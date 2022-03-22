@@ -14,7 +14,7 @@ lines.push("export const symbols: Symbols = {");
 for (const key of Object.keys(functions)) {
   lines.push(`\t${key}: {`);
   lines.push(
-    `\t\tparameters: [${functions[key].parameters
+    `\t\tparameters: [${Object.values(functions[key].parameters)
       .map((x) => `"${x[0]}"`)
       .join(", ")}],`
   );

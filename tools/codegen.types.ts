@@ -10,6 +10,6 @@ export type CodeGenTypeMapping<T extends Deno.NativeType = Deno.NativeType> =
     : never;
 
 export type CodeGenFunction = {
-  parameters: CodeGenTypeMapping[];
+  parameters: Record<string, CodeGenTypeMapping>;
   result: CodeGenTypeMapping;
 };
