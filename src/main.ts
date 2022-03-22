@@ -12,7 +12,7 @@ function decode(v: Uint8Array): string {
   return new TextDecoder().decode(v);
 }
 
-const sdl2Library = Deno.dlopen("./ext/SDL/SDL2.dll", {
+const sdl2Library = Deno.dlopen("../ext/SDL/SDL2.dll", {
   SDL_CreateWindow: {
     parameters: ["pointer", "i32", "i32", "i32", "i32", "u32"],
     result: "u32",
