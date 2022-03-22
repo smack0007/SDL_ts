@@ -7,10 +7,9 @@
         "kind": "build",
         "isDefault": true
       },
-      "type": "shell",
-      "windows": {
-        "command": "build.cmd"
-      },
+      "type": "deno",
+      "command": "task",
+      "args": ["build"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -22,10 +21,9 @@
         "kind": "none",
         "isDefault": true
       },
-      "type": "shell",
-      "windows": {
-        "command": "run.cmd"
-      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run"],
       "options": {
         "cwd": "${workspaceFolder}"
       },

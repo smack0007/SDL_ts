@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "build": "deno compile --unstable --allow-ffi --output ./bin/hello.exe ./src/main.ts",
+    "run": "cd ./src && deno run --unstable --allow-ffi ./main.ts"
+  }
+}
