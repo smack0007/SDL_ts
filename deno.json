@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "lib": ["deno.window", "deno.unstable"]
+  },
   "tasks": {
     "build": "deno compile --unstable --allow-ffi --output ./bin/hello.exe ./src/main.ts",
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-write ./codegen.ts",

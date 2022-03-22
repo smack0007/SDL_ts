@@ -25,7 +25,7 @@ export const functions: Record<string, CodeGenFunction> = {
     result: ["i32", "number"],
   },
   SDL_PollEvent: {
-    parameters: { event: ["u32", "number"] },
+    parameters: { event: ["pointer", "Deno.UnsafePointer"] },
     result: ["u32", "number"],
   },
   SDL_Quit: { parameters: {}, result: ["void", "void"] },

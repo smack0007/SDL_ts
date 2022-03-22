@@ -5,28 +5,26 @@ import {
   SDL_WINDOW_RESIZABLE,
   SDL_WINDOW_SHOWN,
 } from "./constants.ts";
-import { symbols } from "./symbols.ts";
-import { encode } from "./utils.ts";
+import {
+  SDL_CreateWindow,
+  SDL_DestroyWindow,
+  SDL_Init,
+  SDL_PollEvent,
+  SDL_Quit,
+} from "./functions.ts";
 
-const sdl2Library = Deno.dlopen("../ext/SDL/SDL2.dll", symbols);
-
-const sdl2 = sdl2Library.symbols;
-
-if ((sdl2.SDL_Init(SDL_INIT_VIDEO) as number) < 0) {
-  console.error("Initialization failed.");
-  Deno.exit(1);
-}
+SDL_Init(SDL_INIT_VIDEO, "../ext/SDL/SDL2.dll");
 
 console.info("SDL Initialized.");
 
-const windowHandle = sdl2.SDL_CreateWindow(
-  encode("Hello World!"),
+const windowHandle = SDL_CreateWindow(
+  "Hello World!",
   SDL_WINDOWPOS_UNDEFINED,
   SDL_WINDOWPOS_UNDEFINED,
   1024,
   768,
   SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-) as number;
+);
 
 if (windowHandle === 0) {
   console.error("Failed to create window.");
@@ -38,15 +36,18 @@ const eventDataView = new DataView(event.buffer);
 
 let done = false;
 while (!done) {
-  while (sdl2.SDL_PollEvent(Deno.UnsafePointer.of(event)) != 0) {
+  while (SDL_PollEvent(Deno.UnsafePointer.of(event)) != 0) {
     const eventType = eventDataView.getUint32(0, true);
     if (eventType === SDL_QUIT) {
+      console.info("Done.");
       done = true;
     }
   }
 }
 
-sdl2.SDL_DestroyWindow(windowHandle);
-sdl2.SDL_Quit();
+console.info("Destroying SDL Window...");
+SDL_DestroyWindow(windowHandle);
+console.info("SDL Window destoryed.");
 
+SDL_Quit();
 console.info("SDL Shutdown.");

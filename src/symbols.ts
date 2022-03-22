@@ -26,7 +26,7 @@ export const symbols: Symbols = {
 		result: "i32"
 	},
 	SDL_PollEvent: {
-		parameters: ["u32"],
+		parameters: ["pointer"],
 		result: "u32"
 	},
 	SDL_Quit: {
