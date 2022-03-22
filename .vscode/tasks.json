@@ -16,6 +16,20 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "CodeGen",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["codegen"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "label": "Run",
       "group": {
         "kind": "none",

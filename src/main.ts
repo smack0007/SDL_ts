@@ -5,10 +5,10 @@ import {
   SDL_WINDOW_RESIZABLE,
   SDL_WINDOW_SHOWN,
 } from "./constants.ts";
-import { Symbols, symbols } from "./symbols.ts";
+import { symbols } from "./symbols.ts";
 import { encode } from "./utils.ts";
 
-const sdl2Library = Deno.dlopen("../ext/SDL/SDL2.dll", symbols as Symbols);
+const sdl2Library = Deno.dlopen("../ext/SDL/SDL2.dll", symbols);
 
 const sdl2 = sdl2Library.symbols;
 
