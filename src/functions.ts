@@ -7,7 +7,7 @@ import {
   SDL_QuitFunc,
 } from "./interfaces.ts";
 import { symbols, Symbols } from "./symbols.ts";
-import { encode } from "./utils.ts";
+import { toCString } from "./utils.ts";
 
 interface SDL_Context {
   library: Deno.DynamicLibrary<Symbols>;
@@ -32,7 +32,7 @@ export const SDL_CreateWindow: SDL_CreateWindowFunc = function (
   flags: number
 ): Deno.UnsafePointer {
   return context.symbols.SDL_CreateWindow(
-    encode(title),
+    toCString(title),
     x,
     y,
     width,
