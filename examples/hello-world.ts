@@ -1,17 +1,15 @@
 import {
-  SDL_INIT_VIDEO,
-  SDL_QUIT,
-  SDL_WINDOWPOS_UNDEFINED,
-  SDL_WINDOW_RESIZABLE,
-  SDL_WINDOW_SHOWN,
-} from "./constants.ts";
-import {
   SDL_CreateWindow,
   SDL_DestroyWindow,
   SDL_Init,
+  SDL_INIT_VIDEO,
   SDL_PollEvent,
+  SDL_QUIT,
   SDL_Quit,
-} from "./functions.ts";
+  SDL_WINDOWPOS_UNDEFINED,
+  SDL_WINDOW_RESIZABLE,
+  SDL_WINDOW_SHOWN,
+} from "../mod.ts";
 
 SDL_Init(SDL_INIT_VIDEO, "../ext/SDL/SDL2.dll");
 

@@ -30,14 +30,14 @@
       "problemMatcher": ["$deno"]
     },
     {
-      "label": "Run",
+      "label": "Run Hello World",
       "group": {
         "kind": "none",
         "isDefault": true
       },
       "type": "deno",
       "command": "task",
-      "args": ["run"],
+      "args": ["run-hello-world"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
