@@ -6,9 +6,10 @@ import {
   SDL_PollEvent,
   SDL_QUIT,
   SDL_Quit,
-  SDL_WINDOWPOS_UNDEFINED,
   SDL_WINDOW_RESIZABLE,
   SDL_WINDOW_SHOWN,
+  SDL_WINDOWPOS_CENTERED,
+  SDL_WINDOWPOS_UNDEFINED,
 } from "../mod.ts";
 
 SDL_Init(SDL_INIT_VIDEO, "../ext/SDL/SDL2.dll");
@@ -17,11 +18,11 @@ console.info("SDL Initialized.");
 
 const windowPtr = SDL_CreateWindow(
   "Hello World!",
-  SDL_WINDOWPOS_UNDEFINED,
-  SDL_WINDOWPOS_UNDEFINED,
+  SDL_WINDOWPOS_CENTERED,
+  SDL_WINDOWPOS_CENTERED,
   1024,
   768,
-  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,
 );
 
 if (windowPtr.value === 0n) {
