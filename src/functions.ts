@@ -1,3 +1,4 @@
+import { SDL_Event } from "./events.ts";
 import { symbols, Symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
@@ -53,8 +54,8 @@ export function SDL_Init(flags: number, libraryPath?: string): number {
   return context.symbols.SDL_Init(flags) as number;
 }
 
-export function SDL_PollEvent(event: Deno.UnsafePointer): number {
-  return context.symbols.SDL_PollEvent(event) as number;
+export function SDL_PollEvent(event: SDL_Event): number {
+  return context.symbols.SDL_PollEvent(Deno.UnsafePointer.of(event._buffer)) as number;
 }
 
 export function SDL_Quit(): void {
