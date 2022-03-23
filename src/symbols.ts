@@ -11,14 +11,14 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
 export const symbols: Symbols = {
 	SDL_CreateWindow: {
 		parameters: ["pointer", "i32", "i32", "i32", "i32", "u32"],
-		result: "u32"
+		result: "pointer"
 	},
 	SDL_Delay: {
 		parameters: ["u32"],
 		result: "void"
 	},
 	SDL_DestroyWindow: {
-		parameters: ["u32"],
+		parameters: ["pointer"],
 		result: "void"
 	},
 	SDL_Init: {

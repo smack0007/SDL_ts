@@ -3,8 +3,8 @@ import {
   SDL_DelayFunc,
   SDL_DestroyWindowFunc,
   SDL_InitFunc,
-SDL_PollEventFunc,
-SDL_QuitFunc,
+  SDL_PollEventFunc,
+  SDL_QuitFunc,
 } from "./interfaces.ts";
 import { symbols, Symbols } from "./symbols.ts";
 import { encode } from "./utils.ts";
@@ -30,17 +30,26 @@ export const SDL_CreateWindow: SDL_CreateWindowFunc = function (
   width: number,
   height: number,
   flags: number
-): number {
-  return context.symbols.SDL_CreateWindow(encode(title), x, y, width, height, flags) as number;
+): Deno.UnsafePointer {
+  return context.symbols.SDL_CreateWindow(
+    encode(title),
+    x,
+    y,
+    width,
+    height,
+    flags
+  ) as Deno.UnsafePointer;
 };
 
 export const SDL_Delay: SDL_DelayFunc = function (delay: number) {
   context.symbols.SDL_Delay(delay);
 };
 
-export const SDL_DestroyWindow: SDL_DestroyWindowFunc = function(window: number): void {
+export const SDL_DestroyWindow: SDL_DestroyWindowFunc = function (
+  window: Deno.UnsafePointer
+): void {
   context.symbols.SDL_DestroyWindow(window);
-}
+};
 
 export type SDL_LibraryLoaderFunc =
   | SDL_InitFunc
@@ -61,11 +70,13 @@ export const SDL_Init: SDL_LibraryLoaderFunc = function (
   return context.symbols.SDL_Init(flags) as number;
 };
 
-export const SDL_PollEvent: SDL_PollEventFunc = function(event: Deno.UnsafePointer): number {
+export const SDL_PollEvent: SDL_PollEventFunc = function (
+  event: Deno.UnsafePointer
+): number {
   return context.symbols.SDL_PollEvent(event) as number;
-}
+};
 
-export const SDL_Quit: SDL_QuitFunc = function(): void {
+export const SDL_Quit: SDL_QuitFunc = function (): void {
   context.symbols.SDL_Quit();
   context.library.close();
-}
+};

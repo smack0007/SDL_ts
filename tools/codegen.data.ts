@@ -10,14 +10,14 @@ export const functions: Record<string, CodeGenFunction> = {
       height: ["i32", "number"],
       flags: ["u32", "number"],
     },
-    result: ["u32", "number"],
+    result: ["pointer", "Deno.UnsafePointer"],
   },
   SDL_Delay: {
     parameters: { time: ["u32", "number"] },
     result: ["void", "void"],
   },
   SDL_DestroyWindow: {
-    parameters: { window: ["u32", "number"] },
+    parameters: { window: ["pointer", "Deno.UnsafePointer"] },
     result: ["void", "void"],
   },
   SDL_Init: {

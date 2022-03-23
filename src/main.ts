@@ -17,7 +17,7 @@ SDL_Init(SDL_INIT_VIDEO, "../ext/SDL/SDL2.dll");
 
 console.info("SDL Initialized.");
 
-const windowHandle = SDL_CreateWindow(
+const windowPtr = SDL_CreateWindow(
   "Hello World!",
   SDL_WINDOWPOS_UNDEFINED,
   SDL_WINDOWPOS_UNDEFINED,
@@ -26,17 +26,18 @@ const windowHandle = SDL_CreateWindow(
   SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
 );
 
-if (windowHandle === 0) {
+if (windowPtr.value === 0n) {
   console.error("Failed to create window.");
   Deno.exit(1);
 }
 
 const event = new Uint8Array(64);
 const eventDataView = new DataView(event.buffer);
+const eventPtr = Deno.UnsafePointer.of(event);
 
 let done = false;
 while (!done) {
-  while (SDL_PollEvent(Deno.UnsafePointer.of(event)) != 0) {
+  while (SDL_PollEvent(eventPtr) != 0) {
     const eventType = eventDataView.getUint32(0, true);
     if (eventType === SDL_QUIT) {
       console.info("Done.");
@@ -46,7 +47,7 @@ while (!done) {
 }
 
 console.info("Destroying SDL Window...");
-SDL_DestroyWindow(windowHandle);
+SDL_DestroyWindow(windowPtr);
 console.info("SDL Window destoryed.");
 
 SDL_Quit();
