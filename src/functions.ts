@@ -1,11 +1,3 @@
-import {
-  SDL_CreateWindowFunc,
-  SDL_DelayFunc,
-  SDL_DestroyWindowFunc,
-  SDL_InitFunc,
-  SDL_PollEventFunc,
-  SDL_QuitFunc,
-} from "./interfaces.ts";
 import { symbols, Symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
@@ -23,7 +15,7 @@ const context: SDL_Context = {
   symbols: null!,
 };
 
-export const SDL_CreateWindow: SDL_CreateWindowFunc = function (
+export function SDL_CreateWindow(
   title: string,
   x: number,
   y: number,
@@ -39,26 +31,17 @@ export const SDL_CreateWindow: SDL_CreateWindowFunc = function (
     height,
     flags
   ) as Deno.UnsafePointer;
-};
+}
 
-export const SDL_Delay: SDL_DelayFunc = function (delay: number) {
+export function SDL_Delay(delay: number): void {
   context.symbols.SDL_Delay(delay);
-};
+}
 
-export const SDL_DestroyWindow: SDL_DestroyWindowFunc = function (
-  window: Deno.UnsafePointer
-): void {
+export function SDL_DestroyWindow(window: Deno.UnsafePointer): void {
   context.symbols.SDL_DestroyWindow(window);
-};
+}
 
-export type SDL_LibraryLoaderFunc =
-  | SDL_InitFunc
-  | ((flags: number, libraryPath?: string) => number);
-
-export const SDL_Init: SDL_LibraryLoaderFunc = function (
-  flags: number,
-  libraryPath?: string
-) {
+export function SDL_Init(flags: number, libraryPath?: string): number {
   // TODO: Improve this logic.
   if (!libraryPath) {
     libraryPath = "sdl2";
@@ -68,15 +51,13 @@ export const SDL_Init: SDL_LibraryLoaderFunc = function (
   context.symbols = context.library.symbols;
 
   return context.symbols.SDL_Init(flags) as number;
-};
+}
 
-export const SDL_PollEvent: SDL_PollEventFunc = function (
-  event: Deno.UnsafePointer
-): number {
+export function SDL_PollEvent(event: Deno.UnsafePointer): number {
   return context.symbols.SDL_PollEvent(event) as number;
-};
+}
 
-export const SDL_Quit: SDL_QuitFunc = function (): void {
+export function SDL_Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
-};
+}

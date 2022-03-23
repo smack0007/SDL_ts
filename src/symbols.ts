@@ -1,4 +1,6 @@
-// This file is auto generated.
+// This file is auto generated. To update the file
+// make changes to the code generator.
+
 export interface Symbols extends Deno.ForeignLibraryInterface {
 	SDL_CreateWindow: Deno.ForeignFunction;
 	SDL_Delay: Deno.ForeignFunction;

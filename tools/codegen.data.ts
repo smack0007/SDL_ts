@@ -3,30 +3,30 @@ import { CodeGenFunction } from "./codegen.types.ts";
 export const functions: Record<string, CodeGenFunction> = {
   SDL_CreateWindow: {
     parameters: {
-      title: ["pointer", "string"],
-      x: ["i32", "number"],
-      y: ["i32", "number"],
-      width: ["i32", "number"],
-      height: ["i32", "number"],
-      flags: ["u32", "number"],
+      title: "pointer",
+      x: "i32",
+      y: "i32",
+      width: "i32",
+      height: "i32",
+      flags: "u32",
     },
-    result: ["pointer", "Deno.UnsafePointer"],
+    result: "pointer",
   },
   SDL_Delay: {
-    parameters: { time: ["u32", "number"] },
-    result: ["void", "void"],
+    parameters: { time: "u32" },
+    result: "void",
   },
   SDL_DestroyWindow: {
-    parameters: { window: ["pointer", "Deno.UnsafePointer"] },
-    result: ["void", "void"],
+    parameters: { window: "pointer" },
+    result: "void",
   },
   SDL_Init: {
-    parameters: { flags: ["u32", "number"] },
-    result: ["i32", "number"],
+    parameters: { flags: "u32" },
+    result: "i32",
   },
   SDL_PollEvent: {
-    parameters: { event: ["pointer", "Deno.UnsafePointer"] },
-    result: ["u32", "number"],
+    parameters: { event: "pointer" },
+    result: "u32",
   },
-  SDL_Quit: { parameters: {}, result: ["void", "void"] },
+  SDL_Quit: { parameters: {}, result: "void" },
 };
