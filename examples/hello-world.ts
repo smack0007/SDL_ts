@@ -9,6 +9,11 @@ import {
   SDL_Quit,
   SDL_WINDOW_RESIZABLE,
   SDL_WINDOW_SHOWN,
+  SDL_WINDOWEVENT,
+  SDL_WindowEvent,
+  SDL_WINDOWEVENT_MINIMIZED,
+  SDL_WINDOWEVENT_RESTORED,
+  SDL_WINDOWEVENT_SHOWN,
   SDL_WINDOWPOS_CENTERED,
 } from "../mod.ts";
 
@@ -38,6 +43,15 @@ while (!done) {
     if (event.type === SDL_QUIT) {
       console.info("Done.");
       done = true;
+    } else if (event.type === SDL_WINDOWEVENT) {
+      const windowEvent = event as SDL_WindowEvent;
+      if (windowEvent.event === SDL_WINDOWEVENT_SHOWN) {
+        console.info(`Window ${windowEvent.windowID} shown.`);
+      } else if (windowEvent.event === SDL_WINDOWEVENT_MINIMIZED) {
+        console.info(`Window ${windowEvent.windowID} minimized.`);
+      } else if (windowEvent.event === SDL_WINDOWEVENT_RESTORED) {
+        console.info(`Window ${windowEvent.windowID} restored.`);
+      }
     }
   }
 }

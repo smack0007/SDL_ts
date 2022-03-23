@@ -89,6 +89,27 @@ export const enums: Record<string, Record<string, string>> = {
     SDL_INIT_EVERYTHING:
       "( SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER | SDL_INIT_SENSOR )",
   },
+  SDL_WindowEventID: {
+    SDL_WINDOWEVENT_NONE: "0",
+    SDL_WINDOWEVENT_SHOWN: "1",
+    SDL_WINDOWEVENT_HIDDEN: "2",
+    SDL_WINDOWEVENT_EXPOSED: "3",
+    SDL_WINDOWEVENT_MOVED: "4",
+    SDL_WINDOWEVENT_RESIZED: "5",
+    SDL_WINDOWEVENT_SIZE_CHANGED: "6",
+    SDL_WINDOWEVENT_MINIMIZED: "7",
+    SDL_WINDOWEVENT_MAXIMIZED: "8",
+    SDL_WINDOWEVENT_RESTORED: "9",
+    SDL_WINDOWEVENT_ENTER: "10",
+    SDL_WINDOWEVENT_LEAVE: "11",
+    SDL_WINDOWEVENT_FOCUS_GAINED: "12",
+    SDL_WINDOWEVENT_FOCUS_LOST: "13",
+    SDL_WINDOWEVENT_CLOSE: "14",
+    SDL_WINDOWEVENT_TAKE_FOCUS: "15",
+    SDL_WINDOWEVENT_HIT_TEST: "16",
+    SDL_WINDOWEVENT_ICCPROF_CHANGED: "17",
+    SDL_WINDOWEVENT_DISPLAY_CHANGED: "18",
+  },
 
   SDL_WindowFlags: {
     SDL_WINDOW_FULLSCREEN: "0x00000001",
@@ -120,6 +141,66 @@ export const enums: Record<string, Record<string, string>> = {
   SDL_WindowPos: {
     SDL_WINDOWPOS_UNDEFINED: "0x1fff0000",
     SDL_WINDOWPOS_CENTERED: "0x2FFF0000",
+  },
+};
+
+type CodeGenEventType = Record<string, string>;
+
+export const eventTypes: Record<string, CodeGenEventType> = {
+  SDL_CommonEvent: {
+    type: "number",
+    timestamp: "number",
+  },
+
+  SDL_DisplayEvent: {
+    type: "number",
+    timestamp: "number",
+    display: "number",
+    event: "number",
+    // data1: "unknown",
+  },
+
+  SDL_WindowEvent: {
+    type: "number",
+    timestamp: "number",
+    windowID: "number",
+    event: "number",
+    // data1: "unknown",
+    // data2: "unknown",
+  },
+};
+
+interface CodeGenEventMember {
+  offset: number;
+  nativeType: string;
+  type: string;
+}
+
+export const eventMembers: Record<string, CodeGenEventMember> = {
+  type: {
+    type: "number",
+    offset: 0,
+    nativeType: "u32",
+  },
+  timestamp: {
+    type: "number",
+    offset: 4,
+    nativeType: "u32",
+  },
+  display: {
+    type: "number",
+    offset: 8,
+    nativeType: "u32",
+  },
+  windowID: {
+    type: "number",
+    offset: 8,
+    nativeType: "u32",
+  },
+  event: {
+    type: "number",
+    offset: 12,
+    nativeType: "u8",
   },
 };
 

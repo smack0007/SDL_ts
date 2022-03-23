@@ -1,9 +1,15 @@
-import { enums, functions } from "./codegen.data.ts";
+import { enums, eventMembers, eventTypes, functions } from "./codegen.data.ts";
+
+const dataViewMethods: Record<string, (offset: number) => string> = {
+  "u8": (offset) => `getUint8(${offset})`,
+  "u32": (offset) => `getUint32(${offset}, true)`,
+} as const;
 
 await main();
 
 async function main(): Promise<void> {
   await writeEnums();
+  await writeEvents();
   await writeSymbols();
 }
 
@@ -31,6 +37,47 @@ async function writeEnums(): Promise<void> {
   }
 
   await writeLinesToFile("../src/enums.ts", lines);
+}
+
+async function writeEvents(): Promise<void> {
+  const lines = createLines();
+
+  for (const eventName of Object.keys(eventTypes)) {
+    lines.push(`export interface ${eventName} {`);
+
+    for (const memberName of Object.keys(eventTypes[eventName])) {
+      const memberType = eventTypes[eventName][memberName];
+      lines.push(`\t${memberName}: ${memberType};`);
+    }
+
+    lines.push("}");
+    lines.push("");
+  }
+
+  const eventTypeNames = Object.keys(eventTypes).join(", ");
+  lines.push(`export class SDL_Event implements ${eventTypeNames} {
+  public _buffer = new Uint8Array(64);
+  public _dataView = new DataView(this._buffer.buffer);
+
+`);
+
+  for (const memberName of Object.keys(eventMembers)) {
+    const member = eventMembers[memberName];
+    lines.push(`\tpublic get ${memberName}(): ${member.type} {`);
+
+    lines.push(
+      `\t\treturn this._dataView.${
+        dataViewMethods[member.nativeType](member.offset)
+      };`,
+    );
+    lines.push("\t}");
+    lines.push("");
+  }
+
+  lines.push("}");
+  lines.push("");
+
+  await writeLinesToFile("../src/events.ts", lines);
 }
 
 async function writeSymbols(): Promise<void> {
