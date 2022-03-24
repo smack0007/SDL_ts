@@ -1,13 +1,13 @@
-import { SDL_Event } from "./events.ts";
+import { Event } from "./events.ts";
 import { symbols, Symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
-interface SDL_Context {
+interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
   symbols: Deno.StaticForeignLibraryInterface<Symbols>;
 }
 
-const context: SDL_Context = {
+const context: SDLContext = {
   // We don't want to check in every function if the
   // library has been loaded so the following are
   // set to null even though the type says it shouldn't
@@ -16,7 +16,7 @@ const context: SDL_Context = {
   symbols: null!,
 };
 
-export function SDL_CreateWindow(
+export function CreateWindow(
   title: string,
   x: number,
   y: number,
@@ -34,15 +34,15 @@ export function SDL_CreateWindow(
   ) as Deno.UnsafePointer;
 }
 
-export function SDL_Delay(delay: number): void {
+export function Delay(delay: number): void {
   context.symbols.SDL_Delay(delay);
 }
 
-export function SDL_DestroyWindow(window: Deno.UnsafePointer): void {
+export function DestroyWindow(window: Deno.UnsafePointer): void {
   context.symbols.SDL_DestroyWindow(window);
 }
 
-export function SDL_Init(flags: number, libraryPath?: string): number {
+export function Init(flags: number, libraryPath?: string): number {
   // TODO: Improve this logic.
   if (!libraryPath) {
     libraryPath = "sdl2";
@@ -54,11 +54,11 @@ export function SDL_Init(flags: number, libraryPath?: string): number {
   return context.symbols.SDL_Init(flags) as number;
 }
 
-export function SDL_PollEvent(event: SDL_Event): number {
+export function PollEvent(event: Event): number {
   return context.symbols.SDL_PollEvent(Deno.UnsafePointer.of(event._buffer)) as number;
 }
 
-export function SDL_Quit(): void {
+export function Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
 }

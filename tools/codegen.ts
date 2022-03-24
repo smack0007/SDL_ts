@@ -20,6 +20,14 @@ function createLines(): string[] {
   ];
 }
 
+function shortenName(name: string): string {
+  return name.startsWith("SDL_") ? name.substring("SDL_".length) : name;
+}
+
+function stripSDLPrefixes(value: string): string {
+  return value.replaceAll("SDL_", "");
+}
+
 async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await Deno.writeTextFile(path, lines.join("\n"));
   await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
@@ -29,9 +37,10 @@ async function writeEnums(): Promise<void> {
   const lines = createLines();
 
   for (const enumName of Object.keys(enums)) {
-    lines.push(`// ${enumName}`);
+    const shortEnumName = shortenName(enumName);
+    lines.push(`// ${shortEnumName}`);
     for (const key of Object.keys(enums[enumName])) {
-      lines.push(`export const ${key} = ${enums[enumName][key]}`);
+      lines.push(`export const ${shortenName(key)} = ${stripSDLPrefixes(enums[enumName][key])}`);
     }
     lines.push("");
   }
@@ -43,7 +52,8 @@ async function writeEvents(): Promise<void> {
   const lines = createLines();
 
   for (const eventName of Object.keys(eventTypes)) {
-    lines.push(`export interface ${eventName} {`);
+    const shortEventName = shortenName(eventName);
+    lines.push(`export interface ${shortEventName} {`);
 
     for (const memberName of Object.keys(eventTypes[eventName])) {
       const memberType = eventTypes[eventName][memberName];
@@ -54,8 +64,8 @@ async function writeEvents(): Promise<void> {
     lines.push("");
   }
 
-  const eventTypeNames = Object.keys(eventTypes).join(", ");
-  lines.push(`export class SDL_Event implements ${eventTypeNames} {
+  const eventTypeNames = Object.keys(eventTypes).map(shortenName).join(", ");
+  lines.push(`export class Event implements ${eventTypeNames} {
   public _buffer = new Uint8Array(64);
   public _dataView = new DataView(this._buffer.buffer);
 

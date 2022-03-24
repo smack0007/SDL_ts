@@ -1,26 +1,25 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-export interface SDL_CommonEvent {
+export interface CommonEvent {
   type: number;
   timestamp: number;
 }
 
-export interface SDL_DisplayEvent {
+export interface DisplayEvent {
   type: number;
   timestamp: number;
   display: number;
   event: number;
 }
 
-export interface SDL_WindowEvent {
+export interface WindowEvent {
   type: number;
   timestamp: number;
   windowID: number;
   event: number;
 }
 
-export class SDL_Event
-  implements SDL_CommonEvent, SDL_DisplayEvent, SDL_WindowEvent {
+export class Event implements CommonEvent, DisplayEvent, WindowEvent {
   public _buffer = new Uint8Array(64);
   public _dataView = new DataView(this._buffer.buffer);
 
