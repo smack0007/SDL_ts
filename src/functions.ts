@@ -1,4 +1,5 @@
 import { Event } from "./events.ts";
+import { Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
@@ -23,7 +24,7 @@ export function CreateWindow(
   width: number,
   height: number,
   flags: number,
-): Deno.UnsafePointer {
+): Window {
   return context.symbols.SDL_CreateWindow(
     toCString(title),
     x,
@@ -31,29 +32,35 @@ export function CreateWindow(
     width,
     height,
     flags,
-  ) as Deno.UnsafePointer;
+  ) as Window;
 }
 
 export function Delay(delay: number): void {
   context.symbols.SDL_Delay(delay);
 }
 
-export function DestroyWindow(window: Deno.UnsafePointer): void {
+export function DestroyWindow(window: Window): void {
   context.symbols.SDL_DestroyWindow(window);
 }
 
 export function FillRect(
-  dst: Deno.UnsafePointer,
+  dst: Surface,
   rect: Deno.UnsafePointer,
   color: number,
 ): number {
-  return context.symbols.SDL_FillRect(dst, rect, color) as number;
+  return context.symbols.SDL_FillRect(
+    dst._pointerView.pointer,
+    rect,
+    color,
+  ) as number;
 }
 
 export function GetWindowSurface(
-  window: Deno.UnsafePointer,
-): Deno.UnsafePointer {
-  return context.symbols.SDL_GetWindowSurface(window) as Deno.UnsafePointer;
+  window: Window,
+): Surface {
+  return new Surface(
+    context.symbols.SDL_GetWindowSurface(window) as Deno.UnsafePointer,
+  );
 }
 
 export function Init(flags: number, libraryPath?: string): number {
@@ -79,8 +86,8 @@ export function MapRGB(
   r: number,
   g: number,
   b: number,
-): void {
-  context.symbols.SDL_MapRGB(format, r, g, b);
+): number {
+  return context.symbols.SDL_MapRGB(format, r, g, b) as number;
 }
 
 export function MapRGBA(
@@ -89,8 +96,8 @@ export function MapRGBA(
   g: number,
   b: number,
   a: number,
-): void {
-  context.symbols.SDL_MapRGB(format, r, g, b, a);
+): number {
+  return context.symbols.SDL_MapRGBA(format, r, g, b, a) as number;
 }
 
 export function Quit(): void {
@@ -98,6 +105,6 @@ export function Quit(): void {
   context.library.close();
 }
 
-export function UpdateWindowSurface(window: Deno.UnsafePointer): number {
+export function UpdateWindowSurface(window: Window): number {
   return context.symbols.SDL_UpdateWindowSurface(window) as number;
 }

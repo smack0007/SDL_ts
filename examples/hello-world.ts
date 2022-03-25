@@ -18,8 +18,14 @@ if (windowPtr.value === 0n) {
   Deno.exit(1);
 }
 
-const surfacePtr = SDL.GetWindowSurface(windowPtr);
-SDL.FillRect(surfacePtr, new Deno.UnsafePointer(0n), 0x6495ED);
+const surface = SDL.GetWindowSurface(windowPtr);
+console.info(surface.flags);
+console.info(surface.w, surface.h);
+SDL.FillRect(
+  surface,
+  new Deno.UnsafePointer(0n),
+  SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
+);
 SDL.UpdateWindowSurface(windowPtr);
 
 const event = new SDL.Event();

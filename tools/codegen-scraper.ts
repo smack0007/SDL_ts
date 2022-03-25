@@ -1,5 +1,8 @@
 // deno task codegen-scraper > codegen-scraper.out
 
+// This is a blunt tool that will produce output from the SDL headers
+// that can then be fed directly into the codegen.
+
 await main();
 
 function write(value: string): void {
