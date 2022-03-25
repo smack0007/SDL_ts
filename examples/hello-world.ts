@@ -1,16 +1,16 @@
-import * as sdl from "../mod.ts";
+import * as SDL from "../mod.ts";
 
-sdl.Init(sdl.INIT_VIDEO, "../ext/SDL/SDL2.dll");
+SDL.Init(SDL.INIT_VIDEO, "../ext/SDL/SDL2.dll");
 
 console.info("SDL Initialized.");
 
-const windowPtr = sdl.CreateWindow(
+const windowPtr = SDL.CreateWindow(
   "Hello World!",
-  sdl.WINDOWPOS_CENTERED,
-  sdl.WINDOWPOS_CENTERED,
+  SDL.WINDOWPOS_CENTERED,
+  SDL.WINDOWPOS_CENTERED,
   1024,
   768,
-  sdl.WINDOW_SHOWN | sdl.WINDOW_RESIZABLE,
+  SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
 if (windowPtr.value === 0n) {
@@ -18,21 +18,21 @@ if (windowPtr.value === 0n) {
   Deno.exit(1);
 }
 
-const event = new sdl.Event();
+const event = new SDL.Event();
 
 let done = false;
 while (!done) {
-  while (sdl.PollEvent(event) != 0) {
-    if (event.type === sdl.QUIT) {
+  while (SDL.PollEvent(event) != 0) {
+    if (event.type === SDL.QUIT) {
       console.info("Done.");
       done = true;
-    } else if (event.type === sdl.WINDOWEVENT) {
-      const windowEvent = event as sdl.WindowEvent;
-      if (windowEvent.event === sdl.WINDOWEVENT_SHOWN) {
+    } else if (event.type === SDL.WINDOWEVENT) {
+      const windowEvent = event as SDL.WindowEvent;
+      if (windowEvent.event === SDL.WINDOWEVENT_SHOWN) {
         console.info(`Window ${windowEvent.windowID} shown.`);
-      } else if (windowEvent.event === sdl.WINDOWEVENT_MINIMIZED) {
+      } else if (windowEvent.event === SDL.WINDOWEVENT_MINIMIZED) {
         console.info(`Window ${windowEvent.windowID} minimized.`);
-      } else if (windowEvent.event === sdl.WINDOWEVENT_RESTORED) {
+      } else if (windowEvent.event === SDL.WINDOWEVENT_RESTORED) {
         console.info(`Window ${windowEvent.windowID} restored.`);
       }
     }
@@ -40,8 +40,8 @@ while (!done) {
 }
 
 console.info("Destroying SDL Window...");
-sdl.DestroyWindow(windowPtr);
+SDL.DestroyWindow(windowPtr);
 console.info("SDL Window destoryed.");
 
-sdl.Quit();
+SDL.Quit();
 console.info("SDL Shutdown.");
