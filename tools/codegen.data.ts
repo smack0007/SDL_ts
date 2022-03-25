@@ -89,6 +89,7 @@ export const enums: Record<string, Record<string, string>> = {
     SDL_INIT_EVERYTHING:
       "( SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER | SDL_INIT_SENSOR )",
   },
+
   SDL_WindowEventID: {
     SDL_WINDOWEVENT_NONE: "0",
     SDL_WINDOWEVENT_SHOWN: "1",
@@ -212,30 +213,80 @@ interface CodeGenFunction {
 export const functions: Record<string, CodeGenFunction> = {
   SDL_CreateWindow: {
     parameters: {
-      title: "pointer",
-      x: "i32",
-      y: "i32",
-      width: "i32",
-      height: "i32",
-      flags: "u32",
+      title: "pointer", /* char* */
+      x: "i32", /* int */
+      y: "i32", /* int */
+      w: "i32", /* int */
+      h: "i32", /* int */
+      flags: "u32", /* Uint32 */
     },
-    result: "pointer",
+    result: "pointer", /* SDL_Window* */
   },
   SDL_Delay: {
-    parameters: { time: "u32" },
-    result: "void",
+    parameters: {
+      ms: "u32", /* Uint32 */
+    },
+    result: "void", /* void */
   },
   SDL_DestroyWindow: {
-    parameters: { window: "pointer" },
-    result: "void",
+    parameters: {
+      window: "pointer", /* SDL_Window* */
+    },
+    result: "void", /* void */
+  },
+  SDL_FillRect: {
+    parameters: {
+      dst: "pointer", /* SDL_Surface* */
+      rect: "pointer", /* SDL_Rect* */
+      color: "u32", /* Uint32 */
+    },
+    result: "i32", /* int */
+  },
+  SDL_GetWindowSurface: {
+    parameters: {
+      window: "pointer", /* SDL_Window* */
+    },
+    result: "pointer", /* SDL_Surface* */
   },
   SDL_Init: {
-    parameters: { flags: "u32" },
-    result: "i32",
+    parameters: {
+      flags: "u32", /* Uint32 */
+    },
+    result: "i32", /* int */
+  },
+  SDL_MapRGB: {
+    parameters: {
+      format: "pointer", /* SDL_PixelFormat* */
+      r: "u8", /* Uint8 */
+      g: "u8", /* Uint8 */
+      b: "u8", /* Uint8 */
+    },
+    result: "u32", /* Uint32 */
+  },
+  SDL_MapRGBA: {
+    parameters: {
+      format: "pointer", /* SDL_PixelFormat* */
+      r: "u8", /* Uint8 */
+      g: "u8", /* Uint8 */
+      b: "u8", /* Uint8 */
+      a: "u8", /* Uint8 */
+    },
+    result: "u32", /* Uint32 */
   },
   SDL_PollEvent: {
-    parameters: { event: "pointer" },
-    result: "u32",
+    parameters: {
+      event: "pointer", /* SDL_Event* */
+    },
+    result: "i32", /* int */
   },
-  SDL_Quit: { parameters: {}, result: "void" },
+  SDL_Quit: {
+    parameters: {},
+    result: "void", /* void */
+  },
+  SDL_UpdateWindowSurface: {
+    parameters: {
+      window: "pointer", /* SDL_Window* */
+    },
+    result: "i32", /* int */
+  },
 };

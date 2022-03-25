@@ -1,5 +1,5 @@
 import { Event } from "./events.ts";
-import { symbols, Symbols } from "./symbols.ts";
+import { Symbols, symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
 interface SDLContext {
@@ -22,7 +22,7 @@ export function CreateWindow(
   y: number,
   width: number,
   height: number,
-  flags: number
+  flags: number,
 ): Deno.UnsafePointer {
   return context.symbols.SDL_CreateWindow(
     toCString(title),
@@ -30,7 +30,7 @@ export function CreateWindow(
     y,
     width,
     height,
-    flags
+    flags,
   ) as Deno.UnsafePointer;
 }
 
@@ -40,6 +40,20 @@ export function Delay(delay: number): void {
 
 export function DestroyWindow(window: Deno.UnsafePointer): void {
   context.symbols.SDL_DestroyWindow(window);
+}
+
+export function FillRect(
+  dst: Deno.UnsafePointer,
+  rect: Deno.UnsafePointer,
+  color: number,
+): number {
+  return context.symbols.SDL_FillRect(dst, rect, color) as number;
+}
+
+export function GetWindowSurface(
+  window: Deno.UnsafePointer,
+): Deno.UnsafePointer {
+  return context.symbols.SDL_GetWindowSurface(window) as Deno.UnsafePointer;
 }
 
 export function Init(flags: number, libraryPath?: string): number {
@@ -55,10 +69,35 @@ export function Init(flags: number, libraryPath?: string): number {
 }
 
 export function PollEvent(event: Event): number {
-  return context.symbols.SDL_PollEvent(Deno.UnsafePointer.of(event._buffer)) as number;
+  return context.symbols.SDL_PollEvent(
+    Deno.UnsafePointer.of(event._buffer),
+  ) as number;
+}
+
+export function MapRGB(
+  format: Deno.UnsafePointer,
+  r: number,
+  g: number,
+  b: number,
+): void {
+  context.symbols.SDL_MapRGB(format, r, g, b);
+}
+
+export function MapRGBA(
+  format: Deno.UnsafePointer,
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+): void {
+  context.symbols.SDL_MapRGB(format, r, g, b, a);
 }
 
 export function Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
+}
+
+export function UpdateWindowSurface(window: Deno.UnsafePointer): number {
+  return context.symbols.SDL_UpdateWindowSurface(window) as number;
 }

@@ -30,6 +30,20 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "CodeGen Scraper",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["codegen-scraper"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "label": "Run Hello World",
       "group": {
         "kind": "none",
