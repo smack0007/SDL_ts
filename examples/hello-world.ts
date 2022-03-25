@@ -37,6 +37,7 @@ while (!done) {
       }
     }
   }
+  SDL.Delay(100);
 }
 
 console.info("Destroying SDL Window...");
