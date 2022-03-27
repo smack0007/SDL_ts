@@ -1,4 +1,3 @@
 bin/
 ext/SDL/include/
-
-codegen-scraper.out
+tmp/

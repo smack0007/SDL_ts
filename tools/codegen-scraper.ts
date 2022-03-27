@@ -3,15 +3,33 @@
 // This is a blunt tool that will produce output from the SDL headers
 // that can then be fed directly into the codegen.
 
-await main();
+let buffer = "";
+
+Deno.exit(await main());
 
 function write(value: string): void {
-  if (value !== "") {
-    console.info(value);
+  if (value === "") {
+    return;
   }
+  buffer += value + "\n";
 }
 
-async function main(): Promise<void> {
+function writePrintF(value: string): void {
+  if (value === "") {
+    return;
+  }
+
+  value = value
+    .replaceAll("\n", "\\n")
+    .replaceAll("\t", "\\t")
+    .replaceAll('"', '\\"');
+
+  write(`printf("${value}\\n");`);
+}
+
+async function main(): Promise<number> {
+  writeStartCode();
+
   for await (const entry of Deno.readDir("../ext/SDL/include")) {
     if (entry.name.startsWith("SDL") && entry.name.endsWith(".h")) {
       write(`// ${entry.name}`);
@@ -19,6 +37,43 @@ async function main(): Promise<void> {
       write("");
     }
   }
+
+  writeEndCode();
+
+  try {
+    await Deno.mkdir("../tmp");
+  } catch {
+    // Ignore
+  }
+
+  const cOutputPath = "../tmp/codgen-scraper.c";
+  await Deno.writeTextFile(cOutputPath, buffer);
+
+  const exeOutputPath = "../tmp/codgen-scraper.exe";
+  await Deno.run({
+    cmd: ["clang", cOutputPath, "-o", exeOutputPath],
+    stdout: "null",
+  }).status();
+
+  const process = Deno.run({ cmd: [exeOutputPath] });
+  const { code } = await process.status();
+
+  // console.info("writing");
+  // await Deno.writeFile("../tmp/codegen-scraper.out", output);
+  // console.info("done");
+
+  return code;
+}
+
+function writeStartCode(): void {
+  write("#include <stdio.h>");
+  write("");
+  write("int main() {");
+}
+
+function writeEndCode(): void {
+  write("}");
+  write("");
 }
 
 type CaptureMode = "define" | "enum" | "function" | null;
@@ -62,7 +117,7 @@ async function scrapeFile(filePath: string): Promise<void> {
     }
 
     if (shouldWrite) {
-      write(capture);
+      writePrintF(capture);
       captureMode = null;
       capture = "";
     }
@@ -82,7 +137,7 @@ function transformDefine(capture: string): string {
     return "";
   }
 
-  return `/* #define */ ${parts[0]}: "${parts.slice(1).join(" ")}"`;
+  return `/* define */ ${parts[0]}: ${parts.slice(1).join(" ")};`;
 }
 
 function transformEnum(capture: string): string {

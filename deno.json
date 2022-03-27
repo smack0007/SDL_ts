@@ -11,7 +11,7 @@
   "tasks": {
     "build": "deno compile --unstable --allow-ffi --output ./bin/hello.exe ./src/main.ts",
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-write ./codegen.ts",
-    "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write ./codegen-scraper.ts",
+    "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write --allow-run ./codegen-scraper.ts",
     "run-hello-world": "cd ./examples && deno run --unstable --allow-ffi ./hello-world.ts"
   }
 }
