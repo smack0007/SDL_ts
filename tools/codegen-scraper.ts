@@ -1,39 +1,47 @@
-// deno task codegen-scraper > codegen-scraper.out
+// deno task codegen-scraper > ./tmp/codegen-scraper.out
 
 // This is a blunt tool that will produce output from the SDL headers
 // that can then be fed directly into the codegen.
+
+const EXT_PATH = "../ext";
+const SDL_PATH = `${EXT_PATH}/SDL`;
+const KHRONOS_PATH = `${EXT_PATH}/khronos`;
+const OUTPUT_PATH = "../tmp";
 
 let buffer = "";
 
 Deno.exit(await main());
 
 function write(value: string): void {
-  if (value === "") {
-    return;
-  }
   buffer += value + "\n";
 }
 
-function writePrintF(value: string): void {
-  if (value === "") {
-    return;
-  }
-
+function writePrintF(value: string, ...args: string[]): void {
   value = value
     .replaceAll("\n", "\\n")
     .replaceAll("\t", "\\t")
     .replaceAll('"', '\\"');
 
-  write(`printf("${value}\\n");`);
+  if (args.length <= 0) {
+    value = value.replaceAll("%", "%%");
+  }
+
+  let argsString = args.join(", ");
+
+  if (argsString.length > 0) {
+    argsString = ", " + argsString;
+  }
+
+  write(`printf("${value}\\n"${argsString});`);
 }
 
 async function main(): Promise<number> {
   writeStartCode();
 
-  for await (const entry of Deno.readDir("../ext/SDL/include")) {
+  for await (const entry of Deno.readDir(`${SDL_PATH}/include`)) {
     if (entry.name.startsWith("SDL") && entry.name.endsWith(".h")) {
       write(`// ${entry.name}`);
-      await scrapeFile(`../ext/SDL/include/${entry.name}`);
+      await scrapeFile(`${SDL_PATH}/include/${entry.name}`);
       write("");
     }
   }
@@ -41,37 +49,60 @@ async function main(): Promise<number> {
   writeEndCode();
 
   try {
-    await Deno.mkdir("../tmp");
+    await Deno.mkdir(OUTPUT_PATH);
   } catch {
     // Ignore
   }
 
-  const cOutputPath = "../tmp/codgen-scraper.c";
+  const cOutputPath = `${OUTPUT_PATH}/codegen-scraper.c`;
   await Deno.writeTextFile(cOutputPath, buffer);
 
-  const exeOutputPath = "../tmp/codgen-scraper.exe";
-  await Deno.run({
-    cmd: ["clang", cOutputPath, "-o", exeOutputPath],
-    stdout: "null",
+  const exeOutputPath = `${OUTPUT_PATH}/codegen-scraper.exe`;
+  const { code } = await Deno.run({
+    cmd: [
+      "clang",
+      cOutputPath,
+      "-o",
+      exeOutputPath,
+      `-I${SDL_PATH}/include`,
+      `-I${KHRONOS_PATH}`,
+      `-L${SDL_PATH}/lib/x64`,
+      "-Wl,/SUBSYSTEM:CONSOLE",
+      "-lSDL2main",
+      "-lSDL2",
+      "-lShell32",
+    ],
+    // stdout: "null",
   }).status();
 
+  if (code !== 0) {
+    return 1;
+  }
+
+  await Deno.copyFile(
+    `${SDL_PATH}/lib/x64/SDL2.dll`,
+    `${OUTPUT_PATH}/SDL2.dll`,
+  );
+
   const process = Deno.run({ cmd: [exeOutputPath] });
-  const { code } = await process.status();
+  await process.status();
 
-  // console.info("writing");
-  // await Deno.writeFile("../tmp/codegen-scraper.out", output);
-  // console.info("done");
-
-  return code;
+  return 0;
 }
 
 function writeStartCode(): void {
   write("#include <stdio.h>");
+  write("#include <windows.h>");
+  write("#include <SDL.h>");
+  write("#include <KHR/khrplatform.h>");
   write("");
-  write("int main() {");
+  write("int main(int argc, char* args[]) {");
+  write("SDL_Init(SDL_INIT_VIDEO);");
 }
 
 function writeEndCode(): void {
+  write("SDL_Quit();");
+  write("return 0;");
   write("}");
   write("");
 }
@@ -98,33 +129,32 @@ async function scrapeFile(filePath: string): Promise<void> {
       capture += trimmedLine;
     }
 
-    let shouldWrite = false;
+    let shouldFlush = false;
 
     if (captureMode === "define" && !trimmedLine.endsWith("\\")) {
-      capture = transformDefine(capture);
-      shouldWrite = true;
+      outputDefine(capture);
+      shouldFlush = true;
     } else if (
-      captureMode === "enum" && trimmedLine.startsWith("}") &&
+      captureMode === "enum" && trimmedLine.startsWith("} ") &&
       trimmedLine.endsWith(";")
     ) {
-      capture = transformEnum(capture);
-      shouldWrite = true;
+      outputEnum(capture);
+      shouldFlush = true;
     } else if (
       captureMode === "function" && trimmedLine.endsWith(";")
     ) {
-      capture = transformFunction(capture);
-      shouldWrite = true;
+      outputFunction(capture);
+      shouldFlush = true;
     }
 
-    if (shouldWrite) {
-      writePrintF(capture);
+    if (shouldFlush) {
       captureMode = null;
       capture = "";
     }
   }
 }
 
-function transformDefine(capture: string): string {
+function outputDefine(capture: string): void {
   capture = capture
     .replaceAll("#define", "")
     .replaceAll("\\", "");
@@ -134,19 +164,22 @@ function transformDefine(capture: string): string {
     .filter((x) => x !== "");
 
   if (parts.length < 2) {
-    return "";
+    return;
   }
 
-  return `/* define */ ${parts[0]}: ${parts.slice(1).join(" ")};`;
+  writePrintF(`/* define */ ${parts[0]}: ${parts.slice(1).join(" ")};`);
 }
 
-function transformEnum(capture: string): string {
+function outputEnum(capture: string): void {
   capture = capture
-    .replace(/\/\*(.*?)\*\//g, "")
+    .replace(/\/\*([.\s\S]*?)\*\//g, "")
     .replaceAll("typedef enum", "")
     .replaceAll("{", "")
     .replaceAll("}", "")
-    .replaceAll(";", "");
+    .replaceAll(";", "")
+    .replaceAll(" | ", "|")
+    .replaceAll("' '", "_") // These 2 come from SDL_keycode
+    .replaceAll("','", "_");
 
   const parts = capture.split(/(\,|\s)/)
     .map((x) => x.trim())
@@ -154,34 +187,43 @@ function transformEnum(capture: string): string {
     .filter((x) => x !== ",");
 
   const enumName = parts[parts.length - 1];
-  let enumMembers = "";
 
-  let currentEnumValue = 0;
-  for (let i = 0; i < parts.length - 1; i++) {
-    enumMembers += `\t${parts[i]}`;
-
-    if (parts[i + 1] === "=") {
-      enumMembers += `: "${parts[i + 2]}"`;
-
-      try {
-        currentEnumValue = parseInt(parts[i + 2], 10);
-      } catch {
-        // Ignore
-      }
-
-      i += 2;
-    } else {
-      enumMembers += `: "${currentEnumValue}"`;
-    }
-
-    enumMembers += "\n";
-    currentEnumValue += 1;
+  if (enumName.startsWith("SDL_WinRT")) {
+    return;
   }
 
-  return `/* enum */
+  // TODO: Need SDL_PixelFormatEnum eventually.
+  if (
+    enumName === "SDL_PixelFormatEnum" || enumName === "SDL_SYSWM_TYPE" ||
+    enumName === "SDL_WindowFlags"
+  ) {
+    return;
+  }
+
+  // if (enumName === "SDL_KeyCode") {
+  //   write(`// ${capture}`);
+  // }
+
+  let enumMembers = "";
+  const args = [];
+  for (let i = 0; i < parts.length - 1; i++) {
+    enumMembers += `\t${parts[i]}: "%d"\n`;
+    args.push(parts[i]);
+
+    if (parts[i + 1] === "=") {
+      i += 2;
+    } else if (parts[i + 1].startsWith("=")) {
+      i += 1;
+    }
+  }
+
+  writePrintF(
+    `/* enum */
 ${enumName}: {
 ${enumMembers}
-}`;
+}`,
+    ...args,
+  );
 }
 
 function guessFFIType(type: string): string {
@@ -203,7 +245,7 @@ function guessFFIType(type: string): string {
   return type;
 }
 
-function transformFunction(capture: string): string {
+function outputFunction(capture: string): void {
   capture = capture
     .replaceAll("extern DECLSPEC", "")
     .replaceAll("SDLCALL", "")
@@ -253,11 +295,11 @@ function transformFunction(capture: string): string {
     }", /* ${paramType} */\n`;
   }
 
-  return `/* function */
+  writePrintF(`/* function */
 ${functionName}: {
   parameters: {
 ${params.trimEnd()}
   },
   result: "${guessFFIType(returnType)}", /* ${returnType} */
-},`;
+},`);
 }
