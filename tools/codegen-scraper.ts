@@ -107,49 +107,74 @@ function writeEndCode(): void {
   write("");
 }
 
-type CaptureMode = "define" | "enum" | "function" | null;
+function writeLineNumber(num: number): void {
+  write(`// Line ${num}`);
+}
 
 async function scrapeFile(filePath: string): Promise<void> {
+  let captureMode: "define" | "enum" | "function" | "struct" | null = null;
+
   const lines = (await Deno.readTextFile(filePath)).split("\n");
-  let captureMode: CaptureMode = null;
   let capture = "";
 
-  for (const line of lines) {
-    const trimmedLine = line.trim();
+  const flush = () => {
+    captureMode = null;
+    capture = "";
+  };
 
-    if (trimmedLine.startsWith("#define SDL_")) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (line.startsWith("#define SDL_")) {
+      flush();
       captureMode = "define";
-    } else if (trimmedLine.startsWith("typedef enum")) {
+      writeLineNumber(i);
+    } else if (line.startsWith("typedef enum")) {
+      flush();
       captureMode = "enum";
-    } else if (trimmedLine.startsWith("extern DECLSPEC ")) {
+      writeLineNumber(i);
+    } else if (line.startsWith("extern DECLSPEC ")) {
+      flush();
       captureMode = "function";
+      writeLineNumber(i);
+    } else if (
+      line.startsWith("typedef struct") && !line.endsWith(";")
+    ) {
+      flush();
+      captureMode = "struct";
+      writeLineNumber(i);
     }
 
     if (captureMode !== null) {
-      capture += trimmedLine;
+      capture += line;
     }
 
     let shouldFlush = false;
 
-    if (captureMode === "define" && !trimmedLine.endsWith("\\")) {
+    if (captureMode === "define" && !line.endsWith("\\")) {
       outputDefine(capture);
       shouldFlush = true;
     } else if (
-      captureMode === "enum" && trimmedLine.startsWith("} ") &&
-      trimmedLine.endsWith(";")
+      captureMode === "enum" && line.startsWith("} ") &&
+      line.endsWith(";")
     ) {
       outputEnum(capture);
       shouldFlush = true;
     } else if (
-      captureMode === "function" && trimmedLine.endsWith(";")
+      captureMode === "function" && line.endsWith(";")
     ) {
       outputFunction(capture);
+      shouldFlush = true;
+    } else if (
+      captureMode === "struct" && line.startsWith("} ") &&
+      line.endsWith(";")
+    ) {
+      outputStruct(capture);
       shouldFlush = true;
     }
 
     if (shouldFlush) {
-      captureMode = null;
-      capture = "";
+      flush();
     }
   }
 }
@@ -302,4 +327,20 @@ ${params.trimEnd()}
   },
   result: "${guessFFIType(returnType)}", /* ${returnType} */
 },`);
+}
+
+function outputStruct(capture: string): void {
+  capture = capture
+    .replace(/\/\*([.\s\S]*?)\*\//g, "")
+    .replaceAll("typedef struct", "")
+    .replaceAll("{", " ")
+    .replaceAll("}", " ")
+    .replaceAll(";", " ");
+
+  let parts = capture.split(/(\;|\s)/)
+    .map((x) => x.trim())
+    .filter((x) => x !== "")
+    .filter((x) => x !== ";");
+
+  write(`/* struct ${capture} ${JSON.stringify(parts, undefined, 2)} */`);
 }

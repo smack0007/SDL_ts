@@ -8,6 +8,11 @@
       "include": ["explicit-function-return-type"]
     }
   },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2
+  },
   "tasks": {
     "build": "deno compile --unstable --allow-ffi --output ./bin/hello.exe ./src/main.ts",
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-write ./codegen.ts",
