@@ -91,8 +91,8 @@ async function main(): Promise<number> {
 }
 
 function writeStartCode(): void {
+  write("#include <stddef.h>");
   write("#include <stdio.h>");
-  write("#include <windows.h>");
   write("#include <SDL.h>");
   write("#include <KHR/khrplatform.h>");
   write("");
@@ -344,12 +344,83 @@ function outputStruct(capture: string): void {
     .replaceAll("typedef struct", "")
     .replaceAll("{", " ")
     .replaceAll("}", " ")
-    .replaceAll(";", " ");
+    .replaceAll(";", " ")
+    .replaceAll(", ", ",") // Move multiple members declarations together
+    .replaceAll("unsigned int", "uint")
+    .replaceAll("unsigned short", "ushort")
+    .replaceAll("char * ", "char* ");
 
   let parts = capture.split(/(\;|\s)/)
     .map((x) => x.trim())
     .filter((x) => x !== "")
     .filter((x) => x !== ";");
 
-  write(`/* struct ${capture} ${JSON.stringify(parts, undefined, 2)} */`);
+  // TODO: Figure out what to do with unions.
+  if (parts.indexOf("union") !== -1) {
+    return;
+  }
+
+  // write(`/* struct ${JSON.stringify(parts, undefined, 2)} */`);
+
+  let structName = parts[0];
+  let membersStart = 1;
+
+  // When struct name / typedef don't match.
+  if (parts[0] !== parts[parts.length - 1]) {
+    structName = parts[parts.length - 1];
+    membersStart = 0;
+  }
+
+  // Skip these structs for now.
+  if (
+    structName.startsWith("SDLTest_") ||
+    [
+      "SDL_AudioCVT",
+    ].includes(structName)
+  ) {
+    return;
+  }
+
+  writePrintF("/* struct */");
+  writePrintF(`${structName}: {`);
+  writePrintF("\tsize: %llu", `sizeof(${structName})`);
+  writePrintF("\tmembers: {");
+
+  for (let i = membersStart; i < parts.length - 1; i += 2) {
+    if (parts[i] === "const") {
+      i += 1;
+    }
+
+    if (parts[i] === "struct") {
+      i += 1;
+    }
+
+    let type = parts[i];
+    let name = parts[i + 1];
+
+    if (name === undefined) {
+      continue;
+    }
+
+    if (name.startsWith("**")) {
+      type += "**";
+      name = name.substring(2);
+    } else if (name.startsWith("*")) {
+      type += "*";
+      name = name.substring(1);
+    }
+
+    // If multiple members are specified with a comma.
+    const names = name.split(",");
+
+    for (const name of names) {
+      writePrintF(`\t\t${name}: {`);
+      writePrintF(`\t\t\ttype: "${guessFFIType(type)}", /* ${type} */`);
+      writePrintF(`\t\t\toffset: %llu,`, `offsetof(${structName}, ${name})`);
+      writePrintF("\t\t}");
+    }
+  }
+
+  writePrintF("\t}");
+  writePrintF("}");
 }
