@@ -350,7 +350,7 @@ function outputStruct(capture: string): void {
     .replaceAll("unsigned short", "ushort")
     .replaceAll("char * ", "char* ");
 
-  let parts = capture.split(/(\;|\s)/)
+  const parts = capture.split(/(\;|\s)/)
     .map((x) => x.trim())
     .filter((x) => x !== "")
     .filter((x) => x !== ";");
