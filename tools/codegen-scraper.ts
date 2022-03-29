@@ -40,9 +40,9 @@ async function main(): Promise<number> {
 
   for await (const entry of Deno.readDir(`${SDL_PATH}/include`)) {
     if (entry.name.startsWith("SDL") && entry.name.endsWith(".h")) {
-      write(`// ${entry.name}`);
+      writePrintF(`// ${entry.name}`);
       await scrapeFile(`${SDL_PATH}/include/${entry.name}`);
-      write("");
+      writePrintF("");
     }
   }
 
@@ -108,7 +108,7 @@ function writeEndCode(): void {
 }
 
 function writeLineNumber(num: number): void {
-  write(`// Line ${num}`);
+  writePrintF(`// Line ${num}`);
 }
 
 async function scrapeFile(filePath: string): Promise<void> {
@@ -204,7 +204,7 @@ function outputEnum(capture: string): void {
     .replaceAll(";", "")
     .replaceAll(" | ", "|")
     .replaceAll("' '", "_") // These 2 come from SDL_keycode
-    .replaceAll("','", "_");
+    .replaceAll("','", "__");
 
   const parts = capture.split(/(\,|\s)/)
     .map((x) => x.trim())
@@ -229,26 +229,36 @@ function outputEnum(capture: string): void {
   //   write(`// ${capture}`);
   // }
 
-  let enumMembers = "";
-  const args = [];
+  writePrintF("/* enum */");
+  writePrintF(`${enumName}: {`);
+
   for (let i = 0; i < parts.length - 1; i++) {
-    enumMembers += `\t${parts[i]}: "%d"\n`;
-    args.push(parts[i]);
+    const key = parts[i];
+    let value: string | null = null;
 
     if (parts[i + 1] === "=") {
+      value = parts[i + 2];
       i += 2;
     } else if (parts[i + 1].startsWith("=")) {
+      value = parts[i + 1].substring(1);
       i += 1;
+    }
+
+    if (value === "_") {
+      value = "' '";
+    } else if (value === "__") {
+      value = "','";
+    }
+
+    if (value !== null) {
+      value = value.replaceAll("\\", "\\\\");
+      writePrintF(`\t${key}: "${value}",`);
+    } else {
+      writePrintF(`\t${key}: "%d",`, key);
     }
   }
 
-  writePrintF(
-    `/* enum */
-${enumName}: {
-${enumMembers}
-}`,
-    ...args,
-  );
+  writePrintF("}");
 }
 
 function guessFFIType(type: string): string {
@@ -295,12 +305,15 @@ function outputFunction(capture: string): void {
 
   let returnType = parts[0];
   let functionName = parts[1];
-  let params = "";
 
   if (functionName.startsWith("*")) {
     returnType += "*";
     functionName = functionName.substring(1);
   }
+
+  writePrintF("/* function */");
+  writePrintF(`${functionName}: {`);
+  writePrintF("\tparameters: {");
 
   for (let i = 2; i < parts.length; i += 2) {
     let paramType = parts[i];
@@ -315,18 +328,14 @@ function outputFunction(capture: string): void {
       paramName = paramName.substring(1);
     }
 
-    params += `\t\t${paramName}: "${
-      guessFFIType(paramType)
-    }", /* ${paramType} */\n`;
+    writePrintF(
+      `\t\t${paramName}: "${guessFFIType(paramType)}", /* ${paramType} */`,
+    );
   }
 
-  writePrintF(`/* function */
-${functionName}: {
-  parameters: {
-${params.trimEnd()}
-  },
-  result: "${guessFFIType(returnType)}", /* ${returnType} */
-},`);
+  writePrintF("\t},");
+  writePrintF(`\tresult: "${guessFFIType(returnType)}", /* ${returnType} */`);
+  writePrintF("}");
 }
 
 function outputStruct(capture: string): void {
