@@ -76,9 +76,7 @@ async function writeEvents(): Promise<void> {
     lines.push(`\tpublic get ${memberName}(): ${member.type} {`);
 
     lines.push(
-      `\t\treturn this._dataView.${
-        dataViewMethods[member.nativeType](member.offset)
-      };`,
+      `\t\treturn this._dataView.${dataViewMethods[member.nativeType](member.offset)};`,
     );
     lines.push("\t}");
     lines.push("");
@@ -107,10 +105,7 @@ async function writeSymbols(): Promise<void> {
       `\t\tparameters: [${
         Object.keys(functions[funcName].parameters)
           .map(
-            (paramName) =>
-              `/* ${paramName} */ "${
-                functions[funcName].parameters[paramName]
-              }"`,
+            (paramName) => `/* ${paramName} */ "${functions[funcName].parameters[paramName]}"`,
           )
           .join(", ")
       }],`,
