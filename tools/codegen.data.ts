@@ -128,63 +128,107 @@ export const enums: Record<string, Record<string, string>> = {
   },
 };
 
-type CodeGenEventType = Record<string, string>;
+type CodeGenEventType = {
+  size: number;
+  members: Record<string, {
+    type: string;
+    offset: number;
+  }>;
+};
 
-export const eventTypes: Record<string, CodeGenEventType> = {
+export const events: Record<string, CodeGenEventType> = {
   SDL_CommonEvent: {
-    type: "number",
-    timestamp: "number",
+    size: 8,
+    members: {
+      type: {
+        type: "u32", /* Uint32 */
+        offset: 0,
+      },
+      timestamp: {
+        type: "u32", /* Uint32 */
+        offset: 4,
+      },
+    },
   },
 
   SDL_DisplayEvent: {
-    type: "number",
-    timestamp: "number",
-    display: "number",
-    event: "number",
-    // data1: "unknown",
+    size: 20,
+    members: {
+      type: {
+        type: "u32", /* Uint32 */
+        offset: 0,
+      },
+      timestamp: {
+        type: "u32", /* Uint32 */
+        offset: 4,
+      },
+      display: {
+        type: "u32", /* Uint32 */
+        offset: 8,
+      },
+      event: {
+        type: "u8", /* Uint8 */
+        offset: 12,
+      },
+      padding1: {
+        type: "u8", /* Uint8 */
+        offset: 13,
+      },
+      padding2: {
+        type: "u8", /* Uint8 */
+        offset: 14,
+      },
+      padding3: {
+        type: "u8", /* Uint8 */
+        offset: 15,
+      },
+      data1: {
+        type: "i32", /* Sint32 */
+        offset: 16,
+      },
+    },
   },
 
   SDL_WindowEvent: {
-    type: "number",
-    timestamp: "number",
-    windowID: "number",
-    event: "number",
-    // data1: "unknown",
-    // data2: "unknown",
-  },
-};
-
-interface CodeGenEventMember {
-  offset: number;
-  nativeType: string;
-  type: string;
-}
-
-export const eventMembers: Record<string, CodeGenEventMember> = {
-  type: {
-    type: "number",
-    offset: 0,
-    nativeType: "u32",
-  },
-  timestamp: {
-    type: "number",
-    offset: 4,
-    nativeType: "u32",
-  },
-  display: {
-    type: "number",
-    offset: 8,
-    nativeType: "u32",
-  },
-  windowID: {
-    type: "number",
-    offset: 8,
-    nativeType: "u32",
-  },
-  event: {
-    type: "number",
-    offset: 12,
-    nativeType: "u8",
+    size: 24,
+    members: {
+      type: {
+        type: "u32", /* Uint32 */
+        offset: 0,
+      },
+      timestamp: {
+        type: "u32", /* Uint32 */
+        offset: 4,
+      },
+      windowID: {
+        type: "u32", /* Uint32 */
+        offset: 8,
+      },
+      event: {
+        type: "u8", /* Uint8 */
+        offset: 12,
+      },
+      padding1: {
+        type: "u8", /* Uint8 */
+        offset: 13,
+      },
+      padding2: {
+        type: "u8", /* Uint8 */
+        offset: 14,
+      },
+      padding3: {
+        type: "u8", /* Uint8 */
+        offset: 15,
+      },
+      data1: {
+        type: "i32", /* Sint32 */
+        offset: 16,
+      },
+      data2: {
+        type: "i32", /* Sint32 */
+        offset: 20,
+      },
+    },
   },
 };
 

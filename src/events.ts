@@ -10,6 +10,7 @@ export interface DisplayEvent {
   timestamp: number;
   display: number;
   event: number;
+  data1: number;
 }
 
 export interface WindowEvent {
@@ -17,6 +18,8 @@ export interface WindowEvent {
   timestamp: number;
   windowID: number;
   event: number;
+  data1: number;
+  data2: number;
 }
 
 export class Event implements CommonEvent, DisplayEvent, WindowEvent {
@@ -41,5 +44,13 @@ export class Event implements CommonEvent, DisplayEvent, WindowEvent {
 
   public get event(): number {
     return this._dataView.getUint8(12);
+  }
+
+  public get data1(): number {
+    return this._dataView.getInt32(16);
+  }
+
+  public get data2(): number {
+    return this._dataView.getInt32(20);
   }
 }

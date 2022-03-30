@@ -258,7 +258,7 @@ function outputEnum(capture: string): void {
     }
   }
 
-  writePrintF("}");
+  writePrintF("},");
 }
 
 function guessFFIType(type: string): string {
@@ -268,6 +268,12 @@ function guessFFIType(type: string): string {
 
   switch (type) {
     case "int":
+      return "i32";
+
+    case "Sint16":
+      return "i16";
+
+    case "Sint32":
       return "i32";
 
     case "Uint8":
@@ -335,7 +341,7 @@ function outputFunction(capture: string): void {
 
   writePrintF("\t},");
   writePrintF(`\tresult: "${guessFFIType(returnType)}", /* ${returnType} */`);
-  writePrintF("}");
+  writePrintF("},");
 }
 
 function outputStruct(capture: string): void {
@@ -383,7 +389,7 @@ function outputStruct(capture: string): void {
 
   writePrintF("/* struct */");
   writePrintF(`${structName}: {`);
-  writePrintF("\tsize: %llu", `sizeof(${structName})`);
+  writePrintF("\tsize: %llu,", `sizeof(${structName})`);
   writePrintF("\tmembers: {");
 
   for (let i = membersStart; i < parts.length - 1; i += 2) {
@@ -417,10 +423,10 @@ function outputStruct(capture: string): void {
       writePrintF(`\t\t${name}: {`);
       writePrintF(`\t\t\ttype: "${guessFFIType(type)}", /* ${type} */`);
       writePrintF(`\t\t\toffset: %llu,`, `offsetof(${structName}, ${name})`);
-      writePrintF("\t\t}");
+      writePrintF("\t\t},");
     }
   }
 
   writePrintF("\t}");
-  writePrintF("}");
+  writePrintF("},");
 }
