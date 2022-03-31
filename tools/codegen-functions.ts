@@ -15,18 +15,21 @@ export const functions: Record<string, CodeGenFunction> = {
     },
     result: "pointer", /* SDL_Window* */
   },
+
   SDL_Delay: {
     parameters: {
       ms: "u32", /* Uint32 */
     },
     result: "void", /* void */
   },
+
   SDL_DestroyWindow: {
     parameters: {
       window: "pointer", /* SDL_Window* */
     },
     result: "void", /* void */
   },
+
   SDL_FillRect: {
     parameters: {
       dst: "pointer", /* SDL_Surface* */
@@ -35,18 +38,21 @@ export const functions: Record<string, CodeGenFunction> = {
     },
     result: "i32", /* int */
   },
+
   SDL_GetWindowSurface: {
     parameters: {
       window: "pointer", /* SDL_Window* */
     },
     result: "pointer", /* SDL_Surface* */
   },
+
   SDL_Init: {
     parameters: {
       flags: "u32", /* Uint32 */
     },
     result: "i32", /* int */
   },
+
   SDL_MapRGB: {
     parameters: {
       format: "pointer", /* SDL_PixelFormat* */
@@ -56,6 +62,7 @@ export const functions: Record<string, CodeGenFunction> = {
     },
     result: "u32", /* Uint32 */
   },
+
   SDL_MapRGBA: {
     parameters: {
       format: "pointer", /* SDL_PixelFormat* */
@@ -66,16 +73,19 @@ export const functions: Record<string, CodeGenFunction> = {
     },
     result: "u32", /* Uint32 */
   },
+
   SDL_PollEvent: {
     parameters: {
       event: "pointer", /* SDL_Event* */
     },
     result: "i32", /* int */
   },
+
   SDL_Quit: {
     parameters: {},
     result: "void", /* void */
   },
+
   SDL_UpdateWindowSurface: {
     parameters: {
       window: "pointer", /* SDL_Window* */
