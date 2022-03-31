@@ -1,4 +1,6 @@
-import { enums, events, functions } from "./codegen.data.ts";
+import { enums } from "./codegen-enums.ts";
+import { events } from "./codegen-events.ts";
+import { functions } from "./codegen-functions.ts";
 
 const dataViewMethods: Record<string, (offset: number) => string> = {
   "i32": (offset) => `getInt32(${offset})`,
