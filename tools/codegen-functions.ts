@@ -1,95 +1,207 @@
 interface CodeGenFunction {
-  parameters: Record<string, Deno.NativeType>;
-  result: Deno.NativeType;
+  parameters: Record<string, {
+    nativeType: string;
+    type: Deno.NativeType;
+  }>;
+
+  result: {
+    nativeType: string;
+    type: Deno.NativeType;
+  };
 }
 
 export const functions: Record<string, CodeGenFunction> = {
   SDL_CreateWindow: {
     parameters: {
-      title: "pointer", /* char* */
-      x: "i32", /* int */
-      y: "i32", /* int */
-      w: "i32", /* int */
-      h: "i32", /* int */
-      flags: "u32", /* Uint32 */
+      title: {
+        nativeType: "char*",
+        type: "pointer",
+      },
+      x: {
+        nativeType: "int",
+        type: "i32",
+      },
+      y: {
+        nativeType: "int",
+        type: "i32",
+      },
+      w: {
+        nativeType: "int",
+        type: "i32",
+      },
+      h: {
+        nativeType: "int",
+        type: "i32",
+      },
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
     },
-    result: "pointer", /* SDL_Window* */
+    result: {
+      nativeType: "SDL_Window*",
+      type: "pointer",
+    },
   },
 
   SDL_Delay: {
     parameters: {
-      ms: "u32", /* Uint32 */
+      ms: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
     },
-    result: "void", /* void */
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
   },
 
   SDL_DestroyWindow: {
     parameters: {
-      window: "pointer", /* SDL_Window* */
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
     },
-    result: "void", /* void */
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
   },
 
   SDL_FillRect: {
     parameters: {
-      dst: "pointer", /* SDL_Surface* */
-      rect: "pointer", /* SDL_Rect* */
-      color: "u32", /* Uint32 */
+      dst: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      rect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+      color: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
     },
-    result: "i32", /* int */
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
   },
 
   SDL_GetWindowSurface: {
     parameters: {
-      window: "pointer", /* SDL_Window* */
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
     },
-    result: "pointer", /* SDL_Surface* */
+    result: {
+      nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
   },
 
   SDL_Init: {
     parameters: {
-      flags: "u32", /* Uint32 */
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
     },
-    result: "i32", /* int */
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
   },
 
   SDL_MapRGB: {
     parameters: {
-      format: "pointer", /* SDL_PixelFormat* */
-      r: "u8", /* Uint8 */
-      g: "u8", /* Uint8 */
-      b: "u8", /* Uint8 */
+      format: {
+        nativeType: "SDL_PixelFormat*",
+        type: "pointer",
+      },
+      r: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      g: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      b: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
     },
-    result: "u32", /* Uint32 */
+    result: {
+      nativeType: "Uint32",
+      type: "u32",
+    },
   },
 
   SDL_MapRGBA: {
     parameters: {
-      format: "pointer", /* SDL_PixelFormat* */
-      r: "u8", /* Uint8 */
-      g: "u8", /* Uint8 */
-      b: "u8", /* Uint8 */
-      a: "u8", /* Uint8 */
+      format: {
+        nativeType: "SDL_PixelFormat*",
+        type: "pointer",
+      },
+      r: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      g: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      b: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      a: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
     },
-    result: "u32", /* Uint32 */
+    result: {
+      nativeType: "Uint32",
+      type: "u32",
+    },
   },
 
   SDL_PollEvent: {
     parameters: {
-      event: "pointer", /* SDL_Event* */
+      event: {
+        nativeType: "SDL_Event*",
+        type: "pointer",
+      },
     },
-    result: "i32", /* int */
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
   },
 
   SDL_Quit: {
     parameters: {},
-    result: "void", /* void */
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
   },
 
   SDL_UpdateWindowSurface: {
     parameters: {
-      window: "pointer", /* SDL_Window* */
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
     },
-    result: "i32", /* int */
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
   },
 };

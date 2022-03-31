@@ -150,11 +150,14 @@ async function writeSymbols(): Promise<void> {
     lines.push(`\t\tparameters: [`);
 
     for (const paramName of Object.keys(functions[funcName].parameters)) {
-      lines.push(`\t\t\t/* ${paramName} */ "${functions[funcName].parameters[paramName]}",`);
+      const param = functions[funcName].parameters[paramName];
+      lines.push(
+        `\t\t\t"${param.type}", /* ${param.nativeType} ${paramName} */`,
+      );
     }
 
     lines.push(`\t\t],`);
-    lines.push(`\t\tresult: "${functions[funcName].result}"`);
+    lines.push(`\t\tresult: "${functions[funcName].result.type}" /* ${functions[funcName].result.nativeType} */`);
     lines.push(`\t},`);
   }
   lines.push("};");

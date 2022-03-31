@@ -17,80 +17,80 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
 export const symbols: Symbols = {
   SDL_CreateWindow: {
     parameters: [
-      /* title */ "pointer",
-      /* x */ "i32",
-      /* y */ "i32",
-      /* w */ "i32",
-      /* h */ "i32",
-      /* flags */ "u32",
+      "pointer", /* char* title */
+      "i32", /* int x */
+      "i32", /* int y */
+      "i32", /* int w */
+      "i32", /* int h */
+      "u32", /* Uint32 flags */
     ],
-    result: "pointer",
+    result: "pointer", /* SDL_Window* */
   },
   SDL_Delay: {
     parameters: [
-      /* ms */ "u32",
+      "u32", /* Uint32 ms */
     ],
-    result: "void",
+    result: "void", /* void */
   },
   SDL_DestroyWindow: {
     parameters: [
-      /* window */ "pointer",
+      "pointer", /* SDL_Window* window */
     ],
-    result: "void",
+    result: "void", /* void */
   },
   SDL_FillRect: {
     parameters: [
-      /* dst */ "pointer",
-      /* rect */ "pointer",
-      /* color */ "u32",
+      "pointer", /* SDL_Surface* dst */
+      "pointer", /* SDL_Rect* rect */
+      "u32", /* Uint32 color */
     ],
-    result: "i32",
+    result: "i32", /* int */
   },
   SDL_GetWindowSurface: {
     parameters: [
-      /* window */ "pointer",
+      "pointer", /* SDL_Window* window */
     ],
-    result: "pointer",
+    result: "pointer", /* SDL_Surface* */
   },
   SDL_Init: {
     parameters: [
-      /* flags */ "u32",
+      "u32", /* Uint32 flags */
     ],
-    result: "i32",
+    result: "i32", /* int */
   },
   SDL_MapRGB: {
     parameters: [
-      /* format */ "pointer",
-      /* r */ "u8",
-      /* g */ "u8",
-      /* b */ "u8",
+      "pointer", /* SDL_PixelFormat* format */
+      "u8", /* Uint8 r */
+      "u8", /* Uint8 g */
+      "u8", /* Uint8 b */
     ],
-    result: "u32",
+    result: "u32", /* Uint32 */
   },
   SDL_MapRGBA: {
     parameters: [
-      /* format */ "pointer",
-      /* r */ "u8",
-      /* g */ "u8",
-      /* b */ "u8",
-      /* a */ "u8",
+      "pointer", /* SDL_PixelFormat* format */
+      "u8", /* Uint8 r */
+      "u8", /* Uint8 g */
+      "u8", /* Uint8 b */
+      "u8", /* Uint8 a */
     ],
-    result: "u32",
+    result: "u32", /* Uint32 */
   },
   SDL_PollEvent: {
     parameters: [
-      /* event */ "pointer",
+      "pointer", /* SDL_Event* event */
     ],
-    result: "i32",
+    result: "i32", /* int */
   },
   SDL_Quit: {
     parameters: [],
-    result: "void",
+    result: "void", /* void */
   },
   SDL_UpdateWindowSurface: {
     parameters: [
-      /* window */ "pointer",
+      "pointer", /* SDL_Window* window */
     ],
-    result: "i32",
+    result: "i32", /* int */
   },
 };
