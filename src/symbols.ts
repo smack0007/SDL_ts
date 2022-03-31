@@ -27,23 +27,35 @@ export const symbols: Symbols = {
     result: "pointer",
   },
   SDL_Delay: {
-    parameters: [/* ms */ "u32"],
+    parameters: [
+      /* ms */ "u32",
+    ],
     result: "void",
   },
   SDL_DestroyWindow: {
-    parameters: [/* window */ "pointer"],
+    parameters: [
+      /* window */ "pointer",
+    ],
     result: "void",
   },
   SDL_FillRect: {
-    parameters: [/* dst */ "pointer", /* rect */ "pointer", /* color */ "u32"],
+    parameters: [
+      /* dst */ "pointer",
+      /* rect */ "pointer",
+      /* color */ "u32",
+    ],
     result: "i32",
   },
   SDL_GetWindowSurface: {
-    parameters: [/* window */ "pointer"],
+    parameters: [
+      /* window */ "pointer",
+    ],
     result: "pointer",
   },
   SDL_Init: {
-    parameters: [/* flags */ "u32"],
+    parameters: [
+      /* flags */ "u32",
+    ],
     result: "i32",
   },
   SDL_MapRGB: {
@@ -66,7 +78,9 @@ export const symbols: Symbols = {
     result: "u32",
   },
   SDL_PollEvent: {
-    parameters: [/* event */ "pointer"],
+    parameters: [
+      /* event */ "pointer",
+    ],
     result: "i32",
   },
   SDL_Quit: {
@@ -74,7 +88,9 @@ export const symbols: Symbols = {
     result: "void",
   },
   SDL_UpdateWindowSurface: {
-    parameters: [/* window */ "pointer"],
+    parameters: [
+      /* window */ "pointer",
+    ],
     result: "i32",
   },
 };

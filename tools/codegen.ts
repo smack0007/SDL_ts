@@ -147,15 +147,13 @@ async function writeSymbols(): Promise<void> {
   lines.push("export const symbols: Symbols = {");
   for (const funcName of Object.keys(functions)) {
     lines.push(`\t${funcName}: {`);
-    lines.push(
-      `\t\tparameters: [${
-        Object.keys(functions[funcName].parameters)
-          .map(
-            (paramName) => `/* ${paramName} */ "${functions[funcName].parameters[paramName]}"`,
-          )
-          .join(", ")
-      }],`,
-    );
+    lines.push(`\t\tparameters: [`);
+
+    for (const paramName of Object.keys(functions[funcName].parameters)) {
+      lines.push(`\t\t\t/* ${paramName} */ "${functions[funcName].parameters[paramName]}",`);
+    }
+
+    lines.push(`\t\t],`);
     lines.push(`\t\tresult: "${functions[funcName].result}"`);
     lines.push(`\t},`);
   }

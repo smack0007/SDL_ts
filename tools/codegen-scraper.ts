@@ -421,7 +421,8 @@ function outputStruct(capture: string): void {
 
     for (const name of names) {
       writePrintF(`\t\t${name}: {`);
-      writePrintF(`\t\t\ttype: "${guessFFIType(type)}", /* ${type} */`);
+      writePrintF(`\t\t\tnativeType: "${type}",`);
+      writePrintF(`\t\t\ttype: "${guessFFIType(type)}",`);
       writePrintF(`\t\t\toffset: %llu,`, `offsetof(${structName}, ${name})`);
       writePrintF("\t\t},");
     }
