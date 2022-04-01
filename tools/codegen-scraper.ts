@@ -270,6 +270,9 @@ function guessFFIType(type: string): string {
     case "int":
       return "i32";
 
+    case "SDL_Rect":
+      return "struct";
+
     case "Sint16":
       return "i16";
 

@@ -1,11 +1,22 @@
 import { enums } from "./codegen-enums.ts";
 import { events } from "./codegen-events.ts";
 import { functions } from "./codegen-functions.ts";
+import { opaqueStructs, structs } from "./codegen-structs.ts";
 
 const dataViewMethods: Record<string, (offset: number) => string> = {
   "i32": (offset) => `getInt32(${offset})`,
   "u8": (offset) => `getUint8(${offset})`,
   "u32": (offset) => `getUint32(${offset}, true)`,
+
+  "pointer": (offset) => `getBigUint64(${offset})`,
+} as const;
+
+const pointerDataViewMethods: Record<string, (offset: number) => string> = {
+  "i32": (offset) => `getInt32(${offset})`,
+  "u8": (offset) => `getUint8(${offset})`,
+  "u32": (offset) => `getUint32(${offset})`,
+
+  "pointer": (offset) => `getBigUint64(${offset})`,
 } as const;
 
 await main();
@@ -13,7 +24,9 @@ await main();
 async function main(): Promise<void> {
   await writeEnums();
   await writeEvents();
+  await writeStructs();
   await writeSymbols();
+  // await writeFunctions();
 }
 
 function createLines(): string[] {
@@ -64,9 +77,25 @@ function mapFFIType(type: string): string {
     case "i64":
     case "u64":
       return "bigint";
+
+    case "pointer":
+      return "Deno.UnsafePointer";
   }
 
   return type;
+}
+
+function sortStructMembers(
+  a: [string, { type: string; offset: number }],
+  b: [string, { type: string; offset: number }],
+): number {
+  const offsetDiff = a[1].offset - b[1].offset;
+
+  if (offsetDiff !== 0) {
+    return offsetDiff;
+  }
+
+  return a[0].localeCompare(b[0]);
 }
 
 async function writeEvents(): Promise<void> {
@@ -100,15 +129,7 @@ async function writeEvents(): Promise<void> {
 `);
 
   const eventMembers = Object.entries(eventMembersMap);
-  eventMembers.sort((a, b) => {
-    const offsetDiff = a[1].offset - b[1].offset;
-
-    if (offsetDiff !== 0) {
-      return offsetDiff;
-    }
-
-    return a[0].localeCompare(b[0]);
-  });
+  eventMembers.sort(sortStructMembers);
 
   for (const eventMember of eventMembers) {
     const memberName = eventMember[0];
@@ -132,6 +153,67 @@ async function writeEvents(): Promise<void> {
   lines.push("");
 
   await writeLinesToFile("../src/events.ts", lines);
+}
+
+async function writeStructs(): Promise<void> {
+  const lines = createLines();
+
+  for (const structName of opaqueStructs) {
+    lines.push(`export type ${shortenName(structName)} = Deno.UnsafePointer;`);
+  }
+
+  lines.push("");
+
+  for (const [structName, struct] of Object.entries(structs)) {
+    lines.push(`export class ${shortenName(structName)} {
+  public _pointerView: Deno.UnsafePointerView;
+    
+  constructor(pointer: Deno.UnsafePointer) {
+    this._pointerView = new Deno.UnsafePointerView(pointer);
+  }
+
+`);
+
+    const structMembers = Object.entries(struct.members);
+    structMembers.sort(sortStructMembers);
+
+    for (const [memberName, member] of structMembers) {
+      // TODO: Figure out how to read structs.
+      if (member.type === "struct") {
+        continue;
+      }
+
+      lines.push(`\tpublic get ${memberName}(): ${mapFFIType(member.type)} {`);
+
+      let readOp = "";
+
+      if (member.type === "pointer") {
+        readOp += "new Deno.UnsafePointer(";
+      }
+
+      const dataViewMethod = pointerDataViewMethods[member.type];
+
+      if (dataViewMethod === undefined) {
+        console.error(`pointerDataViewMethods is missing ${member.type}.`);
+      }
+
+      readOp += `this._pointerView.${pointerDataViewMethods[member.type](member.offset)}`;
+
+      if (member.type === "pointer") {
+        readOp += ")";
+      }
+
+      lines.push(`\t\treturn ${readOp};`);
+
+      lines.push("\t}");
+      lines.push("");
+    }
+
+    lines.push("}");
+    lines.push("");
+  }
+
+  await writeLinesToFile("../src/structs.ts", lines);
 }
 
 async function writeSymbols(): Promise<void> {
@@ -164,4 +246,22 @@ async function writeSymbols(): Promise<void> {
   lines.push("");
 
   await writeLinesToFile("../src/symbols.ts", lines);
+}
+
+async function writeFunctions(): Promise<void> {
+  const lines = createLines();
+
+  const structNames = Object.keys(structs).map(shortenName).join(", ");
+
+  lines.push(`import { Event } from "./events.ts";`);
+  lines.push(`import { ${structNames} } from "./structs.ts";`);
+  lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
+  lines.push(`import { toCString } from "./utils.ts";`);
+
+  for (const funcName of Object.keys(functions)) {
+  }
+
+  lines.push("");
+
+  await writeLinesToFile("../src/functions.ts", lines);
 }

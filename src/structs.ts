@@ -1,3 +1,31 @@
+// This file is auto generated. To update the file make changes to the code generator.
+
+export type Window = Deno.UnsafePointer;
+
+export class Rect {
+  public _pointerView: Deno.UnsafePointerView;
+
+  constructor(pointer: Deno.UnsafePointer) {
+    this._pointerView = new Deno.UnsafePointerView(pointer);
+  }
+
+  public get x(): number {
+    return this._pointerView.getInt32(0);
+  }
+
+  public get y(): number {
+    return this._pointerView.getInt32(4);
+  }
+
+  public get w(): number {
+    return this._pointerView.getInt32(8);
+  }
+
+  public get h(): number {
+    return this._pointerView.getInt32(12);
+  }
+}
+
 export class Surface {
   public _pointerView: Deno.UnsafePointerView;
 
@@ -10,7 +38,6 @@ export class Surface {
   }
 
   public get format(): Deno.UnsafePointer {
-    // TODO: Don't understand why this is 8 and not 4?
     return new Deno.UnsafePointer(this._pointerView.getBigUint64(8));
   }
 
@@ -21,29 +48,32 @@ export class Surface {
   public get h(): number {
     return this._pointerView.getInt32(20);
   }
-  //  Uint32 flags;               /**< Read-only */
-  //  SDL_PixelFormat *format;    /**< Read-only */
-  //  int w, h;                   /**< Read-only */
-  //  int pitch;                  /**< Read-only */
-  //  void *pixels;               /**< Read-write */
 
-  //  /** Application data associated with the surface */
-  //  void *userdata;             /**< Read-write */
+  public get pitch(): number {
+    return this._pointerView.getInt32(24);
+  }
 
-  //  /** information needed for surfaces requiring locks */
-  //  int locked;                 /**< Read-only */
+  public get pixels(): Deno.UnsafePointer {
+    return new Deno.UnsafePointer(this._pointerView.getBigUint64(32));
+  }
 
-  //  /** list of BlitMap that hold a reference to this surface */
-  //  void *list_blitmap;         /**< Private */
+  public get userdata(): Deno.UnsafePointer {
+    return new Deno.UnsafePointer(this._pointerView.getBigUint64(40));
+  }
 
-  //  /** clipping information */
-  //  SDL_Rect clip_rect;         /**< Read-only */
+  public get locked(): number {
+    return this._pointerView.getInt32(48);
+  }
 
-  //  /** info for fast blit mapping to other surfaces */
-  //  struct SDL_BlitMap *map;    /**< Private */
+  public get list_blitmap(): Deno.UnsafePointer {
+    return new Deno.UnsafePointer(this._pointerView.getBigUint64(56));
+  }
 
-  //  /** Reference count -- used when freeing surface */
-  //  int refcount;               /**< Read-mostly */
+  public get map(): Deno.UnsafePointer {
+    return new Deno.UnsafePointer(this._pointerView.getBigUint64(80));
+  }
+
+  public get refcount(): number {
+    return this._pointerView.getInt32(88);
+  }
 }
-
-export type Window = Deno.UnsafePointer;
