@@ -3,20 +3,14 @@ import { events } from "./codegen-events.ts";
 import { functions } from "./codegen-functions.ts";
 import { opaqueStructs, structs } from "./codegen-structs.ts";
 
-const dataViewMethods: Record<string, (offset: number) => string> = {
-  "i32": (offset) => `getInt32(${offset})`,
-  "u8": (offset) => `getUint8(${offset})`,
-  "u32": (offset) => `getUint32(${offset}, true)`,
+const dataViewMethods: Record<string, (offset: number, length: number) => string> = {
+  "i32": (offset, _) => `getInt32(${offset})`,
+  "u8": (offset, _) => `getUint8(${offset})`,
+  "u32": (offset, _) => `getUint32(${offset})`,
 
-  "pointer": (offset) => `getBigUint64(${offset})`,
-} as const;
+  "pointer": (offset, _) => `getBigUint64(${offset})`,
 
-const pointerDataViewMethods: Record<string, (offset: number) => string> = {
-  "i32": (offset) => `getInt32(${offset})`,
-  "u8": (offset) => `getUint8(${offset})`,
-  "u32": (offset) => `getUint32(${offset})`,
-
-  "pointer": (offset) => `getBigUint64(${offset})`,
+  "struct": (offset, length) => `getArrayBuffer(${length}, ${offset})`,
 } as const;
 
 await main();
@@ -100,6 +94,10 @@ function sortStructMembers(
 
 async function writeEvents(): Promise<void> {
   const lines = createLines();
+
+  lines.push(`import { BufferOrPointerView } from "./utils.ts";`);
+  lines.push("");
+
   const eventMembersMap: Record<string, { type: string; offset: number }> = {};
 
   for (const eventName of Object.keys(events)) {
@@ -124,7 +122,7 @@ async function writeEvents(): Promise<void> {
   const eventTypeNames = Object.keys(events).map(shortenName).join(", ");
   lines.push(`export class Event implements ${eventTypeNames} {
   public _buffer = new Uint8Array(64);
-  public _dataView = new DataView(this._buffer.buffer);
+  public _data = new BufferOrPointerView(this._buffer.buffer);
 
 `);
 
@@ -142,8 +140,9 @@ async function writeEvents(): Promise<void> {
       console.error(`dataViewMethods is missing ${member.type}.`);
     }
 
+    const length = 0;
     lines.push(
-      `\t\treturn this._dataView.${dataViewMethods[member.type](member.offset)};`,
+      `\t\treturn this._data.${dataViewMethods[member.type](member.offset, length)};`,
     );
     lines.push("\t}");
     lines.push("");
@@ -176,11 +175,11 @@ async function writeStructs(): Promise<void> {
   }
 
   public get buffer(): ArrayBuffer | null {
-    return this._data instanceof ArrayBuffer ? this._data : null;
+    return this._data.buffer;
   }
 
   public get pointer(): Deno.UnsafePointer | null {
-    return this._data instanceof Deno.UnsafePointer ? this._data : null;
+    return this._data.pointer;
   }
 `);
 
@@ -188,28 +187,30 @@ async function writeStructs(): Promise<void> {
     structMembers.sort(sortStructMembers);
 
     for (const [memberName, member] of structMembers) {
-      // TODO: Figure out how to read structs.
-      if (member.type === "struct") {
-        continue;
-      }
-
-      lines.push(`\tpublic get ${memberName}(): ${mapFFIType(member.type)} {`);
-
       let readOp = "";
+      let length = 0;
+      let returnType = mapFFIType(member.type);
 
       if (member.type === "pointer") {
         readOp += "new Deno.UnsafePointer(";
+      } else if (member.type === "struct") {
+        const subStructName = shortenName(member.nativeType);
+        returnType = subStructName;
+        readOp += `new ${subStructName}(`;
+        length = structs[member.nativeType].size;
       }
 
-      const dataViewMethod = pointerDataViewMethods[member.type];
+      lines.push(`\tpublic get ${memberName}(): ${returnType} {`);
+
+      const dataViewMethod = dataViewMethods[member.type];
 
       if (dataViewMethod === undefined) {
-        console.error(`pointerDataViewMethods is missing ${member.type}.`);
+        console.error(`dataViewMethods is missing ${member.type}.`);
       }
 
-      readOp += `this._data.${pointerDataViewMethods[member.type](member.offset)}`;
+      readOp += `this._data.${dataViewMethods[member.type](member.offset, length)}`;
 
-      if (member.type === "pointer") {
+      if (member.type === "pointer" || member.type === "struct") {
         readOp += ")";
       }
 

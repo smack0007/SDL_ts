@@ -33,12 +33,24 @@ export class BufferOrPointerView {
     return this._data instanceof Deno.UnsafePointer ? this._data : null;
   }
 
+  public getArrayBuffer(byteLength: number, byteOffset: number): ArrayBuffer {
+    if (this._dataView instanceof DataView) {
+      throw new Error("Not implemented.");
+    } else {
+      return this._dataView.getArrayBuffer(byteLength, byteOffset);
+    }
+  }
+
   public getBigUint64(byteOffset: number): bigint {
     return this._dataView.getBigUint64(byteOffset, BufferOrPointerView.littleEndian);
   }
 
   public getInt32(byteOffset: number): number {
     return this._dataView.getInt32(byteOffset, BufferOrPointerView.littleEndian);
+  }
+
+  public getUint8(byteOffset: number): number {
+    return this._dataView.getUint8(byteOffset);
   }
 
   public getUint32(byteOffset: number): number {

@@ -87,6 +87,10 @@ export class Surface {
     return new Deno.UnsafePointer(this._data.getBigUint64(56));
   }
 
+  public get clip_rect(): Rect {
+    return new Rect(this._data.getArrayBuffer(16, 64));
+  }
+
   public get map(): Deno.UnsafePointer {
     return new Deno.UnsafePointer(this._data.getBigUint64(80));
   }
