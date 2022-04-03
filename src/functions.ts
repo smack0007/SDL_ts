@@ -49,7 +49,7 @@ export function FillRect(
   color: number,
 ): number {
   return context.symbols.SDL_FillRect(
-    dst._pointerView.pointer,
+    dst.pointer,
     rect,
     color,
   ) as number;

@@ -158,6 +158,9 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
+  lines.push(`import { BufferOrPointerView } from "./utils.ts"`);
+  lines.push("");
+
   for (const structName of opaqueStructs) {
     lines.push(`export type ${shortenName(structName)} = Deno.UnsafePointer;`);
   }
@@ -166,12 +169,19 @@ async function writeStructs(): Promise<void> {
 
   for (const [structName, struct] of Object.entries(structs)) {
     lines.push(`export class ${shortenName(structName)} {
-  public _pointerView: Deno.UnsafePointerView;
-    
-  constructor(pointer: Deno.UnsafePointer) {
-    this._pointerView = new Deno.UnsafePointerView(pointer);
+  public _data: BufferOrPointerView;
+
+  constructor(data: ArrayBuffer | Deno.UnsafePointer) {
+    this._data = new BufferOrPointerView(data);
   }
 
+  public get buffer(): ArrayBuffer | null {
+    return this._data instanceof ArrayBuffer ? this._data : null;
+  }
+
+  public get pointer(): Deno.UnsafePointer | null {
+    return this._data instanceof Deno.UnsafePointer ? this._data : null;
+  }
 `);
 
     const structMembers = Object.entries(struct.members);
@@ -197,7 +207,7 @@ async function writeStructs(): Promise<void> {
         console.error(`pointerDataViewMethods is missing ${member.type}.`);
       }
 
-      readOp += `this._pointerView.${pointerDataViewMethods[member.type](member.offset)}`;
+      readOp += `this._data.${pointerDataViewMethods[member.type](member.offset)}`;
 
       if (member.type === "pointer") {
         readOp += ")";
