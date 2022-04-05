@@ -1,5 +1,19 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
+// ArrayOrder
+export const ARRAYORDER_NONE = 0;
+export const ARRAYORDER_RGB = 1;
+export const ARRAYORDER_RGBA = 2;
+export const ARRAYORDER_ARGB = 3;
+export const ARRAYORDER_BGR = 4;
+export const ARRAYORDER_BGRA = 5;
+export const ARRAYORDER_ABGR = 6;
+
+// BitmapOrder
+export const BITMAPORDER_NONE = 0;
+export const BITMAPORDER_4321 = 1;
+export const BITMAPORDER_1234 = 2;
+
 // EventType
 export const FIRSTEVENT = 0;
 export const QUIT = 0x100;
@@ -72,6 +86,42 @@ export const INIT_NOPARACHUTE = 0x00100000;
 export const INIT_EVERYTHING =
   (INIT_TIMER | INIT_AUDIO | INIT_VIDEO | INIT_EVENTS | INIT_JOYSTICK | INIT_HAPTIC | INIT_GAMECONTROLLER |
     INIT_SENSOR);
+
+// PackedLayout
+export const PACKEDLAYOUT_NONE = 0;
+export const PACKEDLAYOUT_332 = 1;
+export const PACKEDLAYOUT_4444 = 2;
+export const PACKEDLAYOUT_1555 = 3;
+export const PACKEDLAYOUT_5551 = 4;
+export const PACKEDLAYOUT_565 = 5;
+export const PACKEDLAYOUT_8888 = 6;
+export const PACKEDLAYOUT_2101010 = 7;
+export const PACKEDLAYOUT_1010102 = 8;
+
+// PackedOrder
+export const PACKEDORDER_NONE = 0;
+export const PACKEDORDER_XRGB = 1;
+export const PACKEDORDER_RGBX = 2;
+export const PACKEDORDER_ARGB = 3;
+export const PACKEDORDER_RGBA = 4;
+export const PACKEDORDER_XBGR = 5;
+export const PACKEDORDER_BGRX = 6;
+export const PACKEDORDER_ABGR = 7;
+export const PACKEDORDER_BGRA = 8;
+
+// PixelType
+export const PIXELTYPE_UNKNOWN = 0;
+export const PIXELTYPE_INDEX1 = 1;
+export const PIXELTYPE_INDEX4 = 2;
+export const PIXELTYPE_INDEX8 = 3;
+export const PIXELTYPE_PACKED8 = 4;
+export const PIXELTYPE_PACKED16 = 5;
+export const PIXELTYPE_PACKED32 = 6;
+export const PIXELTYPE_ARRAYU8 = 7;
+export const PIXELTYPE_ARRAYU16 = 8;
+export const PIXELTYPE_ARRAYU32 = 9;
+export const PIXELTYPE_ARRAYF16 = 10;
+export const PIXELTYPE_ARRAYF32 = 11;
 
 // WindowEventID
 export const WINDOWEVENT_NONE = 0;

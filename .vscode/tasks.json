@@ -44,6 +44,20 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "Run Doom Fire",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run-doom-fire"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "label": "Run Hello World",
       "group": {
         "kind": "none",

@@ -19,6 +19,36 @@ const context: SDLContext = {
   symbols: null!,
 };
 
+export function BlitSurface(
+  src: Surface,
+  srcrect: Rect | null,
+  dst: Surface,
+  dstrect: Rect | null,
+): number {
+  return context.symbols.SDL_UpperBlit(
+    src.pointer,
+    srcrect?.pointer ?? nullPointer,
+    dst.pointer,
+    dstrect?.pointer ?? nullPointer,
+  ) as number;
+}
+
+export function CreateRGBSurfaceWithFormat(
+  flags: number,
+  width: number,
+  height: number,
+  depth: number,
+  format: number,
+): Surface {
+  return new Surface(context.symbols.SDL_CreateRGBSurfaceWithFormat(
+    flags,
+    width,
+    height,
+    depth,
+    format,
+  ) as Deno.UnsafePointer);
+}
+
 export function CreateWindow(
   title: string,
   x: number,
@@ -85,6 +115,14 @@ export function Init(flags: number, libraryPath?: string): number {
   return context.symbols.SDL_Init(flags) as number;
 }
 
+export function LockSurface(
+  surface: Surface,
+): number {
+  return context.symbols.SDL_LockSurface(
+    surface.pointer,
+  ) as number;
+}
+
 export function MapRGB(
   format: Deno.UnsafePointer,
   r: number,
@@ -126,6 +164,14 @@ export function PollEvent(
 export function Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
+}
+
+export function UnlockSurface(
+  surface: Surface,
+): void {
+  context.symbols.SDL_UnlockSurface(
+    surface.pointer,
+  );
 }
 
 export function UpdateWindowSurface(

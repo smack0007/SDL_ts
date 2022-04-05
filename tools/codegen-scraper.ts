@@ -217,17 +217,13 @@ function outputEnum(capture: string): void {
     return;
   }
 
-  // TODO: Need SDL_PixelFormatEnum eventually.
   if (
-    enumName === "SDL_PixelFormatEnum" || enumName === "SDL_SYSWM_TYPE" ||
+    enumName === "SDL_PixelFormatEnum" ||
+    enumName === "SDL_SYSWM_TYPE" ||
     enumName === "SDL_WindowFlags"
   ) {
     return;
   }
-
-  // if (enumName === "SDL_KeyCode") {
-  //   write(`// ${capture}`);
-  // }
 
   writePrintF("/* enum */");
   writePrintF(`${enumName}: {`);
@@ -337,13 +333,17 @@ function outputFunction(capture: string): void {
       paramName = paramName.substring(1);
     }
 
-    writePrintF(
-      `\t\t${paramName}: "${guessFFIType(paramType)}", /* ${paramType} */`,
-    );
+    writePrintF(`\t\t${paramName}: {`);
+    writePrintF(`\t\t\tnativeType: "${paramType}",`);
+    writePrintF(`\t\t\ttype: "${guessFFIType(paramType)}",`);
+    writePrintF(`\t\t},`);
   }
 
   writePrintF("\t},");
-  writePrintF(`\tresult: "${guessFFIType(returnType)}", /* ${returnType} */`);
+  writePrintF("\tresult: {");
+  writePrintF(`\t\tnativeType: "${returnType}",`);
+  writePrintF(`\t\ttype: "${guessFFIType(returnType)}",`);
+  writePrintF(`\t},`);
   writePrintF("},");
 }
 

@@ -254,36 +254,41 @@ async function writeSymbols(): Promise<void> {
   const lines = createLines();
 
   lines.push("export interface Symbols extends Deno.ForeignLibraryInterface {");
-  for (const key of Object.keys(functions)) {
-    lines.push(`\t${key}: Deno.ForeignFunction;`);
+  for (const [ funcName, func ] of Object.entries(functions)) {
+    if (func.symbolName !== undefined) {
+      lines.push(`\t${func.symbolName}: Deno.ForeignFunction;`);
+    } else {
+      lines.push(`\t${funcName}: Deno.ForeignFunction;`);
+    }
   }
   lines.push("}");
   lines.push("");
 
   lines.push("export const symbols: Symbols = {");
-  for (const funcName of Object.keys(functions)) {
-    lines.push(`\t${funcName}: {`);
+  for (const [ funcName, func ] of Object.entries(functions)) {
+    if (func.symbolName !== undefined) {
+      lines.push(`\t${func.symbolName}: {`);
+    } else {
+      lines.push(`\t${funcName}: {`);
+    }
+    
     lines.push(`\t\tparameters: [`);
 
-    for (const paramName of Object.keys(functions[funcName].parameters)) {
-      const param = functions[funcName].parameters[paramName];
+    for (const paramName of Object.keys(func.parameters)) {
+      const param = func.parameters[paramName];
       lines.push(
         `\t\t\t"${param.type}", /* ${param.nativeType} ${paramName} */`,
       );
     }
 
     lines.push(`\t\t],`);
-    lines.push(`\t\tresult: "${functions[funcName].result.type}" /* ${functions[funcName].result.nativeType} */`);
+    lines.push(`\t\tresult: "${func.result.type}" /* ${func.result.nativeType} */`);
     lines.push(`\t},`);
   }
   lines.push("};");
   lines.push("");
 
   await writeLinesToFile("../src/symbols.ts", lines);
-}
-
-function isFunctionParamPointer(param: CodeGenFunctionParam): boolean {
-  return param.nativeType.endsWith("*");
 }
 
 function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
@@ -393,6 +398,11 @@ const context: SDLContext = {
 
     lines.push(`): ${returnType} {`);
 
+    let symbolName = funcName;
+    if (func.symbolName !== undefined) {
+      symbolName = func.symbolName;
+    }
+
     if (returnType !== "void") {
       let returnStatement = "\treturn ";
 
@@ -400,10 +410,10 @@ const context: SDLContext = {
         returnStatement += `new ${mapFunctionParamType(func.result)}(`;
       }
 
-      returnStatement += `context.symbols.${funcName}(`;
+      returnStatement += `context.symbols.${symbolName}(`;
       lines.push(returnStatement);
     } else {
-      lines.push(`\tcontext.symbols.${funcName}(`);
+      lines.push(`\tcontext.symbols.${symbolName}(`);
     }
 
     for (const [paramName, param] of Object.entries(func.parameters)) {

@@ -1,10 +1,14 @@
 export interface CodeGenFunctionParam {
   nativeType: string;
   type: Deno.NativeType;
-  nullable?: boolean; 
+  nullable?: boolean;
 }
 
 export interface CodeGenFunction {
+  // Some functions are (i.e. SDL_BlitSurface) are just
+  // macros that proxy to another name.
+  symbolName?: string;
+
   parameters: Record<string, CodeGenFunctionParam>;
 
   result: {
@@ -14,6 +18,63 @@ export interface CodeGenFunction {
 }
 
 export const functions: Record<string, CodeGenFunction> = {
+  SDL_BlitSurface: {
+    symbolName: "SDL_UpperBlit",
+    parameters: {
+      src: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      srcrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true,
+      },
+      dst: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      dstrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_CreateRGBSurfaceWithFormat: {
+    parameters: {
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      width: {
+        nativeType: "int",
+        type: "i32",
+      },
+      height: {
+        nativeType: "int",
+        type: "i32",
+      },
+      depth: {
+        nativeType: "int",
+        type: "i32",
+      },
+      format: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
+  },
+
   SDL_CreateWindow: {
     parameters: {
       title: {
@@ -82,7 +143,7 @@ export const functions: Record<string, CodeGenFunction> = {
       rect: {
         nativeType: "SDL_Rect*",
         type: "pointer",
-        nullable: true
+        nullable: true,
       },
       color: {
         nativeType: "Uint32",
@@ -120,6 +181,19 @@ export const functions: Record<string, CodeGenFunction> = {
       type: "i32",
     },
   },
+
+  SDL_LockSurface: {
+    parameters: {
+      surface: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },  
 
   SDL_MapRGB: {
     parameters: {
@@ -190,6 +264,19 @@ export const functions: Record<string, CodeGenFunction> = {
 
   SDL_Quit: {
     parameters: {},
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
+  SDL_UnlockSurface: {
+    parameters: {
+      surface: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+    },
     result: {
       nativeType: "void",
       type: "void",
