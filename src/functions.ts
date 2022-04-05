@@ -1,5 +1,7 @@
+// This file is auto generated. To update the file make changes to the code generator.
+
 import { Event } from "./events.ts";
-import { Surface, Window } from "./structs.ts";
+import { Rect, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { toCString } from "./utils.ts";
 
@@ -21,36 +23,44 @@ export function CreateWindow(
   title: string,
   x: number,
   y: number,
-  width: number,
-  height: number,
+  w: number,
+  h: number,
   flags: number,
 ): Window {
   return context.symbols.SDL_CreateWindow(
     toCString(title),
     x,
     y,
-    width,
-    height,
+    w,
+    h,
     flags,
   ) as Window;
 }
 
-export function Delay(delay: number): void {
-  context.symbols.SDL_Delay(delay);
+export function Delay(
+  ms: number,
+): void {
+  context.symbols.SDL_Delay(
+    ms,
+  );
 }
 
-export function DestroyWindow(window: Window): void {
-  context.symbols.SDL_DestroyWindow(window);
+export function DestroyWindow(
+  window: Window,
+): void {
+  context.symbols.SDL_DestroyWindow(
+    window,
+  );
 }
 
 export function FillRect(
   dst: Surface,
-  rect: Deno.UnsafePointer,
+  rect: Rect,
   color: number,
 ): number {
   return context.symbols.SDL_FillRect(
     dst.pointer,
-    rect,
+    rect.pointer,
     color,
   ) as number;
 }
@@ -58,9 +68,9 @@ export function FillRect(
 export function GetWindowSurface(
   window: Window,
 ): Surface {
-  return new Surface(
-    context.symbols.SDL_GetWindowSurface(window) as Deno.UnsafePointer,
-  );
+  return new Surface(context.symbols.SDL_GetWindowSurface(
+    window,
+  ) as Deno.UnsafePointer);
 }
 
 export function Init(flags: number, libraryPath?: string): number {
@@ -75,19 +85,18 @@ export function Init(flags: number, libraryPath?: string): number {
   return context.symbols.SDL_Init(flags) as number;
 }
 
-export function PollEvent(event: Event): number {
-  return context.symbols.SDL_PollEvent(
-    Deno.UnsafePointer.of(event._buffer),
-  ) as number;
-}
-
 export function MapRGB(
   format: Deno.UnsafePointer,
   r: number,
   g: number,
   b: number,
 ): number {
-  return context.symbols.SDL_MapRGB(format, r, g, b) as number;
+  return context.symbols.SDL_MapRGB(
+    format,
+    r,
+    g,
+    b,
+  ) as number;
 }
 
 export function MapRGBA(
@@ -97,7 +106,21 @@ export function MapRGBA(
   b: number,
   a: number,
 ): number {
-  return context.symbols.SDL_MapRGBA(format, r, g, b, a) as number;
+  return context.symbols.SDL_MapRGBA(
+    format,
+    r,
+    g,
+    b,
+    a,
+  ) as number;
+}
+
+export function PollEvent(
+  event: Event,
+): number {
+  return context.symbols.SDL_PollEvent(
+    event.pointer,
+  ) as number;
 }
 
 export function Quit(): void {
@@ -105,6 +128,10 @@ export function Quit(): void {
   context.library.close();
 }
 
-export function UpdateWindowSurface(window: Window): number {
-  return context.symbols.SDL_UpdateWindowSurface(window) as number;
+export function UpdateWindowSurface(
+  window: Window,
+): number {
+  return context.symbols.SDL_UpdateWindowSurface(
+    window,
+  ) as number;
 }

@@ -23,7 +23,7 @@ console.info(surface.flags);
 console.info(surface.w, surface.h);
 SDL.FillRect(
   surface,
-  new Deno.UnsafePointer(0n),
+  surface.clip_rect,
   SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
 );
 SDL.UpdateWindowSurface(windowPtr);

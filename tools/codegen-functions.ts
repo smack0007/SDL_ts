@@ -1,8 +1,10 @@
-interface CodeGenFunction {
-  parameters: Record<string, {
-    nativeType: string;
-    type: Deno.NativeType;
-  }>;
+export interface CodeGenFunctionParam {
+  nativeType: string;
+  type: Deno.NativeType;
+}
+
+export interface CodeGenFunction {
+  parameters: Record<string, CodeGenFunctionParam>;
 
   result: {
     nativeType: string;

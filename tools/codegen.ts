@@ -1,7 +1,7 @@
 import { enums } from "./codegen-enums.ts";
 import { events } from "./codegen-events.ts";
-import { functions } from "./codegen-functions.ts";
-import { opaqueStructs, structs } from "./codegen-structs.ts";
+import { CodeGenFunctionParam, functions } from "./codegen-functions.ts";
+import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.ts";
 
 const dataViewMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
@@ -13,6 +13,25 @@ const dataViewMethods: Record<string, (offset: number, length: number) => string
   "struct": (offset, length) => `getArrayBuffer(${length}, ${offset})`,
 } as const;
 
+const functionImplementations: Record<string, string> = {
+  SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
+  // TODO: Improve this logic.
+  if (!libraryPath) {
+    libraryPath = "sdl2";
+  }
+
+  context.library = Deno.dlopen(libraryPath, symbols);
+  context.symbols = context.library.symbols;
+
+  return context.symbols.SDL_Init(flags) as number;
+}`,
+
+  SDL_Quit: `export function Quit(): void {
+  context.symbols.SDL_Quit();
+  context.library.close();
+}`,
+} as const;
+
 await main();
 
 async function main(): Promise<void> {
@@ -20,7 +39,7 @@ async function main(): Promise<void> {
   await writeEvents();
   await writeStructs();
   await writeSymbols();
-  // await writeFunctions();
+  await writeFunctions();
 }
 
 function createLines(): string[] {
@@ -58,8 +77,8 @@ async function writeEnums(): Promise<void> {
   await writeLinesToFile("../src/enums.ts", lines);
 }
 
-function mapFFIType(type: string): string {
-  switch (type) {
+function mapStructMemberType(member: CodeGenStructMember): string {
+  switch (member.type) {
     case "i8":
     case "u8":
     case "i16":
@@ -76,7 +95,7 @@ function mapFFIType(type: string): string {
       return "Deno.UnsafePointer";
   }
 
-  return type;
+  return member.type;
 }
 
 function sortStructMembers(
@@ -98,7 +117,7 @@ async function writeEvents(): Promise<void> {
   lines.push(`import { BufferOrPointerView } from "./utils.ts";`);
   lines.push("");
 
-  const eventMembersMap: Record<string, { type: string; offset: number }> = {};
+  const eventMembersMap: Record<string, CodeGenStructMember> = {};
 
   for (const eventName of Object.keys(events)) {
     const shortEventName = shortenName(eventName);
@@ -109,7 +128,7 @@ async function writeEvents(): Promise<void> {
         continue;
       }
 
-      const memberType = mapFFIType(events[eventName].members[memberName].type);
+      const memberType = mapStructMemberType(events[eventName].members[memberName]);
       lines.push(`\t${memberName}: ${memberType};`);
 
       eventMembersMap[memberName] = events[eventName].members[memberName];
@@ -121,18 +140,20 @@ async function writeEvents(): Promise<void> {
 
   const eventTypeNames = Object.keys(events).map(shortenName).join(", ");
   lines.push(`export class Event implements ${eventTypeNames} {
-  public _buffer = new Uint8Array(64);
-  public _data = new BufferOrPointerView(this._buffer.buffer);
+  public _data = new Uint8Array(64);
+  public _view = new BufferOrPointerView(this._data.buffer);
+
+  public get pointer(): Deno.UnsafePointer | null {
+    return Deno.UnsafePointer.of(this._data);
+  }
 
 `);
 
   const eventMembers = Object.entries(eventMembersMap);
   eventMembers.sort(sortStructMembers);
 
-  for (const eventMember of eventMembers) {
-    const memberName = eventMember[0];
-    const member = eventMember[1];
-    lines.push(`\tpublic get ${memberName}(): ${mapFFIType(member.type)} {`);
+  for (const [memberName, member] of eventMembers) {
+    lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
 
     const dataViewMethod = dataViewMethods[member.type];
 
@@ -142,7 +163,7 @@ async function writeEvents(): Promise<void> {
 
     const length = 0;
     lines.push(
-      `\t\treturn this._data.${dataViewMethods[member.type](member.offset, length)};`,
+      `\t\treturn this._view.${dataViewMethods[member.type](member.offset, length)};`,
     );
     lines.push("\t}");
     lines.push("");
@@ -168,18 +189,20 @@ async function writeStructs(): Promise<void> {
 
   for (const [structName, struct] of Object.entries(structs)) {
     lines.push(`export class ${shortenName(structName)} {
-  public _data: BufferOrPointerView;
+  public _data: ArrayBuffer | Deno.UnsafePointer;
+  public _view: BufferOrPointerView;
 
   constructor(data: ArrayBuffer | Deno.UnsafePointer) {
-    this._data = new BufferOrPointerView(data);
+    this._data = data;
+    this._view = new BufferOrPointerView(this._data);
   }
 
   public get buffer(): ArrayBuffer | null {
-    return this._data.buffer;
+    return this._view.buffer;
   }
 
   public get pointer(): Deno.UnsafePointer | null {
-    return this._data.pointer;
+    return this._view.pointer;
   }
 `);
 
@@ -189,7 +212,7 @@ async function writeStructs(): Promise<void> {
     for (const [memberName, member] of structMembers) {
       let readOp = "";
       let length = 0;
-      let returnType = mapFFIType(member.type);
+      let returnType = mapStructMemberType(member);
 
       if (member.type === "pointer") {
         readOp += "new Deno.UnsafePointer(";
@@ -208,7 +231,7 @@ async function writeStructs(): Promise<void> {
         console.error(`dataViewMethods is missing ${member.type}.`);
       }
 
-      readOp += `this._data.${dataViewMethods[member.type](member.offset, length)}`;
+      readOp += `this._view.${dataViewMethods[member.type](member.offset, length)}`;
 
       if (member.type === "pointer" || member.type === "struct") {
         readOp += ")";
@@ -259,20 +282,152 @@ async function writeSymbols(): Promise<void> {
   await writeLinesToFile("../src/symbols.ts", lines);
 }
 
+function isFunctionParamPointer(param: CodeGenFunctionParam): boolean {
+  return param.nativeType.endsWith("*");
+}
+
+function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
+  let structName = param.nativeType;
+
+  if (structName.endsWith("*")) {
+    structName = structName.slice(0, -1);
+  }
+
+  return opaqueStructs.includes(structName);
+}
+
+function isFunctionParamStruct(param: CodeGenFunctionParam): boolean {
+  let structName = param.nativeType;
+
+  if (structName.endsWith("*")) {
+    structName = structName.slice(0, -1);
+  }
+
+  if (structName === "SDL_Event") {
+    return true;
+  }
+
+  return Object.keys(structs).includes(structName);
+}
+
+function mapFunctionParamType(param: CodeGenFunctionParam): string {
+  if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
+    let structName = param.nativeType.substring("SDL_".length);
+
+    if (structName.endsWith("*")) {
+      structName = structName.slice(0, -1);
+    }
+
+    return structName;
+  }
+
+  switch (param.nativeType) {
+    case "char*":
+      return "string";
+  }
+
+  switch (param.type) {
+    case "i8":
+    case "u8":
+    case "i16":
+    case "u16":
+    case "i32":
+    case "u32":
+      return "number";
+
+    case "i64":
+    case "u64":
+      return "bigint";
+
+    case "pointer":
+      return "Deno.UnsafePointer";
+  }
+
+  return param.type;
+}
+
 async function writeFunctions(): Promise<void> {
   const lines = createLines();
 
-  const structNames = Object.keys(structs).map(shortenName).join(", ");
+  const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
 
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { toCString } from "./utils.ts";`);
-
-  for (const funcName of Object.keys(functions)) {
-  }
-
   lines.push("");
+
+  lines.push(`interface SDLContext {
+  library: Deno.DynamicLibrary<Symbols>;
+  symbols: Deno.StaticForeignLibraryInterface<Symbols>;
+}
+
+const context: SDLContext = {
+  // We don't want to check in every function if the
+  // library has been loaded so the following are
+  // set to null even though the type says it shouldn't
+  // be null.
+  library: null!,
+  symbols: null!,
+};
+`);
+
+  for (const [funcName, func] of Object.entries(functions)) {
+    if (functionImplementations[funcName] !== undefined) {
+      lines.push(functionImplementations[funcName].trim());
+      lines.push("");
+      continue;
+    }
+
+    const returnType = mapFunctionParamType(func.result);
+
+    lines.push(`export function ${shortenName(funcName)}(`);
+
+    for (const [paramName, param] of Object.entries(func.parameters)) {
+      lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
+    }
+
+    lines.push(`): ${returnType} {`);
+
+    if (returnType !== "void") {
+      let returnStatement = "\treturn ";
+
+      if (isFunctionParamStruct(func.result)) {
+        returnStatement += `new ${mapFunctionParamType(func.result)}(`;
+      }
+
+      returnStatement += `context.symbols.${funcName}(`;
+      lines.push(returnStatement);
+    } else {
+      lines.push(`\tcontext.symbols.${funcName}(`);
+    }
+
+    for (const [paramName, param] of Object.entries(func.parameters)) {
+      const paramType = mapFunctionParamType(param);
+      if (isFunctionParamOpaqueStruct(param)) {
+        lines.push(`\t\t${paramName},`);
+      } else if (isFunctionParamStruct(param)) {
+        lines.push(`\t\t${paramName}.pointer,`);
+      } else if (paramType === "string") {
+        lines.push(`\t\ttoCString(${paramName}),`);
+      } else {
+        lines.push(`\t\t${paramName},`);
+      }
+    }
+
+    if (returnType !== "void") {
+      if (isFunctionParamStruct(func.result)) {
+        lines.push(`\t) as Deno.UnsafePointer);`);
+      } else {
+        lines.push(`\t) as ${returnType};`);
+      }
+    } else {
+      lines.push(`\t);`);
+    }
+
+    lines.push("}");
+    lines.push("");
+  }
 
   await writeLinesToFile("../src/functions.ts", lines);
 }

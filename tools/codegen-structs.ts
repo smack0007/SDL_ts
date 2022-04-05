@@ -1,10 +1,12 @@
+export type CodeGenStructMember = {
+  nativeType: string;
+  type: Deno.NativeType | "struct";
+  offset: number;
+};
+
 export type CodeGenStructType = {
   size: number;
-  members: Record<string, {
-    nativeType: string;
-    type: Deno.NativeType | "struct";
-    offset: number;
-  }>;
+  members: Record<string, CodeGenStructMember>;
 };
 
 export const opaqueStructs: string[] = [

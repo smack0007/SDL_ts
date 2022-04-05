@@ -5,97 +5,101 @@ import { BufferOrPointerView } from "./utils.ts";
 export type Window = Deno.UnsafePointer;
 
 export class Rect {
-  public _data: BufferOrPointerView;
+  public _data: ArrayBuffer | Deno.UnsafePointer;
+  public _view: BufferOrPointerView;
 
   constructor(data: ArrayBuffer | Deno.UnsafePointer) {
-    this._data = new BufferOrPointerView(data);
+    this._data = data;
+    this._view = new BufferOrPointerView(this._data);
   }
 
   public get buffer(): ArrayBuffer | null {
-    return this._data.buffer;
+    return this._view.buffer;
   }
 
   public get pointer(): Deno.UnsafePointer | null {
-    return this._data.pointer;
+    return this._view.pointer;
   }
 
   public get x(): number {
-    return this._data.getInt32(0);
+    return this._view.getInt32(0);
   }
 
   public get y(): number {
-    return this._data.getInt32(4);
+    return this._view.getInt32(4);
   }
 
   public get w(): number {
-    return this._data.getInt32(8);
+    return this._view.getInt32(8);
   }
 
   public get h(): number {
-    return this._data.getInt32(12);
+    return this._view.getInt32(12);
   }
 }
 
 export class Surface {
-  public _data: BufferOrPointerView;
+  public _data: ArrayBuffer | Deno.UnsafePointer;
+  public _view: BufferOrPointerView;
 
   constructor(data: ArrayBuffer | Deno.UnsafePointer) {
-    this._data = new BufferOrPointerView(data);
+    this._data = data;
+    this._view = new BufferOrPointerView(this._data);
   }
 
   public get buffer(): ArrayBuffer | null {
-    return this._data.buffer;
+    return this._view.buffer;
   }
 
   public get pointer(): Deno.UnsafePointer | null {
-    return this._data.pointer;
+    return this._view.pointer;
   }
 
   public get flags(): number {
-    return this._data.getUint32(0);
+    return this._view.getUint32(0);
   }
 
   public get format(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._data.getBigUint64(8));
+    return new Deno.UnsafePointer(this._view.getBigUint64(8));
   }
 
   public get w(): number {
-    return this._data.getInt32(16);
+    return this._view.getInt32(16);
   }
 
   public get h(): number {
-    return this._data.getInt32(20);
+    return this._view.getInt32(20);
   }
 
   public get pitch(): number {
-    return this._data.getInt32(24);
+    return this._view.getInt32(24);
   }
 
   public get pixels(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._data.getBigUint64(32));
+    return new Deno.UnsafePointer(this._view.getBigUint64(32));
   }
 
   public get userdata(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._data.getBigUint64(40));
+    return new Deno.UnsafePointer(this._view.getBigUint64(40));
   }
 
   public get locked(): number {
-    return this._data.getInt32(48);
+    return this._view.getInt32(48);
   }
 
   public get list_blitmap(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._data.getBigUint64(56));
+    return new Deno.UnsafePointer(this._view.getBigUint64(56));
   }
 
   public get clip_rect(): Rect {
-    return new Rect(this._data.getArrayBuffer(16, 64));
+    return new Rect(this._view.getArrayBuffer(16, 64));
   }
 
   public get map(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._data.getBigUint64(80));
+    return new Deno.UnsafePointer(this._view.getBigUint64(80));
   }
 
   public get refcount(): number {
-    return this._data.getInt32(88);
+    return this._view.getInt32(88);
   }
 }
