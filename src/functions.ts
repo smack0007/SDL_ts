@@ -3,7 +3,7 @@
 import { Event } from "./events.ts";
 import { Rect, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
-import { toCString } from "./utils.ts";
+import { nullPointer, toCString } from "./utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -55,12 +55,12 @@ export function DestroyWindow(
 
 export function FillRect(
   dst: Surface,
-  rect: Rect,
+  rect: Rect | null,
   color: number,
 ): number {
   return context.symbols.SDL_FillRect(
     dst.pointer,
-    rect.pointer,
+    rect?.pointer ?? nullPointer,
     color,
   ) as number;
 }

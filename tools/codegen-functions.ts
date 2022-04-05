@@ -1,6 +1,7 @@
 export interface CodeGenFunctionParam {
   nativeType: string;
   type: Deno.NativeType;
+  nullable?: boolean; 
 }
 
 export interface CodeGenFunction {
@@ -81,6 +82,7 @@ export const functions: Record<string, CodeGenFunction> = {
       rect: {
         nativeType: "SDL_Rect*",
         type: "pointer",
+        nullable: true
       },
       color: {
         nativeType: "Uint32",

@@ -23,13 +23,10 @@ console.info(surface.flags);
 console.info(surface.w, surface.h);
 SDL.FillRect(
   surface,
-  surface.clip_rect,
+  null,
   SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
 );
 SDL.UpdateWindowSurface(windowPtr);
-
-// const clipRect = surface.clip_rect;
-// console.info(`clip_rect: ${clipRect.x} ${clipRect.y} ${clipRect.w} ${clipRect.h}`);
 
 const event = new SDL.Event();
 

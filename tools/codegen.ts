@@ -318,6 +318,10 @@ function mapFunctionParamType(param: CodeGenFunctionParam): string {
       structName = structName.slice(0, -1);
     }
 
+    if (param.nullable) {
+      structName += "| null";
+    }
+
     return structName;
   }
 
@@ -354,7 +358,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
-  lines.push(`import { toCString } from "./utils.ts";`);
+  lines.push(`import { nullPointer, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -407,7 +411,11 @@ const context: SDLContext = {
       if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamStruct(param)) {
-        lines.push(`\t\t${paramName}.pointer,`);
+        if (param.nullable) {
+          lines.push(`\t\t${paramName}?.pointer ?? nullPointer,`);
+        } else {
+          lines.push(`\t\t${paramName}.pointer,`);
+        }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
       } else {
