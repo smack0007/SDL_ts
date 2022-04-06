@@ -46,6 +46,51 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_CreateRGBSurfaceFrom: {
+    parameters: {
+      pixels: {
+        nativeType: "void*",
+        type: "pointer",
+      },
+      width: {
+        nativeType: "int",
+        type: "i32",
+      },
+      height: {
+        nativeType: "int",
+        type: "i32",
+      },
+      depth: {
+        nativeType: "int",
+        type: "i32",
+      },
+      pitch: {
+        nativeType: "int",
+        type: "i32",
+      },
+      Rmask: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      Gmask: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      Bmask: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      Amask: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
+  },  
+
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: {
       flags: {

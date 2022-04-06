@@ -33,6 +33,30 @@ export function BlitSurface(
   ) as number;
 }
 
+export function CreateRGBSurfaceFrom(
+  pixels: Deno.UnsafePointer,
+  width: number,
+  height: number,
+  depth: number,
+  pitch: number,
+  Rmask: number,
+  Gmask: number,
+  Bmask: number,
+  Amask: number,
+): Surface {
+  return new Surface(context.symbols.SDL_CreateRGBSurfaceFrom(
+    pixels,
+    width,
+    height,
+    depth,
+    pitch,
+    Rmask,
+    Gmask,
+    Bmask,
+    Amask,
+  ) as Deno.UnsafePointer);
+}
+
 export function CreateRGBSurfaceWithFormat(
   flags: number,
   width: number,
