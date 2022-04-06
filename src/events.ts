@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { BufferOrPointerView } from "./utils.ts";
+import { ArrayOrPointerView } from "./utils.ts";
 
 export interface CommonEvent {
   type: number;
@@ -26,9 +26,9 @@ export interface WindowEvent {
 
 export class Event implements CommonEvent, DisplayEvent, WindowEvent {
   public _data = new Uint8Array(64);
-  public _view = new BufferOrPointerView(this._data.buffer);
+  public _view = new ArrayOrPointerView(this._data);
 
-  public get pointer(): Deno.UnsafePointer | null {
+  public get pointer(): Deno.UnsafePointer {
     return Deno.UnsafePointer.of(this._data);
   }
 

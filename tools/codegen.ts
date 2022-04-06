@@ -3,7 +3,7 @@ import { events } from "./codegen-events.ts";
 import { CodeGenFunctionParam, functions } from "./codegen-functions.ts";
 import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.ts";
 
-const dataViewMethods: Record<string, (offset: number, length: number) => string> = {
+const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
   "u32": (offset, _) => `getUint32(${offset})`,
@@ -11,6 +11,12 @@ const dataViewMethods: Record<string, (offset: number, length: number) => string
   "pointer": (offset, _) => `getBigUint64(${offset})`,
 
   "struct": (offset, length) => `getArrayBuffer(${length}, ${offset})`,
+} as const;
+
+const dataViewSetMethods: Record<string, (offset: number, length: number) => string> = {
+  "i32": (offset, _) => `setInt32(${offset}, value)`,
+  "u8": (offset, _) => `setUint8(${offset}, value)`,
+  "u32": (offset, _) => `setUint32(${offset}, value)`,
 } as const;
 
 const functionImplementations: Record<string, string> = {
@@ -114,7 +120,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { BufferOrPointerView } from "./utils.ts";`);
+  lines.push(`import { ArrayOrPointerView } from "./utils.ts";`);
   lines.push("");
 
   const eventMembersMap: Record<string, CodeGenStructMember> = {};
@@ -141,9 +147,9 @@ async function writeEvents(): Promise<void> {
   const eventTypeNames = Object.keys(events).map(shortenName).join(", ");
   lines.push(`export class Event implements ${eventTypeNames} {
   public _data = new Uint8Array(64);
-  public _view = new BufferOrPointerView(this._data.buffer);
+  public _view = new ArrayOrPointerView(this._data);
 
-  public get pointer(): Deno.UnsafePointer | null {
+  public get pointer(): Deno.UnsafePointer {
     return Deno.UnsafePointer.of(this._data);
   }
 
@@ -155,7 +161,7 @@ async function writeEvents(): Promise<void> {
   for (const [memberName, member] of eventMembers) {
     lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
 
-    const dataViewMethod = dataViewMethods[member.type];
+    const dataViewMethod = dataViewGetMethods[member.type];
 
     if (dataViewMethod === undefined) {
       console.error(`dataViewMethods is missing ${member.type}.`);
@@ -163,7 +169,7 @@ async function writeEvents(): Promise<void> {
 
     const length = 0;
     lines.push(
-      `\t\treturn this._view.${dataViewMethods[member.type](member.offset, length)};`,
+      `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
     );
     lines.push("\t}");
     lines.push("");
@@ -178,7 +184,7 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { BufferOrPointerView } from "./utils.ts"`);
+  lines.push(`import { ArrayOrPointerView } from "./utils.ts"`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -188,20 +194,27 @@ async function writeStructs(): Promise<void> {
   lines.push("");
 
   for (const [structName, struct] of Object.entries(structs)) {
-    lines.push(`export class ${shortenName(structName)} {
-  public _data: ArrayBuffer | Deno.UnsafePointer;
-  public _view: BufferOrPointerView;
+    const className = shortenName(structName);
 
-  constructor(data: ArrayBuffer | Deno.UnsafePointer) {
+    lines.push(`export class ${className} {
+  public static SIZE_IN_BYTES = ${struct.size};
+  public _data: Uint8Array | Deno.UnsafePointer;
+  public _view: ArrayOrPointerView;
+
+  constructor(data?: Uint8Array | Deno.UnsafePointer) {
+    if (!data) {
+      data = new Uint8Array(${className}.SIZE_IN_BYTES);
+    }
+    
     this._data = data;
-    this._view = new BufferOrPointerView(this._data);
+    this._view = new ArrayOrPointerView(this._data);
   }
 
-  public get buffer(): ArrayBuffer | null {
-    return this._view.buffer;
+  public get array(): Uint8Array | null {
+    return this._view.array;
   }
 
-  public get pointer(): Deno.UnsafePointer | null {
+  public get pointer(): Deno.UnsafePointer {
     return this._view.pointer;
   }
 `);
@@ -211,33 +224,58 @@ async function writeStructs(): Promise<void> {
 
     for (const [memberName, member] of structMembers) {
       let readOp = "";
+      let writeOp = "";
       let length = 0;
-      let returnType = mapStructMemberType(member);
+      let memberType = mapStructMemberType(member);
 
       if (member.type === "pointer") {
         readOp += "new Deno.UnsafePointer(";
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
-        returnType = subStructName;
+        memberType = subStructName;
         readOp += `new ${subStructName}(`;
         length = structs[member.nativeType].size;
       }
 
-      lines.push(`\tpublic get ${memberName}(): ${returnType} {`);
+      lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
-      const dataViewMethod = dataViewMethods[member.type];
+      const getMethod = dataViewGetMethods[member.type];
 
-      if (dataViewMethod === undefined) {
-        console.error(`dataViewMethods is missing ${member.type}.`);
+      if (getMethod === undefined) {
+        console.error(`dataViewGetMethods is missing ${member.type}.`);
       }
 
-      readOp += `this._view.${dataViewMethods[member.type](member.offset, length)}`;
+      readOp += `this._view.${getMethod(member.offset, length)}`;
 
       if (member.type === "pointer" || member.type === "struct") {
         readOp += ")";
       }
 
       lines.push(`\t\treturn ${readOp};`);
+
+      lines.push("\t}");
+      lines.push("");
+
+      // TODO: Can we write to pointers / structs?
+      if (member.type === "pointer" || member.type === "struct") {
+        continue;
+      }
+
+      lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
+
+      const setMethod = dataViewSetMethods[member.type];
+
+      if (setMethod === undefined) {
+        console.error(`dataViewSetMethods is missing ${member.type}.`);
+      }
+
+      writeOp += `this._view.${setMethod(member.offset, length)}`;
+
+      // if (member.type === "pointer" || member.type === "struct") {
+      //   writeOp += ")";
+      // }
+
+      lines.push(`\t\t${writeOp};`);
 
       lines.push("\t}");
       lines.push("");
@@ -254,7 +292,7 @@ async function writeSymbols(): Promise<void> {
   const lines = createLines();
 
   lines.push("export interface Symbols extends Deno.ForeignLibraryInterface {");
-  for (const [ funcName, func ] of Object.entries(functions)) {
+  for (const [funcName, func] of Object.entries(functions)) {
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: Deno.ForeignFunction;`);
     } else {
@@ -265,13 +303,13 @@ async function writeSymbols(): Promise<void> {
   lines.push("");
 
   lines.push("export const symbols: Symbols = {");
-  for (const [ funcName, func ] of Object.entries(functions)) {
+  for (const [funcName, func] of Object.entries(functions)) {
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: {`);
     } else {
       lines.push(`\t${funcName}: {`);
     }
-    
+
     lines.push(`\t\tparameters: [`);
 
     for (const paramName of Object.keys(func.parameters)) {

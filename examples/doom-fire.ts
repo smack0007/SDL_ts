@@ -1,30 +1,34 @@
 import * as SDL from "../mod.ts";
 
-const FIRE_WIDTH = 500;
+const WINDOW_WIDTH = 1024;
+const WINDOW_HEIGHT = 768;
+const HALF_WINDOW_HEIGHT = WINDOW_HEIGHT / 2;
+
+const FIRE_WIDTH = 1024;
 const FIRE_HEIGHT = 120;
 
 const FIRE_COLORS = [
   0x00000000,
   0xC0070707,
-  0xC007071f,
-  0xC0070f2f,
-  0xC0070f47,
+  0xC007071F,
+  0xC0070F2F,
+  0xC0070F47,
   0xC0071757,
-  0xC0071f67,
-  0xC0071f77,
-  0xC007278f,
-  0xC0072f9f,
-  0xC0073faf,
-  0xC00747bf,
-  0xC00747c7,
+  0xC0071F67,
+  0xC0071F77,
+  0xC007278F,
+  0xC0072F9F,
+  0xC0073FAF,
+  0xC00747BF,
+  0xC00747C7,
   0xC0074FDF,
   0xC00757DF,
   0xC00757DF,
   0xC0075FD7,
   0xC00F67D7,
-  0xC00f6fcf,
-  0xC00f77cf,
-  0xC00f7fcf,
+  0xC00F6FCF,
+  0xC00F77CF,
+  0xC00F7FCF,
   0xC01787CF,
   0xC01787C7,
   0xC0178FC7,
@@ -50,8 +54,8 @@ function main(): number {
     "Doom Fire",
     SDL.WINDOWPOS_CENTERED,
     SDL.WINDOWPOS_CENTERED,
-    1024,
-    768,
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
     SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
   );
 
@@ -99,7 +103,12 @@ function main(): number {
     draw(pixels);
 
     SDL.FillRect(frontBuffer, null, 0x00000000);
-    SDL.BlitSurface(backBuffer, null, frontBuffer, null);
+    const rect = new SDL.Rect();
+    rect.x = 0;
+    rect.y = HALF_WINDOW_HEIGHT;
+    rect.w = frontBuffer.w;
+    rect.h = HALF_WINDOW_HEIGHT;
+    SDL.BlitScaled(backBuffer, null, frontBuffer, rect);
     SDL.UpdateWindowSurface(window);
 
     SDL.Delay(16);
@@ -120,10 +129,10 @@ function draw(pixels: Uint32Array): void {
 }
 
 function spreadFire(from: number, pixels: Uint32Array): void {
-  const rand = Math.round(Math.random() * 3.0) & 3;
+  const rand = Math.round(Math.random() * 3) & 3;
   const to = from - FIRE_WIDTH - rand + 1;
 
-  let toValue = FIRE_COLORS.indexOf(pixels[from]) - 1 - (rand & 1);
+  let toValue = FIRE_COLORS.indexOf(pixels[from]) - (rand & 1);
 
   if (toValue < 0) {
     toValue = 0;

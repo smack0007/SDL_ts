@@ -1,6 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 export interface Symbols extends Deno.ForeignLibraryInterface {
+  SDL_UpperBlitScaled: Deno.ForeignFunction;
   SDL_UpperBlit: Deno.ForeignFunction;
   SDL_CreateRGBSurfaceFrom: Deno.ForeignFunction;
   SDL_CreateRGBSurfaceWithFormat: Deno.ForeignFunction;
@@ -20,6 +21,15 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
 }
 
 export const symbols: Symbols = {
+  SDL_UpperBlitScaled: {
+    parameters: [
+      "pointer", /* SDL_Surface* src */
+      "pointer", /* SDL_Rect* srcrect */
+      "pointer", /* SDL_Surface* dst */
+      "pointer", /* SDL_Rect* dstrect */
+    ],
+    result: "i32", /* int */
+  },
   SDL_UpperBlit: {
     parameters: [
       "pointer", /* SDL_Surface* src */

@@ -18,6 +18,34 @@ export interface CodeGenFunction {
 }
 
 export const functions: Record<string, CodeGenFunction> = {
+  SDL_BlitScaled: {
+    symbolName: "SDL_UpperBlitScaled",
+    parameters: {
+      src: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      srcrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true,
+      },
+      dst: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      dstrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true,
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
   SDL_BlitSurface: {
     symbolName: "SDL_UpperBlit",
     parameters: {
@@ -37,7 +65,7 @@ export const functions: Record<string, CodeGenFunction> = {
       dstrect: {
         nativeType: "SDL_Rect*",
         type: "pointer",
-        nullable: true
+        nullable: true,
       },
     },
     result: {
@@ -89,7 +117,7 @@ export const functions: Record<string, CodeGenFunction> = {
       nativeType: "SDL_Surface*",
       type: "pointer",
     },
-  },  
+  },
 
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: {
@@ -238,7 +266,7 @@ export const functions: Record<string, CodeGenFunction> = {
       nativeType: "int",
       type: "i32",
     },
-  },  
+  },
 
   SDL_MapRGB: {
     parameters: {

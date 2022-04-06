@@ -19,6 +19,20 @@ const context: SDLContext = {
   symbols: null!,
 };
 
+export function BlitScaled(
+  src: Surface,
+  srcrect: Rect | null,
+  dst: Surface,
+  dstrect: Rect | null,
+): number {
+  return context.symbols.SDL_UpperBlitScaled(
+    src.pointer,
+    srcrect?.pointer ?? nullPointer,
+    dst.pointer,
+    dstrect?.pointer ?? nullPointer,
+  ) as number;
+}
+
 export function BlitSurface(
   src: Surface,
   srcrect: Rect | null,
