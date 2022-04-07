@@ -1,5 +1,5 @@
 export interface CodeGenFunctionParam {
-  // Native SDL type.
+  // SDL type.
   nativeType: string;
 
   // FFI type.
@@ -412,3 +412,22 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 };
+
+export const functionImplementations: Record<string, string> = {
+  SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
+  // TODO: Improve this logic.
+  if (!libraryPath) {
+    libraryPath = "sdl2";
+  }
+
+  context.library = Deno.dlopen(libraryPath, symbols);
+  context.symbols = context.library.symbols;
+
+  return context.symbols.SDL_Init(flags) as number;
+}`,
+
+  SDL_Quit: `export function Quit(): void {
+  context.symbols.SDL_Quit();
+  context.library.close();
+}`,
+} as const;

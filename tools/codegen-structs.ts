@@ -1,11 +1,23 @@
 export type CodeGenStructMember = {
+  // SDL type.
   nativeType: string;
+
+  // FFI type.
   type: Deno.NativeType | "struct";
+
+  // Offset of the member in bytes.
   offset: number;
 };
 
 export type CodeGenStructType = {
+  // Indicates whether the struct can be allocated in
+  // deno. If false it will only be allocated by SDL.
+  allocatable?: boolean;
+
+  // Size of the struct in bytes.
   size: number;
+
+  // Struct members.
   members: Record<string, CodeGenStructMember>;
 };
 
@@ -17,6 +29,7 @@ export const opaqueStructs: string[] = [
 
 export const structs: Record<string, CodeGenStructType> = {
   SDL_Rect: {
+    allocatable: true,
     size: 16,
     members: {
       x: {

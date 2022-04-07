@@ -7,20 +7,26 @@ export type Window = Deno.UnsafePointer;
 
 export class Rect {
   public static SIZE_IN_BYTES = 16;
+
   public _data: Uint8Array | Deno.UnsafePointer;
   public _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer) {
+  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Rect>) {
+    let props: Partial<Rect> | null = null;
+
     if (!data) {
+      data = new Uint8Array(Rect.SIZE_IN_BYTES);
+    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
+      props = data;
       data = new Uint8Array(Rect.SIZE_IN_BYTES);
     }
 
     this._data = data;
     this._view = new ArrayOrPointerView(this._data);
-  }
 
-  public get array(): Uint8Array | null {
-    return this._view.array;
+    if (props !== null) {
+      Object.assign(this, props);
+    }
   }
 
   public get pointer(): Deno.UnsafePointer {
@@ -62,32 +68,21 @@ export class Rect {
 
 export class Surface {
   public static SIZE_IN_BYTES = 96;
-  public _data: Uint8Array | Deno.UnsafePointer;
+
+  public _data: Deno.UnsafePointer;
   public _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer) {
-    if (!data) {
-      data = new Uint8Array(Surface.SIZE_IN_BYTES);
-    }
-
+  constructor(data: Deno.UnsafePointer) {
     this._data = data;
     this._view = new ArrayOrPointerView(this._data);
   }
 
-  public get array(): Uint8Array | null {
-    return this._view.array;
-  }
-
   public get pointer(): Deno.UnsafePointer {
-    return this._view.pointer;
+    return this._data;
   }
 
   public get flags(): number {
     return this._view.getUint32(0);
-  }
-
-  public set flags(value: number) {
-    this._view.setUint32(0, value);
   }
 
   public get format(): Deno.UnsafePointer {
@@ -98,24 +93,12 @@ export class Surface {
     return this._view.getInt32(16);
   }
 
-  public set w(value: number) {
-    this._view.setInt32(16, value);
-  }
-
   public get h(): number {
     return this._view.getInt32(20);
   }
 
-  public set h(value: number) {
-    this._view.setInt32(20, value);
-  }
-
   public get pitch(): number {
     return this._view.getInt32(24);
-  }
-
-  public set pitch(value: number) {
-    this._view.setInt32(24, value);
   }
 
   public get pixels(): Deno.UnsafePointer {
@@ -130,16 +113,12 @@ export class Surface {
     return this._view.getInt32(48);
   }
 
-  public set locked(value: number) {
-    this._view.setInt32(48, value);
-  }
-
   public get list_blitmap(): Deno.UnsafePointer {
     return new Deno.UnsafePointer(this._view.getBigUint64(56));
   }
 
   public get clip_rect(): Rect {
-    return new Rect(this._view.getArrayBuffer(16, 64));
+    return new Rect(this._view.getArray(16, 64));
   }
 
   public get map(): Deno.UnsafePointer {
@@ -148,9 +127,5 @@ export class Surface {
 
   public get refcount(): number {
     return this._view.getInt32(88);
-  }
-
-  public set refcount(value: number) {
-    this._view.setInt32(88, value);
   }
 }

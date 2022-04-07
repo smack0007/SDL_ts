@@ -1,6 +1,6 @@
 import { enums } from "./codegen-enums.ts";
 import { events } from "./codegen-events.ts";
-import { CodeGenFunctionParam, functions } from "./codegen-functions.ts";
+import { CodeGenFunctionParam, functionImplementations, functions } from "./codegen-functions.ts";
 import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.ts";
 
 const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
@@ -10,32 +10,13 @@ const dataViewGetMethods: Record<string, (offset: number, length: number) => str
 
   "pointer": (offset, _) => `getBigUint64(${offset})`,
 
-  "struct": (offset, length) => `getArrayBuffer(${length}, ${offset})`,
+  "struct": (offset, length) => `getArray(${length}, ${offset})`,
 } as const;
 
 const dataViewSetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `setInt32(${offset}, value)`,
   "u8": (offset, _) => `setUint8(${offset}, value)`,
   "u32": (offset, _) => `setUint32(${offset}, value)`,
-} as const;
-
-const functionImplementations: Record<string, string> = {
-  SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
-  // TODO: Improve this logic.
-  if (!libraryPath) {
-    libraryPath = "sdl2";
-  }
-
-  context.library = Deno.dlopen(libraryPath, symbols);
-  context.symbols = context.library.symbols;
-
-  return context.symbols.SDL_Init(flags) as number;
-}`,
-
-  SDL_Quit: `export function Quit(): void {
-  context.symbols.SDL_Quit();
-  context.library.close();
-}`,
 } as const;
 
 await main();
@@ -197,27 +178,50 @@ async function writeStructs(): Promise<void> {
     const className = shortenName(structName);
 
     lines.push(`export class ${className} {
-  public static SIZE_IN_BYTES = ${struct.size};
+  public static SIZE_IN_BYTES = ${struct.size};`);
+
+    if (struct.allocatable) {
+      lines.push(`
   public _data: Uint8Array | Deno.UnsafePointer;
   public _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer) {
+  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<${className}>) {
+    let props: Partial<${className}> | null = null;
+    
     if (!data) {
       data = new Uint8Array(${className}.SIZE_IN_BYTES);
+    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
+      props = data;
+      data = new Uint8Array(${className}.SIZE_IN_BYTES);
     }
-    
+
     this._data = data;
     this._view = new ArrayOrPointerView(this._data);
-  }
 
-  public get array(): Uint8Array | null {
-    return this._view.array;
+    if (props !== null) {
+      Object.assign(this, props);
+    }
   }
 
   public get pointer(): Deno.UnsafePointer {
     return this._view.pointer;
   }
 `);
+    } else {
+      lines.push(`
+  public _data: Deno.UnsafePointer;
+  public _view: ArrayOrPointerView;
+
+  constructor(data: Deno.UnsafePointer) {    
+    this._data = data;
+    this._view = new ArrayOrPointerView(this._data);
+  }
+
+  public get pointer(): Deno.UnsafePointer {
+    return this._data;
+  }
+`);
+    }
 
     const structMembers = Object.entries(struct.members);
     structMembers.sort(sortStructMembers);
@@ -256,29 +260,31 @@ async function writeStructs(): Promise<void> {
       lines.push("\t}");
       lines.push("");
 
-      // TODO: Can we write to pointers / structs?
-      if (member.type === "pointer" || member.type === "struct") {
-        continue;
+      if (struct.allocatable) {
+        // TODO: Can we write to pointers / structs?
+        if (member.type === "pointer" || member.type === "struct") {
+          continue;
+        }
+
+        lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
+
+        const setMethod = dataViewSetMethods[member.type];
+
+        if (setMethod === undefined) {
+          console.error(`dataViewSetMethods is missing ${member.type}.`);
+        }
+
+        writeOp += `this._view.${setMethod(member.offset, length)}`;
+
+        // if (member.type === "pointer" || member.type === "struct") {
+        //   writeOp += ")";
+        // }
+
+        lines.push(`\t\t${writeOp};`);
+
+        lines.push("\t}");
+        lines.push("");
       }
-
-      lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
-
-      const setMethod = dataViewSetMethods[member.type];
-
-      if (setMethod === undefined) {
-        console.error(`dataViewSetMethods is missing ${member.type}.`);
-      }
-
-      writeOp += `this._view.${setMethod(member.offset, length)}`;
-
-      // if (member.type === "pointer" || member.type === "struct") {
-      //   writeOp += ")";
-      // }
-
-      lines.push(`\t\t${writeOp};`);
-
-      lines.push("\t}");
-      lines.push("");
     }
 
     lines.push("}");

@@ -17,4 +17,6 @@
 
 Deno images taken from https://deno.land/artwork.
 
-Thanks to: [Samip Poudel](https://github.com/SamipPoudel58) for the Jurassic deno image.
+Thanks to:
+
+- [Samip Poudel](https://github.com/SamipPoudel58) for the Jurassic deno image.

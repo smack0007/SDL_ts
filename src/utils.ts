@@ -29,15 +29,11 @@ export class ArrayOrPointerView {
     }
   }
 
-  public get array(): Uint8Array | null {
-    return this._data instanceof Uint8Array ? this._data : null;
-  }
-
   public get pointer(): Deno.UnsafePointer {
     return this._data instanceof Deno.UnsafePointer ? this._data : Deno.UnsafePointer.of(this._data);
   }
 
-  public getArrayBuffer(byteLength: number, byteOffset: number): Uint8Array {
+  public getArray(byteLength: number, byteOffset: number): Uint8Array {
     if (this._dataView instanceof DataView) {
       throw new Error("Not implemented.");
     } else {
