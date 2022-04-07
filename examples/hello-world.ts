@@ -4,7 +4,7 @@ SDL.Init(SDL.INIT_VIDEO, "../ext/SDL/lib/x64/SDL2.dll");
 
 console.info("SDL Initialized.");
 
-const windowPtr = SDL.CreateWindow(
+const window = SDL.CreateWindow(
   "Hello World!",
   SDL.WINDOWPOS_CENTERED,
   SDL.WINDOWPOS_CENTERED,
@@ -13,12 +13,12 @@ const windowPtr = SDL.CreateWindow(
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
-if (windowPtr.value === 0n) {
+if (window.value === 0n) {
   console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 
-const surface = SDL.GetWindowSurface(windowPtr);
+let surface = SDL.GetWindowSurface(window);
 console.info(surface.flags);
 console.info(surface.w, surface.h);
 SDL.FillRect(
@@ -26,7 +26,7 @@ SDL.FillRect(
   null,
   SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
 );
-SDL.UpdateWindowSurface(windowPtr);
+SDL.UpdateWindowSurface(window);
 
 const event = new SDL.Event();
 
@@ -44,6 +44,15 @@ while (!done) {
         console.info(`Window ${windowEvent.windowID} minimized.`);
       } else if (windowEvent.event === SDL.WINDOWEVENT_RESTORED) {
         console.info(`Window ${windowEvent.windowID} restored.`);
+      } else if (windowEvent.event === SDL.WINDOWEVENT_RESIZED) {
+        console.info(`Window ${windowEvent.windowID} resized: ${event.data1} ${event.data2}`);
+        surface = SDL.GetWindowSurface(window);
+        SDL.FillRect(
+          surface,
+          null,
+          SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
+        );
+        SDL.UpdateWindowSurface(window);
       }
     }
   }
@@ -51,7 +60,7 @@ while (!done) {
 }
 
 console.info("Destroying SDL Window...");
-SDL.DestroyWindow(windowPtr);
+SDL.DestroyWindow(window);
 console.info("SDL Window destoryed.");
 
 SDL.Quit();
