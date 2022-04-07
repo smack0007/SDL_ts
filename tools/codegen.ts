@@ -401,6 +401,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
+  lines.push(`import { RWMode } from "./types.ts";`);
   lines.push(`import { nullPointer, toCString } from "./utils.ts";`);
   lines.push("");
 
@@ -431,7 +432,11 @@ const context: SDLContext = {
     lines.push(`export function ${shortenName(funcName)}(`);
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
-      lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
+      if (param.overrideType) {
+        lines.push(`${paramName}: ${param.overrideType},`);
+      } else {
+        lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
+      }
     }
 
     lines.push(`): ${returnType} {`);

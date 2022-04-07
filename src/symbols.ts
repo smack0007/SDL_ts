@@ -11,11 +11,13 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_FillRect: Deno.ForeignFunction;
   SDL_GetWindowSurface: Deno.ForeignFunction;
   SDL_Init: Deno.ForeignFunction;
+  SDL_LoadBMP_RW: Deno.ForeignFunction;
   SDL_LockSurface: Deno.ForeignFunction;
   SDL_MapRGB: Deno.ForeignFunction;
   SDL_MapRGBA: Deno.ForeignFunction;
   SDL_PollEvent: Deno.ForeignFunction;
   SDL_Quit: Deno.ForeignFunction;
+  SDL_RWFromFile: Deno.ForeignFunction;
   SDL_UnlockSurface: Deno.ForeignFunction;
   SDL_UpdateWindowSurface: Deno.ForeignFunction;
 }
@@ -106,6 +108,13 @@ export const symbols: Symbols = {
     ],
     result: "i32", /* int */
   },
+  SDL_LoadBMP_RW: {
+    parameters: [
+      "pointer", /* SDL_RWops* src */
+      "i32", /* int freesrc */
+    ],
+    result: "pointer", /* SDL_Surface* */
+  },
   SDL_LockSurface: {
     parameters: [
       "pointer", /* SDL_Surface* surface */
@@ -140,6 +149,13 @@ export const symbols: Symbols = {
   SDL_Quit: {
     parameters: [],
     result: "void", /* void */
+  },
+  SDL_RWFromFile: {
+    parameters: [
+      "pointer", /* char* file */
+      "pointer", /* char* mode */
+    ],
+    result: "pointer", /* SDL_RWops* */
   },
   SDL_UnlockSurface: {
     parameters: [

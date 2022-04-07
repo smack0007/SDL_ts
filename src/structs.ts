@@ -2,6 +2,7 @@
 
 import { ArrayOrPointerView } from "./utils.ts";
 
+export type RWops = Deno.UnsafePointer;
 export type Window = Deno.UnsafePointer;
 
 export class Rect {

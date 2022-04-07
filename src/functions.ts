@@ -1,8 +1,9 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { Event } from "./events.ts";
-import { Rect, Surface, Window } from "./structs.ts";
+import { Rect, RWops, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
+import { RWMode } from "./types.ts";
 import { nullPointer, toCString } from "./utils.ts";
 
 interface SDLContext {
@@ -153,6 +154,16 @@ export function Init(flags: number, libraryPath?: string): number {
   return context.symbols.SDL_Init(flags) as number;
 }
 
+export function LoadBMP_RW(
+  src: RWops,
+  freesrc: number,
+): Surface {
+  return new Surface(context.symbols.SDL_LoadBMP_RW(
+    src,
+    freesrc,
+  ) as Deno.UnsafePointer);
+}
+
 export function LockSurface(
   surface: Surface,
 ): number {
@@ -202,6 +213,16 @@ export function PollEvent(
 export function Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
+}
+
+export function RWFromFile(
+  file: string,
+  mode: RWMode,
+): RWops {
+  return context.symbols.SDL_RWFromFile(
+    toCString(file),
+    toCString(mode),
+  ) as RWops;
 }
 
 export function UnlockSurface(

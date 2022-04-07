@@ -1,7 +1,15 @@
 export interface CodeGenFunctionParam {
+  // Native SDL type.
   nativeType: string;
+
+  // FFI type.
   type: Deno.NativeType;
+
+  // Can the parameter be null.
   nullable?: boolean;
+
+  // If set this type will be used as the deno type.
+  overrideType?: string;
 }
 
 export interface CodeGenFunction {
@@ -255,6 +263,23 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_LoadBMP_RW: {
+    parameters: {
+      src: {
+        nativeType: "SDL_RWops*",
+        type: "pointer",
+      },
+      freesrc: {
+        nativeType: "int",
+        type: "i32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
+  },
+
   SDL_LockSurface: {
     parameters: {
       surface: {
@@ -340,6 +365,24 @@ export const functions: Record<string, CodeGenFunction> = {
     result: {
       nativeType: "void",
       type: "void",
+    },
+  },
+
+  SDL_RWFromFile: {
+    parameters: {
+      file: {
+        nativeType: "char*",
+        type: "pointer",
+      },
+      mode: {
+        nativeType: "char*",
+        type: "pointer",
+        overrideType: "RWMode",
+      },
+    },
+    result: {
+      nativeType: "SDL_RWops*",
+      type: "pointer",
     },
   },
 

@@ -66,9 +66,11 @@ function main(): number {
 
   const frontBuffer = SDL.GetWindowSurface(window);
 
-  const pixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
-  const backBuffer = SDL.CreateRGBSurfaceFrom(
-    Deno.UnsafePointer.of(pixels),
+  const denoSurface = SDL.LoadBMP("../assets/jurassicDeno.bmp");
+
+  const firePixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
+  const fireSurface = SDL.CreateRGBSurfaceFrom(
+    Deno.UnsafePointer.of(firePixels),
     FIRE_WIDTH,
     FIRE_HEIGHT,
     32,
@@ -79,10 +81,10 @@ function main(): number {
     0xFF000000,
   );
 
-  pixels.fill(0x00000000);
+  firePixels.fill(0x00000000);
 
   for (let x = 0; x < FIRE_WIDTH; x += 1) {
-    pixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] = FIRE_COLORS[FIRE_COLORS.length - 1];
+    firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] = FIRE_COLORS[FIRE_COLORS.length - 1];
   }
 
   const event = new SDL.Event();
@@ -100,15 +102,16 @@ function main(): number {
       break;
     }
 
-    draw(pixels);
+    draw(firePixels);
 
     SDL.FillRect(frontBuffer, null, 0x00000000);
+    SDL.BlitScaled(denoSurface, null, frontBuffer, null);
     const rect = new SDL.Rect();
     rect.x = 0;
     rect.y = HALF_WINDOW_HEIGHT;
     rect.w = frontBuffer.w;
     rect.h = HALF_WINDOW_HEIGHT;
-    SDL.BlitScaled(backBuffer, null, frontBuffer, rect);
+    SDL.BlitScaled(fireSurface, null, frontBuffer, rect);
     SDL.UpdateWindowSurface(window);
 
     SDL.Delay(16);
@@ -120,25 +123,25 @@ function main(): number {
   return 0;
 }
 
-function draw(pixels: Uint32Array): void {
+function draw(firePixels: Uint32Array): void {
   for (let x = 0; x < FIRE_WIDTH; x += 1) {
     for (let y = 1; y < FIRE_HEIGHT; y += 1) {
-      spreadFire(y * FIRE_WIDTH + x, pixels);
+      spreadFire(firePixels, y * FIRE_WIDTH + x);
     }
   }
 }
 
-function spreadFire(from: number, pixels: Uint32Array): void {
+function spreadFire(firePixels: Uint32Array, from: number): void {
   const rand = Math.round(Math.random() * 3) & 3;
   const to = from - FIRE_WIDTH - rand + 1;
 
-  let toValue = FIRE_COLORS.indexOf(pixels[from]) - (rand & 1);
+  let toValue = FIRE_COLORS.indexOf(firePixels[from]) - (rand & 1);
 
   if (toValue < 0) {
     toValue = 0;
   }
 
-  pixels[to] = FIRE_COLORS[toValue];
+  firePixels[to] = FIRE_COLORS[toValue];
 }
 
 Deno.exit(main());

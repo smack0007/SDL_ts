@@ -10,6 +10,8 @@ export type CodeGenStructType = {
 };
 
 export const opaqueStructs: string[] = [
+  // TODO: Figure out how to implement SDL_RWops in deno.
+  "SDL_RWops",
   "SDL_Window",
 ];
 
