@@ -1,6 +1,6 @@
 # deno-sdl2-ffi
 
-SDL 2 bindings for Deno via FFI (Foreign Function Interface).
+[SDL2](https://www.libsdl.org/) bindings for Deno via FFI (Foreign Function Interface).
 
 ## Goals
 
