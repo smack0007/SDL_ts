@@ -6,12 +6,16 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 
 export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
-export function toCString(v: string): Uint8Array {
-  return new TextEncoder().encode(v + "\0");
+export function toCString(value: string): Uint8Array {
+  return new TextEncoder().encode(value + "\0");
 }
 
-export function fromCString(v: Uint8Array): string {
-  return new TextDecoder().decode(v);
+export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
+  if (value instanceof Deno.UnsafePointer) {
+    return new Deno.UnsafePointerView(value).getCString();
+  }
+
+  return new TextDecoder().decode(value);
 }
 
 export class ArrayOrPointerView {

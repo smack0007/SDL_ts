@@ -250,6 +250,14 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_GetError: {
+    parameters: {},
+    result: {
+      nativeType: "char*",
+      type: "pointer",
+    },
+  },
+
   SDL_GetWindowSurface: {
     parameters: {
       window: {

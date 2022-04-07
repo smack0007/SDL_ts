@@ -408,7 +408,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode } from "./types.ts";`);
-  lines.push(`import { NULL_POINTER, toCString } from "./utils.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -457,6 +457,8 @@ const context: SDLContext = {
 
       if (isFunctionParamStruct(func.result)) {
         returnStatement += `new ${mapFunctionParamType(func.result)}(`;
+      } else if (returnType === "string") {
+        returnStatement += "\t\tfromCString(";
       }
 
       returnStatement += `context.symbols.${symbolName}(`;
@@ -483,7 +485,7 @@ const context: SDLContext = {
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamStruct(func.result)) {
+      if (isFunctionParamStruct(func.result) || returnType === "string") {
         lines.push(`\t) as Deno.UnsafePointer);`);
       } else {
         lines.push(`\t) as ${returnType};`);

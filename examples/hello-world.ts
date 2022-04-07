@@ -14,7 +14,7 @@ const windowPtr = SDL.CreateWindow(
 );
 
 if (windowPtr.value === 0n) {
-  console.error("Failed to create window.");
+  console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 

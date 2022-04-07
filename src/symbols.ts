@@ -10,6 +10,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_DestroyWindow: Deno.ForeignFunction;
   SDL_FillRect: Deno.ForeignFunction;
   SDL_FreeSurface: Deno.ForeignFunction;
+  SDL_GetError: Deno.ForeignFunction;
   SDL_GetWindowSurface: Deno.ForeignFunction;
   SDL_Init: Deno.ForeignFunction;
   SDL_LoadBMP_RW: Deno.ForeignFunction;
@@ -102,6 +103,10 @@ export const symbols: Symbols = {
       "pointer", /* SDL_Surface* surface */
     ],
     result: "void", /* void */
+  },
+  SDL_GetError: {
+    parameters: [],
+    result: "pointer", /* char* */
   },
   SDL_GetWindowSurface: {
     parameters: [
