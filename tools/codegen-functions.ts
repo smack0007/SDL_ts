@@ -237,6 +237,19 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_FreeSurface: {
+    parameters: {
+      surface: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
   SDL_GetWindowSurface: {
     parameters: {
       window: {

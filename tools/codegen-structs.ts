@@ -28,6 +28,23 @@ export const opaqueStructs: string[] = [
 ];
 
 export const structs: Record<string, CodeGenStructType> = {
+  SDL_Point: {
+    allocatable: true,
+    size: 8,
+    members: {
+      x: {
+        nativeType: "int",
+        type: "i32",
+        offset: 0,
+      },
+      y: {
+        nativeType: "int",
+        type: "i32",
+        offset: 4,
+      },
+    },
+  },
+
   SDL_Rect: {
     allocatable: true,
     size: 16,

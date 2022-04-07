@@ -1,7 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { Event } from "./events.ts";
-import { Rect, RWops, Surface, Window } from "./structs.ts";
+import { Point, Rect, RWops, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode } from "./types.ts";
 import { nullPointer, toCString } from "./utils.ts";
@@ -132,6 +132,14 @@ export function FillRect(
     rect?.pointer ?? nullPointer,
     color,
   ) as number;
+}
+
+export function FreeSurface(
+  surface: Surface,
+): void {
+  context.symbols.SDL_FreeSurface(
+    surface.pointer,
+  );
 }
 
 export function GetWindowSurface(

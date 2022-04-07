@@ -5,6 +5,51 @@ import { ArrayOrPointerView } from "./utils.ts";
 export type RWops = Deno.UnsafePointer;
 export type Window = Deno.UnsafePointer;
 
+export class Point {
+  public static SIZE_IN_BYTES = 8;
+
+  public _data: Uint8Array | Deno.UnsafePointer;
+  public _view: ArrayOrPointerView;
+
+  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Point>) {
+    let props: Partial<Point> | null = null;
+
+    if (!data) {
+      data = new Uint8Array(Point.SIZE_IN_BYTES);
+    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
+      props = data;
+      data = new Uint8Array(Point.SIZE_IN_BYTES);
+    }
+
+    this._data = data;
+    this._view = new ArrayOrPointerView(this._data);
+
+    if (props !== null) {
+      Object.assign(this, props);
+    }
+  }
+
+  public get pointer(): Deno.UnsafePointer {
+    return this._view.pointer;
+  }
+
+  public get x(): number {
+    return this._view.getInt32(0);
+  }
+
+  public set x(value: number) {
+    this._view.setInt32(0, value);
+  }
+
+  public get y(): number {
+    return this._view.getInt32(4);
+  }
+
+  public set y(value: number) {
+    this._view.setInt32(4, value);
+  }
+}
+
 export class Rect {
   public static SIZE_IN_BYTES = 16;
 

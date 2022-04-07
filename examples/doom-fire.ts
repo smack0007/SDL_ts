@@ -56,7 +56,7 @@ function main(): number {
     SDL.WINDOWPOS_CENTERED,
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
+    SDL.WINDOW_SHOWN,
   );
 
   if (window.value === 0n) {
@@ -80,8 +80,8 @@ function main(): number {
     0x00FF0000,
     0xFF000000,
   );
-  
-  const flamesRect = new SDL.Rect({ x: 0, y: HALF_WINDOW_HEIGHT, w: frontBuffer.w, h: HALF_WINDOW_HEIGHT});
+
+  const flamesRect = new SDL.Rect({ x: 0, y: HALF_WINDOW_HEIGHT, w: frontBuffer.w, h: HALF_WINDOW_HEIGHT });
 
   firePixels.fill(0x00000000);
 
@@ -114,6 +114,8 @@ function main(): number {
     SDL.Delay(16);
   }
 
+  SDL.FreeSurface(denoSurface);
+  SDL.FreeSurface(fireSurface);
   SDL.DestroyWindow(window);
   SDL.Quit();
 

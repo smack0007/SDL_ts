@@ -9,6 +9,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_Delay: Deno.ForeignFunction;
   SDL_DestroyWindow: Deno.ForeignFunction;
   SDL_FillRect: Deno.ForeignFunction;
+  SDL_FreeSurface: Deno.ForeignFunction;
   SDL_GetWindowSurface: Deno.ForeignFunction;
   SDL_Init: Deno.ForeignFunction;
   SDL_LoadBMP_RW: Deno.ForeignFunction;
@@ -95,6 +96,12 @@ export const symbols: Symbols = {
       "u32", /* Uint32 color */
     ],
     result: "i32", /* int */
+  },
+  SDL_FreeSurface: {
+    parameters: [
+      "pointer", /* SDL_Surface* surface */
+    ],
+    result: "void", /* void */
   },
   SDL_GetWindowSurface: {
     parameters: [
