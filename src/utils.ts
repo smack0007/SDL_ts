@@ -4,7 +4,7 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
   return new Int16Array(buffer)[0] === 256 ? "LE" : "BE";
 })();
 
-export const nullPointer = new Deno.UnsafePointer(0n);
+export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
 export function toCString(v: string): Uint8Array {
   return new TextEncoder().encode(v + "\0");

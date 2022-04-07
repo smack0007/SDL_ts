@@ -4,7 +4,7 @@ import { Event } from "./events.ts";
 import { Point, Rect, RWops, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode } from "./types.ts";
-import { nullPointer, toCString } from "./utils.ts";
+import { NULL_POINTER, toCString } from "./utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -28,9 +28,9 @@ export function BlitScaled(
 ): number {
   return context.symbols.SDL_UpperBlitScaled(
     src.pointer,
-    srcrect?.pointer ?? nullPointer,
+    srcrect?.pointer ?? NULL_POINTER,
     dst.pointer,
-    dstrect?.pointer ?? nullPointer,
+    dstrect?.pointer ?? NULL_POINTER,
   ) as number;
 }
 
@@ -42,9 +42,9 @@ export function BlitSurface(
 ): number {
   return context.symbols.SDL_UpperBlit(
     src.pointer,
-    srcrect?.pointer ?? nullPointer,
+    srcrect?.pointer ?? NULL_POINTER,
     dst.pointer,
-    dstrect?.pointer ?? nullPointer,
+    dstrect?.pointer ?? NULL_POINTER,
   ) as number;
 }
 
@@ -129,7 +129,7 @@ export function FillRect(
 ): number {
   return context.symbols.SDL_FillRect(
     dst.pointer,
-    rect?.pointer ?? nullPointer,
+    rect?.pointer ?? NULL_POINTER,
     color,
   ) as number;
 }

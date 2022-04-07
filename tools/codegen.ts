@@ -408,7 +408,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode } from "./types.ts";`);
-  lines.push(`import { nullPointer, toCString } from "./utils.ts";`);
+  lines.push(`import { NULL_POINTER, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -471,7 +471,7 @@ const context: SDLContext = {
         lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
-          lines.push(`\t\t${paramName}?.pointer ?? nullPointer,`);
+          lines.push(`\t\t${paramName}?.pointer ?? NULL_POINTER,`);
         } else {
           lines.push(`\t\t${paramName}.pointer,`);
         }
