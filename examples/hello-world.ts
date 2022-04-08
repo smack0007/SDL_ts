@@ -37,15 +37,14 @@ while (!done) {
       console.info("Done.");
       done = true;
     } else if (event.type === SDL.WINDOWEVENT) {
-      const windowEvent = event as SDL.WindowEvent;
-      if (windowEvent.event === SDL.WINDOWEVENT_SHOWN) {
-        console.info(`Window ${windowEvent.windowID} shown.`);
-      } else if (windowEvent.event === SDL.WINDOWEVENT_MINIMIZED) {
-        console.info(`Window ${windowEvent.windowID} minimized.`);
-      } else if (windowEvent.event === SDL.WINDOWEVENT_RESTORED) {
-        console.info(`Window ${windowEvent.windowID} restored.`);
-      } else if (windowEvent.event === SDL.WINDOWEVENT_RESIZED) {
-        console.info(`Window ${windowEvent.windowID} resized: ${event.data1} ${event.data2}`);
+      if (event.window.event === SDL.WINDOWEVENT_SHOWN) {
+        console.info(`Window ${event.window.windowID} shown.`);
+      } else if (event.window.event === SDL.WINDOWEVENT_MINIMIZED) {
+        console.info(`Window ${event.window.windowID} minimized.`);
+      } else if (event.window.event === SDL.WINDOWEVENT_RESTORED) {
+        console.info(`Window ${event.window.windowID} restored.`);
+      } else if (event.window.event === SDL.WINDOWEVENT_RESIZED) {
+        console.info(`Window ${event.window.windowID} resized: ${event.window.data1} ${event.window.data2}`);
         surface = SDL.GetWindowSurface(window);
         SDL.FillRect(
           surface,

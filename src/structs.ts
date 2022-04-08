@@ -8,8 +8,8 @@ export type Window = Deno.UnsafePointer;
 export class Point {
   public static SIZE_IN_BYTES = 8;
 
-  public _data: Uint8Array | Deno.UnsafePointer;
-  public _view: ArrayOrPointerView;
+  private _data: Uint8Array | Deno.UnsafePointer;
+  private _view: ArrayOrPointerView;
 
   constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Point>) {
     let props: Partial<Point> | null = null;
@@ -53,8 +53,8 @@ export class Point {
 export class Rect {
   public static SIZE_IN_BYTES = 16;
 
-  public _data: Uint8Array | Deno.UnsafePointer;
-  public _view: ArrayOrPointerView;
+  private _data: Uint8Array | Deno.UnsafePointer;
+  private _view: ArrayOrPointerView;
 
   constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Rect>) {
     let props: Partial<Rect> | null = null;
@@ -114,8 +114,8 @@ export class Rect {
 export class Surface {
   public static SIZE_IN_BYTES = 96;
 
-  public _data: Deno.UnsafePointer;
-  public _view: ArrayOrPointerView;
+  private _data: Deno.UnsafePointer;
+  private _view: ArrayOrPointerView;
 
   constructor(data: Deno.UnsafePointer) {
     this._data = data;

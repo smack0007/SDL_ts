@@ -104,55 +104,56 @@ async function writeEvents(): Promise<void> {
   lines.push(`import { ArrayOrPointerView } from "./utils.ts";`);
   lines.push("");
 
-  const eventMembersMap: Record<string, CodeGenStructMember> = {};
+  for (const [eventName, event] of Object.entries(events)) {
+    const className = shortenName(eventName);
+    lines.push(`export class ${className} {`);
+    lines.push("\tconstructor(private _view: ArrayOrPointerView) {}");
+    lines.push("");
 
-  for (const eventName of Object.keys(events)) {
-    const shortEventName = shortenName(eventName);
-    lines.push(`export interface ${shortEventName} {`);
-
-    for (const memberName of Object.keys(events[eventName].members)) {
+    for (const [memberName, member] of Object.entries(event.members)) {
       if (memberName.startsWith("padding")) {
         continue;
       }
 
-      const memberType = mapStructMemberType(events[eventName].members[memberName]);
-      lines.push(`\t${memberName}: ${memberType};`);
+      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
 
-      eventMembersMap[memberName] = events[eventName].members[memberName];
+      const dataViewMethod = dataViewGetMethods[member.type];
+
+      if (dataViewMethod === undefined) {
+        console.error(`dataViewMethods is missing ${member.type}.`);
+      }
+
+      const length = 0;
+      lines.push(
+        `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
+      );
+      lines.push("\t}");
+      lines.push("");
     }
 
     lines.push("}");
     lines.push("");
   }
 
-  const eventTypeNames = Object.keys(events).map(shortenName).join(", ");
-  lines.push(`export class Event implements ${eventTypeNames} {
-  public _data = new Uint8Array(64);
-  public _view = new ArrayOrPointerView(this._data);
+  lines.push(`export class Event {
+  private _data = new Uint8Array(64);
+  private _view = new ArrayOrPointerView(this._data);
 
   public get pointer(): Deno.UnsafePointer {
     return Deno.UnsafePointer.of(this._data);
   }
 
+  public get type(): number {
+    return this._view.getUint32(0);
+  }
+
 `);
 
-  const eventMembers = Object.entries(eventMembersMap);
-  eventMembers.sort(sortStructMembers);
-
-  for (const [memberName, member] of eventMembers) {
-    lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
-
-    const dataViewMethod = dataViewGetMethods[member.type];
-
-    if (dataViewMethod === undefined) {
-      console.error(`dataViewMethods is missing ${member.type}.`);
-    }
-
-    const length = 0;
-    lines.push(
-      `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
-    );
-    lines.push("\t}");
+  for (const eventName of Object.keys(events)) {
+    // TODO: This won't work longterm. There should be some property of the
+    // event that says what this name should be.
+    const propName = shortenName(eventName).slice(0, -"Event".length).toLowerCase();
+    lines.push(`public readonly ${propName} = new ${shortenName(eventName)}(this._view);`);
     lines.push("");
   }
 
@@ -182,8 +183,8 @@ async function writeStructs(): Promise<void> {
 
     if (struct.allocatable) {
       lines.push(`
-  public _data: Uint8Array | Deno.UnsafePointer;
-  public _view: ArrayOrPointerView;
+  private _data: Uint8Array | Deno.UnsafePointer;
+  private _view: ArrayOrPointerView;
 
   constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<${className}>) {
     let props: Partial<${className}> | null = null;
@@ -209,8 +210,8 @@ async function writeStructs(): Promise<void> {
 `);
     } else {
       lines.push(`
-  public _data: Deno.UnsafePointer;
-  public _view: ArrayOrPointerView;
+  private _data: Deno.UnsafePointer;
+  private _view: ArrayOrPointerView;
 
   constructor(data: Deno.UnsafePointer) {    
     this._data = data;
