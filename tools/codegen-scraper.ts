@@ -278,8 +278,14 @@ function guessFFIType(type: string): string {
     case "Uint8":
       return "u8";
 
+    case "Uint16":
+      return "u16";
+
     case "Uint32":
       return "u32";
+
+    case "Uint64":
+      return "u64";
   }
 
   return type;

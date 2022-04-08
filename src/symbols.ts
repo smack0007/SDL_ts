@@ -11,14 +11,20 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_FillRect: Deno.ForeignFunction;
   SDL_FreeSurface: Deno.ForeignFunction;
   SDL_GetError: Deno.ForeignFunction;
+  SDL_GetSystemRAM: Deno.ForeignFunction;
+  SDL_GetTicks: Deno.ForeignFunction;
+  SDL_GetTicks64: Deno.ForeignFunction;
   SDL_GetWindowSurface: Deno.ForeignFunction;
   SDL_Init: Deno.ForeignFunction;
   SDL_LoadBMP_RW: Deno.ForeignFunction;
   SDL_LockSurface: Deno.ForeignFunction;
   SDL_MapRGB: Deno.ForeignFunction;
   SDL_MapRGBA: Deno.ForeignFunction;
+  SDL_MaximizeWindow: Deno.ForeignFunction;
+  SDL_MinimizeWindow: Deno.ForeignFunction;
   SDL_PollEvent: Deno.ForeignFunction;
   SDL_Quit: Deno.ForeignFunction;
+  SDL_RestoreWindow: Deno.ForeignFunction;
   SDL_RWFromFile: Deno.ForeignFunction;
   SDL_UnlockSurface: Deno.ForeignFunction;
   SDL_UpdateWindowSurface: Deno.ForeignFunction;
@@ -108,6 +114,18 @@ export const symbols: Symbols = {
     parameters: [],
     result: "pointer", /* char* */
   },
+  SDL_GetSystemRAM: {
+    parameters: [],
+    result: "i32", /* int */
+  },
+  SDL_GetTicks: {
+    parameters: [],
+    result: "u32", /* Uint32 */
+  },
+  SDL_GetTicks64: {
+    parameters: [],
+    result: "u64", /* Uint64 */
+  },
   SDL_GetWindowSurface: {
     parameters: [
       "pointer", /* SDL_Window* window */
@@ -152,6 +170,18 @@ export const symbols: Symbols = {
     ],
     result: "u32", /* Uint32 */
   },
+  SDL_MaximizeWindow: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+    ],
+    result: "void", /* void */
+  },
+  SDL_MinimizeWindow: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+    ],
+    result: "void", /* void */
+  },
   SDL_PollEvent: {
     parameters: [
       "pointer", /* SDL_Event* event */
@@ -160,6 +190,12 @@ export const symbols: Symbols = {
   },
   SDL_Quit: {
     parameters: [],
+    result: "void", /* void */
+  },
+  SDL_RestoreWindow: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+    ],
     result: "void", /* void */
   },
   SDL_RWFromFile: {

@@ -258,6 +258,30 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_GetSystemRAM: {
+    parameters: {},
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_GetTicks: {
+    parameters: {},
+    result: {
+      nativeType: "Uint32",
+      type: "u32",
+    },
+  },
+
+  SDL_GetTicks64: {
+    parameters: {},
+    result: {
+      nativeType: "Uint64",
+      type: "u64",
+    },
+  },
+
   SDL_GetWindowSurface: {
     parameters: {
       window: {
@@ -368,6 +392,32 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_MaximizeWindow: {
+    parameters: {
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
+  SDL_MinimizeWindow: {
+    parameters: {
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
   SDL_PollEvent: {
     parameters: {
       event: {
@@ -383,6 +433,19 @@ export const functions: Record<string, CodeGenFunction> = {
 
   SDL_Quit: {
     parameters: {},
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
+  SDL_RestoreWindow: {
+    parameters: {
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
+    },
     result: {
       nativeType: "void",
       type: "void",

@@ -3,6 +3,7 @@ import * as SDL from "../mod.ts";
 SDL.Init(SDL.INIT_VIDEO, "../ext/SDL/lib/x64/SDL2.dll");
 
 console.info("SDL Initialized.");
+console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
 const window = SDL.CreateWindow(
   "Hello World!",
@@ -30,6 +31,9 @@ SDL.UpdateWindowSurface(window);
 
 const event = new SDL.Event();
 
+SDL.MinimizeWindow(window);
+SDL.RestoreWindow(window);
+
 let done = false;
 while (!done) {
   while (SDL.PollEvent(event) != 0) {
@@ -56,6 +60,7 @@ while (!done) {
     }
   }
   SDL.Delay(100);
+  console.info(SDL.GetTicks64());
 }
 
 console.info("Destroying SDL Window...");

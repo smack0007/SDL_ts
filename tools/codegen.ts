@@ -488,6 +488,8 @@ const context: SDLContext = {
     if (returnType !== "void") {
       if (isFunctionParamStruct(func.result) || returnType === "string") {
         lines.push(`\t) as Deno.UnsafePointer);`);
+      } else if (returnType === "bigint") {
+        lines.push(`\t) as unknown as ${returnType};`);
       } else {
         lines.push(`\t) as ${returnType};`);
       }

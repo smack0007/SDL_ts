@@ -146,6 +146,18 @@ export function GetError(): string {
   return fromCString(context.symbols.SDL_GetError() as Deno.UnsafePointer);
 }
 
+export function GetSystemRAM(): number {
+  return context.symbols.SDL_GetSystemRAM() as number;
+}
+
+export function GetTicks(): number {
+  return context.symbols.SDL_GetTicks() as number;
+}
+
+export function GetTicks64(): bigint {
+  return context.symbols.SDL_GetTicks64() as unknown as bigint;
+}
+
 export function GetWindowSurface(
   window: Window,
 ): Surface {
@@ -214,6 +226,22 @@ export function MapRGBA(
   ) as number;
 }
 
+export function MaximizeWindow(
+  window: Window,
+): void {
+  context.symbols.SDL_MaximizeWindow(
+    window,
+  );
+}
+
+export function MinimizeWindow(
+  window: Window,
+): void {
+  context.symbols.SDL_MinimizeWindow(
+    window,
+  );
+}
+
 export function PollEvent(
   event: Event,
 ): number {
@@ -225,6 +253,14 @@ export function PollEvent(
 export function Quit(): void {
   context.symbols.SDL_Quit();
   context.library.close();
+}
+
+export function RestoreWindow(
+  window: Window,
+): void {
+  context.symbols.SDL_RestoreWindow(
+    window,
+  );
 }
 
 export function RWFromFile(
