@@ -27,6 +27,7 @@ async function main(): Promise<void> {
   await writeStructs();
   await writeSymbols();
   await writeFunctions();
+  await writeMod();
 }
 
 function createLines(): string[] {
@@ -502,4 +503,44 @@ const context: SDLContext = {
   }
 
   await writeLinesToFile("../src/functions.ts", lines);
+}
+
+function underscoreToCamelCase(value: string): string {
+  return value
+    .split("_")
+    .map((val, index) => {
+      if (index === 0) {
+        return val;
+      }
+
+      return val.substring(0, 1).toUpperCase() + val.substring(1);
+    })
+    .join("");
+}
+
+async function writeMod(): Promise<void> {
+  const lines = createLines();
+
+  const modulesToExport: string[] = [];
+
+  for await (const entry of Deno.readDir("../src")) {
+    if (!entry.isFile) {
+      continue;
+    }
+    const variableName = underscoreToCamelCase(entry.name.slice(0, -".ts".length));
+    lines.push(`import * as ${variableName} from "./src/${entry.name}";`);
+    modulesToExport.push(variableName);
+  }
+
+  lines.push("");
+  lines.push("export default {");
+
+  for (const module of modulesToExport) {
+    lines.push(`...${module},`);
+  }
+
+  lines.push("};");
+  lines.push("");
+
+  await writeLinesToFile("../mod.ts", lines);
 }
