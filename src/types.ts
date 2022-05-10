@@ -1,6 +1,4 @@
-export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
-
-type TypedArray =
+export type TypedArray =
   | Int8Array
   | Uint8Array
   | Int16Array

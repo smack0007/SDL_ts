@@ -4,7 +4,7 @@ import { Event } from "./events.ts";
 import { Point, Rect, RWops, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode } from "./types.ts";
-import { fromCString, NULL_POINTER, toCString } from "./utils.ts";
+import { fromCString, NULL_POINTER, toCString } from "../utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;

@@ -1,4 +1,4 @@
-import SDL from "../mod.ts";
+import { SDL } from "../mod.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;

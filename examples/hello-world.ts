@@ -1,4 +1,4 @@
-import SDL from "../mod.ts";
+import { SDL } from "../mod.ts";
 
 SDL.Init(SDL.INIT_VIDEO, "../ext/SDL/lib/x64/SDL2.dll");
 

@@ -27,7 +27,6 @@ async function main(): Promise<void> {
   await writeStructs();
   await writeSymbols();
   await writeFunctions();
-  await writeMod();
 }
 
 function createLines(): string[] {
@@ -62,7 +61,7 @@ async function writeEnums(): Promise<void> {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/enums.ts", lines);
+  await writeLinesToFile("../src/SDL/enums.ts", lines);
 }
 
 function mapStructMemberType(member: CodeGenStructMember): string {
@@ -102,7 +101,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView } from "./utils.ts";`);
+  lines.push(`import { ArrayOrPointerView } from "../utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -161,13 +160,13 @@ async function writeEvents(): Promise<void> {
   lines.push("}");
   lines.push("");
 
-  await writeLinesToFile("../src/events.ts", lines);
+  await writeLinesToFile("../src/SDL/events.ts", lines);
 }
 
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView } from "./utils.ts"`);
+  lines.push(`import { ArrayOrPointerView } from "../utils.ts"`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -293,7 +292,7 @@ async function writeStructs(): Promise<void> {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/structs.ts", lines);
+  await writeLinesToFile("../src/SDL/structs.ts", lines);
 }
 
 async function writeSymbols(): Promise<void> {
@@ -334,7 +333,7 @@ async function writeSymbols(): Promise<void> {
   lines.push("};");
   lines.push("");
 
-  await writeLinesToFile("../src/symbols.ts", lines);
+  await writeLinesToFile("../src/SDL/symbols.ts", lines);
 }
 
 function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
@@ -410,7 +409,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode } from "./types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, toCString } from "./utils.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, toCString } from "../utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -502,45 +501,5 @@ const context: SDLContext = {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/functions.ts", lines);
-}
-
-function underscoreToCamelCase(value: string): string {
-  return value
-    .split("_")
-    .map((val, index) => {
-      if (index === 0) {
-        return val;
-      }
-
-      return val.substring(0, 1).toUpperCase() + val.substring(1);
-    })
-    .join("");
-}
-
-async function writeMod(): Promise<void> {
-  const lines = createLines();
-
-  const modulesToExport: string[] = [];
-
-  for await (const entry of Deno.readDir("../src")) {
-    if (!entry.isFile) {
-      continue;
-    }
-    const variableName = underscoreToCamelCase(entry.name.slice(0, -".ts".length));
-    lines.push(`import * as ${variableName} from "./src/${entry.name}";`);
-    modulesToExport.push(variableName);
-  }
-
-  lines.push("");
-  lines.push("export default {");
-
-  for (const module of modulesToExport) {
-    lines.push(`...${module},`);
-  }
-
-  lines.push("};");
-  lines.push("");
-
-  await writeLinesToFile("../mod.ts", lines);
+  await writeLinesToFile("../src/SDL/functions.ts", lines);
 }

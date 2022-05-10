@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView } from "./utils.ts";
+import { ArrayOrPointerView } from "../utils.ts";
 
 export class CommonEvent {
   constructor(private _view: ArrayOrPointerView) {}
