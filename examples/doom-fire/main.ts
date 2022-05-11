@@ -1,4 +1,4 @@
-import { SDL } from "../mod.ts";
+import SDL from "../../mod.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -48,7 +48,7 @@ const FIRE_COLORS = [
 ];
 
 function main(): number {
-  SDL.Init(SDL.INIT_VIDEO, "../ext/SDL/lib/x64/SDL2.dll");
+  SDL.Init(SDL.INIT_VIDEO, "../../ext/SDL/lib/x64/SDL2.dll");
 
   const window = SDL.CreateWindow(
     "Doom Fire",
@@ -66,7 +66,7 @@ function main(): number {
 
   const frontBuffer = SDL.GetWindowSurface(window);
 
-  const denoSurface = SDL.LoadBMP("../assets/jurassicDeno.bmp");
+  const denoSurface = SDL.LoadBMP("../../assets/jurassicDeno.bmp");
 
   const firePixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
   const fireSurface = SDL.CreateRGBSurfaceFrom(
