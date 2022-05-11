@@ -1,6 +1,7 @@
 import SDL from "../../mod.ts";
+import { SDL_LIB_PATH } from "../paths.ts";
 
-SDL.Init(SDL.INIT_VIDEO, "../../ext/SDL/lib/x64/SDL2.dll");
+SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
 console.info("SDL Initialized.");
 console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
