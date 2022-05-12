@@ -186,21 +186,43 @@ async function writeStructs(): Promise<void> {
   private _data: Uint8Array | Deno.UnsafePointer;
   private _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<${className}>) {
-    let props: Partial<${className}> | null = null;
-    
-    if (!data) {
-      data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
-      props = data;
-      data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    }
+  constructor();
+  constructor(data: Uint8Array);
+  constructor(data: Deno.UnsafePointer);
+  constructor(data: Partial<${className}>);`);
 
-    this._data = data;
-    this._view = new ArrayOrPointerView(this._data);
+      const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
+        `${memberName}: ${mapStructMemberType(member)}`
+      ).join(", ");
+      lines.push(`constructor(${constructorParams});`);
 
-    if (props !== null) {
-      Object.assign(this, props);
+      const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
+      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
+        `, _${index + 2}?: ${mapStructMemberType(member)}`
+      ).join("");
+      lines.push(
+        `constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+      );
+
+      const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
+        `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
+      ).join("\n");
+
+      lines.push(`
+    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+      this._data = _1;
+      this._view = new ArrayOrPointerView(this._data);
+    } else {
+      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+      this._view = new ArrayOrPointerView(this._data);
+
+      if (_1 !== undefined) {
+        if (_2 === undefined) {
+          Object.assign(this, _1);
+        } else {
+          ${assignMemmbers}
+        }
+      }
     }
   }
 
@@ -502,17 +524,4 @@ const context: SDLContext = {
   }
 
   await writeLinesToFile("../src/functions.ts", lines);
-}
-
-function underscoreToCamelCase(value: string): string {
-  return value
-    .split("_")
-    .map((val, index) => {
-      if (index === 0) {
-        return val;
-      }
-
-      return val.substring(0, 1).toUpperCase() + val.substring(1);
-    })
-    .join("");
 }

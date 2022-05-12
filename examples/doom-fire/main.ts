@@ -82,7 +82,7 @@ function main(): number {
     0xFF000000,
   );
 
-  const flamesRect = new SDL.Rect({ x: 0, y: HALF_WINDOW_HEIGHT, w: frontBuffer.w, h: HALF_WINDOW_HEIGHT });
+  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.w, HALF_WINDOW_HEIGHT);
 
   firePixels.fill(0x00000000);
 

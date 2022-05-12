@@ -55,11 +55,15 @@ function main(): number {
       }
     }
 
+    if (done) {
+      break;
+    }
+
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    const rect = new SDL.Rect({ x: 100, y: 100, w: 200, h: 400 });
+    const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderFillRect(renderer, rect);
 
     SDL.RenderPresent(renderer);

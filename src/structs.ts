@@ -11,21 +11,27 @@ export class Point {
   private _data: Uint8Array | Deno.UnsafePointer;
   private _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Point>) {
-    let props: Partial<Point> | null = null;
+  constructor();
+  constructor(data: Uint8Array);
+  constructor(data: Deno.UnsafePointer);
+  constructor(data: Partial<Point>);
+  constructor(x: number, y: number);
+  constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<Point> | number, _2?: number) {
+    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+      this._data = _1;
+      this._view = new ArrayOrPointerView(this._data);
+    } else {
+      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+      this._view = new ArrayOrPointerView(this._data);
 
-    if (!data) {
-      data = new Uint8Array(Point.SIZE_IN_BYTES);
-    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
-      props = data;
-      data = new Uint8Array(Point.SIZE_IN_BYTES);
-    }
-
-    this._data = data;
-    this._view = new ArrayOrPointerView(this._data);
-
-    if (props !== null) {
-      Object.assign(this, props);
+      if (_1 !== undefined) {
+        if (_2 === undefined) {
+          Object.assign(this, _1);
+        } else {
+          this.x = _1 as number;
+          this.y = _2 as number;
+        }
+      }
     }
   }
 
@@ -56,21 +62,29 @@ export class Rect {
   private _data: Uint8Array | Deno.UnsafePointer;
   private _view: ArrayOrPointerView;
 
-  constructor(data?: Uint8Array | Deno.UnsafePointer | Partial<Rect>) {
-    let props: Partial<Rect> | null = null;
+  constructor();
+  constructor(data: Uint8Array);
+  constructor(data: Deno.UnsafePointer);
+  constructor(data: Partial<Rect>);
+  constructor(x: number, y: number, w: number, h: number);
+  constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<Rect> | number, _2?: number, _3?: number, _4?: number) {
+    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+      this._data = _1;
+      this._view = new ArrayOrPointerView(this._data);
+    } else {
+      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+      this._view = new ArrayOrPointerView(this._data);
 
-    if (!data) {
-      data = new Uint8Array(Rect.SIZE_IN_BYTES);
-    } else if (!(data instanceof Uint8Array) && !(data instanceof Deno.UnsafePointer)) {
-      props = data;
-      data = new Uint8Array(Rect.SIZE_IN_BYTES);
-    }
-
-    this._data = data;
-    this._view = new ArrayOrPointerView(this._data);
-
-    if (props !== null) {
-      Object.assign(this, props);
+      if (_1 !== undefined) {
+        if (_2 === undefined) {
+          Object.assign(this, _1);
+        } else {
+          this.x = _1 as number;
+          this.y = _2 as number;
+          this.w = _3 as number;
+          this.h = _4 as number;
+        }
+      }
     }
   }
 
