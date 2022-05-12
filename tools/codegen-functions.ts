@@ -252,6 +252,32 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_DestroyRenderer: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
+  SDL_DestroyTexture: {
+    parameters: {
+      texture: {
+        nativeType: "SDL_Texture*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
   SDL_DestroyWindow: {
     parameters: {
       window: {
@@ -510,6 +536,19 @@ export const functions: Record<string, CodeGenFunction> = {
       },
       rect: {
         nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_RenderFlush: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
         type: "pointer",
       },
     },

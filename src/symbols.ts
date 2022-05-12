@@ -9,6 +9,8 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_CreateTexture: Deno.ForeignFunction;
   SDL_CreateWindow: Deno.ForeignFunction;
   SDL_Delay: Deno.ForeignFunction;
+  SDL_DestroyRenderer: Deno.ForeignFunction;
+  SDL_DestroyTexture: Deno.ForeignFunction;
   SDL_DestroyWindow: Deno.ForeignFunction;
   SDL_FillRect: Deno.ForeignFunction;
   SDL_FreeSurface: Deno.ForeignFunction;
@@ -28,6 +30,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_Quit: Deno.ForeignFunction;
   SDL_RenderClear: Deno.ForeignFunction;
   SDL_RenderFillRect: Deno.ForeignFunction;
+  SDL_RenderFlush: Deno.ForeignFunction;
   SDL_RenderPresent: Deno.ForeignFunction;
   SDL_RestoreWindow: Deno.ForeignFunction;
   SDL_RWFromFile: Deno.ForeignFunction;
@@ -111,6 +114,18 @@ export const symbols: Symbols = {
   SDL_Delay: {
     parameters: [
       "u32", /* Uint32 ms */
+    ],
+    result: "void", /* void */
+  },
+  SDL_DestroyRenderer: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+    ],
+    result: "void", /* void */
+  },
+  SDL_DestroyTexture: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
     ],
     result: "void", /* void */
   },
@@ -226,6 +241,12 @@ export const symbols: Symbols = {
     parameters: [
       "pointer", /* SDL_Renderer* renderer */
       "pointer", /* SDL_Rect* rect */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderFlush: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
     ],
     result: "i32", /* int */
   },

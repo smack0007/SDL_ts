@@ -142,6 +142,22 @@ export function Delay(
   );
 }
 
+export function DestroyRenderer(
+  renderer: Deno.UnsafePointer,
+): void {
+  context.symbols.SDL_DestroyRenderer(
+    renderer,
+  );
+}
+
+export function DestroyTexture(
+  texture: Deno.UnsafePointer,
+): void {
+  context.symbols.SDL_DestroyTexture(
+    texture,
+  );
+}
+
 export function DestroyWindow(
   window: Window,
 ): void {
@@ -298,6 +314,14 @@ export function RenderFillRect(
   return context.symbols.SDL_RenderFillRect(
     renderer,
     rect.pointer,
+  ) as number;
+}
+
+export function RenderFlush(
+  renderer: Deno.UnsafePointer,
+): number {
+  return context.symbols.SDL_RenderFlush(
+    renderer,
   ) as number;
 }
 

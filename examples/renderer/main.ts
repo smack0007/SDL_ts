@@ -71,6 +71,8 @@ function main(): number {
     SDL.Delay(16);
   }
 
+  SDL.DestroyTexture(texture);
+  SDL.DestroyRenderer(renderer);
   SDL.DestroyWindow(window);
   SDL.Quit();
 
