@@ -82,6 +82,27 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_CreateRenderer: {
+    parameters: {
+      window: {
+        nativeType: "SDL_Window*",
+        type: "pointer",
+      },
+      index: {
+        nativeType: "int",
+        type: "i32",
+      },
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Renderer*",
+      type: "pointer",
+    },
+  },
+
   SDL_CreateRGBSurfaceFrom: {
     parameters: {
       pixels: {
@@ -152,6 +173,35 @@ export const functions: Record<string, CodeGenFunction> = {
     },
     result: {
       nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
+  },
+
+  SDL_CreateTexture: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      format: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      access: {
+        nativeType: "int",
+        type: "i32",
+      },
+      w: {
+        nativeType: "int",
+        type: "i32",
+      },
+      h: {
+        nativeType: "int",
+        type: "i32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Texture*",
       type: "pointer",
     },
   },
@@ -439,6 +489,49 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_RenderClear: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_RenderFillRect: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      rect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_RenderPresent: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
+    },
+  },
+
   SDL_RestoreWindow: {
     parameters: {
       window: {
@@ -467,6 +560,35 @@ export const functions: Record<string, CodeGenFunction> = {
     result: {
       nativeType: "SDL_RWops*",
       type: "pointer",
+    },
+  },
+
+  SDL_SetRenderDrawColor: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      r: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      g: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      b: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+      a: {
+        nativeType: "Uint8",
+        type: "u8",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
     },
   },
 

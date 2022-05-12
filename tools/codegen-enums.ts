@@ -14,7 +14,7 @@ export const enums: Record<string, Record<string, string>> = {
     SDL_BITMAPORDER_4321: "1",
     SDL_BITMAPORDER_1234: "2",
   },
-    
+
   SDL_EventType: {
     SDL_FIRSTEVENT: "0",
     SDL_QUIT: "0x100",
@@ -111,7 +111,7 @@ export const enums: Record<string, Record<string, string>> = {
     SDL_PACKEDORDER_BGRX: "6",
     SDL_PACKEDORDER_ABGR: "7",
     SDL_PACKEDORDER_BGRA: "8",
-  },  
+  },
 
   SDL_PixelType: {
     SDL_PIXELTYPE_UNKNOWN: "0",
@@ -126,6 +126,37 @@ export const enums: Record<string, Record<string, string>> = {
     SDL_PIXELTYPE_ARRAYU32: "9",
     SDL_PIXELTYPE_ARRAYF16: "10",
     SDL_PIXELTYPE_ARRAYF32: "11",
+  },
+
+  SDL_RendererFlags: {
+    SDL_RENDERER_SOFTWARE: "0x00000001",
+    SDL_RENDERER_ACCELERATED: "0x00000002",
+    SDL_RENDERER_PRESENTVSYNC: "0x00000004",
+    SDL_RENDERER_TARGETTEXTURE: "0x00000008",
+  },
+
+  SDL_RendererFlip: {
+    SDL_FLIP_NONE: "0x00000000",
+    SDL_FLIP_HORIZONTAL: "0x00000001",
+    SDL_FLIP_VERTICAL: "0x00000002",
+  },
+
+  SDL_ScaleMode: {
+    SDL_ScaleModeNearest: "0",
+    SDL_ScaleModeLinear: "1",
+    SDL_ScaleModeBest: "2",
+  },
+
+  SDL_TextureAccess: {
+    SDL_TEXTUREACCESS_STATIC: "0",
+    SDL_TEXTUREACCESS_STREAMING: "1",
+    SDL_TEXTUREACCESS_TARGET: "2",
+  },
+
+  SDL_TextureModulate: {
+    SDL_TEXTUREMODULATE_NONE: "0x00000000",
+    SDL_TEXTUREMODULATE_COLOR: "0x00000001",
+    SDL_TEXTUREMODULATE_ALPHA: "0x00000002",
   },
 
   SDL_WindowEventID: {

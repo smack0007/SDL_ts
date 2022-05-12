@@ -20,6 +20,7 @@
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-read --allow-write ./codegen.ts",
     "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write --allow-run ./codegen-scraper.ts",
     "run-doom-fire": "cd ./examples/doom-fire && deno run --unstable --allow-ffi ./main.ts",
-    "run-hello-world": "cd ./examples/hello-world && deno run --unstable --allow-ffi ./main.ts"
+    "run-hello-world": "cd ./examples/hello-world && deno run --unstable --allow-ffi ./main.ts",
+    "run-renderer": "cd ./examples/renderer && deno run --unstable --allow-ffi ./main.ts"
   }
 }

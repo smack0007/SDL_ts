@@ -48,6 +48,18 @@ export function BlitSurface(
   ) as number;
 }
 
+export function CreateRenderer(
+  window: Window,
+  index: number,
+  flags: number,
+): Deno.UnsafePointer {
+  return context.symbols.SDL_CreateRenderer(
+    window,
+    index,
+    flags,
+  ) as Deno.UnsafePointer;
+}
+
 export function CreateRGBSurfaceFrom(
   pixels: Deno.UnsafePointer,
   width: number,
@@ -86,6 +98,22 @@ export function CreateRGBSurfaceWithFormat(
     depth,
     format,
   ) as Deno.UnsafePointer);
+}
+
+export function CreateTexture(
+  renderer: Deno.UnsafePointer,
+  format: number,
+  access: number,
+  w: number,
+  h: number,
+): Deno.UnsafePointer {
+  return context.symbols.SDL_CreateTexture(
+    renderer,
+    format,
+    access,
+    w,
+    h,
+  ) as Deno.UnsafePointer;
 }
 
 export function CreateWindow(
@@ -255,6 +283,32 @@ export function Quit(): void {
   context.library.close();
 }
 
+export function RenderClear(
+  renderer: Deno.UnsafePointer,
+): number {
+  return context.symbols.SDL_RenderClear(
+    renderer,
+  ) as number;
+}
+
+export function RenderFillRect(
+  renderer: Deno.UnsafePointer,
+  rect: Rect,
+): number {
+  return context.symbols.SDL_RenderFillRect(
+    renderer,
+    rect.pointer,
+  ) as number;
+}
+
+export function RenderPresent(
+  renderer: Deno.UnsafePointer,
+): void {
+  context.symbols.SDL_RenderPresent(
+    renderer,
+  );
+}
+
 export function RestoreWindow(
   window: Window,
 ): void {
@@ -271,6 +325,22 @@ export function RWFromFile(
     toCString(file),
     toCString(mode),
   ) as RWops;
+}
+
+export function SetRenderDrawColor(
+  renderer: Deno.UnsafePointer,
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+): number {
+  return context.symbols.SDL_SetRenderDrawColor(
+    renderer,
+    r,
+    g,
+    b,
+    a,
+  ) as number;
 }
 
 export function UnlockSurface(

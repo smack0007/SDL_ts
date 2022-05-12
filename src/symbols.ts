@@ -3,8 +3,10 @@
 export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_UpperBlitScaled: Deno.ForeignFunction;
   SDL_UpperBlit: Deno.ForeignFunction;
+  SDL_CreateRenderer: Deno.ForeignFunction;
   SDL_CreateRGBSurfaceFrom: Deno.ForeignFunction;
   SDL_CreateRGBSurfaceWithFormat: Deno.ForeignFunction;
+  SDL_CreateTexture: Deno.ForeignFunction;
   SDL_CreateWindow: Deno.ForeignFunction;
   SDL_Delay: Deno.ForeignFunction;
   SDL_DestroyWindow: Deno.ForeignFunction;
@@ -24,8 +26,12 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_MinimizeWindow: Deno.ForeignFunction;
   SDL_PollEvent: Deno.ForeignFunction;
   SDL_Quit: Deno.ForeignFunction;
+  SDL_RenderClear: Deno.ForeignFunction;
+  SDL_RenderFillRect: Deno.ForeignFunction;
+  SDL_RenderPresent: Deno.ForeignFunction;
   SDL_RestoreWindow: Deno.ForeignFunction;
   SDL_RWFromFile: Deno.ForeignFunction;
+  SDL_SetRenderDrawColor: Deno.ForeignFunction;
   SDL_UnlockSurface: Deno.ForeignFunction;
   SDL_UpdateWindowSurface: Deno.ForeignFunction;
 }
@@ -48,6 +54,14 @@ export const symbols: Symbols = {
       "pointer", /* SDL_Rect* dstrect */
     ],
     result: "i32", /* int */
+  },
+  SDL_CreateRenderer: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+      "i32", /* int index */
+      "u32", /* Uint32 flags */
+    ],
+    result: "pointer", /* SDL_Renderer* */
   },
   SDL_CreateRGBSurfaceFrom: {
     parameters: [
@@ -72,6 +86,16 @@ export const symbols: Symbols = {
       "u32", /* Uint32 format */
     ],
     result: "pointer", /* SDL_Surface* */
+  },
+  SDL_CreateTexture: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "u32", /* Uint32 format */
+      "i32", /* int access */
+      "i32", /* int w */
+      "i32", /* int h */
+    ],
+    result: "pointer", /* SDL_Texture* */
   },
   SDL_CreateWindow: {
     parameters: [
@@ -192,6 +216,25 @@ export const symbols: Symbols = {
     parameters: [],
     result: "void", /* void */
   },
+  SDL_RenderClear: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderFillRect: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Rect* rect */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderPresent: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+    ],
+    result: "void", /* void */
+  },
   SDL_RestoreWindow: {
     parameters: [
       "pointer", /* SDL_Window* window */
@@ -204,6 +247,16 @@ export const symbols: Symbols = {
       "pointer", /* char* mode */
     ],
     result: "pointer", /* SDL_RWops* */
+  },
+  SDL_SetRenderDrawColor: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "u8", /* Uint8 r */
+      "u8", /* Uint8 g */
+      "u8", /* Uint8 b */
+      "u8", /* Uint8 a */
+    ],
+    result: "i32", /* int */
   },
   SDL_UnlockSurface: {
     parameters: [

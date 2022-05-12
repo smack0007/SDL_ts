@@ -70,6 +70,20 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": ["$deno"]
+    },
+    {
+      "label": "Run Renderer",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run-renderer"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
     }
   ]
 }

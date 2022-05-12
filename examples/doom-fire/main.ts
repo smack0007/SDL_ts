@@ -91,7 +91,6 @@ function main(): number {
   }
 
   const event = new SDL.Event();
-
   let done = false;
   while (!done) {
     while (SDL.PollEvent(event) != 0) {

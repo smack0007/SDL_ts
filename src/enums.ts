@@ -123,6 +123,32 @@ export const PIXELTYPE_ARRAYU32 = 9;
 export const PIXELTYPE_ARRAYF16 = 10;
 export const PIXELTYPE_ARRAYF32 = 11;
 
+// RendererFlags
+export const RENDERER_SOFTWARE = 0x00000001;
+export const RENDERER_ACCELERATED = 0x00000002;
+export const RENDERER_PRESENTVSYNC = 0x00000004;
+export const RENDERER_TARGETTEXTURE = 0x00000008;
+
+// RendererFlip
+export const FLIP_NONE = 0x00000000;
+export const FLIP_HORIZONTAL = 0x00000001;
+export const FLIP_VERTICAL = 0x00000002;
+
+// ScaleMode
+export const ScaleModeNearest = 0;
+export const ScaleModeLinear = 1;
+export const ScaleModeBest = 2;
+
+// TextureAccess
+export const TEXTUREACCESS_STATIC = 0;
+export const TEXTUREACCESS_STREAMING = 1;
+export const TEXTUREACCESS_TARGET = 2;
+
+// TextureModulate
+export const TEXTUREMODULATE_NONE = 0x00000000;
+export const TEXTUREMODULATE_COLOR = 0x00000001;
+export const TEXTUREMODULATE_ALPHA = 0x00000002;
+
 // WindowEventID
 export const WINDOWEVENT_NONE = 0;
 export const WINDOWEVENT_SHOWN = 1;
