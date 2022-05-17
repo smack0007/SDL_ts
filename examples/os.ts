@@ -1,1 +1,1 @@
-export const isWindows = Deno.build.os === "windows";
+export const IS_WINDOWS = Deno.build.os === "windows";
