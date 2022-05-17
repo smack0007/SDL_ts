@@ -334,9 +334,12 @@ function outputFunction(capture: string): void {
       continue;
     }
 
-    if (paramName.startsWith("*")) {
+    if (paramName.startsWith("**")) {
+      paramType += "**";
+      paramName = paramName.substring("**".length);
+    } else if (paramName.startsWith("*")) {
       paramType += "*";
-      paramName = paramName.substring(1);
+      paramName = paramName.substring("*".length);
     }
 
     writePrintF(`\t\t${paramName}: {`);
