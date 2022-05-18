@@ -1,7 +1,9 @@
-# deno-sdl2-ffi
+# sdl2-ts
 
-[SDL2](https://www.libsdl.org/) bindings for [deno](https://deno.land/) via
-[FFI](https://deno.land/manual/runtime/ffi_api) (Foreign Function Interface).
+[SDL2](https://www.libsdl.org/) bindings for [TypeScript](https://www.typescriptlang.org/).
+
+Currently working via [deno](https://deno.land/) on Windows using [FFI](https://deno.land/manual/runtime/ffi_api)
+(Foreign Function Interface).
 
 ## Goals
 
