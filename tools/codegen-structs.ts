@@ -27,6 +27,7 @@ export const opaqueStructs: string[] = [
   "SDL_PixelFormat", // TODO: Implement PixelFormat struct.
   "SDL_Renderer",
   "SDL_RWops",
+  "SDL_Texture",
   "SDL_Window",
 ];
 

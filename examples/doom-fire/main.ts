@@ -71,7 +71,7 @@ function main(): number {
 
   const firePixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
   const fireSurface = SDL.CreateRGBSurfaceFrom(
-    Deno.UnsafePointer.of(firePixels),
+    firePixels,
     FIRE_WIDTH,
     FIRE_HEIGHT,
     32,

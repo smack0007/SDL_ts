@@ -1,9 +1,9 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { Event } from "./events.ts";
-import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Window } from "./structs.ts";
+import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
-import { RWMode } from "./types.ts";
+import { RWMode, TypedArray } from "./types.ts";
 import { fromCString, NULL_POINTER, Pointer, PointerOrStruct, toCString } from "./utils.ts";
 
 interface SDLContext {
@@ -61,7 +61,7 @@ export function CreateRenderer(
 }
 
 export function CreateRGBSurfaceFrom(
-  pixels: Deno.UnsafePointer,
+  pixels: TypedArray,
   width: number,
   height: number,
   depth: number,
@@ -73,7 +73,7 @@ export function CreateRGBSurfaceFrom(
 ): Surface {
   return new Surface(
     new Pointer(context.symbols.SDL_CreateRGBSurfaceFrom(
-      pixels,
+      Deno.UnsafePointer.of(pixels),
       width,
       height,
       depth,
@@ -110,14 +110,14 @@ export function CreateTexture(
   access: number,
   w: number,
   h: number,
-): Deno.UnsafePointer {
-  return context.symbols.SDL_CreateTexture(
+): Pointer<Texture> {
+  return new Pointer<Texture>(context.symbols.SDL_CreateTexture(
     renderer._value,
     format,
     access,
     w,
     h,
-  ) as Deno.UnsafePointer;
+  ) as Deno.UnsafePointer);
 }
 
 export function CreateWindow(
@@ -155,10 +155,10 @@ export function DestroyRenderer(
 }
 
 export function DestroyTexture(
-  texture: Deno.UnsafePointer,
+  texture: Pointer<Texture>,
 ): void {
   context.symbols.SDL_DestroyTexture(
-    texture,
+    texture._value,
   );
 }
 

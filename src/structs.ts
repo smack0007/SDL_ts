@@ -42,6 +42,16 @@ export class RWops implements Struct {
   }
 }
 
+export class Texture implements Struct {
+  public static SIZE_IN_BYTES = 0;
+
+  constructor(private _data: Pointer<Texture>) {}
+
+  public get pointer(): Pointer<Texture> {
+    return this._data;
+  }
+}
+
 export class Window implements Struct {
   public static SIZE_IN_BYTES = 0;
 

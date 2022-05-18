@@ -40,7 +40,7 @@ function main(): number {
     WINDOW_HEIGHT,
   );
 
-  if (texture.value === 0n) {
+  if (texture.isNullPointer) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
     return 1;
   }

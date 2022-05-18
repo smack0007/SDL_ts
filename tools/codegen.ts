@@ -402,11 +402,15 @@ function isFunctionParamStruct(param: CodeGenFunctionParam): boolean {
   return Object.keys(structs).includes(structName);
 }
 
+function isFunctionParamVoidPointer(param: CodeGenFunctionParam): boolean {
+  return param.nativeType === "void*";
+}
+
 function mapFunctionReturnType(param: CodeGenFunctionParam): string {
   return mapFunctionParamType(param, true);
 }
 
-function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType: boolean = false): string {
+function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false): string {
   if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
     let structName = param.nativeType.substring("SDL_".length);
 
@@ -436,6 +440,9 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType: boolean
   switch (param.nativeType) {
     case "char*":
       return "string";
+
+    case "void*":
+      return "TypedArray";
   }
 
   switch (param.type) {
@@ -466,7 +473,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
-  lines.push(`import { RWMode } from "./types.ts";`);
+  lines.push(`import { RWMode, TypedArray } from "./types.ts";`);
   lines.push(`import { fromCString, NULL_POINTER, Pointer, PointerOrStruct, toCString } from "./utils.ts";`);
   lines.push("");
 
@@ -541,6 +548,8 @@ const context: SDLContext = {
         }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
+      } else if (isFunctionParamVoidPointer(param)) {
+        lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
       } else {
         lines.push(`\t\t${paramName},`);
       }
