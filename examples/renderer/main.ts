@@ -16,7 +16,7 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window.value === 0n) {
+  if (window._value.value === 0n) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
     return 1;
   }

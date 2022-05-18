@@ -1,10 +1,10 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { Event } from "./events.ts";
-import { Point, Rect, RWops, Surface, Window } from "./structs.ts";
+import { BlitMap, PixelFormat, Point, Rect, RWops, Surface, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode } from "./types.ts";
-import { fromCString, NULL_POINTER, toCString } from "./utils.ts";
+import { fromCString, NULL_POINTER, Pointer, toCString } from "./utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -27,10 +27,10 @@ export function BlitScaled(
   dstrect: Rect | null,
 ): number {
   return context.symbols.SDL_UpperBlitScaled(
-    src.pointer,
-    srcrect?.pointer ?? NULL_POINTER,
-    dst.pointer,
-    dstrect?.pointer ?? NULL_POINTER,
+    src.pointer._value,
+    srcrect?.pointer._value ?? NULL_POINTER,
+    dst.pointer._value,
+    dstrect?.pointer._value ?? NULL_POINTER,
   ) as number;
 }
 
@@ -41,10 +41,10 @@ export function BlitSurface(
   dstrect: Rect | null,
 ): number {
   return context.symbols.SDL_UpperBlit(
-    src.pointer,
-    srcrect?.pointer ?? NULL_POINTER,
-    dst.pointer,
-    dstrect?.pointer ?? NULL_POINTER,
+    src.pointer._value,
+    srcrect?.pointer._value ?? NULL_POINTER,
+    dst.pointer._value,
+    dstrect?.pointer._value ?? NULL_POINTER,
   ) as number;
 }
 
@@ -54,7 +54,7 @@ export function CreateRenderer(
   flags: number,
 ): Deno.UnsafePointer {
   return context.symbols.SDL_CreateRenderer(
-    window,
+    window._value,
     index,
     flags,
   ) as Deno.UnsafePointer;
@@ -71,17 +71,19 @@ export function CreateRGBSurfaceFrom(
   Bmask: number,
   Amask: number,
 ): Surface {
-  return new Surface(context.symbols.SDL_CreateRGBSurfaceFrom(
-    pixels,
-    width,
-    height,
-    depth,
-    pitch,
-    Rmask,
-    Gmask,
-    Bmask,
-    Amask,
-  ) as Deno.UnsafePointer);
+  return new Surface(
+    new Pointer(context.symbols.SDL_CreateRGBSurfaceFrom(
+      pixels,
+      width,
+      height,
+      depth,
+      pitch,
+      Rmask,
+      Gmask,
+      Bmask,
+      Amask,
+    ) as Deno.UnsafePointer),
+  );
 }
 
 export function CreateRGBSurfaceWithFormat(
@@ -91,13 +93,15 @@ export function CreateRGBSurfaceWithFormat(
   depth: number,
   format: number,
 ): Surface {
-  return new Surface(context.symbols.SDL_CreateRGBSurfaceWithFormat(
-    flags,
-    width,
-    height,
-    depth,
-    format,
-  ) as Deno.UnsafePointer);
+  return new Surface(
+    new Pointer(context.symbols.SDL_CreateRGBSurfaceWithFormat(
+      flags,
+      width,
+      height,
+      depth,
+      format,
+    ) as Deno.UnsafePointer),
+  );
 }
 
 export function CreateTexture(
@@ -124,14 +128,14 @@ export function CreateWindow(
   h: number,
   flags: number,
 ): Window {
-  return context.symbols.SDL_CreateWindow(
+  return new Pointer(context.symbols.SDL_CreateWindow(
     toCString(title),
     x,
     y,
     w,
     h,
     flags,
-  ) as Window;
+  ) as Deno.UnsafePointer);
 }
 
 export function Delay(
@@ -162,7 +166,7 @@ export function DestroyWindow(
   window: Window,
 ): void {
   context.symbols.SDL_DestroyWindow(
-    window,
+    window._value,
   );
 }
 
@@ -172,8 +176,8 @@ export function FillRect(
   color: number,
 ): number {
   return context.symbols.SDL_FillRect(
-    dst.pointer,
-    rect?.pointer ?? NULL_POINTER,
+    dst.pointer._value,
+    rect?.pointer._value ?? NULL_POINTER,
     color,
   ) as number;
 }
@@ -182,7 +186,7 @@ export function FreeSurface(
   surface: Surface,
 ): void {
   context.symbols.SDL_FreeSurface(
-    surface.pointer,
+    surface.pointer._value,
   );
 }
 
@@ -205,9 +209,11 @@ export function GetTicks64(): bigint {
 export function GetWindowSurface(
   window: Window,
 ): Surface {
-  return new Surface(context.symbols.SDL_GetWindowSurface(
-    window,
-  ) as Deno.UnsafePointer);
+  return new Surface(
+    new Pointer(context.symbols.SDL_GetWindowSurface(
+      window._value,
+    ) as Deno.UnsafePointer),
+  );
 }
 
 export function Init(flags: number, libraryPath?: string): number {
@@ -226,28 +232,30 @@ export function LoadBMP_RW(
   src: RWops,
   freesrc: number,
 ): Surface {
-  return new Surface(context.symbols.SDL_LoadBMP_RW(
-    src,
-    freesrc,
-  ) as Deno.UnsafePointer);
+  return new Surface(
+    new Pointer(context.symbols.SDL_LoadBMP_RW(
+      src._value,
+      freesrc,
+    ) as Deno.UnsafePointer),
+  );
 }
 
 export function LockSurface(
   surface: Surface,
 ): number {
   return context.symbols.SDL_LockSurface(
-    surface.pointer,
+    surface.pointer._value,
   ) as number;
 }
 
 export function MapRGB(
-  format: Deno.UnsafePointer,
+  format: PixelFormat,
   r: number,
   g: number,
   b: number,
 ): number {
   return context.symbols.SDL_MapRGB(
-    format,
+    format._value,
     r,
     g,
     b,
@@ -255,14 +263,14 @@ export function MapRGB(
 }
 
 export function MapRGBA(
-  format: Deno.UnsafePointer,
+  format: PixelFormat,
   r: number,
   g: number,
   b: number,
   a: number,
 ): number {
   return context.symbols.SDL_MapRGBA(
-    format,
+    format._value,
     r,
     g,
     b,
@@ -274,7 +282,7 @@ export function MaximizeWindow(
   window: Window,
 ): void {
   context.symbols.SDL_MaximizeWindow(
-    window,
+    window._value,
   );
 }
 
@@ -282,7 +290,7 @@ export function MinimizeWindow(
   window: Window,
 ): void {
   context.symbols.SDL_MinimizeWindow(
-    window,
+    window._value,
   );
 }
 
@@ -290,7 +298,7 @@ export function PollEvent(
   event: Event,
 ): number {
   return context.symbols.SDL_PollEvent(
-    event.pointer,
+    event.pointer._value,
   ) as number;
 }
 
@@ -313,7 +321,7 @@ export function RenderFillRect(
 ): number {
   return context.symbols.SDL_RenderFillRect(
     renderer,
-    rect.pointer,
+    rect.pointer._value,
   ) as number;
 }
 
@@ -337,7 +345,7 @@ export function RestoreWindow(
   window: Window,
 ): void {
   context.symbols.SDL_RestoreWindow(
-    window,
+    window._value,
   );
 }
 
@@ -345,10 +353,10 @@ export function RWFromFile(
   file: string,
   mode: RWMode,
 ): RWops {
-  return context.symbols.SDL_RWFromFile(
+  return new Pointer(context.symbols.SDL_RWFromFile(
     toCString(file),
     toCString(mode),
-  ) as RWops;
+  ) as Deno.UnsafePointer);
 }
 
 export function SetRenderDrawColor(
@@ -371,7 +379,7 @@ export function UnlockSurface(
   surface: Surface,
 ): void {
   context.symbols.SDL_UnlockSurface(
-    surface.pointer,
+    surface.pointer._value,
   );
 }
 
@@ -379,6 +387,6 @@ export function UpdateWindowSurface(
   window: Window,
 ): number {
   return context.symbols.SDL_UpdateWindowSurface(
-    window,
+    window._value,
   ) as number;
 }

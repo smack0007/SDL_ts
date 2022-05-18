@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView } from "./utils.ts";
+import { ArrayOrPointerView, Pointer } from "./utils.ts";
 
 export class CommonEvent {
   constructor(private _view: ArrayOrPointerView) {}
@@ -70,8 +70,8 @@ export class Event {
   private _data = new Uint8Array(64);
   private _view = new ArrayOrPointerView(this._data);
 
-  public get pointer(): Deno.UnsafePointer {
-    return Deno.UnsafePointer.of(this._data);
+  public get pointer(): Pointer<Event> {
+    return Pointer.of(this._data);
   }
 
   public get type(): number {

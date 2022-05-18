@@ -15,7 +15,7 @@ const window = SDL.CreateWindow(
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
-if (window.value === 0n) {
+if (window._value.value === 0n) { // TODO: Add isNullPointer property.
   console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }

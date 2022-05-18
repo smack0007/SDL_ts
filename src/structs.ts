@@ -1,23 +1,25 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView } from "./utils.ts";
+import { ArrayOrPointerView, Pointer } from "./utils.ts";
 
-export type RWops = Deno.UnsafePointer;
-export type Window = Deno.UnsafePointer;
+export type BlitMap = Pointer<unknown>;
+export type PixelFormat = Pointer<unknown>;
+export type RWops = Pointer<unknown>;
+export type Window = Pointer<unknown>;
 
 export class Point {
   public static SIZE_IN_BYTES = 8;
 
-  private _data: Uint8Array | Deno.UnsafePointer;
+  private _data: Uint8Array | Pointer<Point>;
   private _view: ArrayOrPointerView;
 
   constructor();
   constructor(data: Uint8Array);
-  constructor(data: Deno.UnsafePointer);
+  constructor(data: Pointer<Point>);
   constructor(data: Partial<Point>);
   constructor(x: number, y: number);
-  constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<Point> | number, _2?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+  constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | number, _2?: number) {
+    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
       this._data = _1;
       this._view = new ArrayOrPointerView(this._data);
     } else {
@@ -35,7 +37,7 @@ export class Point {
     }
   }
 
-  public get pointer(): Deno.UnsafePointer {
+  public get pointer(): Pointer<Point> {
     return this._view.pointer;
   }
 
@@ -59,16 +61,16 @@ export class Point {
 export class Rect {
   public static SIZE_IN_BYTES = 16;
 
-  private _data: Uint8Array | Deno.UnsafePointer;
+  private _data: Uint8Array | Pointer<Rect>;
   private _view: ArrayOrPointerView;
 
   constructor();
   constructor(data: Uint8Array);
-  constructor(data: Deno.UnsafePointer);
+  constructor(data: Pointer<Rect>);
   constructor(data: Partial<Rect>);
   constructor(x: number, y: number, w: number, h: number);
-  constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<Rect> | number, _2?: number, _3?: number, _4?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+  constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | number, _2?: number, _3?: number, _4?: number) {
+    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
       this._data = _1;
       this._view = new ArrayOrPointerView(this._data);
     } else {
@@ -88,7 +90,7 @@ export class Rect {
     }
   }
 
-  public get pointer(): Deno.UnsafePointer {
+  public get pointer(): Pointer<Rect> {
     return this._view.pointer;
   }
 
@@ -128,15 +130,15 @@ export class Rect {
 export class Surface {
   public static SIZE_IN_BYTES = 96;
 
-  private _data: Deno.UnsafePointer;
+  private _data: Pointer<Surface>;
   private _view: ArrayOrPointerView;
 
-  constructor(data: Deno.UnsafePointer) {
+  constructor(data: Pointer<Surface>) {
     this._data = data;
     this._view = new ArrayOrPointerView(this._data);
   }
 
-  public get pointer(): Deno.UnsafePointer {
+  public get pointer(): Pointer<Surface> {
     return this._data;
   }
 
@@ -144,8 +146,8 @@ export class Surface {
     return this._view.getUint32(0);
   }
 
-  public get format(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._view.getBigUint64(8));
+  public get format(): Pointer<PixelFormat> {
+    return new Pointer(this._view.getBigUint64(8));
   }
 
   public get w(): number {
@@ -160,28 +162,28 @@ export class Surface {
     return this._view.getInt32(24);
   }
 
-  public get pixels(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._view.getBigUint64(32));
+  public get pixels(): Pointer<void> {
+    return new Pointer(this._view.getBigUint64(32));
   }
 
-  public get userdata(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._view.getBigUint64(40));
+  public get userdata(): Pointer<void> {
+    return new Pointer(this._view.getBigUint64(40));
   }
 
   public get locked(): number {
     return this._view.getInt32(48);
   }
 
-  public get list_blitmap(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._view.getBigUint64(56));
+  public get list_blitmap(): Pointer<void> {
+    return new Pointer(this._view.getBigUint64(56));
   }
 
   public get clip_rect(): Rect {
     return new Rect(this._view.getArray(16, 64));
   }
 
-  public get map(): Deno.UnsafePointer {
-    return new Deno.UnsafePointer(this._view.getBigUint64(80));
+  public get map(): Pointer<BlitMap> {
+    return new Pointer(this._view.getBigUint64(80));
   }
 
   public get refcount(): number {

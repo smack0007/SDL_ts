@@ -1,3 +1,5 @@
+import { TypedArray } from "./types.ts";
+
 export const ENDIANNESS = (function (): "BE" | "LE" {
   const buffer = new ArrayBuffer(2);
   new DataView(buffer).setInt16(0, 256, true);
@@ -18,6 +20,22 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
+export class Pointer<T extends TypedArray | unknown> {
+  public readonly _value: Deno.UnsafePointer;
+
+  constructor(value: Deno.UnsafePointer | bigint) {
+    if (typeof value === "bigint") {
+      value = new Deno.UnsafePointer(value);
+    }
+
+    this._value = value;
+  }
+
+  public static of<T extends TypedArray>(data: T): Pointer<T> {
+    return new Pointer<T>(Deno.UnsafePointer.of(data));
+  }
+}
+
 export class ArrayOrPointerView {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
 
@@ -25,16 +43,16 @@ export class ArrayOrPointerView {
 
   public _dataView: DataView | Deno.UnsafePointerView;
 
-  constructor(public _data: Uint8Array | Deno.UnsafePointer) {
+  constructor(public _data: Uint8Array | Pointer<unknown>) {
     if (this._data instanceof Uint8Array) {
       this._dataView = new DataView(this._data.buffer);
     } else {
-      this._dataView = new Deno.UnsafePointerView(this._data);
+      this._dataView = new Deno.UnsafePointerView(this._data._value);
     }
   }
 
-  public get pointer(): Deno.UnsafePointer {
-    return this._data instanceof Deno.UnsafePointer ? this._data : Deno.UnsafePointer.of(this._data);
+  public get pointer(): Pointer<TypedArray | unknown> {
+    return this._data instanceof Pointer ? this._data : Pointer.of(this._data);
   }
 
   public getArray(byteLength: number, byteOffset: number): Uint8Array {

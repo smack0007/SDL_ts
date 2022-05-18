@@ -40,6 +40,14 @@ function shortenName(name: string): string {
   return name.startsWith("SDL_") ? name.substring("SDL_".length) : name;
 }
 
+function removePointerPostfix(name: string): string {
+  while (name.endsWith("*")) {
+    name = name.substring(0, name.length - 1);
+  }
+
+  return name;
+}
+
 function stripSDLPrefixes(value: string): string {
   return value.replaceAll("SDL_", "");
 }
@@ -101,7 +109,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView } from "./utils.ts";`);
+  lines.push(`import { ArrayOrPointerView, Pointer } from "./utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -139,8 +147,8 @@ async function writeEvents(): Promise<void> {
   private _data = new Uint8Array(64);
   private _view = new ArrayOrPointerView(this._data);
 
-  public get pointer(): Deno.UnsafePointer {
-    return Deno.UnsafePointer.of(this._data);
+  public get pointer(): Pointer<Event> {
+    return Pointer.of(this._data);
   }
 
   public get type(): number {
@@ -166,11 +174,11 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView } from "./utils.ts"`);
+  lines.push(`import { ArrayOrPointerView, Pointer } from "./utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
-    lines.push(`export type ${shortenName(structName)} = Deno.UnsafePointer;`);
+    lines.push(`export type ${shortenName(structName)} = Pointer<unknown>;`);
   }
 
   lines.push("");
@@ -183,12 +191,12 @@ async function writeStructs(): Promise<void> {
 
     if (struct.allocatable) {
       lines.push(`
-  private _data: Uint8Array | Deno.UnsafePointer;
+  private _data: Uint8Array | Pointer<${className}>;
   private _view: ArrayOrPointerView;
 
   constructor();
   constructor(data: Uint8Array);
-  constructor(data: Deno.UnsafePointer);
+  constructor(data: Pointer<${className}>);
   constructor(data: Partial<${className}>);`);
 
       const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
@@ -201,7 +209,7 @@ async function writeStructs(): Promise<void> {
         `, _${index + 2}?: ${mapStructMemberType(member)}`
       ).join("");
       lines.push(
-        `constructor(_1?: Uint8Array | Deno.UnsafePointer | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
       );
 
       const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
@@ -209,7 +217,7 @@ async function writeStructs(): Promise<void> {
       ).join("\n");
 
       lines.push(`
-    if (_1 instanceof Uint8Array || _1 instanceof Deno.UnsafePointer) {
+    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
       this._data = _1;
       this._view = new ArrayOrPointerView(this._data);
     } else {
@@ -226,21 +234,21 @@ async function writeStructs(): Promise<void> {
     }
   }
 
-  public get pointer(): Deno.UnsafePointer {
+  public get pointer(): Pointer<${className}> {
     return this._view.pointer;
   }
 `);
     } else {
       lines.push(`
-  private _data: Deno.UnsafePointer;
+  private _data: Pointer<${className}>;
   private _view: ArrayOrPointerView;
 
-  constructor(data: Deno.UnsafePointer) {    
+  constructor(data: Pointer<${className}>) {    
     this._data = data;
     this._view = new ArrayOrPointerView(this._data);
   }
 
-  public get pointer(): Deno.UnsafePointer {
+  public get pointer(): Pointer<${className}> {
     return this._data;
   }
 `);
@@ -256,7 +264,9 @@ async function writeStructs(): Promise<void> {
       let memberType = mapStructMemberType(member);
 
       if (member.type === "pointer") {
-        readOp += "new Deno.UnsafePointer(";
+        const subStructName = shortenName(removePointerPostfix(member.nativeType));
+        memberType = `Pointer<${subStructName}>`;
+        readOp += `new Pointer(`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -431,7 +441,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode } from "./types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, toCString } from "./utils.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, Pointer, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -479,7 +489,9 @@ const context: SDLContext = {
       let returnStatement = "\treturn ";
 
       if (isFunctionParamStruct(func.result)) {
-        returnStatement += `new ${mapFunctionParamType(func.result)}(`;
+        returnStatement += `new ${mapFunctionParamType(func.result)}(new Pointer(`;
+      } else if (isFunctionParamOpaqueStruct(func.result)) {
+        returnStatement += `new Pointer(`;
       } else if (returnType === "string") {
         returnStatement += "\t\tfromCString(";
       }
@@ -493,12 +505,12 @@ const context: SDLContext = {
     for (const [paramName, param] of Object.entries(func.parameters)) {
       const paramType = mapFunctionParamType(param);
       if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t${paramName},`);
+        lines.push(`\t\t${paramName}._value,`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
-          lines.push(`\t\t${paramName}?.pointer ?? NULL_POINTER,`);
+          lines.push(`\t\t${paramName}?.pointer._value ?? NULL_POINTER,`);
         } else {
-          lines.push(`\t\t${paramName}.pointer,`);
+          lines.push(`\t\t${paramName}.pointer._value,`);
         }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
@@ -508,7 +520,9 @@ const context: SDLContext = {
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamStruct(func.result) || returnType === "string") {
+      if (isFunctionParamStruct(func.result)) {
+        lines.push(`\t) as Deno.UnsafePointer));`);
+      } else if (isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
         lines.push(`\t) as Deno.UnsafePointer);`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
