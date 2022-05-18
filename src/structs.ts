@@ -1,13 +1,58 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView, Pointer } from "./utils.ts";
+import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";
 
-export type BlitMap = Pointer<unknown>;
-export type PixelFormat = Pointer<unknown>;
-export type RWops = Pointer<unknown>;
-export type Window = Pointer<unknown>;
+export class BlitMap implements Struct {
+  public static SIZE_IN_BYTES = 0;
 
-export class Point {
+  constructor(private _data: Pointer<BlitMap>) {}
+
+  public get pointer(): Pointer<BlitMap> {
+    return this._data;
+  }
+}
+
+export class PixelFormat implements Struct {
+  public static SIZE_IN_BYTES = 0;
+
+  constructor(private _data: Pointer<PixelFormat>) {}
+
+  public get pointer(): Pointer<PixelFormat> {
+    return this._data;
+  }
+}
+
+export class Renderer implements Struct {
+  public static SIZE_IN_BYTES = 0;
+
+  constructor(private _data: Pointer<Renderer>) {}
+
+  public get pointer(): Pointer<Renderer> {
+    return this._data;
+  }
+}
+
+export class RWops implements Struct {
+  public static SIZE_IN_BYTES = 0;
+
+  constructor(private _data: Pointer<RWops>) {}
+
+  public get pointer(): Pointer<RWops> {
+    return this._data;
+  }
+}
+
+export class Window implements Struct {
+  public static SIZE_IN_BYTES = 0;
+
+  constructor(private _data: Pointer<Window>) {}
+
+  public get pointer(): Pointer<Window> {
+    return this._data;
+  }
+}
+
+export class Point implements Struct {
   public static SIZE_IN_BYTES = 8;
 
   private _data: Uint8Array | Pointer<Point>;
@@ -58,7 +103,7 @@ export class Point {
   }
 }
 
-export class Rect {
+export class Rect implements Struct {
   public static SIZE_IN_BYTES = 16;
 
   private _data: Uint8Array | Pointer<Rect>;
@@ -127,7 +172,7 @@ export class Rect {
   }
 }
 
-export class Surface {
+export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
   private _data: Pointer<Surface>;
@@ -147,7 +192,7 @@ export class Surface {
   }
 
   public get format(): Pointer<PixelFormat> {
-    return new Pointer(this._view.getBigUint64(8));
+    return new Pointer<PixelFormat>(this._view.getBigUint64(8));
   }
 
   public get w(): number {
@@ -163,11 +208,11 @@ export class Surface {
   }
 
   public get pixels(): Pointer<void> {
-    return new Pointer(this._view.getBigUint64(32));
+    return new Pointer<void>(this._view.getBigUint64(32));
   }
 
   public get userdata(): Pointer<void> {
-    return new Pointer(this._view.getBigUint64(40));
+    return new Pointer<void>(this._view.getBigUint64(40));
   }
 
   public get locked(): number {
@@ -175,7 +220,7 @@ export class Surface {
   }
 
   public get list_blitmap(): Pointer<void> {
-    return new Pointer(this._view.getBigUint64(56));
+    return new Pointer<void>(this._view.getBigUint64(56));
   }
 
   public get clip_rect(): Rect {
@@ -183,7 +228,7 @@ export class Surface {
   }
 
   public get map(): Pointer<BlitMap> {
-    return new Pointer(this._view.getBigUint64(80));
+    return new Pointer<BlitMap>(this._view.getBigUint64(80));
   }
 
   public get refcount(): number {

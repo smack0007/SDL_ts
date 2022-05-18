@@ -20,7 +20,13 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
-export class Pointer<T extends TypedArray | unknown> {
+export interface Struct {
+  readonly pointer: Pointer<Struct>;
+}
+
+export type PointerData = TypedArray | Struct | void;
+
+export class Pointer<T extends PointerData> {
   public readonly _value: Deno.UnsafePointer;
 
   constructor(value: Deno.UnsafePointer | bigint) {
@@ -31,10 +37,25 @@ export class Pointer<T extends TypedArray | unknown> {
     this._value = value;
   }
 
-  public static of<T extends TypedArray>(data: T): Pointer<T> {
-    return new Pointer<T>(Deno.UnsafePointer.of(data));
+  // Used for PointerOrStruct scenarios.
+  public get pointer(): Pointer<T> {
+    return this;
+  }
+
+  public get isNullPointer(): boolean {
+    return this._value.value === 0n;
+  }
+
+  public static of<T extends PointerData>(value: T): Pointer<T> {
+    if ((value as unknown as Struct).pointer !== undefined) {
+      return (value as unknown as Struct).pointer;
+    }
+
+    return new Pointer<T>(Deno.UnsafePointer.of(value as TypedArray));
   }
 }
+
+export type PointerOrStruct<T extends PointerData> = Pointer<T> | Struct;
 
 export class ArrayOrPointerView {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
@@ -43,7 +64,7 @@ export class ArrayOrPointerView {
 
   public _dataView: DataView | Deno.UnsafePointerView;
 
-  constructor(public _data: Uint8Array | Pointer<unknown>) {
+  constructor(public _data: Uint8Array | Pointer<PointerData>) {
     if (this._data instanceof Uint8Array) {
       this._dataView = new DataView(this._data.buffer);
     } else {
@@ -51,7 +72,7 @@ export class ArrayOrPointerView {
     }
   }
 
-  public get pointer(): Pointer<TypedArray | unknown> {
+  public get pointer(): Pointer<PointerData> {
     return this._data instanceof Pointer ? this._data : Pointer.of(this._data);
   }
 

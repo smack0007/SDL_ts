@@ -109,7 +109,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView, Pointer } from "./utils.ts";`);
+  lines.push(`import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -143,7 +143,7 @@ async function writeEvents(): Promise<void> {
     lines.push("");
   }
 
-  lines.push(`export class Event {
+  lines.push(`export class Event implements Struct {
   private _data = new Uint8Array(64);
   private _view = new ArrayOrPointerView(this._data);
 
@@ -174,11 +174,21 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView, Pointer } from "./utils.ts";`);
+  lines.push(`import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
-    lines.push(`export type ${shortenName(structName)} = Pointer<unknown>;`);
+    const className = shortenName(structName);
+    lines.push(`export class ${className} implements Struct {
+  public static SIZE_IN_BYTES = 0;
+  
+  constructor(private _data: Pointer<${className}>) {}
+  
+  public get pointer(): Pointer<${className}> {
+    return this._data;
+  }
+}
+`);
   }
 
   lines.push("");
@@ -186,7 +196,7 @@ async function writeStructs(): Promise<void> {
   for (const [structName, struct] of Object.entries(structs)) {
     const className = shortenName(structName);
 
-    lines.push(`export class ${className} {
+    lines.push(`export class ${className} implements Struct {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     if (struct.allocatable) {
@@ -266,7 +276,7 @@ async function writeStructs(): Promise<void> {
       if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
-        readOp += `new Pointer(`;
+        readOp += `new Pointer<${subStructName}>(`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -284,7 +294,7 @@ async function writeStructs(): Promise<void> {
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
-      if (member.type === "pointer" || member.type === "struct") {
+      if ((member.type === "pointer" || member.type === "struct")) {
         readOp += ")";
       }
 
@@ -392,12 +402,28 @@ function isFunctionParamStruct(param: CodeGenFunctionParam): boolean {
   return Object.keys(structs).includes(structName);
 }
 
-function mapFunctionParamType(param: CodeGenFunctionParam): string {
+function mapFunctionReturnType(param: CodeGenFunctionParam): string {
+  return mapFunctionParamType(param, true);
+}
+
+function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType: boolean = false): string {
   if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
     let structName = param.nativeType.substring("SDL_".length);
 
     if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
+
+      if (isReturnType) {
+        if (isFunctionParamOpaqueStruct(param)) {
+          structName = `Pointer<${structName}>`;
+        }
+      } else {
+        if (isFunctionParamOpaqueStruct(param)) {
+          structName = `Pointer<${structName}>`;
+        } else {
+          structName = `PointerOrStruct<${structName}>`;
+        }
+      }
     }
 
     if (param.nullable) {
@@ -441,7 +467,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode } from "./types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, Pointer, toCString } from "./utils.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, Pointer, PointerOrStruct, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -466,7 +492,7 @@ const context: SDLContext = {
       continue;
     }
 
-    const returnType = mapFunctionParamType(func.result);
+    const returnType = mapFunctionReturnType(func.result);
 
     lines.push(`export function ${shortenName(funcName)}(`);
 
@@ -488,10 +514,11 @@ const context: SDLContext = {
     if (returnType !== "void") {
       let returnStatement = "\treturn ";
 
-      if (isFunctionParamStruct(func.result)) {
-        returnStatement += `new ${mapFunctionParamType(func.result)}(new Pointer(`;
-      } else if (isFunctionParamOpaqueStruct(func.result)) {
-        returnStatement += `new Pointer(`;
+      if (isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)) {
+        returnStatement += `new ${mapFunctionReturnType(func.result)}(`;
+        if (isFunctionParamStruct(func.result)) {
+          returnStatement += `new Pointer(`;
+        }
       } else if (returnType === "string") {
         returnStatement += "\t\tfromCString(";
       }

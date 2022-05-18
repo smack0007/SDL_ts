@@ -25,6 +25,7 @@ export const opaqueStructs: string[] = [
   // TODO: Figure out how to implement SDL_RWops in deno.
   "SDL_BlitMap",
   "SDL_PixelFormat", // TODO: Implement PixelFormat struct.
+  "SDL_Renderer",
   "SDL_RWops",
   "SDL_Window",
 ];

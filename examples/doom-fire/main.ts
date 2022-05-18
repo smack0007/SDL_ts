@@ -60,7 +60,7 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window.value === 0n) {
+  if (window.isNullPointer) {
     console.error("Failed to create window.");
     return 1;
   }

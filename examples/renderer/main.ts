@@ -16,14 +16,14 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window._value.value === 0n) {
+  if (window.isNullPointer) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
     return 1;
   }
 
   const renderer = SDL.CreateRenderer(window, -1, SDL.RENDERER_ACCELERATED | SDL.RENDERER_PRESENTVSYNC);
 
-  if (renderer.value === 0n) {
+  if (renderer.isNullPointer) {
     console.error(`Failed to create renderer: ${SDL.GetError()}`);
     return 1;
   }
