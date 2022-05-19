@@ -4,14 +4,21 @@ import * as functions from "./src/functions.ts";
 import * as functionMacros from "./src/functionMacros.ts";
 import * as pixels from "./src/pixels.ts";
 import * as structs from "./src/structs.ts";
-import * as types from "./src/types.ts";
 
-export default {
+export const SDL = {
   ...enums,
   ...events,
   ...functions,
   ...functionMacros,
   ...pixels,
   ...structs,
-  ...types,
 };
+
+import type { DoublePointerTarget, Pointer } from "./src/types.ts";
+import type { Renderer, Window } from "./src/structs.ts";
+export type {
+  DoublePointerTarget,
+  Pointer,
+  Renderer,
+  Window
+}; 

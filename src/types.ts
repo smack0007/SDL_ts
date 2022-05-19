@@ -1,5 +1,7 @@
 // This file is for types exposed as part of the API.
 
+export type DoublePointerTarget<T extends Struct> = { value?: Pointer<T> };
+
 export type PointerData = TypedArray | Struct | void;
 
 export interface Pointer<T> {

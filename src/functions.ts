@@ -3,7 +3,7 @@
 import { Event } from "./events.ts";
 import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
-import { RWMode, TypedArray } from "./types.ts";
+import { DoublePointerTarget, RWMode, TypedArray } from "./types.ts";
 import { Pointer, PointerOrStruct } from "./types.ts";
 import { DataPointer, fromCString, NULL_POINTER, toCString } from "./utils.ts";
 
@@ -137,6 +137,30 @@ export function CreateWindow(
     h,
     flags,
   ) as Deno.UnsafePointer);
+}
+
+export function CreateWindowAndRenderer(
+  width: number,
+  height: number,
+  window_flags: number,
+  window: DoublePointerTarget<Window>,
+  renderer: DoublePointerTarget<Renderer>,
+): number {
+  const windowPointer = new BigUint64Array(1);
+  const rendererPointer = new BigUint64Array(1);
+
+  const result = context.symbols.SDL_CreateWindowAndRenderer(
+    width,
+    height,
+    window_flags,
+    windowPointer,
+    rendererPointer,
+  ) as number;
+
+  window.value = new DataPointer<Window>(windowPointer[0]);
+  renderer.value = new DataPointer<Renderer>(rendererPointer[0]);
+
+  return result;
 }
 
 export function Delay(

@@ -239,6 +239,35 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_CreateWindowAndRenderer: {
+    parameters: {
+      width: {
+        nativeType: "int",
+        type: "i32",
+      },
+      height: {
+        nativeType: "int",
+        type: "i32",
+      },
+      window_flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+      window: {
+        nativeType: "SDL_Window**",
+        type: "pointer",
+      },
+      renderer: {
+        nativeType: "SDL_Renderer**",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
   SDL_Delay: {
     parameters: {
       ms: {

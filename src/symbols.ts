@@ -8,6 +8,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_CreateRGBSurfaceWithFormat: Deno.ForeignFunction;
   SDL_CreateTexture: Deno.ForeignFunction;
   SDL_CreateWindow: Deno.ForeignFunction;
+  SDL_CreateWindowAndRenderer: Deno.ForeignFunction;
   SDL_Delay: Deno.ForeignFunction;
   SDL_DestroyRenderer: Deno.ForeignFunction;
   SDL_DestroyTexture: Deno.ForeignFunction;
@@ -110,6 +111,16 @@ export const symbols: Symbols = {
       "u32", /* Uint32 flags */
     ],
     result: "pointer", /* SDL_Window* */
+  },
+  SDL_CreateWindowAndRenderer: {
+    parameters: [
+      "i32", /* int width */
+      "i32", /* int height */
+      "u32", /* Uint32 window_flags */
+      "pointer", /* SDL_Window** window */
+      "pointer", /* SDL_Renderer** renderer */
+    ],
+    result: "i32", /* int */
   },
   SDL_Delay: {
     parameters: [
