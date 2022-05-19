@@ -1,8 +1,11 @@
-import { TypedArray } from "./types.ts";
+// This file includes private utility types which should not be
+// exposed as part of the API.
+
+import { Pointer, PointerData, Struct, TypedArray } from "./types.ts";
 
 export const ENDIANNESS = (function (): "BE" | "LE" {
   const buffer = new ArrayBuffer(2);
-  new DataView(buffer).setInt16(0, 256, true);
+  new globalThis.DataView(buffer).setInt16(0, 256, true);
   return new Int16Array(buffer)[0] === 256 ? "LE" : "BE";
 })();
 
@@ -20,13 +23,7 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
-export interface Struct {
-  readonly pointer: Pointer<Struct>;
-}
-
-export type PointerData = TypedArray | Struct | void;
-
-export class Pointer<T extends PointerData> {
+export class DataPointer<T extends PointerData> implements Pointer<T> {
   public readonly _value: Deno.UnsafePointer;
 
   constructor(value: Deno.UnsafePointer | bigint) {
@@ -51,33 +48,31 @@ export class Pointer<T extends PointerData> {
       return (value as unknown as Struct).pointer;
     }
 
-    return new Pointer<T>(Deno.UnsafePointer.of(value as TypedArray));
+    return new DataPointer<T>(Deno.UnsafePointer.of(value as TypedArray));
   }
 }
 
-export type PointerOrStruct<T extends PointerData> = Pointer<T> | Struct;
-
-export class ArrayOrPointerView {
+export class DataView {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
 
-  public _dataView: DataView | Deno.UnsafePointerView;
+  public _dataView: globalThis.DataView | Deno.UnsafePointerView;
 
-  constructor(public _data: Uint8Array | Pointer<PointerData>) {
+  constructor(public _data: Uint8Array | DataPointer<PointerData>) {
     if (this._data instanceof Uint8Array) {
-      this._dataView = new DataView(this._data.buffer);
+      this._dataView = new globalThis.DataView(this._data.buffer);
     } else {
       this._dataView = new Deno.UnsafePointerView(this._data._value);
     }
   }
 
   public get pointer(): Pointer<PointerData> {
-    return this._data instanceof Pointer ? this._data : Pointer.of(this._data);
+    return this._data instanceof DataPointer ? this._data : DataPointer.of(this._data);
   }
 
   public getArray(byteLength: number, byteOffset: number): Uint8Array {
-    if (this._dataView instanceof DataView) {
+    if (this._dataView instanceof globalThis.DataView) {
       throw new Error("Not implemented.");
     } else {
       return new Uint8Array(this._dataView.getArrayBuffer(byteLength, byteOffset));
@@ -85,11 +80,11 @@ export class ArrayOrPointerView {
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._dataView.getBigUint64(byteOffset, ArrayOrPointerView.LITTLE_ENDIAN);
+    return this._dataView.getBigUint64(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getInt32(byteOffset: number): number {
-    return this._dataView.getInt32(byteOffset, ArrayOrPointerView.LITTLE_ENDIAN);
+    return this._dataView.getInt32(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {
@@ -97,27 +92,27 @@ export class ArrayOrPointerView {
   }
 
   public getUint32(byteOffset: number): number {
-    return this._dataView.getUint32(byteOffset, ArrayOrPointerView.LITTLE_ENDIAN);
+    return this._dataView.getUint32(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public setInt32(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof DataView)) {
-      throw new Error(ArrayOrPointerView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+    if (!(this._dataView instanceof globalThis.DataView)) {
+      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setInt32(byteOffset, value, ArrayOrPointerView.LITTLE_ENDIAN);
+    this._dataView.setInt32(byteOffset, value, DataView.LITTLE_ENDIAN);
   }
 
   public setUint8(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof DataView)) {
-      throw new Error(ArrayOrPointerView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+    if (!(this._dataView instanceof globalThis.DataView)) {
+      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
     this._dataView.setUint8(byteOffset, value);
   }
 
   public setUint32(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof DataView)) {
-      throw new Error(ArrayOrPointerView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+    if (!(this._dataView instanceof globalThis.DataView)) {
+      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint32(byteOffset, value, ArrayOrPointerView.LITTLE_ENDIAN);
+    this._dataView.setUint32(byteOffset, value, DataView.LITTLE_ENDIAN);
   }
 }

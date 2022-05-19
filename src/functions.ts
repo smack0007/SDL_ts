@@ -4,7 +4,8 @@ import { Event } from "./events.ts";
 import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode, TypedArray } from "./types.ts";
-import { fromCString, NULL_POINTER, Pointer, PointerOrStruct, toCString } from "./utils.ts";
+import { Pointer, PointerOrStruct } from "./types.ts";
+import { DataPointer, fromCString, NULL_POINTER, toCString } from "./utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -27,10 +28,10 @@ export function BlitScaled(
   dstrect: PointerOrStruct<Rect> | null,
 ): number {
   return context.symbols.SDL_UpperBlitScaled(
-    src.pointer._value,
-    srcrect?.pointer._value ?? NULL_POINTER,
-    dst.pointer._value,
-    dstrect?.pointer._value ?? NULL_POINTER,
+    (src.pointer as DataPointer<Surface>)._value,
+    (srcrect?.pointer as DataPointer<Rect> | undefined)?._value ?? NULL_POINTER,
+    (dst.pointer as DataPointer<Surface>)._value,
+    (dstrect?.pointer as DataPointer<Rect> | undefined)?._value ?? NULL_POINTER,
   ) as number;
 }
 
@@ -41,10 +42,10 @@ export function BlitSurface(
   dstrect: PointerOrStruct<Rect> | null,
 ): number {
   return context.symbols.SDL_UpperBlit(
-    src.pointer._value,
-    srcrect?.pointer._value ?? NULL_POINTER,
-    dst.pointer._value,
-    dstrect?.pointer._value ?? NULL_POINTER,
+    (src.pointer as DataPointer<Surface>)._value,
+    (srcrect?.pointer as DataPointer<Rect> | undefined)?._value ?? NULL_POINTER,
+    (dst.pointer as DataPointer<Surface>)._value,
+    (dstrect?.pointer as DataPointer<Rect> | undefined)?._value ?? NULL_POINTER,
   ) as number;
 }
 
@@ -53,8 +54,8 @@ export function CreateRenderer(
   index: number,
   flags: number,
 ): Pointer<Renderer> {
-  return new Pointer<Renderer>(context.symbols.SDL_CreateRenderer(
-    window._value,
+  return new DataPointer<Renderer>(context.symbols.SDL_CreateRenderer(
+    (window as DataPointer<Window>)._value,
     index,
     flags,
   ) as Deno.UnsafePointer);
@@ -72,7 +73,7 @@ export function CreateRGBSurfaceFrom(
   Amask: number,
 ): Surface {
   return new Surface(
-    new Pointer(context.symbols.SDL_CreateRGBSurfaceFrom(
+    new DataPointer(context.symbols.SDL_CreateRGBSurfaceFrom(
       Deno.UnsafePointer.of(pixels),
       width,
       height,
@@ -94,7 +95,7 @@ export function CreateRGBSurfaceWithFormat(
   format: number,
 ): Surface {
   return new Surface(
-    new Pointer(context.symbols.SDL_CreateRGBSurfaceWithFormat(
+    new DataPointer(context.symbols.SDL_CreateRGBSurfaceWithFormat(
       flags,
       width,
       height,
@@ -111,8 +112,8 @@ export function CreateTexture(
   w: number,
   h: number,
 ): Pointer<Texture> {
-  return new Pointer<Texture>(context.symbols.SDL_CreateTexture(
-    renderer._value,
+  return new DataPointer<Texture>(context.symbols.SDL_CreateTexture(
+    (renderer as DataPointer<Renderer>)._value,
     format,
     access,
     w,
@@ -128,7 +129,7 @@ export function CreateWindow(
   h: number,
   flags: number,
 ): Pointer<Window> {
-  return new Pointer<Window>(context.symbols.SDL_CreateWindow(
+  return new DataPointer<Window>(context.symbols.SDL_CreateWindow(
     toCString(title),
     x,
     y,
@@ -150,7 +151,7 @@ export function DestroyRenderer(
   renderer: Pointer<Renderer>,
 ): void {
   context.symbols.SDL_DestroyRenderer(
-    renderer._value,
+    (renderer as DataPointer<Renderer>)._value,
   );
 }
 
@@ -158,7 +159,7 @@ export function DestroyTexture(
   texture: Pointer<Texture>,
 ): void {
   context.symbols.SDL_DestroyTexture(
-    texture._value,
+    (texture as DataPointer<Texture>)._value,
   );
 }
 
@@ -166,7 +167,7 @@ export function DestroyWindow(
   window: Pointer<Window>,
 ): void {
   context.symbols.SDL_DestroyWindow(
-    window._value,
+    (window as DataPointer<Window>)._value,
   );
 }
 
@@ -176,8 +177,8 @@ export function FillRect(
   color: number,
 ): number {
   return context.symbols.SDL_FillRect(
-    dst.pointer._value,
-    rect?.pointer._value ?? NULL_POINTER,
+    (dst.pointer as DataPointer<Surface>)._value,
+    (rect?.pointer as DataPointer<Rect> | undefined)?._value ?? NULL_POINTER,
     color,
   ) as number;
 }
@@ -186,7 +187,7 @@ export function FreeSurface(
   surface: PointerOrStruct<Surface>,
 ): void {
   context.symbols.SDL_FreeSurface(
-    surface.pointer._value,
+    (surface.pointer as DataPointer<Surface>)._value,
   );
 }
 
@@ -210,8 +211,8 @@ export function GetWindowSurface(
   window: Pointer<Window>,
 ): Surface {
   return new Surface(
-    new Pointer(context.symbols.SDL_GetWindowSurface(
-      window._value,
+    new DataPointer(context.symbols.SDL_GetWindowSurface(
+      (window as DataPointer<Window>)._value,
     ) as Deno.UnsafePointer),
   );
 }
@@ -233,8 +234,8 @@ export function LoadBMP_RW(
   freesrc: number,
 ): Surface {
   return new Surface(
-    new Pointer(context.symbols.SDL_LoadBMP_RW(
-      src._value,
+    new DataPointer(context.symbols.SDL_LoadBMP_RW(
+      (src as DataPointer<RWops>)._value,
       freesrc,
     ) as Deno.UnsafePointer),
   );
@@ -244,7 +245,7 @@ export function LockSurface(
   surface: PointerOrStruct<Surface>,
 ): number {
   return context.symbols.SDL_LockSurface(
-    surface.pointer._value,
+    (surface.pointer as DataPointer<Surface>)._value,
   ) as number;
 }
 
@@ -255,7 +256,7 @@ export function MapRGB(
   b: number,
 ): number {
   return context.symbols.SDL_MapRGB(
-    format._value,
+    (format as DataPointer<PixelFormat>)._value,
     r,
     g,
     b,
@@ -270,7 +271,7 @@ export function MapRGBA(
   a: number,
 ): number {
   return context.symbols.SDL_MapRGBA(
-    format._value,
+    (format as DataPointer<PixelFormat>)._value,
     r,
     g,
     b,
@@ -282,7 +283,7 @@ export function MaximizeWindow(
   window: Pointer<Window>,
 ): void {
   context.symbols.SDL_MaximizeWindow(
-    window._value,
+    (window as DataPointer<Window>)._value,
   );
 }
 
@@ -290,7 +291,7 @@ export function MinimizeWindow(
   window: Pointer<Window>,
 ): void {
   context.symbols.SDL_MinimizeWindow(
-    window._value,
+    (window as DataPointer<Window>)._value,
   );
 }
 
@@ -298,7 +299,7 @@ export function PollEvent(
   event: PointerOrStruct<Event>,
 ): number {
   return context.symbols.SDL_PollEvent(
-    event.pointer._value,
+    (event.pointer as DataPointer<Event>)._value,
   ) as number;
 }
 
@@ -311,7 +312,7 @@ export function RenderClear(
   renderer: Pointer<Renderer>,
 ): number {
   return context.symbols.SDL_RenderClear(
-    renderer._value,
+    (renderer as DataPointer<Renderer>)._value,
   ) as number;
 }
 
@@ -320,8 +321,8 @@ export function RenderFillRect(
   rect: PointerOrStruct<Rect>,
 ): number {
   return context.symbols.SDL_RenderFillRect(
-    renderer._value,
-    rect.pointer._value,
+    (renderer as DataPointer<Renderer>)._value,
+    (rect.pointer as DataPointer<Rect>)._value,
   ) as number;
 }
 
@@ -329,7 +330,7 @@ export function RenderFlush(
   renderer: Pointer<Renderer>,
 ): number {
   return context.symbols.SDL_RenderFlush(
-    renderer._value,
+    (renderer as DataPointer<Renderer>)._value,
   ) as number;
 }
 
@@ -337,7 +338,7 @@ export function RenderPresent(
   renderer: Pointer<Renderer>,
 ): void {
   context.symbols.SDL_RenderPresent(
-    renderer._value,
+    (renderer as DataPointer<Renderer>)._value,
   );
 }
 
@@ -345,7 +346,7 @@ export function RestoreWindow(
   window: Pointer<Window>,
 ): void {
   context.symbols.SDL_RestoreWindow(
-    window._value,
+    (window as DataPointer<Window>)._value,
   );
 }
 
@@ -353,7 +354,7 @@ export function RWFromFile(
   file: string,
   mode: RWMode,
 ): Pointer<RWops> {
-  return new Pointer<RWops>(context.symbols.SDL_RWFromFile(
+  return new DataPointer<RWops>(context.symbols.SDL_RWFromFile(
     toCString(file),
     toCString(mode),
   ) as Deno.UnsafePointer);
@@ -367,7 +368,7 @@ export function SetRenderDrawColor(
   a: number,
 ): number {
   return context.symbols.SDL_SetRenderDrawColor(
-    renderer._value,
+    (renderer as DataPointer<Renderer>)._value,
     r,
     g,
     b,
@@ -379,7 +380,7 @@ export function UnlockSurface(
   surface: PointerOrStruct<Surface>,
 ): void {
   context.symbols.SDL_UnlockSurface(
-    surface.pointer._value,
+    (surface.pointer as DataPointer<Surface>)._value,
   );
 }
 
@@ -387,6 +388,6 @@ export function UpdateWindowSurface(
   window: Pointer<Window>,
 ): number {
   return context.symbols.SDL_UpdateWindowSurface(
-    window._value,
+    (window as DataPointer<Window>)._value,
   ) as number;
 }

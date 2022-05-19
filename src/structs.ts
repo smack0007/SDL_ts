@@ -1,6 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";
+import { Pointer, Struct } from "./types.ts";
+import { DataPointer, DataView } from "./utils.ts";
 
 export class BlitMap implements Struct {
   public static SIZE_IN_BYTES = 0;
@@ -66,7 +67,7 @@ export class Point implements Struct {
   public static SIZE_IN_BYTES = 8;
 
   private _data: Uint8Array | Pointer<Point>;
-  private _view: ArrayOrPointerView;
+  private _view: DataView;
 
   constructor();
   constructor(data: Uint8Array);
@@ -74,12 +75,12 @@ export class Point implements Struct {
   constructor(data: Partial<Point>);
   constructor(x: number, y: number);
   constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | number, _2?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data as Uint8Array | DataPointer<Point>);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data);
 
       if (_1 !== undefined) {
         if (_2 === undefined) {
@@ -117,7 +118,7 @@ export class Rect implements Struct {
   public static SIZE_IN_BYTES = 16;
 
   private _data: Uint8Array | Pointer<Rect>;
-  private _view: ArrayOrPointerView;
+  private _view: DataView;
 
   constructor();
   constructor(data: Uint8Array);
@@ -125,12 +126,12 @@ export class Rect implements Struct {
   constructor(data: Partial<Rect>);
   constructor(x: number, y: number, w: number, h: number);
   constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | number, _2?: number, _3?: number, _4?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data as Uint8Array | DataPointer<Rect>);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data);
 
       if (_1 !== undefined) {
         if (_2 === undefined) {
@@ -186,11 +187,11 @@ export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
   private _data: Pointer<Surface>;
-  private _view: ArrayOrPointerView;
+  private _view: DataView;
 
   constructor(data: Pointer<Surface>) {
     this._data = data;
-    this._view = new ArrayOrPointerView(this._data);
+    this._view = new DataView(this._data as DataPointer<Surface>);
   }
 
   public get pointer(): Pointer<Surface> {
@@ -202,7 +203,7 @@ export class Surface implements Struct {
   }
 
   public get format(): Pointer<PixelFormat> {
-    return new Pointer<PixelFormat>(this._view.getBigUint64(8));
+    return new DataPointer<PixelFormat>(this._view.getBigUint64(8));
   }
 
   public get w(): number {
@@ -218,11 +219,11 @@ export class Surface implements Struct {
   }
 
   public get pixels(): Pointer<void> {
-    return new Pointer<void>(this._view.getBigUint64(32));
+    return new DataPointer<void>(this._view.getBigUint64(32));
   }
 
   public get userdata(): Pointer<void> {
-    return new Pointer<void>(this._view.getBigUint64(40));
+    return new DataPointer<void>(this._view.getBigUint64(40));
   }
 
   public get locked(): number {
@@ -230,7 +231,7 @@ export class Surface implements Struct {
   }
 
   public get list_blitmap(): Pointer<void> {
-    return new Pointer<void>(this._view.getBigUint64(56));
+    return new DataPointer<void>(this._view.getBigUint64(56));
   }
 
   public get clip_rect(): Rect {
@@ -238,7 +239,7 @@ export class Surface implements Struct {
   }
 
   public get map(): Pointer<BlitMap> {
-    return new Pointer<BlitMap>(this._view.getBigUint64(80));
+    return new DataPointer<BlitMap>(this._view.getBigUint64(80));
   }
 
   public get refcount(): number {

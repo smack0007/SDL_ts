@@ -1,9 +1,10 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";
+import { Pointer, Struct } from "./types.ts";
+import { DataPointer, DataView } from "./utils.ts";
 
 export class CommonEvent {
-  constructor(private _view: ArrayOrPointerView) {}
+  constructor(private _view: DataView) {}
 
   public get type(): number {
     return this._view.getUint32(0);
@@ -15,7 +16,7 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(private _view: ArrayOrPointerView) {}
+  constructor(private _view: DataView) {}
 
   public get type(): number {
     return this._view.getUint32(0);
@@ -39,7 +40,7 @@ export class DisplayEvent {
 }
 
 export class WindowEvent {
-  constructor(private _view: ArrayOrPointerView) {}
+  constructor(private _view: DataView) {}
 
   public get type(): number {
     return this._view.getUint32(0);
@@ -68,10 +69,10 @@ export class WindowEvent {
 
 export class Event implements Struct {
   private _data = new Uint8Array(64);
-  private _view = new ArrayOrPointerView(this._data);
+  private _view = new DataView(this._data);
 
   public get pointer(): Pointer<Event> {
-    return Pointer.of(this._data);
+    return DataPointer.of(this._data); // TODO: Can we save the pointer?
   }
 
   public get type(): number {

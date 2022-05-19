@@ -109,13 +109,14 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";`);
+  lines.push(`import { Pointer, Struct } from "./types.ts";`);
+  lines.push(`import { DataPointer, DataView } from "./utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
     const className = shortenName(eventName);
     lines.push(`export class ${className} {`);
-    lines.push("\tconstructor(private _view: ArrayOrPointerView) {}");
+    lines.push("\tconstructor(private _view: DataView) {}");
     lines.push("");
 
     for (const [memberName, member] of Object.entries(event.members)) {
@@ -145,10 +146,10 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`export class Event implements Struct {
   private _data = new Uint8Array(64);
-  private _view = new ArrayOrPointerView(this._data);
+  private _view = new DataView(this._data);
 
   public get pointer(): Pointer<Event> {
-    return Pointer.of(this._data);
+    return DataPointer.of(this._data); // TODO: Can we save the pointer?
   }
 
   public get type(): number {
@@ -174,7 +175,8 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { ArrayOrPointerView, Pointer, Struct } from "./utils.ts";`);
+  lines.push(`import { Pointer, Struct } from "./types.ts";`);
+  lines.push(`import { DataPointer, DataView } from "./utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -202,7 +204,7 @@ async function writeStructs(): Promise<void> {
     if (struct.allocatable) {
       lines.push(`
   private _data: Uint8Array | Pointer<${className}>;
-  private _view: ArrayOrPointerView;
+  private _view: DataView;
 
   constructor();
   constructor(data: Uint8Array);
@@ -227,12 +229,12 @@ async function writeStructs(): Promise<void> {
       ).join("\n");
 
       lines.push(`
-    if (_1 instanceof Uint8Array || _1 instanceof Pointer) {
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-      this._view = new ArrayOrPointerView(this._data);
+      this._view = new DataView(this._data);
 
       if (_1 !== undefined) {
         if (_2 === undefined) {
@@ -251,11 +253,11 @@ async function writeStructs(): Promise<void> {
     } else {
       lines.push(`
   private _data: Pointer<${className}>;
-  private _view: ArrayOrPointerView;
+  private _view: DataView;
 
   constructor(data: Pointer<${className}>) {    
     this._data = data;
-    this._view = new ArrayOrPointerView(this._data);
+    this._view = new DataView(this._data as DataPointer<${className}>);
   }
 
   public get pointer(): Pointer<${className}> {
@@ -276,7 +278,7 @@ async function writeStructs(): Promise<void> {
       if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
-        readOp += `new Pointer<${subStructName}>(`;
+        readOp += `new DataPointer<${subStructName}>(`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -465,6 +467,15 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
   return param.type;
 }
 
+function getGenericParam(type: string): string {
+  const startIndex = type.indexOf("<");
+  const endIndex = type.lastIndexOf(">");
+  if (startIndex === -1 || endIndex === -1) {
+    return "";
+  }
+  return type.substring(startIndex + 1, endIndex);
+}
+
 async function writeFunctions(): Promise<void> {
   const lines = createLines();
 
@@ -474,7 +485,8 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode, TypedArray } from "./types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, Pointer, PointerOrStruct, toCString } from "./utils.ts";`);
+  lines.push(`import { Pointer, PointerOrStruct } from "./types.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, DataPointer, toCString } from "./utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -521,11 +533,10 @@ const context: SDLContext = {
     if (returnType !== "void") {
       let returnStatement = "\treturn ";
 
-      if (isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)) {
-        returnStatement += `new ${mapFunctionReturnType(func.result)}(`;
-        if (isFunctionParamStruct(func.result)) {
-          returnStatement += `new Pointer(`;
-        }
+      if (isFunctionParamOpaqueStruct(func.result)) {
+        returnStatement += `new DataPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
+      } else if (isFunctionParamStruct(func.result)) {
+        returnStatement += `new ${mapFunctionReturnType(func.result)}(new DataPointer(`;
       } else if (returnType === "string") {
         returnStatement += "\t\tfromCString(";
       }
@@ -539,12 +550,16 @@ const context: SDLContext = {
     for (const [paramName, param] of Object.entries(func.parameters)) {
       const paramType = mapFunctionParamType(param);
       if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t${paramName}._value,`);
+        lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._value,`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
-          lines.push(`\t\t${paramName}?.pointer._value ?? NULL_POINTER,`);
+          lines.push(
+            `\t\t(${paramName}?.pointer as DataPointer<${
+              getGenericParam(paramType)
+            }> | undefined)?._value ?? NULL_POINTER,`,
+          );
         } else {
-          lines.push(`\t\t${paramName}.pointer._value,`);
+          lines.push(`\t\t(${paramName}.pointer as DataPointer<${getGenericParam(paramType)}>)._value,`);
         }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
