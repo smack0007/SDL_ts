@@ -3,6 +3,8 @@ import { events } from "./codegen-events.ts";
 import { CodeGenFunction, CodeGenFunctionParam, functionImplementations, functions } from "./codegen-functions.ts";
 import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.ts";
 
+const SDL_PATH = "../src/SDL";
+
 const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
@@ -27,6 +29,7 @@ async function main(): Promise<void> {
   await writeStructs();
   await writeSymbols();
   await writeFunctions();
+  await writeMod();
 }
 
 function createLines(): string[] {
@@ -69,7 +72,7 @@ async function writeEnums(): Promise<void> {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/enums.ts", lines);
+  await writeLinesToFile(`${SDL_PATH}/enums.ts`, lines);
 }
 
 function mapStructMemberType(member: CodeGenStructMember): string {
@@ -109,8 +112,8 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer, Struct } from "./types.ts";`);
-  lines.push(`import { DataPointer, DataView } from "./utils.ts";`);
+  lines.push(`import { Pointer, Struct } from "../types.ts";`);
+  lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -169,14 +172,14 @@ async function writeEvents(): Promise<void> {
   lines.push("}");
   lines.push("");
 
-  await writeLinesToFile("../src/events.ts", lines);
+  await writeLinesToFile(`${SDL_PATH}/events.ts`, lines);
 }
 
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer, Struct } from "./types.ts";`);
-  lines.push(`import { DataPointer, DataView } from "./utils.ts";`);
+  lines.push(`import { Pointer, Struct } from "../types.ts";`);
+  lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -336,7 +339,7 @@ async function writeStructs(): Promise<void> {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/structs.ts", lines);
+  await writeLinesToFile(`${SDL_PATH}/structs.ts`, lines);
 }
 
 async function writeSymbols(): Promise<void> {
@@ -377,7 +380,7 @@ async function writeSymbols(): Promise<void> {
   lines.push("};");
   lines.push("");
 
-  await writeLinesToFile("../src/symbols.ts", lines);
+  await writeLinesToFile(`${SDL_PATH}/symbols.ts`, lines);
 }
 
 function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
@@ -495,9 +498,9 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
-  lines.push(`import { RWMode, TypedArray } from "./types.ts";`);
-  lines.push(`import { Pointer, PointerOrStruct, PointerTarget } from "./types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, DataPointer, toCString } from "./utils.ts";`);
+  lines.push(`import { RWMode, TypedArray } from "../types.ts";`);
+  lines.push(`import { Pointer, PointerOrStruct, PointerTarget } from "../types.ts";`);
+  lines.push(`import { fromCString, NULL_POINTER, DataPointer, toCString } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -633,5 +636,82 @@ const context: SDLContext = {
     lines.push("");
   }
 
-  await writeLinesToFile("../src/functions.ts", lines);
+  await writeLinesToFile(`${SDL_PATH}/functions.ts`, lines);
+}
+
+async function writeMod(): Promise<void> {
+  const lines = createLines();
+
+  const sdlProjects = ["SDL"];
+
+  for (const sdlProject of sdlProjects) {
+    const modulesToExport: string[] = [];
+
+    for await (const entry of Deno.readDir(`../src/${sdlProject}`)) {
+      if (!entry.isFile || entry.name.startsWith("_")) {
+        continue;
+      }
+      const variableName = entry.name.slice(0, -".ts".length);
+      lines.push(`import * as ${sdlProject}_${variableName} from "./src/${sdlProject}/${entry.name}";`);
+      modulesToExport.push(variableName);
+    }
+
+    lines.push("");
+    lines.push(`export const ${sdlProject} = {`);
+
+    for (const module of modulesToExport) {
+      lines.push(`...${sdlProject}_${module},`);
+    }
+
+    lines.push("};");
+    lines.push("");
+  }
+
+  const typesToExport: string[] = [];
+
+  lines.push("import type {");
+  for (const strcutName of Object.keys(structs).concat(opaqueStructs)) {
+    const strcutNameShort = strcutName.substring("SDL_".length);
+    typesToExport.push(strcutNameShort);
+    lines.push(`\t${strcutNameShort},`);
+  }
+  lines.push(`} from "./src/SDL/structs.ts";`);
+  lines.push("");
+
+  const typeExportLines = (await Deno.readTextFile("../src/types.ts")).split("\n").filter((x) =>
+    x.startsWith("export type ") || x.startsWith("export interface ")
+  );
+
+  lines.push("import type {");
+  for (let typeName of typeExportLines) {
+    if (typeName.startsWith("export type ")) {
+      typeName = typeName.substring("export type ".length);
+    } else if (typeName.startsWith("export interface ")) {
+      typeName = typeName.substring("export interface ".length);
+    }
+
+    if (typeName.indexOf("<") !== -1) {
+      typeName = typeName.substring(0, typeName.indexOf("<"));
+    } else if (typeName.indexOf("=") !== -1) {
+      typeName = typeName.substring(0, typeName.indexOf("="));
+    } else if (typeName.indexOf("{") !== -1) {
+      typeName = typeName.substring(0, typeName.indexOf("{"));
+    }
+
+    typeName = typeName.trim();
+
+    typesToExport.push(typeName);
+    lines.push(`${typeName},`);
+  }
+  lines.push(`} from "./src/types.ts"`);
+  lines.push("");
+
+  lines.push("export type {");
+  for (const type of typesToExport) {
+    lines.push(`\t${type},`);
+  }
+  lines.push("};");
+  lines.push("");
+
+  await writeLinesToFile("../mod.ts", lines);
 }

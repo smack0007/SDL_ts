@@ -1,19 +1,52 @@
-import * as enums from "./src/enums.ts";
-import * as events from "./src/events.ts";
-import * as functions from "./src/functions.ts";
-import * as functionMacros from "./src/functionMacros.ts";
-import * as pixels from "./src/pixels.ts";
-import * as structs from "./src/structs.ts";
+// This file is auto generated. To update the file make changes to the code generator.
+
+import * as SDL_enums from "./src/SDL/enums.ts";
+import * as SDL_events from "./src/SDL/events.ts";
+import * as SDL_functionMacros from "./src/SDL/functionMacros.ts";
+import * as SDL_functions from "./src/SDL/functions.ts";
+import * as SDL_pixels from "./src/SDL/pixels.ts";
+import * as SDL_structs from "./src/SDL/structs.ts";
+import * as SDL_symbols from "./src/SDL/symbols.ts";
 
 export const SDL = {
-  ...enums,
-  ...events,
-  ...functions,
-  ...functionMacros,
-  ...pixels,
-  ...structs,
+  ...SDL_enums,
+  ...SDL_events,
+  ...SDL_functionMacros,
+  ...SDL_functions,
+  ...SDL_pixels,
+  ...SDL_structs,
+  ...SDL_symbols,
 };
 
-import type { Pointer, PointerTarget } from "./src/types.ts";
-import type { Renderer, Window } from "./src/structs.ts";
-export type { Pointer, PointerTarget, Renderer, Window };
+import type {
+  BlitMap,
+  PixelFormat,
+  Point,
+  Rect,
+  Renderer,
+  RWops,
+  Surface,
+  Texture,
+  Window,
+} from "./src/SDL/structs.ts";
+
+import type { Pointer, PointerData, PointerOrStruct, PointerTarget, RWMode, Struct, TypedArray } from "./src/types.ts";
+
+export type {
+  BlitMap,
+  PixelFormat,
+  Point,
+  Pointer,
+  PointerData,
+  PointerOrStruct,
+  PointerTarget,
+  Rect,
+  Renderer,
+  RWMode,
+  RWops,
+  Struct,
+  Surface,
+  Texture,
+  TypedArray,
+  Window,
+};

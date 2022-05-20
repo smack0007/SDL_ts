@@ -1,7 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { Pointer, Struct } from "./types.ts";
-import { DataPointer, DataView } from "./utils.ts";
+import { Pointer, Struct } from "../types.ts";
+import { DataPointer, DataView } from "../_utils.ts";
 
 export class CommonEvent {
   constructor(private _view: DataView) {}

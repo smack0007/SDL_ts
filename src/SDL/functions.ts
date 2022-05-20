@@ -3,9 +3,9 @@
 import { Event } from "./events.ts";
 import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, Window } from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
-import { RWMode, TypedArray } from "./types.ts";
-import { Pointer, PointerOrStruct, PointerTarget } from "./types.ts";
-import { DataPointer, fromCString, NULL_POINTER, toCString } from "./utils.ts";
+import { RWMode, TypedArray } from "../types.ts";
+import { Pointer, PointerOrStruct, PointerTarget } from "../types.ts";
+import { DataPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
