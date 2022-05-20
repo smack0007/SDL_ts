@@ -32,8 +32,6 @@ import type {
 
 import type {
   Pointer,
-  PointerData,
-  PointerOrStruct,
   PointerTarget,
   PointerTargetArray,
   PointerTargetObject,
@@ -47,8 +45,6 @@ export type {
   PixelFormat,
   Point,
   Pointer,
-  PointerData,
-  PointerOrStruct,
   PointerTarget,
   PointerTargetArray,
   PointerTargetObject,

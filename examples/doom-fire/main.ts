@@ -60,7 +60,7 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window.isNullPointer) {
+  if (window.isNull) {
     console.error("Failed to create window.");
     return 1;
   }
@@ -82,7 +82,7 @@ function main(): number {
     0xFF000000,
   );
 
-  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.w, HALF_WINDOW_HEIGHT);
+  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.value.w, HALF_WINDOW_HEIGHT);
 
   firePixels.fill(0x00000000);
 
@@ -93,7 +93,7 @@ function main(): number {
   const event = new SDL.Event();
   let done = false;
   while (!done) {
-    while (SDL.PollEvent(event) != 0) {
+    while (SDL.PollEvent(event.pointer) != 0) {
       if (event.type === SDL.QUIT) {
         done = true;
         break;
@@ -108,7 +108,7 @@ function main(): number {
 
     SDL.FillRect(frontBuffer, null, 0x00000000);
     SDL.BlitScaled(denoSurface, null, frontBuffer, null);
-    SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect);
+    SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect.pointer);
     SDL.UpdateWindowSurface(window);
 
     SDL.Delay(16);

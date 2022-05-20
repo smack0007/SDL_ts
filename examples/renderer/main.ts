@@ -15,12 +15,12 @@ function main(): number {
   const window = windowTarget[0];
   const renderer = rendererTarget[0];
 
-  if (window.isNullPointer) {
+  if (window.isNull) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
     return 1;
   }
 
-  if (renderer.isNullPointer) {
+  if (renderer.isNull) {
     console.error(`Failed to create renderer: ${SDL.GetError()}`);
     return 1;
   }
@@ -37,7 +37,7 @@ function main(): number {
     WINDOW_HEIGHT,
   );
 
-  if (texture.isNullPointer) {
+  if (texture.isNull) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
     return 1;
   }
@@ -45,7 +45,7 @@ function main(): number {
   const event = new SDL.Event();
   let done = false;
   while (!done) {
-    while (SDL.PollEvent(event) != 0) {
+    while (SDL.PollEvent(event.pointer) != 0) {
       if (event.type === SDL.QUIT) {
         done = true;
         break;
@@ -61,7 +61,7 @@ function main(): number {
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
     const rect = new SDL.Rect(100, 100, 200, 400);
-    SDL.RenderFillRect(renderer, rect);
+    SDL.RenderFillRect(renderer, rect.pointer);
 
     SDL.RenderPresent(renderer);
 

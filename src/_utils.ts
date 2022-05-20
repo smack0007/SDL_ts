@@ -1,7 +1,7 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { Pointer, PointerData, PointerTarget, Struct, TypedArray } from "./types.ts";
+import { Pointer, PointerTarget, Struct } from "./types.ts";
 
 export const ENDIANNESS = (function (): "BE" | "LE" {
   const buffer = new ArrayBuffer(2);
@@ -31,52 +31,55 @@ export function toCString(value: string): Uint8Array {
   return new TextEncoder().encode(value + "\0");
 }
 
-export class DataPointer<T extends PointerData> implements Pointer<T> {
-  public readonly _value: Deno.UnsafePointer;
+export class DataPointer<T> implements Pointer<T> {
+  public readonly _pointer: Deno.UnsafePointer;
+  private _value: T | null = null;
 
-  constructor(value: Deno.UnsafePointer | bigint) {
-    if (typeof value === "bigint") {
-      value = new Deno.UnsafePointer(value);
+  constructor(
+    pointer: Deno.UnsafePointer | bigint,
+    private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null,
+  ) {
+    if (typeof pointer === "bigint") {
+      pointer = new Deno.UnsafePointer(pointer);
     }
 
-    this._value = value;
+    this._pointer = pointer;
   }
 
-  // Used for PointerOrStruct scenarios.
-  public get pointer(): Pointer<T> {
-    return this;
+  public get isNull(): boolean {
+    return this._pointer.value === 0n;
   }
 
-  public get isNullPointer(): boolean {
-    return this._value.value === 0n;
+  public get address(): bigint {
+    return this._pointer.value;
   }
 
-  public static of<T extends PointerData>(value: T): Pointer<T> {
-    if ((value as unknown as Struct).pointer !== undefined) {
-      return (value as unknown as Struct).pointer;
+  public get value(): T {
+    if (this._value === null) {
+      if (!this._constructor) {
+        throw new Error("Unable to create type pointed to by pointer as no constructor was provided.");
+      }
+
+      this._value = new this._constructor(this);
     }
 
-    return new DataPointer<T>(Deno.UnsafePointer.of(value as TypedArray));
+    return this._value as T;
   }
 }
 
-export class DataView {
+export class DataView<T> {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
 
   public _dataView: globalThis.DataView | Deno.UnsafePointerView;
 
-  constructor(public _data: Uint8Array | DataPointer<PointerData>) {
+  constructor(public _data: Uint8Array | DataPointer<T>) {
     if (this._data instanceof Uint8Array) {
       this._dataView = new globalThis.DataView(this._data.buffer);
     } else {
-      this._dataView = new Deno.UnsafePointerView(this._data._value);
+      this._dataView = new Deno.UnsafePointerView(this._data._pointer);
     }
-  }
-
-  public get pointer(): Pointer<PointerData> {
-    return this._data instanceof DataPointer ? this._data : DataPointer.of(this._data);
   }
 
   public getArray(byteLength: number, byteOffset: number): Uint8Array {

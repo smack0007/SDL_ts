@@ -119,7 +119,7 @@ async function writeEvents(): Promise<void> {
   for (const [eventName, event] of Object.entries(events)) {
     const className = shortenName(eventName);
     lines.push(`export class ${className} {`);
-    lines.push("\tconstructor(private _view: DataView) {}");
+    lines.push("\tconstructor(private _view: DataView<Event>) {}");
     lines.push("");
 
     for (const [memberName, member] of Object.entries(event.members)) {
@@ -149,10 +149,11 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`export class Event implements Struct {
   private _data = new Uint8Array(64);
-  private _view = new DataView(this._data);
+  private _view = new DataView<Event>(this._data);
+  private _pointer = new DataPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
 
   public get pointer(): Pointer<Event> {
-    return DataPointer.of(this._data); // TODO: Can we save the pointer?
+    return this._pointer;
   }
 
   public get type(): number {
@@ -207,7 +208,8 @@ async function writeStructs(): Promise<void> {
     if (struct.allocatable) {
       lines.push(`
   private _data: Uint8Array | Pointer<${className}>;
-  private _view: DataView;
+  private _view: DataView<${className}>;
+  private _pointer: DataPointer<${className}>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -247,16 +249,22 @@ async function writeStructs(): Promise<void> {
         }
       }
     }
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
+    } else {
+      this._pointer = this._data as DataPointer<${className}>;
+    }
   }
 
   public get pointer(): Pointer<${className}> {
-    return this._view.pointer;
+    return this._pointer;
   }
 `);
     } else {
       lines.push(`
   private _data: Pointer<${className}>;
-  private _view: DataView;
+  private _view: DataView<${className}>;
 
   constructor(data: Pointer<${className}>) {    
     this._data = data;
@@ -424,18 +432,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
       structName = `PointerTarget<${structName}>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
-
-      if (isReturnType) {
-        if (isFunctionParamOpaqueStruct(param)) {
-          structName = `Pointer<${structName}>`;
-        }
-      } else {
-        if (isFunctionParamOpaqueStruct(param)) {
-          structName = `Pointer<${structName}>`;
-        } else {
-          structName = `PointerOrStruct<${structName}>`;
-        }
-      }
+      structName = `Pointer<${structName}>`;
     }
 
     if (param.nullable) {
@@ -499,7 +496,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode, TypedArray } from "../types.ts";`);
-  lines.push(`import { Pointer, PointerOrStruct, PointerTarget } from "../types.ts";`);
+  lines.push(`import { Pointer, PointerTarget } from "../types.ts";`);
   lines.push(`import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";`);
   lines.push("");
 
@@ -562,10 +559,8 @@ const context: SDLContext = {
         returnStatement += "return ";
       }
 
-      if (isFunctionParamOpaqueStruct(func.result)) {
+      if (isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)) {
         returnStatement += `new DataPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
-      } else if (isFunctionParamStruct(func.result)) {
-        returnStatement += `new ${mapFunctionReturnType(func.result)}(new DataPointer(`;
       } else if (returnType === "string") {
         returnStatement += "\t\tfromCString(";
       }
@@ -581,16 +576,14 @@ const context: SDLContext = {
       if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\t${paramName}DoublePointer,`);
       } else if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._value,`);
+        lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._pointer,`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
           lines.push(
-            `\t\t(${paramName}?.pointer as DataPointer<${
-              getGenericParam(paramType)
-            }> | undefined)?._value ?? NULL_POINTER,`,
+            `\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}> | null)?._pointer ?? NULL_POINTER,`,
           );
         } else {
-          lines.push(`\t\t(${paramName}.pointer as DataPointer<${getGenericParam(paramType)}>)._value,`);
+          lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._pointer,`);
         }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
@@ -602,10 +595,8 @@ const context: SDLContext = {
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamStruct(func.result)) {
-        lines.push(`\t) as Deno.UnsafePointer));`);
-      } else if (isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
-        lines.push(`\t) as Deno.UnsafePointer);`);
+      if (isFunctionParamStruct(func.result) || isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
+        lines.push(`\t) as Deno.UnsafePointer, ${getGenericParam(returnType)});`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
       } else {

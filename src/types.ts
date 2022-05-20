@@ -1,15 +1,12 @@
 // This file is for types exposed as part of the API.
 
-export type PointerData = TypedArray | Struct | void;
-
 export interface Pointer<T> {
-  // Used for PointerOrStruct scenarios.
-  readonly pointer: Pointer<T>;
+  readonly isNull: boolean;
 
-  readonly isNullPointer: boolean;
+  readonly address: bigint;
+
+  readonly value: T;
 }
-
-export type PointerOrStruct<T extends PointerData> = Pointer<T> | Struct;
 
 export type PointerTargetArray<T extends Struct> = Pointer<T>[];
 

@@ -67,7 +67,8 @@ export class Point implements Struct {
   public static SIZE_IN_BYTES = 8;
 
   private _data: Uint8Array | Pointer<Point>;
-  private _view: DataView;
+  private _view: DataView<Point>;
+  private _pointer: DataPointer<Point>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -91,10 +92,16 @@ export class Point implements Struct {
         }
       }
     }
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<Point>(Deno.UnsafePointer.of(this._data), Point);
+    } else {
+      this._pointer = this._data as DataPointer<Point>;
+    }
   }
 
   public get pointer(): Pointer<Point> {
-    return this._view.pointer;
+    return this._pointer;
   }
 
   public get x(): number {
@@ -118,7 +125,8 @@ export class Rect implements Struct {
   public static SIZE_IN_BYTES = 16;
 
   private _data: Uint8Array | Pointer<Rect>;
-  private _view: DataView;
+  private _view: DataView<Rect>;
+  private _pointer: DataPointer<Rect>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -144,10 +152,16 @@ export class Rect implements Struct {
         }
       }
     }
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<Rect>(Deno.UnsafePointer.of(this._data), Rect);
+    } else {
+      this._pointer = this._data as DataPointer<Rect>;
+    }
   }
 
   public get pointer(): Pointer<Rect> {
-    return this._view.pointer;
+    return this._pointer;
   }
 
   public get x(): number {
@@ -187,7 +201,7 @@ export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
   private _data: Pointer<Surface>;
-  private _view: DataView;
+  private _view: DataView<Surface>;
 
   constructor(data: Pointer<Surface>) {
     this._data = data;

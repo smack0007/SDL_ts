@@ -15,18 +15,24 @@ const window = SDL.CreateWindow(
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
-if (window.isNullPointer) {
+if (window.isNull) {
   console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 
 let surface = SDL.GetWindowSurface(window);
-console.info(surface.flags);
-console.info(surface.w, surface.h);
+
+if (surface.isNull) {
+  console.error(`Failed to create surface: ${SDL.GetError()}`);
+  Deno.exit(1);
+}
+
+console.info(surface.value.flags);
+console.info(surface.value.w, surface.value.h);
 SDL.FillRect(
   surface,
   null,
-  SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
+  SDL.MapRGB(surface.value.format, 0x64, 0x95, 0xED),
 );
 SDL.UpdateWindowSurface(window);
 
@@ -37,7 +43,7 @@ SDL.RestoreWindow(window);
 
 let done = false;
 while (!done) {
-  while (SDL.PollEvent(event) != 0) {
+  while (SDL.PollEvent(event.pointer) != 0) {
     if (event.type === SDL.QUIT) {
       console.info("Done.");
       done = true;
@@ -54,7 +60,7 @@ while (!done) {
         SDL.FillRect(
           surface,
           null,
-          SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
+          SDL.MapRGB(surface.value.format, 0x64, 0x95, 0xED),
         );
         SDL.UpdateWindowSurface(window);
       }
