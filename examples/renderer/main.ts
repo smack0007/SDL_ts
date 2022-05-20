@@ -1,4 +1,4 @@
-import { DoublePointerTarget, Pointer, Renderer, SDL, Window } from "../../mod.ts";
+import { PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -7,13 +7,13 @@ const WINDOW_HEIGHT = 768;
 function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
-  const windowTarget: DoublePointerTarget<Window> = {};
-  const rendererTarget: DoublePointerTarget<Renderer> = {};
+  const windowTarget = {} as PointerTarget<Window>;
+  const rendererTarget = {} as PointerTarget<Renderer>;
 
   SDL.CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, SDL.WINDOW_SHOWN, windowTarget, rendererTarget);
 
-  const window = windowTarget.value as Pointer<Window>;
-  const renderer = rendererTarget.value as Pointer<Renderer>;
+  const window = windowTarget.value;
+  const renderer = rendererTarget.value;
 
   if (window.isNullPointer) {
     console.error(`Failed to create window: ${SDL.GetError()}`);

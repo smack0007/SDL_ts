@@ -1,4 +1,4 @@
-import SDL from "../../mod.ts";
+import { SDL } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;

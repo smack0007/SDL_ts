@@ -1,6 +1,6 @@
 import { enums } from "./codegen-enums.ts";
 import { events } from "./codegen-events.ts";
-import { CodeGenFunctionParam, functionImplementations, functions } from "./codegen-functions.ts";
+import { CodeGenFunction, CodeGenFunctionParam, functionImplementations, functions } from "./codegen-functions.ts";
 import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.ts";
 
 const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
@@ -383,7 +383,7 @@ async function writeSymbols(): Promise<void> {
 function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
   let structName = param.nativeType;
 
-  if (structName.endsWith("*")) {
+  while (structName.endsWith("*")) {
     structName = structName.slice(0, -1);
   }
 
@@ -393,7 +393,7 @@ function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
 function isFunctionParamStruct(param: CodeGenFunctionParam): boolean {
   let structName = param.nativeType;
 
-  if (structName.endsWith("*")) {
+  while (structName.endsWith("*")) {
     structName = structName.slice(0, -1);
   }
 
@@ -416,7 +416,10 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
   if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
     let structName = param.nativeType.substring("SDL_".length);
 
-    if (structName.endsWith("*")) {
+    if (structName.endsWith("**")) {
+      structName = structName.slice(0, -2);
+      structName = `PointerTarget<${structName}>`;
+    } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
 
       if (isReturnType) {
@@ -476,6 +479,14 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
+function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
+  return param.nativeType.endsWith("**");
+}
+
+function hasDoublePointerParams(func: CodeGenFunction): boolean {
+  return Object.values(func.parameters).some(isFunctionParamDoublePointer);
+}
+
 async function writeFunctions(): Promise<void> {
   const lines = createLines();
 
@@ -485,7 +496,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode, TypedArray } from "./types.ts";`);
-  lines.push(`import { Pointer, PointerOrStruct } from "./types.ts";`);
+  lines.push(`import { Pointer, PointerOrStruct, PointerTarget } from "./types.ts";`);
   lines.push(`import { fromCString, NULL_POINTER, DataPointer, toCString } from "./utils.ts";`);
   lines.push("");
 
@@ -530,8 +541,23 @@ const context: SDLContext = {
       symbolName = func.symbolName;
     }
 
+    if (hasDoublePointerParams(func)) {
+      for (
+        const [paramName] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
+      ) {
+        lines.push(`const ${paramName}DoublePointer = new BigUint64Array(1);`);
+      }
+      lines.push("");
+    }
+
     if (returnType !== "void") {
-      let returnStatement = "\treturn ";
+      let returnStatement = "\t";
+
+      if (hasDoublePointerParams(func)) {
+        returnStatement += "const result = ";
+      } else {
+        returnStatement += "return ";
+      }
 
       if (isFunctionParamOpaqueStruct(func.result)) {
         returnStatement += `new DataPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
@@ -549,7 +575,9 @@ const context: SDLContext = {
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
       const paramType = mapFunctionParamType(param);
-      if (isFunctionParamOpaqueStruct(param)) {
+      if (isFunctionParamDoublePointer(param)) {
+        lines.push(`\t\t${paramName}DoublePointer,`);
+      } else if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._value,`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
@@ -582,6 +610,23 @@ const context: SDLContext = {
       }
     } else {
       lines.push(`\t);`);
+    }
+
+    if (hasDoublePointerParams(func)) {
+      lines.push("");
+
+      for (
+        const [paramName, param] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
+      ) {
+        lines.push(
+          `${paramName}.value = new DataPointer<${
+            getGenericParam(mapFunctionParamType(param))
+          }>(${paramName}DoublePointer[0]);`,
+        );
+      }
+
+      lines.push("");
+      lines.push("return result;");
     }
 
     lines.push("}");

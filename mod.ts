@@ -14,11 +14,6 @@ export const SDL = {
   ...structs,
 };
 
-import type { DoublePointerTarget, Pointer } from "./src/types.ts";
+import type { Pointer, PointerTarget } from "./src/types.ts";
 import type { Renderer, Window } from "./src/structs.ts";
-export type {
-  DoublePointerTarget,
-  Pointer,
-  Renderer,
-  Window
-}; 
+export type { Pointer, PointerTarget, Renderer, Window };
