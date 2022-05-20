@@ -500,7 +500,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
   lines.push(`import { RWMode, TypedArray } from "../types.ts";`);
   lines.push(`import { Pointer, PointerOrStruct, PointerTarget } from "../types.ts";`);
-  lines.push(`import { fromCString, NULL_POINTER, DataPointer, toCString } from "../_utils.ts";`);
+  lines.push(`import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -622,9 +622,9 @@ const context: SDLContext = {
         const [paramName, param] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
       ) {
         lines.push(
-          `${paramName}.value = new DataPointer<${
+          `setPointerTarget(${paramName}, new DataPointer<${
             getGenericParam(mapFunctionParamType(param))
-          }>(${paramName}DoublePointer[0]);`,
+          }>(${paramName}DoublePointer[0]));`,
         );
       }
 

@@ -5,7 +5,7 @@ import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, W
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode, TypedArray } from "../types.ts";
 import { Pointer, PointerOrStruct, PointerTarget } from "../types.ts";
-import { DataPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";
+import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -157,8 +157,8 @@ export function CreateWindowAndRenderer(
     rendererDoublePointer,
   ) as number;
 
-  window.value = new DataPointer<Window>(windowDoublePointer[0]);
-  renderer.value = new DataPointer<Renderer>(rendererDoublePointer[0]);
+  setPointerTarget(window, new DataPointer<Window>(windowDoublePointer[0]));
+  setPointerTarget(renderer, new DataPointer<Renderer>(rendererDoublePointer[0]));
 
   return result;
 }

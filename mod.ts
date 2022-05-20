@@ -30,7 +30,17 @@ import type {
   Window,
 } from "./src/SDL/structs.ts";
 
-import type { Pointer, PointerData, PointerOrStruct, PointerTarget, RWMode, Struct, TypedArray } from "./src/types.ts";
+import type {
+  Pointer,
+  PointerData,
+  PointerOrStruct,
+  PointerTarget,
+  PointerTargetArray,
+  PointerTargetObject,
+  RWMode,
+  Struct,
+  TypedArray,
+} from "./src/types.ts";
 
 export type {
   BlitMap,
@@ -40,6 +50,8 @@ export type {
   PointerData,
   PointerOrStruct,
   PointerTarget,
+  PointerTargetArray,
+  PointerTargetObject,
   Rect,
   Renderer,
   RWMode,

@@ -1,7 +1,7 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { Pointer, PointerData, Struct, TypedArray } from "./types.ts";
+import { Pointer, PointerData, PointerTarget, Struct, TypedArray } from "./types.ts";
 
 export const ENDIANNESS = (function (): "BE" | "LE" {
   const buffer = new ArrayBuffer(2);
@@ -11,16 +11,24 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 
 export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
-export function toCString(value: string): Uint8Array {
-  return new TextEncoder().encode(value + "\0");
-}
-
 export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   if (value instanceof Deno.UnsafePointer) {
     return new Deno.UnsafePointerView(value).getCString();
   }
 
   return new TextDecoder().decode(value);
+}
+
+export function setPointerTarget<T extends Struct>(target: PointerTarget<T>, value: Pointer<T>): void {
+  if (Array.isArray(target)) {
+    target[0] = value;
+  } else {
+    target.value = value;
+  }
+}
+
+export function toCString(value: string): Uint8Array {
+  return new TextEncoder().encode(value + "\0");
 }
 
 export class DataPointer<T extends PointerData> implements Pointer<T> {
