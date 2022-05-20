@@ -31,6 +31,7 @@ import type {
 } from "./src/SDL/structs.ts";
 
 import type {
+  OpaqueStruct,
   Pointer,
   PointerTarget,
   PointerTargetArray,
@@ -41,6 +42,7 @@ import type {
 
 export type {
   BlitMap,
+  OpaqueStruct,
   PixelFormat,
   Point,
   Pointer,

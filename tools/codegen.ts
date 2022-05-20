@@ -179,13 +179,13 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer } from "../types.ts";`);
+  lines.push(`import { OpaqueStruct, Pointer } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export type ${className} = void;`);
+    lines.push(`export type ${className} = OpaqueStruct;`);
   }
 
   lines.push("");
@@ -674,11 +674,18 @@ async function writeMod(): Promise<void> {
       typeName = typeName.substring("export interface ".length);
     }
 
+    // The order of these ifs is important and they cannot be
+    // joined with an else.
+
     if (typeName.indexOf("<") !== -1) {
       typeName = typeName.substring(0, typeName.indexOf("<"));
-    } else if (typeName.indexOf("=") !== -1) {
+    }
+
+    if (typeName.indexOf("=") !== -1) {
       typeName = typeName.substring(0, typeName.indexOf("="));
-    } else if (typeName.indexOf("{") !== -1) {
+    }
+
+    if (typeName.indexOf("{") !== -1) {
       typeName = typeName.substring(0, typeName.indexOf("{"));
     }
 

@@ -1,12 +1,24 @@
 // This file is for types exposed as part of the API.
 
-export interface Pointer<T> {
-  readonly isNull: boolean;
+export type OpaqueStruct = Record<never, never> & { __opaque: true };
 
-  readonly address: bigint;
+// deno-fmt-ignore
+export type Pointer<T> =
+  T extends OpaqueStruct | void ?
+    {
+      readonly isNull: boolean;
 
-  readonly value: T;
-}
+      readonly address: bigint;
+    }
+  :
+    {
+      readonly isNull: boolean;
+
+      readonly address: bigint;
+
+      // Instances of OpaqueStructs cannot be created
+      readonly value: T;
+    };
 
 export type PointerTargetArray<T> = Pointer<T>[];
 

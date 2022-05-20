@@ -31,7 +31,9 @@ export function toCString(value: string): Uint8Array {
   return new TextEncoder().encode(value + "\0");
 }
 
-export class DataPointer<T> implements Pointer<T> {
+// DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
+// has dynamic members.
+export class DataPointer<T> /* implements Pointer<T> */ {
   public readonly _pointer: Deno.UnsafePointer;
   private _value: T | null = null;
 

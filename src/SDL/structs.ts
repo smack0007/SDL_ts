@@ -1,14 +1,14 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { Pointer } from "../types.ts";
+import { OpaqueStruct, Pointer } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
 
-export type BlitMap = void;
-export type PixelFormat = void;
-export type Renderer = void;
-export type RWops = void;
-export type Texture = void;
-export type Window = void;
+export type BlitMap = OpaqueStruct;
+export type PixelFormat = OpaqueStruct;
+export type Renderer = OpaqueStruct;
+export type RWops = OpaqueStruct;
+export type Texture = OpaqueStruct;
+export type Window = OpaqueStruct;
 
 export class Point {
   public static SIZE_IN_BYTES = 8;
