@@ -36,7 +36,6 @@ import type {
   PointerTargetArray,
   PointerTargetObject,
   RWMode,
-  Struct,
   TypedArray,
 } from "./src/types.ts";
 
@@ -52,7 +51,6 @@ export type {
   Renderer,
   RWMode,
   RWops,
-  Struct,
   Surface,
   Texture,
   TypedArray,

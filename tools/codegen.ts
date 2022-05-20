@@ -112,7 +112,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer, Struct } from "../types.ts";`);
+  lines.push(`import { Pointer } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
@@ -147,7 +147,7 @@ async function writeEvents(): Promise<void> {
     lines.push("");
   }
 
-  lines.push(`export class Event implements Struct {
+  lines.push(`export class Event {
   private _data = new Uint8Array(64);
   private _view = new DataView<Event>(this._data);
   private _pointer = new DataPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
@@ -179,7 +179,7 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer, Struct } from "../types.ts";`);
+  lines.push(`import { Pointer } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
@@ -193,7 +193,7 @@ async function writeStructs(): Promise<void> {
   for (const [structName, struct] of Object.entries(structs)) {
     const className = shortenName(structName);
 
-    lines.push(`export class ${className} implements Struct {
+    lines.push(`export class ${className} {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     if (struct.allocatable) {

@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { Pointer, Struct } from "../types.ts";
+import { Pointer } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
 
 export type BlitMap = void;
@@ -10,7 +10,7 @@ export type RWops = void;
 export type Texture = void;
 export type Window = void;
 
-export class Point implements Struct {
+export class Point {
   public static SIZE_IN_BYTES = 8;
 
   private _data: Uint8Array | Pointer<Point>;
@@ -68,7 +68,7 @@ export class Point implements Struct {
   }
 }
 
-export class Rect implements Struct {
+export class Rect {
   public static SIZE_IN_BYTES = 16;
 
   private _data: Uint8Array | Pointer<Rect>;
@@ -144,7 +144,7 @@ export class Rect implements Struct {
   }
 }
 
-export class Surface implements Struct {
+export class Surface {
   public static SIZE_IN_BYTES = 96;
 
   private _data: Pointer<Surface>;

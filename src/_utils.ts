@@ -1,7 +1,7 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { Pointer, PointerTarget, Struct } from "./types.ts";
+import { Pointer, PointerTarget } from "./types.ts";
 
 export const ENDIANNESS = (function (): "BE" | "LE" {
   const buffer = new ArrayBuffer(2);

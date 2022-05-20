@@ -16,10 +16,6 @@ export type PointerTarget<T> = PointerTargetArray<T> | PointerTargetObject<T>;
 
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 
-export interface Struct {
-  readonly pointer: Pointer<Struct>;
-}
-
 export type TypedArray =
   | Int8Array
   | Uint8Array
