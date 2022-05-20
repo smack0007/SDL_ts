@@ -185,16 +185,7 @@ async function writeStructs(): Promise<void> {
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export class ${className} implements Struct {
-  public static SIZE_IN_BYTES = 0;
-  
-  constructor(private _data: Pointer<${className}>) {}
-  
-  public get pointer(): Pointer<${className}> {
-    return this._data;
-  }
-}
-`);
+    lines.push(`export type ${className} = void;`);
   }
 
   lines.push("");
@@ -595,7 +586,9 @@ const context: SDLContext = {
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamStruct(func.result) || isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
+      if (isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
+        lines.push(`\t) as Deno.UnsafePointer);`);
+      } else if (isFunctionParamStruct(func.result)) {
         lines.push(`\t) as Deno.UnsafePointer, ${getGenericParam(returnType)});`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);

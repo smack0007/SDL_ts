@@ -54,14 +54,11 @@ export function CreateRenderer(
   index: number,
   flags: number,
 ): Pointer<Renderer> {
-  return new DataPointer<Renderer>(
-    context.symbols.SDL_CreateRenderer(
-      (window as DataPointer<Window>)._pointer,
-      index,
-      flags,
-    ) as Deno.UnsafePointer,
-    Renderer,
-  );
+  return new DataPointer<Renderer>(context.symbols.SDL_CreateRenderer(
+    (window as DataPointer<Window>)._pointer,
+    index,
+    flags,
+  ) as Deno.UnsafePointer);
 }
 
 export function CreateRGBSurfaceFrom(
@@ -117,16 +114,13 @@ export function CreateTexture(
   w: number,
   h: number,
 ): Pointer<Texture> {
-  return new DataPointer<Texture>(
-    context.symbols.SDL_CreateTexture(
-      (renderer as DataPointer<Renderer>)._pointer,
-      format,
-      access,
-      w,
-      h,
-    ) as Deno.UnsafePointer,
-    Texture,
-  );
+  return new DataPointer<Texture>(context.symbols.SDL_CreateTexture(
+    (renderer as DataPointer<Renderer>)._pointer,
+    format,
+    access,
+    w,
+    h,
+  ) as Deno.UnsafePointer);
 }
 
 export function CreateWindow(
@@ -137,17 +131,14 @@ export function CreateWindow(
   h: number,
   flags: number,
 ): Pointer<Window> {
-  return new DataPointer<Window>(
-    context.symbols.SDL_CreateWindow(
-      toCString(title),
-      x,
-      y,
-      w,
-      h,
-      flags,
-    ) as Deno.UnsafePointer,
-    Window,
-  );
+  return new DataPointer<Window>(context.symbols.SDL_CreateWindow(
+    toCString(title),
+    x,
+    y,
+    w,
+    h,
+    flags,
+  ) as Deno.UnsafePointer);
 }
 
 export function CreateWindowAndRenderer(
@@ -391,13 +382,10 @@ export function RWFromFile(
   file: string,
   mode: RWMode,
 ): Pointer<RWops> {
-  return new DataPointer<RWops>(
-    context.symbols.SDL_RWFromFile(
-      toCString(file),
-      toCString(mode),
-    ) as Deno.UnsafePointer,
-    RWops,
-  );
+  return new DataPointer<RWops>(context.symbols.SDL_RWFromFile(
+    toCString(file),
+    toCString(mode),
+  ) as Deno.UnsafePointer);
 }
 
 export function SetRenderDrawColor(

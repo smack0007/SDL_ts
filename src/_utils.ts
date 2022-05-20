@@ -19,7 +19,7 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
-export function setPointerTarget<T extends Struct>(target: PointerTarget<T>, value: Pointer<T>): void {
+export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>): void {
   if (Array.isArray(target)) {
     target[0] = value;
   } else {

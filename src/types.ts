@@ -8,11 +8,11 @@ export interface Pointer<T> {
   readonly value: T;
 }
 
-export type PointerTargetArray<T extends Struct> = Pointer<T>[];
+export type PointerTargetArray<T> = Pointer<T>[];
 
-export type PointerTargetObject<T extends Struct> = { value: Pointer<T> };
+export type PointerTargetObject<T> = { value: Pointer<T> };
 
-export type PointerTarget<T extends Struct> = PointerTargetArray<T> | PointerTargetObject<T>;
+export type PointerTarget<T> = PointerTargetArray<T> | PointerTargetObject<T>;
 
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 

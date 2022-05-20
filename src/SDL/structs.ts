@@ -3,65 +3,12 @@
 import { Pointer, Struct } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
 
-export class BlitMap implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<BlitMap>) {}
-
-  public get pointer(): Pointer<BlitMap> {
-    return this._data;
-  }
-}
-
-export class PixelFormat implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<PixelFormat>) {}
-
-  public get pointer(): Pointer<PixelFormat> {
-    return this._data;
-  }
-}
-
-export class Renderer implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<Renderer>) {}
-
-  public get pointer(): Pointer<Renderer> {
-    return this._data;
-  }
-}
-
-export class RWops implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<RWops>) {}
-
-  public get pointer(): Pointer<RWops> {
-    return this._data;
-  }
-}
-
-export class Texture implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<Texture>) {}
-
-  public get pointer(): Pointer<Texture> {
-    return this._data;
-  }
-}
-
-export class Window implements Struct {
-  public static SIZE_IN_BYTES = 0;
-
-  constructor(private _data: Pointer<Window>) {}
-
-  public get pointer(): Pointer<Window> {
-    return this._data;
-  }
-}
+export type BlitMap = void;
+export type PixelFormat = void;
+export type Renderer = void;
+export type RWops = void;
+export type Texture = void;
+export type Window = void;
 
 export class Point implements Struct {
   public static SIZE_IN_BYTES = 8;
