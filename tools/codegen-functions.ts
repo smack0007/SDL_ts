@@ -574,6 +574,136 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_RenderDrawLine: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      x1: {
+        nativeType: "int",
+        type: "i32",
+      },
+      y1: {
+        nativeType: "int",
+        type: "i32",
+      },
+      x2: {
+        nativeType: "int",
+        type: "i32",
+      },
+      y2: {
+        nativeType: "int",
+        type: "i32",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  // SDL_RenderDrawLines: {
+  //   parameters: {
+  //     renderer: {
+  //       nativeType: "SDL_Renderer*",
+  //       type: "pointer",
+  //     },
+  //     points: {
+  //       nativeType: "SDL_Point*",
+  //       type: "pointer",
+  //     },
+  //     count: {
+  //       nativeType: "int",
+  //       type: "i32",
+  //     },
+  //   },
+  //   result: {
+  //     nativeType: "int",
+  //     type: "i32",
+  //   },
+  // },
+
+  SDL_RenderDrawPoint: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      x: {
+        nativeType: "int",
+        type: "i32",
+      },
+      y: {
+        nativeType: "int",
+        type: "i32",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  // SDL_RenderDrawPoints: {
+  //   parameters: {
+  //     renderer: {
+  //       nativeType: "SDL_Renderer*",
+  //       type: "pointer",
+  //     },
+  //     points: {
+  //       nativeType: "SDL_Point*",
+  //       type: "pointer",
+  //     },
+  //     count: {
+  //       nativeType: "int",
+  //       type: "i32",
+  //     },
+  //   },
+  //   result: {
+  //     nativeType: "int",
+  //     type: "i32",
+  //   },
+  // },
+
+  SDL_RenderDrawRect: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      rect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  // SDL_RenderDrawRects: {
+  //   parameters: {
+  //     renderer: {
+  //       nativeType: "SDL_Renderer*",
+  //       type: "pointer",
+  //     },
+  //     rects: {
+  //       nativeType: "SDL_Rect*",
+  //       type: "pointer",
+  //     },
+  //     count: {
+  //       nativeType: "int",
+  //       type: "i32",
+  //     },
+  //   },
+  //   result: {
+  //     nativeType: "int",
+  //     type: "i32",
+  //   },
+  // },
+
   SDL_RenderFillRect: {
     parameters: {
       renderer: {
@@ -590,6 +720,27 @@ export const functions: Record<string, CodeGenFunction> = {
       type: "i32",
     },
   },
+
+  // SDL_RenderFillRects: {
+  //   parameters: {
+  //     renderer: {
+  //       nativeType: "SDL_Renderer*",
+  //       type: "pointer",
+  //     },
+  //     rects: {
+  //       nativeType: "SDL_Rect*",
+  //       type: "pointer",
+  //     },
+  //     count: {
+  //       nativeType: "int",
+  //       type: "i32",
+  //     },
+  //   },
+  //   result: {
+  //     nativeType: "int",
+  //     type: "i32",
+  //   },
+  // },
 
   SDL_RenderFlush: {
     parameters: {

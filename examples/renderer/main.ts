@@ -1,4 +1,4 @@
-import { PointerTargetArray, Renderer, SDL, Window } from "../../mod.ts";
+import { Pointer, PointerTargetArray, Renderer, SDL, Window } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -39,6 +39,7 @@ function main(): number {
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
   SDL.RenderPresent(renderer);
+  SDL.RenderFlush(renderer);
 
   const texture = SDL.CreateTexture(
     renderer,
@@ -72,9 +73,17 @@ function main(): number {
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
     const rect = new SDL.Rect(100, 100, 200, 400);
+    SDL.RenderDrawPoint(renderer, 0, 0);
+    SDL.RenderDrawPoint(renderer, 1, 0);
+    SDL.RenderDrawPoint(renderer, 1, 1);
+    SDL.RenderDrawPoint(renderer, 0, 1);
+    SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     SDL.RenderFillRect(renderer, rect.pointer);
+    SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    SDL.RenderDrawRect(renderer, rect.pointer);
 
     SDL.RenderPresent(renderer);
+    SDL.RenderFlush(renderer);
 
     SDL.Delay(16);
   }

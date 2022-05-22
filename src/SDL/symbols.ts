@@ -31,6 +31,9 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_PollEvent: Deno.ForeignFunction;
   SDL_Quit: Deno.ForeignFunction;
   SDL_RenderClear: Deno.ForeignFunction;
+  SDL_RenderDrawLine: Deno.ForeignFunction;
+  SDL_RenderDrawPoint: Deno.ForeignFunction;
+  SDL_RenderDrawRect: Deno.ForeignFunction;
   SDL_RenderFillRect: Deno.ForeignFunction;
   SDL_RenderFlush: Deno.ForeignFunction;
   SDL_RenderPresent: Deno.ForeignFunction;
@@ -253,6 +256,31 @@ export const symbols: Symbols = {
   SDL_RenderClear: {
     parameters: [
       "pointer", /* SDL_Renderer* renderer */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderDrawLine: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "i32", /* int x1 */
+      "i32", /* int y1 */
+      "i32", /* int x2 */
+      "i32", /* int y2 */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderDrawPoint: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "i32", /* int x */
+      "i32", /* int y */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderDrawRect: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Rect* rect */
     ],
     result: "i32", /* int */
   },

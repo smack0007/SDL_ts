@@ -365,6 +365,44 @@ export function RenderClear(
   ) as number;
 }
 
+export function RenderDrawLine(
+  renderer: Pointer<Renderer>,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+): number {
+  return context.symbols.SDL_RenderDrawLine(
+    (renderer as DataPointer<Renderer>)._pointer,
+    x1,
+    y1,
+    x2,
+    y2,
+  ) as number;
+}
+
+export function RenderDrawPoint(
+  renderer: Pointer<Renderer>,
+  x: number,
+  y: number,
+): number {
+  return context.symbols.SDL_RenderDrawPoint(
+    (renderer as DataPointer<Renderer>)._pointer,
+    x,
+    y,
+  ) as number;
+}
+
+export function RenderDrawRect(
+  renderer: Pointer<Renderer>,
+  rect: Pointer<Rect>,
+): number {
+  return context.symbols.SDL_RenderDrawRect(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (rect as DataPointer<Rect>)._pointer,
+  ) as number;
+}
+
 export function RenderFillRect(
   renderer: Pointer<Renderer>,
   rect: Pointer<Rect>,
