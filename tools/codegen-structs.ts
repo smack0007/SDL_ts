@@ -11,8 +11,12 @@ export type CodeGenStructMember = {
 
 export type CodeGenStructType = {
   // Indicates whether the struct can be allocated in
-  // deno. If false it will only be allocated by SDL.
+  // in script. If false it will only be allocated by SDL.
   allocatable?: boolean;
+
+  // Indicates whether the struct can be written to in
+  // in script. If false it will only be written to by SDL.
+  writable?: boolean;
 
   // Size of the struct in bytes.
   size: number;
@@ -34,6 +38,7 @@ export const opaqueStructs: string[] = [
 export const structs: Record<string, CodeGenStructType> = {
   SDL_Point: {
     allocatable: true,
+    writable: true,
     size: 8,
     members: {
       x: {
@@ -51,6 +56,7 @@ export const structs: Record<string, CodeGenStructType> = {
 
   SDL_Rect: {
     allocatable: true,
+    writable: true,
     size: 16,
     members: {
       x: {
@@ -72,6 +78,45 @@ export const structs: Record<string, CodeGenStructType> = {
         nativeType: "int",
         type: "i32",
         offset: 12,
+      },
+    },
+  },
+
+  SDL_RendererInfo: {
+    allocatable: true,
+    writable: false,
+    size: 88,
+    members: {
+      name: {
+        nativeType: "char*",
+        type: "pointer",
+        offset: 0,
+      },
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 8,
+      },
+      num_texture_formats: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 12,
+      },
+      // TODO: Add support for arrays in structs.
+      // texture_formats: {
+      //   nativeType: "Uint32",
+      //   type: "u32",
+      //   offset: 16,
+      // },
+      max_texture_width: {
+        nativeType: "int",
+        type: "i32",
+        offset: 80,
+      },
+      max_texture_height: {
+        nativeType: "int",
+        type: "i32",
+        offset: 84,
       },
     },
   },

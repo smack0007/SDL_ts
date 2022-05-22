@@ -16,6 +16,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_FillRect: Deno.ForeignFunction;
   SDL_FreeSurface: Deno.ForeignFunction;
   SDL_GetError: Deno.ForeignFunction;
+  SDL_GetRendererInfo: Deno.ForeignFunction;
   SDL_GetSystemRAM: Deno.ForeignFunction;
   SDL_GetTicks: Deno.ForeignFunction;
   SDL_GetTicks64: Deno.ForeignFunction;
@@ -163,6 +164,13 @@ export const symbols: Symbols = {
   SDL_GetError: {
     parameters: [],
     result: "pointer", /* char* */
+  },
+  SDL_GetRendererInfo: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_RendererInfo* info */
+    ],
+    result: "i32", /* int */
   },
   SDL_GetSystemRAM: {
     parameters: [],

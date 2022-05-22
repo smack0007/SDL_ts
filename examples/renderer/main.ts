@@ -25,6 +25,17 @@ function main(): number {
     return 1;
   }
 
+  const rendererInfo = new SDL.RendererInfo();
+  if (SDL.GetRendererInfo(renderer, rendererInfo.pointer) != 0) {
+    console.error(`Failed to get renderer info: ${SDL.GetError()}`);
+    return 1;
+  }
+
+  console.info(rendererInfo.name);
+  console.info(rendererInfo.max_texture_width);
+  console.info(rendererInfo.max_texture_height);
+  console.info((rendererInfo.flags & SDL.RENDERER_ACCELERATED) === SDL.RENDERER_ACCELERATED);
+
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
   SDL.RenderPresent(renderer);

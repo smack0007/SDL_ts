@@ -363,6 +363,23 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_GetRendererInfo: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      info: {
+        nativeType: "SDL_RendererInfo*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
   SDL_GetSystemRAM: {
     parameters: {},
     result: {

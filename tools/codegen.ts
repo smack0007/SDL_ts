@@ -76,6 +76,11 @@ async function writeEnums(): Promise<void> {
 }
 
 function mapStructMemberType(member: CodeGenStructMember): string {
+  switch (member.nativeType) {
+    case "char*":
+      return "string";
+  }
+
   switch (member.type) {
     case "i8":
     case "u8":
@@ -180,7 +185,7 @@ async function writeStructs(): Promise<void> {
   const lines = createLines();
 
   lines.push(`import { OpaqueStruct, Pointer } from "../types.ts";`);
-  lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
+  lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -204,32 +209,50 @@ async function writeStructs(): Promise<void> {
 
   constructor();
   constructor(data: Uint8Array);
-  constructor(data: Pointer<${className}>);
-  constructor(data: Partial<${className}>);`);
+  constructor(data: Pointer<${className}>);`);
 
-      const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-        `${memberName}: ${mapStructMemberType(member)}`
-      ).join(", ");
-      lines.push(`constructor(${constructorParams});`);
+      if (!struct.writable) {
+        lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
+  if (data instanceof Uint8Array || data instanceof DataPointer) {
+    this._data = data;
+  } else {
+    this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
+  }
+  
+  this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
 
-      const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
-      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-        `, _${index + 2}?: ${mapStructMemberType(member)}`
-      ).join("");
-      lines.push(
-        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
-      );
+  if (this._data instanceof Uint8Array) {
+    this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
+  } else {
+    this._pointer = this._data as DataPointer<${className}>;
+  }
+}
+`);
+      } else {
+        lines.push(`constructor(data: Partial<${className}>);`);
+        const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
+          `${memberName}: ${mapStructMemberType(member)}`
+        ).join(", ");
+        lines.push(`constructor(${constructorParams});`);
 
-      const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-        `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
-      ).join("\n");
+        const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
+        const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
+          `, _${index + 2}?: ${mapStructMemberType(member)}`
+        ).join("");
+        lines.push(
+          `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+        );
 
-      lines.push(`
+        const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
+          `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
+        ).join("\n");
+
+        lines.push(`
     if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
     } else {
-      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+      this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
       this._view = new DataView(this._data);
 
       if (_1 !== undefined) {
@@ -247,10 +270,12 @@ async function writeStructs(): Promise<void> {
       this._pointer = this._data as DataPointer<${className}>;
     }
   }
+`);
+      }
 
-  public get pointer(): Pointer<${className}> {
-    return this._pointer;
-  }
+      lines.push(`public get pointer(): Pointer<${className}> {
+        return this._pointer;
+      }
 `);
     } else {
       lines.push(`
@@ -277,7 +302,9 @@ async function writeStructs(): Promise<void> {
       let length = 0;
       let memberType = mapStructMemberType(member);
 
-      if (member.type === "pointer") {
+      if (memberType === "string") {
+        readOp += `fromCString(new Deno.UnsafePointer(`;
+      } else if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
         readOp += `new DataPointer<${subStructName}>(`;
@@ -298,7 +325,9 @@ async function writeStructs(): Promise<void> {
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
-      if ((member.type === "pointer" || member.type === "struct")) {
+      if (memberType === "string") {
+        readOp += "))";
+      } else if ((member.type === "pointer" || member.type === "struct")) {
         readOp += ")";
       }
 

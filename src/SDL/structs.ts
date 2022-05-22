@@ -1,7 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { OpaqueStruct, Pointer } from "../types.ts";
-import { DataPointer, DataView } from "../_utils.ts";
+import { DataPointer, DataView, fromCString } from "../_utils.ts";
 
 export type BlitMap = OpaqueStruct;
 export type PixelFormat = OpaqueStruct;
@@ -27,7 +27,7 @@ export class Point {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<Point>);
     } else {
-      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+      this._data = new Uint8Array(Point.SIZE_IN_BYTES);
       this._view = new DataView(this._data);
 
       if (_1 !== undefined) {
@@ -141,6 +141,73 @@ export class Rect {
 
   public set h(value: number) {
     this._view.setInt32(12, value);
+  }
+}
+
+export class RendererInfo {
+  public static SIZE_IN_BYTES = 88;
+
+  private _data: Uint8Array | Pointer<RendererInfo>;
+  private _view: DataView<RendererInfo>;
+  private _pointer: DataPointer<RendererInfo>;
+
+  constructor();
+  constructor(data: Uint8Array);
+  constructor(data: Pointer<RendererInfo>);
+  constructor(data?: Uint8Array | Pointer<RendererInfo>) {
+    if (data instanceof Uint8Array || data instanceof DataPointer) {
+      this._data = data;
+    } else {
+      this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
+    }
+
+    this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<RendererInfo>(Deno.UnsafePointer.of(this._data), RendererInfo);
+    } else {
+      this._pointer = this._data as DataPointer<RendererInfo>;
+    }
+  }
+
+  public get pointer(): Pointer<RendererInfo> {
+    return this._pointer;
+  }
+
+  public get name(): string {
+    return fromCString(new Deno.UnsafePointer(this._view.getBigUint64(0)));
+  }
+
+  public get flags(): number {
+    return this._view.getUint32(8);
+  }
+
+  public set flags(value: number) {
+    this._view.setUint32(8, value);
+  }
+
+  public get num_texture_formats(): number {
+    return this._view.getUint32(12);
+  }
+
+  public set num_texture_formats(value: number) {
+    this._view.setUint32(12, value);
+  }
+
+  public get max_texture_width(): number {
+    return this._view.getInt32(80);
+  }
+
+  public set max_texture_width(value: number) {
+    this._view.setInt32(80, value);
+  }
+
+  public get max_texture_height(): number {
+    return this._view.getInt32(84);
+  }
+
+  public set max_texture_height(value: number) {
+    this._view.setInt32(84, value);
   }
 }
 

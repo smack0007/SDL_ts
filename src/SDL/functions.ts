@@ -1,7 +1,18 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { Event } from "./events.ts";
-import { BlitMap, PixelFormat, Point, Rect, Renderer, RWops, Surface, Texture, Window } from "./structs.ts";
+import {
+  BlitMap,
+  PixelFormat,
+  Point,
+  Rect,
+  Renderer,
+  RendererInfo,
+  RWops,
+  Surface,
+  Texture,
+  Window,
+} from "./structs.ts";
 import { Symbols, symbols } from "./symbols.ts";
 import { RWMode, TypedArray } from "../types.ts";
 import { Pointer, PointerTarget } from "../types.ts";
@@ -219,6 +230,16 @@ export function FreeSurface(
 
 export function GetError(): string {
   return fromCString(context.symbols.SDL_GetError() as Deno.UnsafePointer);
+}
+
+export function GetRendererInfo(
+  renderer: Pointer<Renderer>,
+  info: Pointer<RendererInfo>,
+): number {
+  return context.symbols.SDL_GetRendererInfo(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (info as DataPointer<RendererInfo>)._pointer,
+  ) as number;
 }
 
 export function GetSystemRAM(): number {
