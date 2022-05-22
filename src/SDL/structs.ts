@@ -182,32 +182,16 @@ export class RendererInfo {
     return this._view.getUint32(8);
   }
 
-  public set flags(value: number) {
-    this._view.setUint32(8, value);
-  }
-
   public get num_texture_formats(): number {
     return this._view.getUint32(12);
-  }
-
-  public set num_texture_formats(value: number) {
-    this._view.setUint32(12, value);
   }
 
   public get max_texture_width(): number {
     return this._view.getInt32(80);
   }
 
-  public set max_texture_width(value: number) {
-    this._view.setInt32(80, value);
-  }
-
   public get max_texture_height(): number {
     return this._view.getInt32(84);
-  }
-
-  public set max_texture_height(value: number) {
-    this._view.setInt32(84, value);
   }
 }
 

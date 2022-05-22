@@ -336,7 +336,7 @@ async function writeStructs(): Promise<void> {
       lines.push("\t}");
       lines.push("");
 
-      if (struct.allocatable) {
+      if (struct.writable) {
         // TODO: Can we write to pointers / structs?
         if (member.type === "pointer" || member.type === "struct") {
           continue;
