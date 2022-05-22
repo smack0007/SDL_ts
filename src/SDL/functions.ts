@@ -393,6 +393,18 @@ export function RenderDrawPoint(
   ) as number;
 }
 
+export function RenderDrawPoints(
+  renderer: Pointer<Renderer>,
+  points: Pointer<Point>,
+  count: number,
+): number {
+  return context.symbols.SDL_RenderDrawPoints(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (points as DataPointer<Point>)._pointer,
+    count,
+  ) as number;
+}
+
 export function RenderDrawRect(
   renderer: Pointer<Renderer>,
   rect: Pointer<Rect>,

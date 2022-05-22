@@ -16,6 +16,8 @@ export const SDL = {
   ...SDL_structs,
 };
 
+export * from "./src/utils.ts";
+
 import type {
   BlitMap,
   PixelFormat,
@@ -30,16 +32,21 @@ import type {
 } from "./src/SDL/structs.ts";
 
 import type {
+  AllocatableStruct,
+  AllocatableStructConstructor,
   OpaqueStruct,
   Pointer,
   PointerTarget,
   PointerTargetArray,
   PointerTargetObject,
   RWMode,
+  Struct,
   TypedArray,
 } from "./src/types.ts";
 
 export type {
+  AllocatableStruct,
+  AllocatableStructConstructor,
   BlitMap,
   OpaqueStruct,
   PixelFormat,
@@ -53,6 +60,7 @@ export type {
   RendererInfo,
   RWMode,
   RWops,
+  Struct,
   Surface,
   Texture,
   TypedArray,

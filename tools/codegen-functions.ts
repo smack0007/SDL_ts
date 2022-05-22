@@ -8,7 +8,7 @@ export interface CodeGenFunctionParam {
   // Can the parameter be null.
   nullable?: boolean;
 
-  // If set this type will be used as the deno type.
+  // If set this type will be used as the script type.
   overrideType?: string;
 }
 
@@ -645,26 +645,26 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
-  // SDL_RenderDrawPoints: {
-  //   parameters: {
-  //     renderer: {
-  //       nativeType: "SDL_Renderer*",
-  //       type: "pointer",
-  //     },
-  //     points: {
-  //       nativeType: "SDL_Point*",
-  //       type: "pointer",
-  //     },
-  //     count: {
-  //       nativeType: "int",
-  //       type: "i32",
-  //     },
-  //   },
-  //   result: {
-  //     nativeType: "int",
-  //     type: "i32",
-  //   },
-  // },
+  SDL_RenderDrawPoints: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      points: {
+        nativeType: "SDL_Point*",
+        type: "pointer",
+      },
+      count: {
+        nativeType: "int",
+        type: "i32",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
 
   SDL_RenderDrawRect: {
     parameters: {

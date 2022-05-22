@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { OpaqueStruct, Pointer } from "../types.ts";
+import { AllocatableStruct, OpaqueStruct, Pointer, Struct } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
 
 export type BlitMap = OpaqueStruct;
@@ -10,7 +10,7 @@ export type RWops = OpaqueStruct;
 export type Texture = OpaqueStruct;
 export type Window = OpaqueStruct;
 
-export class Point {
+export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
   private _data: Uint8Array | Pointer<Point>;
@@ -68,7 +68,7 @@ export class Point {
   }
 }
 
-export class Rect {
+export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
   private _data: Uint8Array | Pointer<Rect>;
@@ -144,7 +144,7 @@ export class Rect {
   }
 }
 
-export class RendererInfo {
+export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
   private _data: Uint8Array | Pointer<RendererInfo>;

@@ -1,6 +1,11 @@
 // This file is for types exposed as part of the API.
 
-export type OpaqueStruct = Record<never, never> & { __opaque: true };
+export type AllocatableStructConstructor<T> = new () => T;
+
+export interface AllocatableStruct extends Struct {
+}
+
+export type OpaqueStruct = Record<never, never> & { __opaqueStruct: true };
 
 // deno-fmt-ignore
 export type Pointer<T> =
@@ -27,6 +32,10 @@ export type PointerTargetObject<T> = { value: Pointer<T> };
 export type PointerTarget<T> = PointerTargetArray<T> | PointerTargetObject<T>;
 
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
+
+export interface Struct {
+  pointer: Pointer<Struct>;
+}
 
 export type TypedArray =
   | Int8Array
