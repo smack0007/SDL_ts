@@ -408,7 +408,7 @@ async function writeSymbols(): Promise<void> {
   lines.push("};");
   lines.push("");
 
-  await writeLinesToFile(`${SDL_PATH}/symbols.ts`, lines);
+  await writeLinesToFile(`${SDL_PATH}/_symbols.ts`, lines);
 }
 
 function isFunctionParamOpaqueStruct(param: CodeGenFunctionParam): boolean {
@@ -514,7 +514,7 @@ async function writeFunctions(): Promise<void> {
 
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
-  lines.push(`import { Symbols, symbols } from "./symbols.ts";`);
+  lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(`import { RWMode, TypedArray } from "../types.ts";`);
   lines.push(`import { Pointer, PointerTarget } from "../types.ts";`);
   lines.push(`import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";`);

@@ -13,7 +13,7 @@ import {
   Texture,
   Window,
 } from "./structs.ts";
-import { Symbols, symbols } from "./symbols.ts";
+import { Symbols, symbols } from "./_symbols.ts";
 import { RWMode, TypedArray } from "../types.ts";
 import { Pointer, PointerTarget } from "../types.ts";
 import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";

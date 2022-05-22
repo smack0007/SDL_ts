@@ -6,7 +6,6 @@ import * as SDL_functionMacros from "./src/SDL/functionMacros.ts";
 import * as SDL_functions from "./src/SDL/functions.ts";
 import * as SDL_pixels from "./src/SDL/pixels.ts";
 import * as SDL_structs from "./src/SDL/structs.ts";
-import * as SDL_symbols from "./src/SDL/symbols.ts";
 
 export const SDL = {
   ...SDL_enums,
@@ -15,7 +14,6 @@ export const SDL = {
   ...SDL_functions,
   ...SDL_pixels,
   ...SDL_structs,
-  ...SDL_symbols,
 };
 
 import type {
