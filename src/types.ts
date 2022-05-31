@@ -2,29 +2,20 @@
 
 import { MemoryOffset } from "./memory.ts";
 
-export type AllocatableStructConstructor<T extends AllocatableStruct> = { new (data: MemoryOffset): T; SIZE_IN_BYTES: number };
+export type AllocatableStructConstructor<T extends AllocatableStruct> = {
+  new (data: MemoryOffset): T;
+  SIZE_IN_BYTES: number;
+};
 
 export type AllocatableStruct = Struct;
 
-export type OpaqueStruct = Record<never, never> & { __opaqueStruct: true };
+export type Pointer<T> = {
+  readonly isNull: boolean;
 
-// deno-fmt-ignore
-export type Pointer<T> =
-  T extends OpaqueStruct | void ?
-    {
-      readonly isNull: boolean;
+  readonly address: bigint;
 
-      readonly address: bigint;
-    }
-  :
-    {
-      readonly isNull: boolean;
-
-      readonly address: bigint;
-
-      // Instances of OpaqueStructs cannot be created
-      readonly value: T;
-    };
+  readonly value: T;
+};
 
 export type PointerTargetArray<T> = Pointer<T>[];
 

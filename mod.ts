@@ -34,7 +34,6 @@ import type {
 import type {
   AllocatableStruct,
   AllocatableStructConstructor,
-  OpaqueStruct,
   Pointer,
   PointerTarget,
   PointerTargetArray,
@@ -48,7 +47,6 @@ export type {
   AllocatableStruct,
   AllocatableStructConstructor,
   BlitMap,
-  OpaqueStruct,
   PixelFormat,
   Point,
   Pointer,

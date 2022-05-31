@@ -184,14 +184,14 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { AllocatableStruct, OpaqueStruct, Pointer, Struct } from "../types.ts";`);
+  lines.push(`import { AllocatableStruct, Pointer, Struct } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
   lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export type ${className} = OpaqueStruct;`);
+    lines.push(`export type ${className} = Record<never, never>;`);
   }
 
   lines.push("");
@@ -199,7 +199,7 @@ async function writeStructs(): Promise<void> {
   for (const [structName, struct] of Object.entries(structs)) {
     const className = shortenName(structName);
 
-    const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : "";
+    const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
     lines.push(`export class ${className}${implementsExpression} {
   public static SIZE_IN_BYTES = ${struct.size};`);

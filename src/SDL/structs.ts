@@ -1,15 +1,15 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { AllocatableStruct, OpaqueStruct, Pointer, Struct } from "../types.ts";
+import { AllocatableStruct, Pointer, Struct } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
 import { MemoryOffset } from "../memory.ts";
 
-export type BlitMap = OpaqueStruct;
-export type PixelFormat = OpaqueStruct;
-export type Renderer = OpaqueStruct;
-export type RWops = OpaqueStruct;
-export type Texture = OpaqueStruct;
-export type Window = OpaqueStruct;
+export type BlitMap = Record<never, never>;
+export type PixelFormat = Record<never, never>;
+export type Renderer = Record<never, never>;
+export type RWops = Record<never, never>;
+export type Texture = Record<never, never>;
+export type Window = Record<never, never>;
 
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
@@ -219,7 +219,7 @@ export class RendererInfo implements AllocatableStruct {
   }
 }
 
-export class Surface {
+export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
   private _data: Pointer<Surface>;
