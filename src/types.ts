@@ -1,9 +1,10 @@
 // This file is for types exposed as part of the API.
 
-export type AllocatableStructConstructor<T> = new () => T;
+import { MemoryOffset } from "./memory.ts";
 
-export interface AllocatableStruct extends Struct {
-}
+export type AllocatableStructConstructor<T extends AllocatableStruct> = { new (data: MemoryOffset): T; SIZE_IN_BYTES: number };
+
+export type AllocatableStruct = Struct;
 
 export type OpaqueStruct = Record<never, never> & { __opaqueStruct: true };
 

@@ -16,7 +16,7 @@ export const SDL = {
   ...SDL_structs,
 };
 
-export * from "./src/utils.ts";
+export * from "./src/memory.ts";
 
 import type {
   BlitMap,

@@ -186,6 +186,7 @@ async function writeStructs(): Promise<void> {
 
   lines.push(`import { AllocatableStruct, OpaqueStruct, Pointer, Struct } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
+  lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -210,20 +211,26 @@ async function writeStructs(): Promise<void> {
   private _pointer: DataPointer<${className}>;
 
   constructor();
+  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<${className}>);`);
 
       if (!struct.writable) {
-        lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
-  if (data instanceof Uint8Array || data instanceof DataPointer) {
+        lines.push(`constructor(data?: MemoryOffset | Uint8Array | Pointer<${className}>) {
+  if (data instanceof MemoryOffset) {
+    this._data = data.memory;
+    this._view = new DataView(this._data, data.byteOffset);
+  } else if (data instanceof Uint8Array || data instanceof DataPointer) {
     this._data = data;
+    this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
   } else {
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
+    this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
   }
   
-  this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
-
-  if (this._data instanceof Uint8Array) {
+  if (data instanceof MemoryOffset) {
+    this._pointer = new DataPointer<${className}>(data, ${className});
+  } else if (this._data instanceof Uint8Array) {
     this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
   } else {
     this._pointer = this._data as DataPointer<${className}>;
@@ -242,7 +249,7 @@ async function writeStructs(): Promise<void> {
           `, _${index + 2}?: ${mapStructMemberType(member)}`
         ).join("");
         lines.push(
-          `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+          `constructor(_1?: MemoryOffset | Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
         );
 
         const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
@@ -250,7 +257,10 @@ async function writeStructs(): Promise<void> {
         ).join("\n");
 
         lines.push(`
-    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+    if (_1 instanceof MemoryOffset) {
+      this._data = _1.memory;
+      this._view = new DataView(this._data, _1.byteOffset);
+    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
     } else {
@@ -266,7 +276,9 @@ async function writeStructs(): Promise<void> {
       }
     }
 
-    if (this._data instanceof Uint8Array) {
+    if (_1 instanceof MemoryOffset) {
+      this._pointer = new DataPointer<${className}>(_1, ${className});
+    } else if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
     } else {
       this._pointer = this._data as DataPointer<${className}>;
@@ -682,7 +694,7 @@ async function writeMod(): Promise<void> {
     lines.push("");
   }
 
-  lines.push(`export * from "./src/utils.ts";`);
+  lines.push(`export * from "./src/memory.ts";`);
   lines.push("");
 
   const typesToExport: string[] = [];

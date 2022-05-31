@@ -84,7 +84,7 @@ function main(): number {
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawPoints(renderer, points.pointer, 4);
-    SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    // SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     SDL.RenderFillRect(renderer, rect.pointer);
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL.RenderDrawRect(renderer, rect.pointer);

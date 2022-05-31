@@ -1,21 +1,29 @@
 // This file includes public utility types which should be
 // exposed as part of the API.
 
-import { AllocatableStruct, Pointer } from "./types.ts";
-import { DataPointer } from "./_utils.ts";
+import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
+import { Writeable } from "./_utils.ts";
+
+export class MemoryOffset {
+  constructor(
+    public readonly memory: Uint8Array,
+    public readonly byteOffset: number = 0,
+  ) {
+  }
+}
 
 export class Memory {
   public static createArray<
     T extends AllocatableStruct,
-    C extends { new (data: Pointer<T>): T; SIZE_IN_BYTES: number },
+    C extends AllocatableStructConstructor<T>,
   >(_constructor: C, length: number): MemoryArray<T> {
     const array = new Array<T>(length);
     const memory = new Uint8Array(_constructor.SIZE_IN_BYTES * length);
-    const basePointer = Deno.UnsafePointer.of(memory);
+    const offset = new MemoryOffset(memory);
 
     for (let i = 0; i < length; i++) {
-      const pointer = new DataPointer<T>(basePointer.value + BigInt(_constructor.SIZE_IN_BYTES * i));
-      array[i] = new _constructor(pointer as unknown as Pointer<T>);
+      (offset as Writeable<MemoryOffset>).byteOffset = _constructor.SIZE_IN_BYTES * i;
+      array[i] = new _constructor(offset);
     }
 
     return new MemoryArray<T>(array, memory, array[0].pointer as Pointer<T>);

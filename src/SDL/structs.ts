@@ -2,6 +2,7 @@
 
 import { AllocatableStruct, OpaqueStruct, Pointer, Struct } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
+import { MemoryOffset } from "../memory.ts";
 
 export type BlitMap = OpaqueStruct;
 export type PixelFormat = OpaqueStruct;
@@ -18,12 +19,16 @@ export class Point implements AllocatableStruct {
   private _pointer: DataPointer<Point>;
 
   constructor();
+  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<Point>);
   constructor(data: Partial<Point>);
   constructor(x: number, y: number);
-  constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | number, _2?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Point> | Partial<Point> | number, _2?: number) {
+    if (_1 instanceof MemoryOffset) {
+      this._data = _1.memory;
+      this._view = new DataView(this._data, _1.byteOffset);
+    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<Point>);
     } else {
@@ -40,7 +45,9 @@ export class Point implements AllocatableStruct {
       }
     }
 
-    if (this._data instanceof Uint8Array) {
+    if (_1 instanceof MemoryOffset) {
+      this._pointer = new DataPointer<Point>(_1, Point);
+    } else if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<Point>(Deno.UnsafePointer.of(this._data), Point);
     } else {
       this._pointer = this._data as DataPointer<Point>;
@@ -76,12 +83,21 @@ export class Rect implements AllocatableStruct {
   private _pointer: DataPointer<Rect>;
 
   constructor();
+  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<Rect>);
   constructor(data: Partial<Rect>);
   constructor(x: number, y: number, w: number, h: number);
-  constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | number, _2?: number, _3?: number, _4?: number) {
-    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+  constructor(
+    _1?: MemoryOffset | Uint8Array | Pointer<Rect> | Partial<Rect> | number,
+    _2?: number,
+    _3?: number,
+    _4?: number,
+  ) {
+    if (_1 instanceof MemoryOffset) {
+      this._data = _1.memory;
+      this._view = new DataView(this._data, _1.byteOffset);
+    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<Rect>);
     } else {
@@ -100,7 +116,9 @@ export class Rect implements AllocatableStruct {
       }
     }
 
-    if (this._data instanceof Uint8Array) {
+    if (_1 instanceof MemoryOffset) {
+      this._pointer = new DataPointer<Rect>(_1, Rect);
+    } else if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<Rect>(Deno.UnsafePointer.of(this._data), Rect);
     } else {
       this._pointer = this._data as DataPointer<Rect>;
@@ -152,18 +170,24 @@ export class RendererInfo implements AllocatableStruct {
   private _pointer: DataPointer<RendererInfo>;
 
   constructor();
+  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<RendererInfo>);
-  constructor(data?: Uint8Array | Pointer<RendererInfo>) {
-    if (data instanceof Uint8Array || data instanceof DataPointer) {
+  constructor(data?: MemoryOffset | Uint8Array | Pointer<RendererInfo>) {
+    if (data instanceof MemoryOffset) {
+      this._data = data.memory;
+      this._view = new DataView(this._data, data.byteOffset);
+    } else if (data instanceof Uint8Array || data instanceof DataPointer) {
       this._data = data;
+      this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
     } else {
       this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
+      this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
     }
 
-    this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
-
-    if (this._data instanceof Uint8Array) {
+    if (data instanceof MemoryOffset) {
+      this._pointer = new DataPointer<RendererInfo>(data, RendererInfo);
+    } else if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<RendererInfo>(Deno.UnsafePointer.of(this._data), RendererInfo);
     } else {
       this._pointer = this._data as DataPointer<RendererInfo>;
