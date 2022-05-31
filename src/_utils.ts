@@ -49,6 +49,7 @@ export function toCString(value: string): Uint8Array {
 // DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
 // has dynamic members.
 export class DataPointer<T> /* implements Pointer<T> */ {
+  // TODO: Would be nice if this wasn't public anymore.
   public readonly _pointer: Deno.UnsafePointer;
   private _value: T | null = null;
 
@@ -92,11 +93,11 @@ export class DataView<T> {
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
 
-  public _dataView: globalThis.DataView | Deno.UnsafePointerView;
+  private _dataView: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    public _data: Uint8Array | DataPointer<T>,
-    public _byteOffset: number = 0,
+    private _data: Uint8Array | DataPointer<T>,
+    private _byteOffset: number = 0,
   ) {
     if (this._data instanceof Uint8Array) {
       this._dataView = new globalThis.DataView(this._data.buffer);

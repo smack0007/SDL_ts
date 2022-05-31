@@ -1,4 +1,4 @@
-import { Memory, MemoryArray, Point, PointerTargetArray, Renderer, SDL, Window } from "../../mod.ts";
+import { Memory, PointerTargetArray, Renderer, SDL, Window } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
