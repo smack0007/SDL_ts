@@ -36,6 +36,32 @@ export const opaqueStructs: string[] = [
 ];
 
 export const structs: Record<string, CodeGenStructType> = {
+  SDL_Keysym: {
+    size: 16,
+    members: {
+      scancode: {
+        nativeType: "SDL_Scancode",
+        type: "u32",
+        offset: 0,
+      },
+      sym: {
+        nativeType: "SDL_Keycode",
+        type: "u32",
+        offset: 4,
+      },
+      mod: {
+        nativeType: "Uint16",
+        type: "u16",
+        offset: 8,
+      },
+      unused: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 12,
+      },
+    },
+  },
+
   SDL_Point: {
     allocatable: true,
     writable: true,

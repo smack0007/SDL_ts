@@ -3,6 +3,7 @@
 import { Event } from "./events.ts";
 import {
   BlitMap,
+  Keysym,
   PixelFormat,
   Point,
   Rect,

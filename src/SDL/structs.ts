@@ -11,6 +11,38 @@ export type RWops = Record<never, never>;
 export type Texture = Record<never, never>;
 export type Window = Record<never, never>;
 
+export class Keysym implements Struct {
+  public static SIZE_IN_BYTES = 16;
+
+  private _data: Pointer<Keysym>;
+  private _view: DataView<Keysym>;
+
+  constructor(data: Pointer<Keysym>) {
+    this._data = data;
+    this._view = new DataView(this._data as DataPointer<Keysym>);
+  }
+
+  public get pointer(): Pointer<Keysym> {
+    return this._data;
+  }
+
+  public get scancode(): number {
+    return this._view.getUint32(0);
+  }
+
+  public get sym(): number {
+    return this._view.getUint32(4);
+  }
+
+  public get mod(): number {
+    return this._view.getUint16(8);
+  }
+
+  public get unused(): number {
+    return this._view.getUint32(12);
+  }
+}
+
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 

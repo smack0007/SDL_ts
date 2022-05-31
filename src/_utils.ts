@@ -50,7 +50,7 @@ export function toCString(value: string): Uint8Array {
 // has dynamic members.
 export class DataPointer<T> /* implements Pointer<T> */ {
   public readonly _pointer: Deno.UnsafePointer;
-  private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null
+  private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null;
   private _value: T | null = null;
 
   constructor(
@@ -67,7 +67,7 @@ export class DataPointer<T> /* implements Pointer<T> */ {
     this._pointer = pointer;
 
     if (constructorOrValue) {
-      if (typeof constructorOrValue === 'function') {
+      if (typeof constructorOrValue === "function") {
         this._constructor = constructorOrValue as (new (pointer: DataPointer<T>) => T);
       } else {
         this._value = constructorOrValue;
@@ -132,6 +132,10 @@ export class DataView<T> {
 
   public getUint8(byteOffset: number): number {
     return this._dataView.getUint8(this._byteOffset + byteOffset);
+  }
+
+  public getUint16(byteOffset: number): number {
+    return this._dataView.getUint16(this._byteOffset + byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getUint32(byteOffset: number): number {

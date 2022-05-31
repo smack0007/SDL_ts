@@ -8,6 +8,7 @@ const SDL_PATH = "../src/SDL";
 const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
+  "u16": (offset, _) => `getUint16(${offset})`,
   "u32": (offset, _) => `getUint32(${offset})`,
 
   "pointer": (offset, _) => `getBigUint64(${offset})`,
@@ -62,6 +63,9 @@ async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
 
 async function writeEnums(): Promise<void> {
   const lines = createLines();
+
+  lines.push(`import { SCANCODE_TO_KEYCODE } from "./keycode.ts";`);
+  lines.push("");
 
   for (const enumName of Object.keys(enums)) {
     const shortEnumName = shortenName(enumName);
