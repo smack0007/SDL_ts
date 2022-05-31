@@ -13,10 +13,14 @@ export class MemoryOffset {
 }
 
 export class Memory {
-  public static createArray<
-    T extends AllocatableStruct,
-    C extends AllocatableStructConstructor<T>,
-  >(_constructor: C, length: number): MemoryArray<T> {
+  public static createArray<T extends AllocatableStruct>(
+    _constructor: AllocatableStructConstructor<T>,
+    length: number,
+  ): MemoryArray<T> {
+    if (length <= 0) {
+      throw new Error("length must be > 0.");
+    }
+
     const array = new Array<T>(length);
     const memory = new Uint8Array(_constructor.SIZE_IN_BYTES * length);
     const offset = new MemoryOffset(memory);
