@@ -134,6 +134,16 @@ export function CreateTexture(
   ) as Deno.UnsafePointer);
 }
 
+export function CreateTextureFromSurface(
+  renderer: Pointer<Renderer>,
+  surface: Pointer<Surface>,
+): Pointer<Texture> {
+  return new DataPointer<Texture>(context.symbols.SDL_CreateTextureFromSurface(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (surface as DataPointer<Surface>)._pointer,
+  ) as Deno.UnsafePointer);
+}
+
 export function CreateWindow(
   title: string,
   x: number,
@@ -362,6 +372,40 @@ export function RenderClear(
 ): number {
   return context.symbols.SDL_RenderClear(
     (renderer as DataPointer<Renderer>)._pointer,
+  ) as number;
+}
+
+export function RenderCopy(
+  renderer: Pointer<Renderer>,
+  texture: Pointer<Texture>,
+  srcrect: Pointer<Rect> | null,
+  dstrect: Pointer<Rect> | null,
+): number {
+  return context.symbols.SDL_RenderCopy(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (texture as DataPointer<Texture>)._pointer,
+    (srcrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
+    (dstrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
+  ) as number;
+}
+
+export function RenderCopyEx(
+  renderer: Pointer<Renderer>,
+  texture: Pointer<Texture>,
+  srcrect: Pointer<Rect>,
+  dstrect: Pointer<Rect>,
+  angle: number,
+  center: Pointer<Point>,
+  flip: number,
+): number {
+  return context.symbols.SDL_RenderCopyEx(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (texture as DataPointer<Texture>)._pointer,
+    (srcrect as DataPointer<Rect>)._pointer,
+    (dstrect as DataPointer<Rect>)._pointer,
+    angle,
+    (center as DataPointer<Point>)._pointer,
+    flip,
   ) as number;
 }
 

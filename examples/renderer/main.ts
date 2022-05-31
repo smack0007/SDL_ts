@@ -1,5 +1,5 @@
 import { Memory, PointerTargetArray, Renderer, SDL, Window } from "../../mod.ts";
-import { SDL_LIB_PATH } from "../paths.ts";
+import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -41,13 +41,13 @@ function main(): number {
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
-  const texture = SDL.CreateTexture(
-    renderer,
-    SDL.PIXELFORMAT_RGBX8888,
-    SDL.TEXTUREACCESS_STREAMING,
-    WINDOW_WIDTH,
-    WINDOW_HEIGHT,
-  );
+  const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
+  const srcRect = new SDL.Rect(0, 0, denoSurface.value.w, denoSurface.value.h);
+  const destRect = new SDL.Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+  const textureCenter = new SDL.Point(denoSurface.value.w / 2, denoSurface.value.h / 2);
+  let textureRotation = 0;
+  const texture = SDL.CreateTextureFromSurface(renderer, denoSurface);
+  SDL.FreeSurface(denoSurface);
 
   if (texture.isNull) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
@@ -81,6 +81,17 @@ function main(): number {
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
+
+    textureRotation += 0.1;
+    SDL.RenderCopyEx(
+      renderer,
+      texture,
+      srcRect.pointer,
+      destRect.pointer,
+      textureRotation,
+      textureCenter.pointer,
+      SDL.FLIP_NONE,
+    );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
     const rect = new SDL.Rect(100, 100, 200, 400);

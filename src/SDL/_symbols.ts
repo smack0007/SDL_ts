@@ -7,6 +7,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_CreateRGBSurfaceFrom: Deno.ForeignFunction;
   SDL_CreateRGBSurfaceWithFormat: Deno.ForeignFunction;
   SDL_CreateTexture: Deno.ForeignFunction;
+  SDL_CreateTextureFromSurface: Deno.ForeignFunction;
   SDL_CreateWindow: Deno.ForeignFunction;
   SDL_CreateWindowAndRenderer: Deno.ForeignFunction;
   SDL_Delay: Deno.ForeignFunction;
@@ -31,6 +32,8 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_PollEvent: Deno.ForeignFunction;
   SDL_Quit: Deno.ForeignFunction;
   SDL_RenderClear: Deno.ForeignFunction;
+  SDL_RenderCopy: Deno.ForeignFunction;
+  SDL_RenderCopyEx: Deno.ForeignFunction;
   SDL_RenderDrawLine: Deno.ForeignFunction;
   SDL_RenderDrawLines: Deno.ForeignFunction;
   SDL_RenderDrawPoint: Deno.ForeignFunction;
@@ -106,6 +109,13 @@ export const symbols: Symbols = {
       "i32", /* int access */
       "i32", /* int w */
       "i32", /* int h */
+    ],
+    result: "pointer", /* SDL_Texture* */
+  },
+  SDL_CreateTextureFromSurface: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Surface* surface */
     ],
     result: "pointer", /* SDL_Texture* */
   },
@@ -260,6 +270,27 @@ export const symbols: Symbols = {
   SDL_RenderClear: {
     parameters: [
       "pointer", /* SDL_Renderer* renderer */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderCopy: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* SDL_Rect* srcrect */
+      "pointer", /* SDL_Rect* dstrect */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderCopyEx: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* SDL_Rect* srcrect */
+      "pointer", /* SDL_Rect* dstrect */
+      "f64", /* double angle */
+      "pointer", /* SDL_Point* center */
+      "u32", /* SDL_RendererFlip flip */
     ],
     result: "i32", /* int */
   },

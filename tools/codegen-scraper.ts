@@ -263,6 +263,12 @@ function guessFFIType(type: string): string {
   }
 
   switch (type) {
+    case "double":
+      return "f64";
+
+    case "float":
+      return "f32";
+
     case "int":
       return "i32";
 

@@ -206,6 +206,23 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
+  SDL_CreateTextureFromSurface: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      surface: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "SDL_Texture*",
+      type: "pointer",
+    },
+  },
+
   SDL_CreateWindow: {
     parameters: {
       title: {
@@ -566,6 +583,70 @@ export const functions: Record<string, CodeGenFunction> = {
       renderer: {
         nativeType: "SDL_Renderer*",
         type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_RenderCopy: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      texture: {
+        nativeType: "SDL_Texture*",
+        type: "pointer",
+      },
+      srcrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true,
+      },
+      dstrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+        nullable: true,
+      },
+    },
+    result: {
+      nativeType: "int",
+      type: "i32",
+    },
+  },
+
+  SDL_RenderCopyEx: {
+    parameters: {
+      renderer: {
+        nativeType: "SDL_Renderer*",
+        type: "pointer",
+      },
+      texture: {
+        nativeType: "SDL_Texture*",
+        type: "pointer",
+      },
+      srcrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+      dstrect: {
+        nativeType: "SDL_Rect*",
+        type: "pointer",
+      },
+      angle: {
+        nativeType: "double",
+        type: "f64",
+      },
+      center: {
+        nativeType: "SDL_Point*",
+        type: "pointer",
+      },
+      flip: {
+        nativeType: "SDL_RendererFlip",
+        type: "u32",
       },
     },
     result: {

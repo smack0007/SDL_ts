@@ -491,6 +491,8 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
     case "u16":
     case "i32":
     case "u32":
+    case "f32":
+    case "f64":
       return "number";
 
     case "i64":
