@@ -28,7 +28,7 @@ if (surface.isNull) {
 }
 
 console.info(surface.value.flags);
-console.info(surface.value.w, surface.value.h);
+console.info('Width', surface.value.w, 'Height', surface.value.h);
 SDL.FillRect(
   surface,
   null,

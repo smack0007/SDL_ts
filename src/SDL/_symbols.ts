@@ -32,10 +32,13 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_Quit: Deno.ForeignFunction;
   SDL_RenderClear: Deno.ForeignFunction;
   SDL_RenderDrawLine: Deno.ForeignFunction;
+  SDL_RenderDrawLines: Deno.ForeignFunction;
   SDL_RenderDrawPoint: Deno.ForeignFunction;
   SDL_RenderDrawPoints: Deno.ForeignFunction;
   SDL_RenderDrawRect: Deno.ForeignFunction;
+  SDL_RenderDrawRects: Deno.ForeignFunction;
   SDL_RenderFillRect: Deno.ForeignFunction;
+  SDL_RenderFillRects: Deno.ForeignFunction;
   SDL_RenderFlush: Deno.ForeignFunction;
   SDL_RenderPresent: Deno.ForeignFunction;
   SDL_RestoreWindow: Deno.ForeignFunction;
@@ -270,6 +273,14 @@ export const symbols: Symbols = {
     ],
     result: "i32", /* int */
   },
+  SDL_RenderDrawLines: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Point* points */
+      "i32", /* int count */
+    ],
+    result: "i32", /* int */
+  },
   SDL_RenderDrawPoint: {
     parameters: [
       "pointer", /* SDL_Renderer* renderer */
@@ -293,10 +304,26 @@ export const symbols: Symbols = {
     ],
     result: "i32", /* int */
   },
+  SDL_RenderDrawRects: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Rect* rects */
+      "i32", /* int count */
+    ],
+    result: "i32", /* int */
+  },
   SDL_RenderFillRect: {
     parameters: [
       "pointer", /* SDL_Renderer* renderer */
       "pointer", /* SDL_Rect* rect */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_RenderFillRects: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* SDL_Rect* rects */
+      "i32", /* int count */
     ],
     result: "i32", /* int */
   },

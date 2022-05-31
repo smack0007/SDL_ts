@@ -49,13 +49,13 @@ export function toCString(value: string): Uint8Array {
 // DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
 // has dynamic members.
 export class DataPointer<T> /* implements Pointer<T> */ {
-  // TODO: Would be nice if this wasn't public anymore.
   public readonly _pointer: Deno.UnsafePointer;
+  private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null
   private _value: T | null = null;
 
   constructor(
     pointer: MemoryOffset | Deno.UnsafePointer | bigint,
-    private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null,
+    constructorOrValue: (new (pointer: DataPointer<T>) => T) | T | null = null,
   ) {
     if (pointer instanceof MemoryOffset) {
       const basePointer = Deno.UnsafePointer.of(pointer.memory);
@@ -65,6 +65,14 @@ export class DataPointer<T> /* implements Pointer<T> */ {
     }
 
     this._pointer = pointer;
+
+    if (constructorOrValue) {
+      if (typeof constructorOrValue === 'function') {
+        this._constructor = constructorOrValue as (new (pointer: DataPointer<T>) => T);
+      } else {
+        this._value = constructorOrValue;
+      }
+    }
   }
 
   public get isNull(): boolean {

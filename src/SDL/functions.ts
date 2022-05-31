@@ -381,6 +381,18 @@ export function RenderDrawLine(
   ) as number;
 }
 
+export function RenderDrawLines(
+  renderer: Pointer<Renderer>,
+  points: Pointer<Point>,
+  count: number,
+): number {
+  return context.symbols.SDL_RenderDrawLines(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (points as DataPointer<Point>)._pointer,
+    count,
+  ) as number;
+}
+
 export function RenderDrawPoint(
   renderer: Pointer<Renderer>,
   x: number,
@@ -415,6 +427,18 @@ export function RenderDrawRect(
   ) as number;
 }
 
+export function RenderDrawRects(
+  renderer: Pointer<Renderer>,
+  rects: Pointer<Rect>,
+  count: number,
+): number {
+  return context.symbols.SDL_RenderDrawRects(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (rects as DataPointer<Rect>)._pointer,
+    count,
+  ) as number;
+}
+
 export function RenderFillRect(
   renderer: Pointer<Renderer>,
   rect: Pointer<Rect>,
@@ -422,6 +446,18 @@ export function RenderFillRect(
   return context.symbols.SDL_RenderFillRect(
     (renderer as DataPointer<Renderer>)._pointer,
     (rect as DataPointer<Rect>)._pointer,
+  ) as number;
+}
+
+export function RenderFillRects(
+  renderer: Pointer<Renderer>,
+  rects: Pointer<Rect>,
+  count: number,
+): number {
+  return context.symbols.SDL_RenderFillRects(
+    (renderer as DataPointer<Renderer>)._pointer,
+    (rects as DataPointer<Rect>)._pointer,
+    count,
   ) as number;
 }
 

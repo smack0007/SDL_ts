@@ -63,6 +63,7 @@ function main(): number {
   points.array[2].y = 1;
   points.array[3].x = 0;
   points.array[3].y = 1;
+  console.info(points.array[2].pointer.value.x);
 
   const event = new SDL.Event();
   let done = false;

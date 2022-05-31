@@ -1,6 +1,3 @@
-// This file includes public utility types which should be
-// exposed as part of the API.
-
 import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
 import { Writeable } from "./_utils.ts";
 

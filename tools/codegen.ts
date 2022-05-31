@@ -229,9 +229,9 @@ async function writeStructs(): Promise<void> {
   }
   
   if (data instanceof MemoryOffset) {
-    this._pointer = new DataPointer<${className}>(data, ${className});
+    this._pointer = new DataPointer<${className}>(data, this);
   } else if (this._data instanceof Uint8Array) {
-    this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
+    this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
   } else {
     this._pointer = this._data as DataPointer<${className}>;
   }
@@ -277,9 +277,9 @@ async function writeStructs(): Promise<void> {
     }
 
     if (_1 instanceof MemoryOffset) {
-      this._pointer = new DataPointer<${className}>(_1, ${className});
+      this._pointer = new DataPointer<${className}>(_1, this);
     } else if (this._data instanceof Uint8Array) {
-      this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), ${className});
+      this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
     } else {
       this._pointer = this._data as DataPointer<${className}>;
     }
