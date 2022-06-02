@@ -1,15 +1,17 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
+// deno-lint-ignore-file no-empty-interface no-unused-vars
+
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
 import { MemoryOffset } from "../memory.ts";
 
-export type BlitMap = Record<never, never>;
-export type PixelFormat = Record<never, never>;
-export type Renderer = Record<never, never>;
-export type RWops = Record<never, never>;
-export type Texture = Record<never, never>;
-export type Window = Record<never, never>;
+export interface BlitMap {}
+export interface PixelFormat {}
+export interface Renderer {}
+export interface RWops {}
+export interface Texture {}
+export interface Window {}
 
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;

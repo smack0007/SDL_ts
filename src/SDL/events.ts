@@ -1,5 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
+// deno-lint-ignore-file no-unused-vars
+
 import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
 

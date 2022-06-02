@@ -1,4 +1,5 @@
 // This file is for types exposed as part of the API.
+
 // deno-lint-ignore-file no-empty-enum
 
 import { MemoryOffset } from "./memory.ts";

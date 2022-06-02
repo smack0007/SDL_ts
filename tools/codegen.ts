@@ -120,6 +120,8 @@ function sortStructMembers(
 
 async function writeEvents(): Promise<void> {
   const lines = createLines();
+  lines.push("// deno-lint-ignore-file no-unused-vars");
+  lines.push("");
 
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
@@ -187,6 +189,8 @@ async function writeEvents(): Promise<void> {
 
 async function writeStructs(): Promise<void> {
   const lines = createLines();
+  lines.push("// deno-lint-ignore-file no-empty-interface no-unused-vars");
+  lines.push("");
 
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
@@ -197,7 +201,7 @@ async function writeStructs(): Promise<void> {
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export type ${className} = Record<never, never>;`);
+    lines.push(`export interface ${className} {}`);
   }
 
   lines.push("");
@@ -460,10 +464,10 @@ function isFunctionParamVoidPointer(param: CodeGenFunctionParam): boolean {
 }
 
 function mapFunctionReturnType(param: CodeGenFunctionParam): string {
-  return mapFunctionParamType(param, true);
+  return mapFunctionParamType(param /*, true */);
 }
 
-function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false): string {
+function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = false */): string {
   if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
     let structName = param.nativeType.substring("SDL_".length);
 
@@ -529,6 +533,8 @@ function hasDoublePointerParams(func: CodeGenFunction): boolean {
 
 async function writeFunctions(): Promise<void> {
   const lines = createLines();
+  lines.push("// deno-lint-ignore-file no-unused-vars");
+  lines.push("");
 
   const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
 
