@@ -1,16 +1,16 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { Pointer } from "../types.ts";
+import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
 
 export class CommonEvent {
   constructor(private _view: DataView<Event>) {}
 
-  public get type(): number {
+  public get type(): u32 {
     return this._view.getUint32(0);
   }
 
-  public get timestamp(): number {
+  public get timestamp(): u32 {
     return this._view.getUint32(4);
   }
 }
@@ -18,23 +18,23 @@ export class CommonEvent {
 export class DisplayEvent {
   constructor(private _view: DataView<Event>) {}
 
-  public get type(): number {
+  public get type(): u32 {
     return this._view.getUint32(0);
   }
 
-  public get timestamp(): number {
+  public get timestamp(): u32 {
     return this._view.getUint32(4);
   }
 
-  public get display(): number {
+  public get display(): u32 {
     return this._view.getUint32(8);
   }
 
-  public get event(): number {
+  public get event(): u8 {
     return this._view.getUint8(12);
   }
 
-  public get data1(): number {
+  public get data1(): i32 {
     return this._view.getInt32(16);
   }
 }
@@ -42,27 +42,27 @@ export class DisplayEvent {
 export class WindowEvent {
   constructor(private _view: DataView<Event>) {}
 
-  public get type(): number {
+  public get type(): u32 {
     return this._view.getUint32(0);
   }
 
-  public get timestamp(): number {
+  public get timestamp(): u32 {
     return this._view.getUint32(4);
   }
 
-  public get windowID(): number {
+  public get windowID(): u32 {
     return this._view.getUint32(8);
   }
 
-  public get event(): number {
+  public get event(): u8 {
     return this._view.getUint8(12);
   }
 
-  public get data1(): number {
+  public get data1(): i32 {
     return this._view.getInt32(16);
   }
 
-  public get data2(): number {
+  public get data2(): i32 {
     return this._view.getInt32(20);
   }
 }

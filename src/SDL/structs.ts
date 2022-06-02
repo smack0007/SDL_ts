@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { AllocatableStruct, Pointer, Struct } from "../types.ts";
+import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
 import { MemoryOffset } from "../memory.ts";
 
@@ -26,19 +26,19 @@ export class Keysym implements Struct {
     return this._data;
   }
 
-  public get scancode(): number {
+  public get scancode(): u32 {
     return this._view.getUint32(0);
   }
 
-  public get sym(): number {
+  public get sym(): u32 {
     return this._view.getUint32(4);
   }
 
-  public get mod(): number {
+  public get mod(): u16 {
     return this._view.getUint16(8);
   }
 
-  public get unused(): number {
+  public get unused(): u32 {
     return this._view.getUint32(12);
   }
 }
@@ -55,8 +55,8 @@ export class Point implements AllocatableStruct {
   constructor(data: Uint8Array);
   constructor(data: Pointer<Point>);
   constructor(data: Partial<Point>);
-  constructor(x: number, y: number);
-  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Point> | Partial<Point> | number, _2?: number) {
+  constructor(x: i32, y: i32);
+  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
     if (_1 instanceof MemoryOffset) {
       this._data = _1.memory;
       this._view = new DataView(this._data, _1.byteOffset);
@@ -71,8 +71,8 @@ export class Point implements AllocatableStruct {
         if (_2 === undefined) {
           Object.assign(this, _1);
         } else {
-          this.x = _1 as number;
-          this.y = _2 as number;
+          this.x = _1 as i32;
+          this.y = _2 as i32;
         }
       }
     }
@@ -90,19 +90,19 @@ export class Point implements AllocatableStruct {
     return this._pointer;
   }
 
-  public get x(): number {
+  public get x(): i32 {
     return this._view.getInt32(0);
   }
 
-  public set x(value: number) {
+  public set x(value: i32) {
     this._view.setInt32(0, value);
   }
 
-  public get y(): number {
+  public get y(): i32 {
     return this._view.getInt32(4);
   }
 
-  public set y(value: number) {
+  public set y(value: i32) {
     this._view.setInt32(4, value);
   }
 }
@@ -119,13 +119,8 @@ export class Rect implements AllocatableStruct {
   constructor(data: Uint8Array);
   constructor(data: Pointer<Rect>);
   constructor(data: Partial<Rect>);
-  constructor(x: number, y: number, w: number, h: number);
-  constructor(
-    _1?: MemoryOffset | Uint8Array | Pointer<Rect> | Partial<Rect> | number,
-    _2?: number,
-    _3?: number,
-    _4?: number,
-  ) {
+  constructor(x: i32, y: i32, w: i32, h: i32);
+  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
     if (_1 instanceof MemoryOffset) {
       this._data = _1.memory;
       this._view = new DataView(this._data, _1.byteOffset);
@@ -140,10 +135,10 @@ export class Rect implements AllocatableStruct {
         if (_2 === undefined) {
           Object.assign(this, _1);
         } else {
-          this.x = _1 as number;
-          this.y = _2 as number;
-          this.w = _3 as number;
-          this.h = _4 as number;
+          this.x = _1 as i32;
+          this.y = _2 as i32;
+          this.w = _3 as i32;
+          this.h = _4 as i32;
         }
       }
     }
@@ -161,35 +156,35 @@ export class Rect implements AllocatableStruct {
     return this._pointer;
   }
 
-  public get x(): number {
+  public get x(): i32 {
     return this._view.getInt32(0);
   }
 
-  public set x(value: number) {
+  public set x(value: i32) {
     this._view.setInt32(0, value);
   }
 
-  public get y(): number {
+  public get y(): i32 {
     return this._view.getInt32(4);
   }
 
-  public set y(value: number) {
+  public set y(value: i32) {
     this._view.setInt32(4, value);
   }
 
-  public get w(): number {
+  public get w(): i32 {
     return this._view.getInt32(8);
   }
 
-  public set w(value: number) {
+  public set w(value: i32) {
     this._view.setInt32(8, value);
   }
 
-  public get h(): number {
+  public get h(): i32 {
     return this._view.getInt32(12);
   }
 
-  public set h(value: number) {
+  public set h(value: i32) {
     this._view.setInt32(12, value);
   }
 }
@@ -234,19 +229,19 @@ export class RendererInfo implements AllocatableStruct {
     return fromCString(new Deno.UnsafePointer(this._view.getBigUint64(0)));
   }
 
-  public get flags(): number {
+  public get flags(): u32 {
     return this._view.getUint32(8);
   }
 
-  public get num_texture_formats(): number {
+  public get num_texture_formats(): u32 {
     return this._view.getUint32(12);
   }
 
-  public get max_texture_width(): number {
+  public get max_texture_width(): i32 {
     return this._view.getInt32(80);
   }
 
-  public get max_texture_height(): number {
+  public get max_texture_height(): i32 {
     return this._view.getInt32(84);
   }
 }
@@ -266,7 +261,7 @@ export class Surface implements Struct {
     return this._data;
   }
 
-  public get flags(): number {
+  public get flags(): u32 {
     return this._view.getUint32(0);
   }
 
@@ -274,15 +269,15 @@ export class Surface implements Struct {
     return new DataPointer<PixelFormat>(this._view.getBigUint64(8));
   }
 
-  public get w(): number {
+  public get w(): i32 {
     return this._view.getInt32(16);
   }
 
-  public get h(): number {
+  public get h(): i32 {
     return this._view.getInt32(20);
   }
 
-  public get pitch(): number {
+  public get pitch(): i32 {
     return this._view.getInt32(24);
   }
 
@@ -294,7 +289,7 @@ export class Surface implements Struct {
     return new DataPointer<void>(this._view.getBigUint64(40));
   }
 
-  public get locked(): number {
+  public get locked(): i32 {
     return this._view.getInt32(48);
   }
 
@@ -310,7 +305,7 @@ export class Surface implements Struct {
     return new DataPointer<BlitMap>(this._view.getBigUint64(80));
   }
 
-  public get refcount(): number {
+  public get refcount(): i32 {
     return this._view.getInt32(88);
   }
 }

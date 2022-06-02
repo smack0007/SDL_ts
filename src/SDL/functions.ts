@@ -15,7 +15,7 @@ import {
   Window,
 } from "./structs.ts";
 import { Symbols, symbols } from "./_symbols.ts";
-import { RWMode, TypedArray } from "../types.ts";
+import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { Pointer, PointerTarget } from "../types.ts";
 import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";
 
@@ -38,13 +38,13 @@ export function BlitScaled(
   srcrect: Pointer<Rect> | null,
   dst: Pointer<Surface>,
   dstrect: Pointer<Rect> | null,
-): number {
+): i32 {
   return context.symbols.SDL_UpperBlitScaled(
     (src as DataPointer<Surface>)._pointer,
     (srcrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
     (dst as DataPointer<Surface>)._pointer,
     (dstrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
-  ) as number;
+  ) as i32;
 }
 
 export function BlitSurface(
@@ -52,19 +52,19 @@ export function BlitSurface(
   srcrect: Pointer<Rect> | null,
   dst: Pointer<Surface>,
   dstrect: Pointer<Rect> | null,
-): number {
+): i32 {
   return context.symbols.SDL_UpperBlit(
     (src as DataPointer<Surface>)._pointer,
     (srcrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
     (dst as DataPointer<Surface>)._pointer,
     (dstrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
-  ) as number;
+  ) as i32;
 }
 
 export function CreateRenderer(
   window: Pointer<Window>,
-  index: number,
-  flags: number,
+  index: i32,
+  flags: u32,
 ): Pointer<Renderer> {
   return new DataPointer<Renderer>(context.symbols.SDL_CreateRenderer(
     (window as DataPointer<Window>)._pointer,
@@ -75,14 +75,14 @@ export function CreateRenderer(
 
 export function CreateRGBSurfaceFrom(
   pixels: TypedArray,
-  width: number,
-  height: number,
-  depth: number,
-  pitch: number,
-  Rmask: number,
-  Gmask: number,
-  Bmask: number,
-  Amask: number,
+  width: i32,
+  height: i32,
+  depth: i32,
+  pitch: i32,
+  Rmask: u32,
+  Gmask: u32,
+  Bmask: u32,
+  Amask: u32,
 ): Pointer<Surface> {
   return new DataPointer<Surface>(
     context.symbols.SDL_CreateRGBSurfaceFrom(
@@ -101,11 +101,11 @@ export function CreateRGBSurfaceFrom(
 }
 
 export function CreateRGBSurfaceWithFormat(
-  flags: number,
-  width: number,
-  height: number,
-  depth: number,
-  format: number,
+  flags: u32,
+  width: i32,
+  height: i32,
+  depth: i32,
+  format: u32,
 ): Pointer<Surface> {
   return new DataPointer<Surface>(
     context.symbols.SDL_CreateRGBSurfaceWithFormat(
@@ -121,10 +121,10 @@ export function CreateRGBSurfaceWithFormat(
 
 export function CreateTexture(
   renderer: Pointer<Renderer>,
-  format: number,
-  access: number,
-  w: number,
-  h: number,
+  format: u32,
+  access: i32,
+  w: i32,
+  h: i32,
 ): Pointer<Texture> {
   return new DataPointer<Texture>(context.symbols.SDL_CreateTexture(
     (renderer as DataPointer<Renderer>)._pointer,
@@ -147,11 +147,11 @@ export function CreateTextureFromSurface(
 
 export function CreateWindow(
   title: string,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  flags: number,
+  x: i32,
+  y: i32,
+  w: i32,
+  h: i32,
+  flags: u32,
 ): Pointer<Window> {
   return new DataPointer<Window>(context.symbols.SDL_CreateWindow(
     toCString(title),
@@ -164,12 +164,12 @@ export function CreateWindow(
 }
 
 export function CreateWindowAndRenderer(
-  width: number,
-  height: number,
-  window_flags: number,
+  width: i32,
+  height: i32,
+  window_flags: u32,
   window: PointerTarget<Window>,
   renderer: PointerTarget<Renderer>,
-): number {
+): i32 {
   const windowDoublePointer = new BigUint64Array(1);
   const rendererDoublePointer = new BigUint64Array(1);
 
@@ -179,7 +179,7 @@ export function CreateWindowAndRenderer(
     window_flags,
     windowDoublePointer,
     rendererDoublePointer,
-  ) as number;
+  ) as i32;
 
   setPointerTarget(window, new DataPointer<Window>(windowDoublePointer[0]));
   setPointerTarget(renderer, new DataPointer<Renderer>(rendererDoublePointer[0]));
@@ -188,7 +188,7 @@ export function CreateWindowAndRenderer(
 }
 
 export function Delay(
-  ms: number,
+  ms: u32,
 ): void {
   context.symbols.SDL_Delay(
     ms,
@@ -222,13 +222,13 @@ export function DestroyWindow(
 export function FillRect(
   dst: Pointer<Surface>,
   rect: Pointer<Rect> | null,
-  color: number,
-): number {
+  color: u32,
+): i32 {
   return context.symbols.SDL_FillRect(
     (dst as DataPointer<Surface>)._pointer,
     (rect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
     color,
-  ) as number;
+  ) as i32;
 }
 
 export function FreeSurface(
@@ -246,23 +246,23 @@ export function GetError(): string {
 export function GetRendererInfo(
   renderer: Pointer<Renderer>,
   info: Pointer<RendererInfo>,
-): number {
+): i32 {
   return context.symbols.SDL_GetRendererInfo(
     (renderer as DataPointer<Renderer>)._pointer,
     (info as DataPointer<RendererInfo>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
-export function GetSystemRAM(): number {
-  return context.symbols.SDL_GetSystemRAM() as number;
+export function GetSystemRAM(): i32 {
+  return context.symbols.SDL_GetSystemRAM() as i32;
 }
 
-export function GetTicks(): number {
-  return context.symbols.SDL_GetTicks() as number;
+export function GetTicks(): u32 {
+  return context.symbols.SDL_GetTicks() as u32;
 }
 
-export function GetTicks64(): bigint {
-  return context.symbols.SDL_GetTicks64() as unknown as bigint;
+export function GetTicks64(): u64 {
+  return context.symbols.SDL_GetTicks64() as u64;
 }
 
 export function GetWindowSurface(
@@ -290,7 +290,7 @@ export function Init(flags: number, libraryPath?: string): number {
 
 export function LoadBMP_RW(
   src: Pointer<RWops>,
-  freesrc: number,
+  freesrc: i32,
 ): Pointer<Surface> {
   return new DataPointer<Surface>(
     context.symbols.SDL_LoadBMP_RW(
@@ -303,40 +303,40 @@ export function LoadBMP_RW(
 
 export function LockSurface(
   surface: Pointer<Surface>,
-): number {
+): i32 {
   return context.symbols.SDL_LockSurface(
     (surface as DataPointer<Surface>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function MapRGB(
   format: Pointer<PixelFormat>,
-  r: number,
-  g: number,
-  b: number,
-): number {
+  r: u8,
+  g: u8,
+  b: u8,
+): u32 {
   return context.symbols.SDL_MapRGB(
     (format as DataPointer<PixelFormat>)._pointer,
     r,
     g,
     b,
-  ) as number;
+  ) as u32;
 }
 
 export function MapRGBA(
   format: Pointer<PixelFormat>,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-): number {
+  r: u8,
+  g: u8,
+  b: u8,
+  a: u8,
+): u32 {
   return context.symbols.SDL_MapRGBA(
     (format as DataPointer<PixelFormat>)._pointer,
     r,
     g,
     b,
     a,
-  ) as number;
+  ) as u32;
 }
 
 export function MaximizeWindow(
@@ -357,10 +357,10 @@ export function MinimizeWindow(
 
 export function PollEvent(
   event: Pointer<Event>,
-): number {
+): i32 {
   return context.symbols.SDL_PollEvent(
     (event as DataPointer<Event>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function Quit(): void {
@@ -370,10 +370,10 @@ export function Quit(): void {
 
 export function RenderClear(
   renderer: Pointer<Renderer>,
-): number {
+): i32 {
   return context.symbols.SDL_RenderClear(
     (renderer as DataPointer<Renderer>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderCopy(
@@ -381,13 +381,13 @@ export function RenderCopy(
   texture: Pointer<Texture>,
   srcrect: Pointer<Rect> | null,
   dstrect: Pointer<Rect> | null,
-): number {
+): i32 {
   return context.symbols.SDL_RenderCopy(
     (renderer as DataPointer<Renderer>)._pointer,
     (texture as DataPointer<Texture>)._pointer,
     (srcrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
     (dstrect as DataPointer<Rect> | null)?._pointer ?? NULL_POINTER,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderCopyEx(
@@ -395,10 +395,10 @@ export function RenderCopyEx(
   texture: Pointer<Texture>,
   srcrect: Pointer<Rect>,
   dstrect: Pointer<Rect>,
-  angle: number,
+  angle: f64,
   center: Pointer<Point>,
-  flip: number,
-): number {
+  flip: u32,
+): i32 {
   return context.symbols.SDL_RenderCopyEx(
     (renderer as DataPointer<Renderer>)._pointer,
     (texture as DataPointer<Texture>)._pointer,
@@ -407,111 +407,111 @@ export function RenderCopyEx(
     angle,
     (center as DataPointer<Point>)._pointer,
     flip,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawLine(
   renderer: Pointer<Renderer>,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-): number {
+  x1: i32,
+  y1: i32,
+  x2: i32,
+  y2: i32,
+): i32 {
   return context.symbols.SDL_RenderDrawLine(
     (renderer as DataPointer<Renderer>)._pointer,
     x1,
     y1,
     x2,
     y2,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawLines(
   renderer: Pointer<Renderer>,
   points: Pointer<Point>,
-  count: number,
-): number {
+  count: i32,
+): i32 {
   return context.symbols.SDL_RenderDrawLines(
     (renderer as DataPointer<Renderer>)._pointer,
     (points as DataPointer<Point>)._pointer,
     count,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawPoint(
   renderer: Pointer<Renderer>,
-  x: number,
-  y: number,
-): number {
+  x: i32,
+  y: i32,
+): i32 {
   return context.symbols.SDL_RenderDrawPoint(
     (renderer as DataPointer<Renderer>)._pointer,
     x,
     y,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawPoints(
   renderer: Pointer<Renderer>,
   points: Pointer<Point>,
-  count: number,
-): number {
+  count: i32,
+): i32 {
   return context.symbols.SDL_RenderDrawPoints(
     (renderer as DataPointer<Renderer>)._pointer,
     (points as DataPointer<Point>)._pointer,
     count,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawRect(
   renderer: Pointer<Renderer>,
   rect: Pointer<Rect>,
-): number {
+): i32 {
   return context.symbols.SDL_RenderDrawRect(
     (renderer as DataPointer<Renderer>)._pointer,
     (rect as DataPointer<Rect>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderDrawRects(
   renderer: Pointer<Renderer>,
   rects: Pointer<Rect>,
-  count: number,
-): number {
+  count: i32,
+): i32 {
   return context.symbols.SDL_RenderDrawRects(
     (renderer as DataPointer<Renderer>)._pointer,
     (rects as DataPointer<Rect>)._pointer,
     count,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderFillRect(
   renderer: Pointer<Renderer>,
   rect: Pointer<Rect>,
-): number {
+): i32 {
   return context.symbols.SDL_RenderFillRect(
     (renderer as DataPointer<Renderer>)._pointer,
     (rect as DataPointer<Rect>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderFillRects(
   renderer: Pointer<Renderer>,
   rects: Pointer<Rect>,
-  count: number,
-): number {
+  count: i32,
+): i32 {
   return context.symbols.SDL_RenderFillRects(
     (renderer as DataPointer<Renderer>)._pointer,
     (rects as DataPointer<Rect>)._pointer,
     count,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderFlush(
   renderer: Pointer<Renderer>,
-): number {
+): i32 {
   return context.symbols.SDL_RenderFlush(
     (renderer as DataPointer<Renderer>)._pointer,
-  ) as number;
+  ) as i32;
 }
 
 export function RenderPresent(
@@ -542,18 +542,18 @@ export function RWFromFile(
 
 export function SetRenderDrawColor(
   renderer: Pointer<Renderer>,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-): number {
+  r: u8,
+  g: u8,
+  b: u8,
+  a: u8,
+): i32 {
   return context.symbols.SDL_SetRenderDrawColor(
     (renderer as DataPointer<Renderer>)._pointer,
     r,
     g,
     b,
     a,
-  ) as number;
+  ) as i32;
 }
 
 export function UnlockSurface(
@@ -566,8 +566,8 @@ export function UnlockSurface(
 
 export function UpdateWindowSurface(
   window: Pointer<Window>,
-): number {
+): i32 {
   return context.symbols.SDL_UpdateWindowSurface(
     (window as DataPointer<Window>)._pointer,
-  ) as number;
+  ) as i32;
 }

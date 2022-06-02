@@ -92,11 +92,11 @@ function mapStructMemberType(member: CodeGenStructMember): string {
     case "u16":
     case "i32":
     case "u32":
-      return "number";
-
     case "i64":
     case "u64":
-      return "bigint";
+    case "f32":
+    case "f64":
+      return member.type;
 
     case "pointer":
       return "Deno.UnsafePointer";
@@ -121,7 +121,7 @@ function sortStructMembers(
 async function writeEvents(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { Pointer } from "../types.ts";`);
+  lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
 
@@ -188,7 +188,9 @@ async function writeEvents(): Promise<void> {
 async function writeStructs(): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { AllocatableStruct, Pointer, Struct } from "../types.ts";`);
+  lines.push(
+    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
+  );
   lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
   lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
@@ -495,13 +497,11 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
     case "u16":
     case "i32":
     case "u32":
-    case "f32":
-    case "f64":
-      return "number";
-
     case "i64":
     case "u64":
-      return "bigint";
+    case "f32":
+    case "f64":
+      return param.type;
 
     case "pointer":
       return "Deno.UnsafePointer";
@@ -535,7 +535,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
-  lines.push(`import { RWMode, TypedArray } from "../types.ts";`);
+  lines.push(`import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { Pointer, PointerTarget } from "../types.ts";`);
   lines.push(`import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";`);
   lines.push("");
