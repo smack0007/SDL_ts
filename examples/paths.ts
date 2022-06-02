@@ -13,6 +13,6 @@ export const ROOT_PATH = new URL(import.meta.url).pathname
   .slice(0, -2)
   .join(PATH_SEPARATOR);
 
-export const SDL_LIB_PATH = joinPath(ROOT_PATH, "ext", "SDL", "lib", "x64", "SDL2.dll");
+export const SDL_LIB_PATH = joinPath(ROOT_PATH, "ext", "SDL", "lib", "x64", "libSDL2");
 
 export const ASSETS_PATH = joinPath(ROOT_PATH, "assets");

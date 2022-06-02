@@ -281,7 +281,7 @@ export function GetWindowSurface(
 export function Init(flags: number, libraryPath?: string): number {
   // TODO: Improve this logic.
   if (!libraryPath) {
-    libraryPath = "sdl2";
+    libraryPath = "libSDL2";
   }
 
   context.library = Deno.dlopen(libraryPath, symbols);
