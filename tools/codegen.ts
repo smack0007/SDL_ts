@@ -100,6 +100,9 @@ function mapStructMemberType(member: CodeGenStructMember): string {
 
     case "pointer":
       return "Deno.UnsafePointer";
+
+    case "struct":
+      return shortenName(member.nativeType);
   }
 
   return member.type;
@@ -123,6 +126,7 @@ async function writeEvents(): Promise<void> {
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
+  lines.push(`import { Keysym } from "./structs.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
   lines.push("");
@@ -135,6 +139,8 @@ async function writeEvents(): Promise<void> {
 
     for (const [memberName, member] of Object.entries(event.members)) {
       if (memberName.startsWith("padding")) {
+        lines.push(`// ${memberName}`);
+        lines.push("");
         continue;
       }
 

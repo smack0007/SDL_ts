@@ -63,6 +63,52 @@ export const events: Record<string, CodeGenStructType> = {
     },
   },
 
+  SDL_KeyboardEvent: {
+    size: 32,
+    members: {
+      type: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 0,
+      },
+      timestamp: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 4,
+      },
+      windowID: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 8,
+      },
+      state: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 12,
+      },
+      repeat: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 13,
+      },
+      padding2: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 14,
+      },
+      padding3: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 15,
+      },
+      keysym: {
+        nativeType: "SDL_Keysym",
+        type: "struct",
+        offset: 16,
+      },
+    },
+  },
+
   SDL_WindowEvent: {
     size: 24,
     members: {
