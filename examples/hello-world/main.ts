@@ -65,7 +65,7 @@ while (!done) {
         SDL.UpdateWindowSurface(window);
       }
     } else if (event.type === SDL.KEYDOWN) {
-      console.info(`KeyDown: ${event.keyboard.keysym.sym}`);
+      console.info(`KeyDown: ${event.key.keysym.sym}`);
     }
   }
   SDL.Delay(100);

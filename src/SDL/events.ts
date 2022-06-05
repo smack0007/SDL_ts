@@ -8,7 +8,8 @@ import { DataPointer, DataView } from "../_utils.ts";
 import { MemoryOffset } from "../memory.ts";
 
 export class CommonEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  }
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -20,7 +21,8 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  }
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -81,13 +83,13 @@ export class KeyboardEvent {
   // padding3
 
   public get keysym(): Keysym {
-    // TODO: This isn't in the code generator yet.
     return this._keysym;
   }
 }
 
 export class WindowEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  }
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -137,7 +139,7 @@ export class Event {
 
   public readonly display = new DisplayEvent(this._data, this._view);
 
-  public readonly keyboard = new KeyboardEvent(this._data, this._view);
+  public readonly key = new KeyboardEvent(this._data, this._view);
 
   public readonly window = new WindowEvent(this._data, this._view);
 }

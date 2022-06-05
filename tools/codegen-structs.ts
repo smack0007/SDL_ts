@@ -1,4 +1,4 @@
-export type CodeGenStructMember = {
+export interface CodeGenStructMember {
   // SDL type.
   nativeType: string;
 
@@ -7,9 +7,9 @@ export type CodeGenStructMember = {
 
   // Offset of the member in bytes.
   offset: number;
-};
+}
 
-export type CodeGenStructType = {
+export interface CodeGenStructType {
   // Indicates whether the struct can be allocated in
   // in script. If false it will only be allocated by SDL.
   allocatable?: boolean;
@@ -23,7 +23,7 @@ export type CodeGenStructType = {
 
   // Struct members.
   members: Record<string, CodeGenStructMember>;
-};
+}
 
 export const opaqueStructs: string[] = [
   // TODO: Figure out how to implement SDL_RWops in deno.

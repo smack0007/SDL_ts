@@ -5,6 +5,8 @@ import { CodeGenStructMember, opaqueStructs, structs } from "./codegen-structs.t
 
 const SDL_PATH = "../src/SDL";
 
+const allStructNames = Object.keys(structs).concat(opaqueStructs);
+
 const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
@@ -121,6 +123,10 @@ function sortStructMembers(
   return a[0].localeCompare(b[0]);
 }
 
+function isStruct(member: CodeGenStructMember): boolean {
+  return allStructNames.some((x) => x === member.nativeType);
+}
+
 async function writeEvents(): Promise<void> {
   const lines = createLines();
   lines.push("// deno-lint-ignore-file no-unused-vars");
@@ -129,12 +135,33 @@ async function writeEvents(): Promise<void> {
   lines.push(`import { Keysym } from "./structs.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
+  lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
     const className = shortenName(eventName);
     lines.push(`export class ${className} {`);
-    lines.push("\tconstructor(private _data: Uint8Array, private _view: DataView<Event>) {}");
+
+    const subStructMembers = Object.entries(event.members).filter((x) => isStruct(x[1]));
+
+    if (subStructMembers.length > 0) {
+      for (const [memberName, member] of subStructMembers) {
+        lines.push(`private _${memberName}: ${shortenName(member.nativeType)}`);
+      }
+      lines.push("");
+    }
+
+    lines.push("\tconstructor(private _data: Uint8Array, private _view: DataView<Event>) {");
+
+    for (const [memberName, member] of subStructMembers) {
+      lines.push(
+        `\t\tthis._${memberName} = new ${
+          shortenName(member.nativeType)
+        }(new DataPointer(new MemoryOffset(this._data, ${member.offset})));`,
+      );
+    }
+
+    lines.push("\t}");
     lines.push("");
 
     for (const [memberName, member] of Object.entries(event.members)) {
@@ -146,16 +173,20 @@ async function writeEvents(): Promise<void> {
 
       lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
 
-      const dataViewMethod = dataViewGetMethods[member.type];
+      if (isStruct(member)) {
+        lines.push(`return this._${memberName};`);
+      } else {
+        const dataViewMethod = dataViewGetMethods[member.type];
 
-      if (dataViewMethod === undefined) {
-        console.error(`dataViewMethods is missing ${member.type}.`);
+        if (dataViewMethod === undefined) {
+          console.error(`dataViewMethods is missing ${member.type}.`);
+        }
+
+        const length = 0;
+        lines.push(
+          `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
+        );
       }
-
-      const length = 0;
-      lines.push(
-        `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
-      );
       lines.push("\t}");
       lines.push("");
     }
@@ -179,10 +210,9 @@ async function writeEvents(): Promise<void> {
 
 `);
 
-  for (const eventName of Object.keys(events)) {
-    // TODO: This won't work longterm. There should be some property of the
-    // event that says what this name should be.
-    const propName = shortenName(eventName).slice(0, -"Event".length).toLowerCase();
+  for (const [eventName, event] of Object.entries(events)) {
+    const propName = event.unionName ?? shortenName(eventName).slice(0, -"Event".length).toLowerCase();
+
     lines.push(`public readonly ${propName} = new ${shortenName(eventName)}(this._data, this._view);`);
     lines.push("");
   }
@@ -718,7 +748,7 @@ async function writeMod(): Promise<void> {
   const typesToExport: string[] = [];
 
   lines.push("import type {");
-  for (const strcutName of Object.keys(structs).concat(opaqueStructs)) {
+  for (const strcutName of allStructNames) {
     const strcutNameShort = strcutName.substring("SDL_".length);
     typesToExport.push(strcutNameShort);
     lines.push(`\t${strcutNameShort},`);
