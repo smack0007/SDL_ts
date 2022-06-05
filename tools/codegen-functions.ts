@@ -397,18 +397,31 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
-  // SDL_GetScancodeFromKey: {
-  //   parameters: {
-  //     key: {
-  //       nativeType: "SDL_Keycode",
-  //       type: "struct",
-  //     },
-  //   },
-  //   result: {
-  //     nativeType: "SDL_Scancode",
-  //     type: "struct",
-  //   },
-  // },
+  SDL_GetScancodeFromKey: {
+    parameters: {
+      key: {
+        nativeType: "SDL_Keycode",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Scancode",
+      type: "u32",
+    },
+  },
+
+  SDL_GetScancodeName: {
+    parameters: {
+      scancode: {
+        nativeType: "SDL_Scancode",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "char*",
+      type: "pointer",
+    },
+  },
 
   SDL_GetSystemRAM: {
     parameters: {},

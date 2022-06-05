@@ -255,6 +255,22 @@ export function GetRendererInfo(
   ) as i32;
 }
 
+export function GetScancodeFromKey(
+  key: u32,
+): u32 {
+  return context.symbols.SDL_GetScancodeFromKey(
+    key,
+  ) as u32;
+}
+
+export function GetScancodeName(
+  scancode: u32,
+): string {
+  return fromCString(context.symbols.SDL_GetScancodeName(
+    scancode,
+  ) as Deno.UnsafePointer);
+}
+
 export function GetSystemRAM(): i32 {
   return context.symbols.SDL_GetSystemRAM() as i32;
 }

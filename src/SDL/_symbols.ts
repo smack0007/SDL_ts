@@ -18,6 +18,8 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_FreeSurface: Deno.ForeignFunction;
   SDL_GetError: Deno.ForeignFunction;
   SDL_GetRendererInfo: Deno.ForeignFunction;
+  SDL_GetScancodeFromKey: Deno.ForeignFunction;
+  SDL_GetScancodeName: Deno.ForeignFunction;
   SDL_GetSystemRAM: Deno.ForeignFunction;
   SDL_GetTicks: Deno.ForeignFunction;
   SDL_GetTicks64: Deno.ForeignFunction;
@@ -188,6 +190,18 @@ export const symbols: Symbols = {
       "pointer", /* SDL_RendererInfo* info */
     ],
     result: "i32", /* int */
+  },
+  SDL_GetScancodeFromKey: {
+    parameters: [
+      "u32", /* SDL_Keycode key */
+    ],
+    result: "u32", /* SDL_Scancode */
+  },
+  SDL_GetScancodeName: {
+    parameters: [
+      "u32", /* SDL_Scancode scancode */
+    ],
+    result: "pointer", /* char* */
   },
   SDL_GetSystemRAM: {
     parameters: [],

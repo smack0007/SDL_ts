@@ -65,7 +65,7 @@ while (!done) {
         SDL.UpdateWindowSurface(window);
       }
     } else if (event.type === SDL.KEYDOWN) {
-      console.info(`KeyDown: ${event.key.keysym.sym}`);
+      console.info(`KeyDown: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
     }
   }
   SDL.Delay(100);
