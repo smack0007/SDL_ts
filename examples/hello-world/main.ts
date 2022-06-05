@@ -28,7 +28,7 @@ if (surface.isNull) {
 }
 
 console.info(surface.value.flags);
-console.info('Width', surface.value.w, 'Height', surface.value.h);
+console.info("Width", surface.value.w, "Height", surface.value.h);
 SDL.FillRect(
   surface,
   null,
@@ -64,6 +64,8 @@ while (!done) {
         );
         SDL.UpdateWindowSurface(window);
       }
+    } else if (event.type === SDL.KEYDOWN) {
+      console.info(`KeyDown: ${event.keyboard.keysym.sym}`);
     }
   }
   SDL.Delay(100);

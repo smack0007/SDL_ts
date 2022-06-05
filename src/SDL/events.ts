@@ -5,9 +5,10 @@
 import { Keysym } from "./structs.ts";
 import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
+import { MemoryOffset } from "../memory.ts";
 
 export class CommonEvent {
-  constructor(private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -19,7 +20,7 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -49,7 +50,11 @@ export class DisplayEvent {
 }
 
 export class KeyboardEvent {
-  constructor(private _view: DataView<Event>) {}
+  private _keysym: Keysym;
+
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+    this._keysym = new Keysym(new DataPointer(new MemoryOffset(this._data, 16)));
+  }
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -76,12 +81,13 @@ export class KeyboardEvent {
   // padding3
 
   public get keysym(): Keysym {
-    return this._view.getArray(0, 16);
+    // TODO: This isn't in the code generator yet.
+    return this._keysym;
   }
 }
 
 export class WindowEvent {
-  constructor(private _view: DataView<Event>) {}
+  constructor(private _data: Uint8Array, private _view: DataView<Event>) {}
 
   public get type(): u32 {
     return this._view.getUint32(0);
@@ -127,11 +133,11 @@ export class Event {
     return this._view.getUint32(0);
   }
 
-  public readonly common = new CommonEvent(this._view);
+  public readonly common = new CommonEvent(this._data, this._view);
 
-  public readonly display = new DisplayEvent(this._view);
+  public readonly display = new DisplayEvent(this._data, this._view);
 
-  public readonly keyboard = new KeyboardEvent(this._view);
+  public readonly keyboard = new KeyboardEvent(this._data, this._view);
 
-  public readonly window = new WindowEvent(this._view);
+  public readonly window = new WindowEvent(this._data, this._view);
 }

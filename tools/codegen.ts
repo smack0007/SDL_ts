@@ -134,7 +134,7 @@ async function writeEvents(): Promise<void> {
   for (const [eventName, event] of Object.entries(events)) {
     const className = shortenName(eventName);
     lines.push(`export class ${className} {`);
-    lines.push("\tconstructor(private _view: DataView<Event>) {}");
+    lines.push("\tconstructor(private _data: Uint8Array, private _view: DataView<Event>) {}");
     lines.push("");
 
     for (const [memberName, member] of Object.entries(event.members)) {
@@ -183,7 +183,7 @@ async function writeEvents(): Promise<void> {
     // TODO: This won't work longterm. There should be some property of the
     // event that says what this name should be.
     const propName = shortenName(eventName).slice(0, -"Event".length).toLowerCase();
-    lines.push(`public readonly ${propName} = new ${shortenName(eventName)}(this._view);`);
+    lines.push(`public readonly ${propName} = new ${shortenName(eventName)}(this._data, this._view);`);
     lines.push("");
   }
 
