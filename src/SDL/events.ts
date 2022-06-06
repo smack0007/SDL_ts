@@ -5,7 +5,6 @@
 import { Keysym } from "./structs.ts";
 import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView } from "../_utils.ts";
-import { MemoryOffset } from "../memory.ts";
 
 export class CommonEvent {
   constructor(private _data: Uint8Array, private _view: DataView<Event>) {
@@ -55,7 +54,7 @@ export class KeyboardEvent {
   private _keysym: Keysym;
 
   constructor(private _data: Uint8Array, private _view: DataView<Event>) {
-    this._keysym = new Keysym(new DataPointer(new MemoryOffset(this._data, 16)));
+    this._keysym = new Keysym(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
   }
 
   public get type(): u32 {

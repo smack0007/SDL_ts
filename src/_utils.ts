@@ -1,7 +1,6 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { MemoryOffset } from "./memory.ts";
 import { Pointer, PointerTarget } from "./types.ts";
 
 //
@@ -54,13 +53,10 @@ export class DataPointer<T> /* implements Pointer<T> */ {
   private _value: T | null = null;
 
   constructor(
-    pointer: MemoryOffset | Deno.UnsafePointer | bigint,
+    pointer: Deno.UnsafePointer | bigint,
     constructorOrValue: (new (pointer: DataPointer<T>) => T) | T | null = null,
   ) {
-    if (pointer instanceof MemoryOffset) {
-      const basePointer = Deno.UnsafePointer.of(pointer.memory);
-      pointer = new Deno.UnsafePointer(basePointer.value + BigInt(pointer.byteOffset));
-    } else if (typeof pointer === "bigint") {
+    if (typeof pointer === "bigint") {
       pointer = new Deno.UnsafePointer(pointer);
     }
 
@@ -105,10 +101,9 @@ export class DataView<T> {
 
   constructor(
     private _data: Uint8Array | DataPointer<T>,
-    private _byteOffset: number = 0,
   ) {
     if (this._data instanceof Uint8Array) {
-      this._dataView = new globalThis.DataView(this._data.buffer);
+      this._dataView = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
     } else {
       this._dataView = new Deno.UnsafePointerView(this._data._pointer);
     }
@@ -118,48 +113,48 @@ export class DataView<T> {
     if (this._dataView instanceof globalThis.DataView) {
       throw new Error("Not implemented.");
     } else {
-      return new Uint8Array(this._dataView.getArrayBuffer(byteLength, this._byteOffset + byteOffset));
+      return new Uint8Array(this._dataView.getArrayBuffer(byteLength, byteOffset));
     }
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._dataView.getBigUint64(this._byteOffset + byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getBigUint64(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getInt32(byteOffset: number): number {
-    return this._dataView.getInt32(this._byteOffset + byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getInt32(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {
-    return this._dataView.getUint8(this._byteOffset + byteOffset);
+    return this._dataView.getUint8(byteOffset);
   }
 
   public getUint16(byteOffset: number): number {
-    return this._dataView.getUint16(this._byteOffset + byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getUint16(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public getUint32(byteOffset: number): number {
-    return this._dataView.getUint32(this._byteOffset + byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getUint32(byteOffset, DataView.LITTLE_ENDIAN);
   }
 
   public setInt32(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
       throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setInt32(this._byteOffset + byteOffset, value, DataView.LITTLE_ENDIAN);
+    this._dataView.setInt32(byteOffset, value, DataView.LITTLE_ENDIAN);
   }
 
   public setUint8(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
       throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint8(this._byteOffset + byteOffset, value);
+    this._dataView.setUint8(byteOffset, value);
   }
 
   public setUint32(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
       throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint32(this._byteOffset + byteOffset, value, DataView.LITTLE_ENDIAN);
+    this._dataView.setUint32(byteOffset, value, DataView.LITTLE_ENDIAN);
   }
 }

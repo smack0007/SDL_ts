@@ -135,7 +135,6 @@ async function writeEvents(): Promise<void> {
   lines.push(`import { Keysym } from "./structs.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
-  lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -154,10 +153,10 @@ async function writeEvents(): Promise<void> {
     lines.push("\tconstructor(private _data: Uint8Array, private _view: DataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
+      const memberTypeName = shortenName(member.nativeType);
+
       lines.push(
-        `\t\tthis._${memberName} = new ${
-          shortenName(member.nativeType)
-        }(new DataPointer(new MemoryOffset(this._data, ${member.offset})));`,
+        `\t\tthis._${memberName} = new ${memberTypeName}(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
       );
     }
 
@@ -232,7 +231,6 @@ async function writeStructs(): Promise<void> {
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
-  lines.push(`import { MemoryOffset } from "../memory.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -250,23 +248,36 @@ async function writeStructs(): Promise<void> {
     lines.push(`export class ${className}${implementsExpression} {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
-    if (struct.allocatable) {
-      lines.push(`
+    lines.push(`
   private _data: Uint8Array | Pointer<${className}>;
   private _view: DataView<${className}>;
   private _pointer: DataPointer<${className}>;
+`);
 
-  constructor();
-  constructor(data: MemoryOffset);
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<${className}>);`);
+    if (struct.allocatable) {
+      lines.push("\t\tconstructor();");
+    }
 
-      if (!struct.writable) {
-        lines.push(`constructor(data?: MemoryOffset | Uint8Array | Pointer<${className}>) {
-  if (data instanceof MemoryOffset) {
-    this._data = data.memory;
-    this._view = new DataView(this._data, data.byteOffset);
-  } else if (data instanceof Uint8Array || data instanceof DataPointer) {
+    lines.push(
+      `constructor(data: Uint8Array);
+  constructor(data: Pointer<${className}>);`,
+    );
+
+    if (!struct.allocatable) {
+      lines.push(`constructor(data: Uint8Array | Pointer<${className}>) {
+        this._data = data;
+        this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
+        
+        if (this._data instanceof Uint8Array) {
+          this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
+        } else {
+          this._pointer = this._data as DataPointer<${className}>;
+        }
+      }
+`);
+    } else if (!struct.writable) {
+      lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
+  if (data instanceof Uint8Array || data instanceof DataPointer) {
     this._data = data;
     this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
   } else {
@@ -274,39 +285,34 @@ async function writeStructs(): Promise<void> {
     this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
   }
   
-  if (data instanceof MemoryOffset) {
-    this._pointer = new DataPointer<${className}>(data, this);
-  } else if (this._data instanceof Uint8Array) {
+  if (this._data instanceof Uint8Array) {
     this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
   } else {
     this._pointer = this._data as DataPointer<${className}>;
   }
 }
 `);
-      } else {
-        lines.push(`constructor(data: Partial<${className}>);`);
-        const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-          `${memberName}: ${mapStructMemberType(member)}`
-        ).join(", ");
-        lines.push(`constructor(${constructorParams});`);
+    } else {
+      lines.push(`constructor(data: Partial<${className}>);`);
+      const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
+        `${memberName}: ${mapStructMemberType(member)}`
+      ).join(", ");
+      lines.push(`constructor(${constructorParams});`);
 
-        const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
-        const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-          `, _${index + 2}?: ${mapStructMemberType(member)}`
-        ).join("");
-        lines.push(
-          `constructor(_1?: MemoryOffset | Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
-        );
+      const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
+      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
+        `, _${index + 2}?: ${mapStructMemberType(member)}`
+      ).join("");
+      lines.push(
+        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+      );
 
-        const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-          `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
-        ).join("\n");
+      const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
+        `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
+      ).join("\n");
 
-        lines.push(`
-    if (_1 instanceof MemoryOffset) {
-      this._data = _1.memory;
-      this._view = new DataView(this._data, _1.byteOffset);
-    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+      lines.push(`
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
     } else {
@@ -322,36 +328,19 @@ async function writeStructs(): Promise<void> {
       }
     }
 
-    if (_1 instanceof MemoryOffset) {
-      this._pointer = new DataPointer<${className}>(_1, this);
-    } else if (this._data instanceof Uint8Array) {
+    if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
     } else {
       this._pointer = this._data as DataPointer<${className}>;
     }
   }
 `);
-      }
+    }
 
-      lines.push(`public get pointer(): Pointer<${className}> {
+    lines.push(`public get pointer(): Pointer<${className}> {
         return this._pointer;
       }
 `);
-    } else {
-      lines.push(`
-  private _data: Pointer<${className}>;
-  private _view: DataView<${className}>;
-
-  constructor(data: Pointer<${className}>) {    
-    this._data = data;
-    this._view = new DataView(this._data as DataPointer<${className}>);
-  }
-
-  public get pointer(): Pointer<${className}> {
-    return this._data;
-  }
-`);
-    }
 
     const structMembers = Object.entries(struct.members);
     structMembers.sort(sortStructMembers);

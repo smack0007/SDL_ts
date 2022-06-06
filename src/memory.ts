@@ -1,13 +1,4 @@
 import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
-import { Writeable } from "./_utils.ts";
-
-export class MemoryOffset {
-  constructor(
-    public readonly memory: Uint8Array,
-    public readonly byteOffset: number = 0,
-  ) {
-  }
-}
 
 export class Memory {
   public static createArray<T extends AllocatableStruct>(
@@ -20,11 +11,10 @@ export class Memory {
 
     const array = new Array<T>(length);
     const memory = new Uint8Array(_constructor.SIZE_IN_BYTES * length);
-    const offset = new MemoryOffset(memory);
 
     for (let i = 0; i < length; i++) {
-      (offset as Writeable<MemoryOffset>).byteOffset = _constructor.SIZE_IN_BYTES * i;
-      array[i] = new _constructor(offset);
+      const memoryOffset = new Uint8Array(memory.buffer, _constructor.SIZE_IN_BYTES * i, _constructor.SIZE_IN_BYTES);
+      array[i] = new _constructor(memoryOffset);
     }
 
     return new MemoryArray<T>(array, memory, array[0].pointer as Pointer<T>);

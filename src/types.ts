@@ -2,8 +2,6 @@
 
 // deno-lint-ignore-file no-empty-enum
 
-import { MemoryOffset } from "./memory.ts";
-
 // Simple types
 
 export enum i8 {}
@@ -20,7 +18,7 @@ export enum f64 {}
 // Complex types
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
-  new (data: MemoryOffset): T;
+  new (data: Uint8Array): T;
   SIZE_IN_BYTES: number;
 };
 

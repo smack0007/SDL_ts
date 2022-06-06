@@ -4,7 +4,6 @@
 
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 import { DataPointer, DataView, fromCString } from "../_utils.ts";
-import { MemoryOffset } from "../memory.ts";
 
 export interface BlitMap {}
 export interface PixelFormat {}
@@ -16,16 +15,25 @@ export interface Window {}
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data: Pointer<Keysym>;
+  private _data: Uint8Array | Pointer<Keysym>;
   private _view: DataView<Keysym>;
+  private _pointer: DataPointer<Keysym>;
 
-  constructor(data: Pointer<Keysym>) {
+  constructor(data: Uint8Array);
+  constructor(data: Pointer<Keysym>);
+  constructor(data: Uint8Array | Pointer<Keysym>) {
     this._data = data;
-    this._view = new DataView(this._data as DataPointer<Keysym>);
+    this._view = new DataView(this._data as Uint8Array | DataPointer<Keysym>);
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<Keysym>(Deno.UnsafePointer.of(this._data), this);
+    } else {
+      this._pointer = this._data as DataPointer<Keysym>;
+    }
   }
 
   public get pointer(): Pointer<Keysym> {
-    return this._data;
+    return this._pointer;
   }
 
   public get scancode(): u32 {
@@ -53,16 +61,12 @@ export class Point implements AllocatableStruct {
   private _pointer: DataPointer<Point>;
 
   constructor();
-  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<Point>);
   constructor(data: Partial<Point>);
   constructor(x: i32, y: i32);
-  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
-    if (_1 instanceof MemoryOffset) {
-      this._data = _1.memory;
-      this._view = new DataView(this._data, _1.byteOffset);
-    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+  constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<Point>);
     } else {
@@ -79,9 +83,7 @@ export class Point implements AllocatableStruct {
       }
     }
 
-    if (_1 instanceof MemoryOffset) {
-      this._pointer = new DataPointer<Point>(_1, this);
-    } else if (this._data instanceof Uint8Array) {
+    if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<Point>(Deno.UnsafePointer.of(this._data), this);
     } else {
       this._pointer = this._data as DataPointer<Point>;
@@ -117,16 +119,12 @@ export class Rect implements AllocatableStruct {
   private _pointer: DataPointer<Rect>;
 
   constructor();
-  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<Rect>);
   constructor(data: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
-  constructor(_1?: MemoryOffset | Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
-    if (_1 instanceof MemoryOffset) {
-      this._data = _1.memory;
-      this._view = new DataView(this._data, _1.byteOffset);
-    } else if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+  constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
+    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
       this._data = _1;
       this._view = new DataView(this._data as Uint8Array | DataPointer<Rect>);
     } else {
@@ -145,9 +143,7 @@ export class Rect implements AllocatableStruct {
       }
     }
 
-    if (_1 instanceof MemoryOffset) {
-      this._pointer = new DataPointer<Rect>(_1, this);
-    } else if (this._data instanceof Uint8Array) {
+    if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<Rect>(Deno.UnsafePointer.of(this._data), this);
     } else {
       this._pointer = this._data as DataPointer<Rect>;
@@ -199,14 +195,10 @@ export class RendererInfo implements AllocatableStruct {
   private _pointer: DataPointer<RendererInfo>;
 
   constructor();
-  constructor(data: MemoryOffset);
   constructor(data: Uint8Array);
   constructor(data: Pointer<RendererInfo>);
-  constructor(data?: MemoryOffset | Uint8Array | Pointer<RendererInfo>) {
-    if (data instanceof MemoryOffset) {
-      this._data = data.memory;
-      this._view = new DataView(this._data, data.byteOffset);
-    } else if (data instanceof Uint8Array || data instanceof DataPointer) {
+  constructor(data?: Uint8Array | Pointer<RendererInfo>) {
+    if (data instanceof Uint8Array || data instanceof DataPointer) {
       this._data = data;
       this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
     } else {
@@ -214,9 +206,7 @@ export class RendererInfo implements AllocatableStruct {
       this._view = new DataView(this._data as Uint8Array | DataPointer<RendererInfo>);
     }
 
-    if (data instanceof MemoryOffset) {
-      this._pointer = new DataPointer<RendererInfo>(data, this);
-    } else if (this._data instanceof Uint8Array) {
+    if (this._data instanceof Uint8Array) {
       this._pointer = new DataPointer<RendererInfo>(Deno.UnsafePointer.of(this._data), this);
     } else {
       this._pointer = this._data as DataPointer<RendererInfo>;
@@ -251,16 +241,25 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  private _data: Pointer<Surface>;
+  private _data: Uint8Array | Pointer<Surface>;
   private _view: DataView<Surface>;
+  private _pointer: DataPointer<Surface>;
 
-  constructor(data: Pointer<Surface>) {
+  constructor(data: Uint8Array);
+  constructor(data: Pointer<Surface>);
+  constructor(data: Uint8Array | Pointer<Surface>) {
     this._data = data;
-    this._view = new DataView(this._data as DataPointer<Surface>);
+    this._view = new DataView(this._data as Uint8Array | DataPointer<Surface>);
+
+    if (this._data instanceof Uint8Array) {
+      this._pointer = new DataPointer<Surface>(Deno.UnsafePointer.of(this._data), this);
+    } else {
+      this._pointer = this._data as DataPointer<Surface>;
+    }
   }
 
   public get pointer(): Pointer<Surface> {
-    return this._data;
+    return this._pointer;
   }
 
   public get flags(): u32 {
