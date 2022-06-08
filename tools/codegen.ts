@@ -515,6 +515,12 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
     case "char*":
       return "string";
 
+    case "int*":
+      return "Pointer<number>";
+
+    case "Uint8*":
+      return "Pointer<number>";
+
     case "void*":
       return "TypedArray";
   }
@@ -533,7 +539,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
       return param.type;
 
     case "pointer":
-      return "Deno.UnsafePointer";
+      throw new Error(`Unable to map param ${JSON.stringify(param)}`);
   }
 
   return param.type;

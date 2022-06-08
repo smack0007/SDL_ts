@@ -245,6 +245,14 @@ export function GetError(): string {
   return fromCString(context.symbols.SDL_GetError() as Deno.UnsafePointer);
 }
 
+export function GetKeyboardState(
+  numkeys: Pointer<number>,
+): Pointer<number> {
+  return context.symbols.SDL_GetKeyboardState(
+    numkeys,
+  ) as Pointer<number>;
+}
+
 export function GetRendererInfo(
   renderer: Pointer<Renderer>,
   info: Pointer<RendererInfo>,

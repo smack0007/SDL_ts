@@ -1,7 +1,7 @@
 import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
 
 export class Memory {
-  public static createArray<T extends AllocatableStruct>(
+  public static allocateArray<T extends AllocatableStruct>(
     _constructor: AllocatableStructConstructor<T>,
     length: number,
   ): MemoryArray<T> {

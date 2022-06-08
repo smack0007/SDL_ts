@@ -17,6 +17,7 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_FillRect: Deno.ForeignFunction;
   SDL_FreeSurface: Deno.ForeignFunction;
   SDL_GetError: Deno.ForeignFunction;
+  SDL_GetKeyboardState: Deno.ForeignFunction;
   SDL_GetRendererInfo: Deno.ForeignFunction;
   SDL_GetScancodeFromKey: Deno.ForeignFunction;
   SDL_GetScancodeName: Deno.ForeignFunction;
@@ -183,6 +184,12 @@ export const symbols: Symbols = {
   SDL_GetError: {
     parameters: [],
     result: "pointer", /* char* */
+  },
+  SDL_GetKeyboardState: {
+    parameters: [
+      "pointer", /* int* numkeys */
+    ],
+    result: "pointer", /* Uint8* */
   },
   SDL_GetRendererInfo: {
     parameters: [

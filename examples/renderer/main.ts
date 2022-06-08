@@ -54,7 +54,7 @@ function main(): number {
     return 1;
   }
 
-  const points = Memory.createArray(SDL.Point, 4);
+  const points = Memory.allocateArray(SDL.Point, 4);
   points.array[0].x = 0;
   points.array[0].y = 0;
   points.array[1].x = 1;
