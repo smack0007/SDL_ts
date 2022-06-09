@@ -19,6 +19,36 @@ export class Memory {
 
     return new MemoryArray<T>(array, memory, array[0].pointer as Pointer<T>);
   }
+
+  public static pointer<T>(value: T[], offset: number): Pointer<T> {
+    return new ArrayPointer<T>(value, offset);
+  }
+}
+
+class ArrayPointer<T> implements Pointer<T> {
+  public _pointer: Deno.UnsafePointer = null!;
+
+  constructor(
+    private _array: T[],
+    private _offset: number,
+  ) {
+  }
+
+  public get isNull(): boolean {
+    return false;
+  }
+
+  public get address(): bigint {
+    return 0n;
+  }
+
+  public get value(): T {
+    return this._array[this._offset];
+  }
+
+  public setValue(value: T): void {
+    this._array[this._offset] = value;
+  }
 }
 
 export class MemoryArray<T extends AllocatableStruct> {

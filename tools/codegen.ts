@@ -498,7 +498,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `PointerTarget<${structName}>`;
+      structName = `Pointer<Pointer<${structName}>>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       structName = `Pointer<${structName}>`;
@@ -573,8 +573,8 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`);
-  lines.push(`import { Pointer, PointerTarget } from "../types.ts";`);
-  lines.push(`import { DataPointer, fromCString, NULL_POINTER, setPointerTarget, toCString } from "../_utils.ts";`);
+  lines.push(`import { Pointer } from "../types.ts";`);
+  lines.push(`import { DataPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -692,9 +692,9 @@ const context: SDLContext = {
         const [paramName, param] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
       ) {
         lines.push(
-          `setPointerTarget(${paramName}, new DataPointer<${
+          `(${paramName} as DataPointer<${
             getGenericParam(mapFunctionParamType(param))
-          }>(${paramName}DoublePointer[0]));`,
+          }>).setValue(new DataPointer(${paramName}DoublePointer[0]));`,
         );
       }
 

@@ -1,7 +1,7 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { Pointer, PointerTarget } from "./types.ts";
+import { Pointer } from "./types.ts";
 
 //
 // Types
@@ -29,14 +29,6 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
-export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>): void {
-  if (Array.isArray(target)) {
-    target[0] = value;
-  } else {
-    target.value = value;
-  }
-}
-
 export function toCString(value: string): Uint8Array {
   return new TextEncoder().encode(value + "\0");
 }
@@ -48,7 +40,7 @@ export function toCString(value: string): Uint8Array {
 // DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
 // has dynamic members.
 export class DataPointer<T> /* implements Pointer<T> */ {
-  public readonly _pointer: Deno.UnsafePointer;
+  public _pointer: Deno.UnsafePointer;
   private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null;
   private _value: T | null = null;
 
@@ -89,6 +81,10 @@ export class DataPointer<T> /* implements Pointer<T> */ {
     }
 
     return this._value as T;
+  }
+
+  public setValue(value: T): void {
+    this._value = value;
   }
 }
 
