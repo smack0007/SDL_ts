@@ -1,9 +1,10 @@
-import { Pointer } from "../types.ts";
+import { TypedArray } from "../types.ts";
+import { PointerInternal } from "../_pointers.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
 export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
-export class PlatformPointer<T> implements Pointer<T> {
+export class PlatformPointer<T> implements PointerInternal<T> {
   public _pointer: Deno.UnsafePointer;
   private readonly _constructor: (new (pointer: PlatformPointer<T>) => T) | null = null;
   private _value: T | null = null;
@@ -25,6 +26,10 @@ export class PlatformPointer<T> implements Pointer<T> {
         this._value = constructorOrValue;
       }
     }
+  }
+
+  public static of<T>(memory: TypedArray, value?: T): PlatformPointer<T> {
+    return new PlatformPointer(Deno.UnsafePointer.of(memory), value);
   }
 
   public get isNull(): boolean {

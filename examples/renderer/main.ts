@@ -32,7 +32,7 @@ function main(): number {
   }
 
   const rendererInfo = new SDL.RendererInfo();
-  if (SDL.GetRendererInfo(renderer, rendererInfo.pointer) != 0) {
+  if (SDL.GetRendererInfo(renderer, Memory.pointer(rendererInfo)) != 0) {
     console.error(`Failed to get renderer info: ${SDL.GetError()}`);
     return 1;
   }
@@ -69,12 +69,11 @@ function main(): number {
   points.array[2].y = 1;
   points.array[3].x = 0;
   points.array[3].y = 1;
-  console.info(points.array[2].pointer.value.x);
 
   const event = new SDL.Event();
   let done = false;
   while (!done) {
-    while (SDL.PollEvent(event.pointer) != 0) {
+    while (SDL.PollEvent(Memory.pointer(event)) != 0) {
       if (event.type === SDL.QUIT) {
         done = true;
         break;
@@ -92,10 +91,10 @@ function main(): number {
     SDL.RenderCopyEx(
       renderer,
       texture,
-      srcRect.pointer,
-      destRect.pointer,
+      Memory.pointer(srcRect),
+      Memory.pointer(destRect),
       textureRotation,
-      textureCenter.pointer,
+      Memory.pointer(textureCenter),
       SDL.FLIP_NONE,
     );
 
@@ -103,9 +102,9 @@ function main(): number {
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawPoints(renderer, points.pointer, 4);
     // SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    SDL.RenderFillRect(renderer, rect.pointer);
+    SDL.RenderFillRect(renderer, Memory.pointer(rect));
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL.RenderDrawRect(renderer, rect.pointer);
+    SDL.RenderDrawRect(renderer, Memory.pointer(rect));
 
     SDL.RenderPresent(renderer);
     SDL.RenderFlush(renderer);

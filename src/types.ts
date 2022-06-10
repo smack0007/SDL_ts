@@ -1,6 +1,6 @@
 // This file is for types exposed as part of the API.
 
-// deno-lint-ignore-file no-empty-enum
+// deno-lint-ignore-file no-empty-enum no-empty-interface
 
 // Simple types
 
@@ -22,22 +22,20 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
   SIZE_IN_BYTES: number;
 };
 
-export type AllocatableStruct = Struct;
+export interface AllocatableStruct extends Struct {}
 
-export type Pointer<T> = {
+export interface Pointer<T> {
   readonly isNull: boolean;
 
   readonly address: bigint;
 
   readonly value: T;
-};
+}
 
 // TODO: Move this to it's own file as it's not generic.
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 
-export interface Struct {
-  pointer: Pointer<Struct>;
-}
+export interface Struct {}
 
 export type TypedArray =
   | Int8Array

@@ -17,23 +17,12 @@ export class Keysym implements Struct {
 
   private _data: Uint8Array | Pointer<Keysym>;
   private _view: PlatformDataView<Keysym>;
-  private _pointer: PlatformPointer<Keysym>;
 
   constructor(data: Uint8Array);
   constructor(data: Pointer<Keysym>);
   constructor(data: Uint8Array | Pointer<Keysym>) {
     this._data = data;
     this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Keysym>);
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<Keysym>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<Keysym>;
-    }
-  }
-
-  public get pointer(): Pointer<Keysym> {
-    return this._pointer;
   }
 
   public get scancode(): u32 {
@@ -58,7 +47,6 @@ export class Point implements AllocatableStruct {
 
   private _data: Uint8Array | Pointer<Point>;
   private _view: PlatformDataView<Point>;
-  private _pointer: PlatformPointer<Point>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -82,16 +70,6 @@ export class Point implements AllocatableStruct {
         }
       }
     }
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<Point>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<Point>;
-    }
-  }
-
-  public get pointer(): Pointer<Point> {
-    return this._pointer;
   }
 
   public get x(): i32 {
@@ -116,7 +94,6 @@ export class Rect implements AllocatableStruct {
 
   private _data: Uint8Array | Pointer<Rect>;
   private _view: PlatformDataView<Rect>;
-  private _pointer: PlatformPointer<Rect>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -142,16 +119,6 @@ export class Rect implements AllocatableStruct {
         }
       }
     }
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<Rect>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<Rect>;
-    }
-  }
-
-  public get pointer(): Pointer<Rect> {
-    return this._pointer;
   }
 
   public get x(): i32 {
@@ -192,7 +159,6 @@ export class RendererInfo implements AllocatableStruct {
 
   private _data: Uint8Array | Pointer<RendererInfo>;
   private _view: PlatformDataView<RendererInfo>;
-  private _pointer: PlatformPointer<RendererInfo>;
 
   constructor();
   constructor(data: Uint8Array);
@@ -205,16 +171,6 @@ export class RendererInfo implements AllocatableStruct {
       this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
       this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<RendererInfo>);
     }
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<RendererInfo>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<RendererInfo>;
-    }
-  }
-
-  public get pointer(): Pointer<RendererInfo> {
-    return this._pointer;
   }
 
   public get name(): string {
@@ -243,23 +199,12 @@ export class Surface implements Struct {
 
   private _data: Uint8Array | Pointer<Surface>;
   private _view: PlatformDataView<Surface>;
-  private _pointer: PlatformPointer<Surface>;
 
   constructor(data: Uint8Array);
   constructor(data: Pointer<Surface>);
   constructor(data: Uint8Array | Pointer<Surface>) {
     this._data = data;
     this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Surface>);
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<Surface>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<Surface>;
-    }
-  }
-
-  public get pointer(): Pointer<Surface> {
-    return this._pointer;
   }
 
   public get flags(): u32 {

@@ -124,11 +124,6 @@ export class WindowEvent {
 export class Event {
   private _data = new Uint8Array(64);
   private _view = new PlatformDataView<Event>(this._data);
-  private _pointer = new PlatformPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
-
-  public get pointer(): Pointer<Event> {
-    return this._pointer;
-  }
 
   public get type(): number {
     return this._view.getUint32(0);

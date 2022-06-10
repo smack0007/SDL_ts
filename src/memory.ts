@@ -1,4 +1,11 @@
+import { PlatformPointer } from "platform";
 import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
+import { ArrayPointer } from "./_pointers.ts";
+import { isStruct } from "./_structs.ts";
+
+interface MemoryPointerCache<T> {
+  _pointer?: Pointer<T>;
+}
 
 export class Memory {
   public static allocateArray<T extends AllocatableStruct>(
@@ -17,37 +24,35 @@ export class Memory {
       array[i] = new _constructor(memoryOffset);
     }
 
-    return new MemoryArray<T>(array, memory, array[0].pointer as Pointer<T>);
+    return new MemoryArray<T>(array, memory, Memory.pointer(array, 0));
   }
 
-  public static pointer<T>(value: T[], offset: number): Pointer<T> {
-    return new ArrayPointer<T>(value, offset);
-  }
-}
+  public static pointer<T>(value: T[] | T, offset?: number): Pointer<T> {
+    if (offset === undefined) {
+      offset = 0;
+    }
 
-class ArrayPointer<T> implements Pointer<T> {
-  public _pointer: Deno.UnsafePointer = null!;
+    if (offset < 0) {
+      throw new Error("offset must be >= 0.");
+    }
 
-  constructor(
-    private _array: T[],
-    private _offset: number,
-  ) {
-  }
+    if (Array.isArray(value)) {
+      return new ArrayPointer<T>(value, offset);
+    } else if (isStruct<T>(value)) {
+      if (value._data instanceof Uint8Array) {
+        const cache = value as unknown as MemoryPointerCache<T>;
 
-  public get isNull(): boolean {
-    return false;
-  }
+        if (cache._pointer === undefined) {
+          cache._pointer = PlatformPointer.of(value._data, value);
+        }
 
-  public get address(): bigint {
-    return 0n;
-  }
-
-  public get value(): T {
-    return this._array[this._offset];
-  }
-
-  public setValue(value: T): void {
-    this._array[this._offset] = value;
+        return cache._pointer;
+      } else {
+        return value._data;
+      }
+    } else {
+      throw new Error("Unable to create pointer.");
+    }
   }
 }
 

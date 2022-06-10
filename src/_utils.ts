@@ -16,9 +16,3 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 //
 
 export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
-
-//
-// Functions
-//
-
-

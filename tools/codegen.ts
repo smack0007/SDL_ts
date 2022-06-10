@@ -197,12 +197,7 @@ async function writeEvents(): Promise<void> {
   lines.push(`export class Event {
   private _data = new Uint8Array(64);
   private _view = new PlatformDataView<Event>(this._data);
-  private _pointer = new PlatformPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
-
-  public get pointer(): Pointer<Event> {
-    return this._pointer;
-  }
-
+  
   public get type(): number {
     return this._view.getUint32(0);
   }
@@ -251,7 +246,6 @@ async function writeStructs(): Promise<void> {
     lines.push(`
   private _data: Uint8Array | Pointer<${className}>;
   private _view: PlatformDataView<${className}>;
-  private _pointer: PlatformPointer<${className}>;
 `);
 
     if (struct.allocatable) {
@@ -267,12 +261,6 @@ async function writeStructs(): Promise<void> {
       lines.push(`constructor(data: Uint8Array | Pointer<${className}>) {
         this._data = data;
         this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
-        
-        if (this._data instanceof Uint8Array) {
-          this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
-        } else {
-          this._pointer = this._data as PlatformPointer<${className}>;
-        }
       }
 `);
     } else if (!struct.writable) {
@@ -283,12 +271,6 @@ async function writeStructs(): Promise<void> {
   } else {
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
     this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
-  }
-  
-  if (this._data instanceof Uint8Array) {
-    this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
-  } else {
-    this._pointer = this._data as PlatformPointer<${className}>;
   }
 }
 `);
@@ -327,20 +309,9 @@ async function writeStructs(): Promise<void> {
         }
       }
     }
-
-    if (this._data instanceof Uint8Array) {
-      this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
-    } else {
-      this._pointer = this._data as PlatformPointer<${className}>;
-    }
   }
 `);
     }
-
-    lines.push(`public get pointer(): Pointer<${className}> {
-        return this._pointer;
-      }
-`);
 
     const structMembers = Object.entries(struct.members);
     structMembers.sort(sortStructMembers);
@@ -761,6 +732,11 @@ async function writeMod(): Promise<void> {
       typeName = typeName.substring("export type ".length);
     } else if (typeName.startsWith("export interface ")) {
       typeName = typeName.substring("export interface ".length);
+
+      const extendsIndex = typeName.indexOf(" extends ");
+      if (extendsIndex >= 0) {
+        typeName = typeName.substring(0, extendsIndex);
+      }
     }
 
     // The order of these ifs is important and they cannot be

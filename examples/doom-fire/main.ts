@@ -1,4 +1,4 @@
-import { SDL } from "../../mod.ts";
+import { Memory, SDL } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -93,7 +93,7 @@ function main(): number {
   const event = new SDL.Event();
   let done = false;
   while (!done) {
-    while (SDL.PollEvent(event.pointer) != 0) {
+    while (SDL.PollEvent(Memory.pointer(event)) != 0) {
       if (event.type === SDL.QUIT) {
         done = true;
         break;
@@ -108,7 +108,7 @@ function main(): number {
 
     SDL.FillRect(frontBuffer, null, 0x00000000);
     SDL.BlitScaled(denoSurface, null, frontBuffer, null);
-    SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect.pointer);
+    SDL.BlitScaled(fireSurface, null, frontBuffer, Memory.pointer(flamesRect));
     SDL.UpdateWindowSurface(window);
 
     SDL.Delay(16);
