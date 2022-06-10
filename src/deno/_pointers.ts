@@ -5,6 +5,10 @@ import { ENDIANNESS } from "../_utils.ts";
 export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
 export class PlatformPointer<T> implements PointerInternal<T> {
+  public get isPlatformPointer(): boolean {
+    return true;
+  }
+
   public _pointer: Deno.UnsafePointer;
   private readonly _constructor: (new (pointer: PlatformPointer<T>) => T) | null = null;
   private _value: T | null = null;

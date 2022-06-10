@@ -84,6 +84,10 @@ function main(): number {
       break;
     }
 
+    const state = SDL.GetKeyboardState(null);
+
+    console.info(Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
+
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
 

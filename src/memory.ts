@@ -1,5 +1,5 @@
-import { PlatformPointer } from "platform";
-import { AllocatableStruct, AllocatableStructConstructor, Pointer } from "./types.ts";
+import { PlatformDataView, PlatformPointer } from "platform";
+import { AllocatableStruct, AllocatableStructConstructor, Pointer, u8 } from "./types.ts";
 import { ArrayPointer } from "./_pointers.ts";
 import { isStruct } from "./_structs.ts";
 
@@ -53,6 +53,11 @@ export class Memory {
     } else {
       throw new Error("Unable to create pointer.");
     }
+  }
+
+  public static readUint8<T>(pointer: Pointer<T>, byteOffset: number): u8 {
+    const dataView = new PlatformDataView(pointer as PlatformPointer<T>);
+    return dataView.getUint8(byteOffset);
   }
 }
 

@@ -22,6 +22,9 @@ export interface CodeGenFunction {
   result: {
     nativeType: string;
     type: Deno.NativeType;
+
+    // If set this type will be used as the script type.
+    overrideType?: string;
   };
 }
 
@@ -380,18 +383,20 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
-  // SDL_GetKeyboardState: {
-  //   parameters: {
-  //     numkeys: {
-  //       nativeType: "int*",
-  //       type: "pointer",
-  //     },
-  //   },
-  //   result: {
-  //     nativeType: "Uint8*",
-  //     type: "pointer",
-  //   },
-  // },
+  SDL_GetKeyboardState: {
+    parameters: {
+      numkeys: {
+        nativeType: "int*",
+        type: "pointer",
+        nullable: true,
+      },
+    },
+    result: {
+      nativeType: "Uint8*",
+      type: "pointer",
+      overrideType: "Pointer<u8[]>",
+    },
+  },
 
   SDL_GetRendererInfo: {
     parameters: {

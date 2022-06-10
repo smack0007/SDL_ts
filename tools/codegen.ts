@@ -455,6 +455,10 @@ function isFunctionParamStruct(param: CodeGenFunctionParam): boolean {
   return Object.keys(structs).includes(structName);
 }
 
+function isFunctionParamPointer(param: CodeGenFunctionParam): boolean {
+  return param.type === "pointer";
+}
+
 function isFunctionParamVoidPointer(param: CodeGenFunctionParam): boolean {
   return param.nativeType === "void*";
 }
@@ -464,6 +468,14 @@ function mapFunctionReturnType(param: CodeGenFunctionParam): string {
 }
 
 function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = false */): string {
+  if (param.overrideType) {
+    if (param.nullable) {
+      return param.overrideType + "| null";
+    }
+
+    return param.overrideType;
+  }
+
   if (isFunctionParamOpaqueStruct(param) || isFunctionParamStruct(param)) {
     let structName = param.nativeType.substring("SDL_".length);
 
@@ -482,38 +494,48 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
     return structName;
   }
 
+  let result = "";
+
   switch (param.nativeType) {
     case "char*":
-      return "string";
+      result = "string";
+      break;
 
     case "int*":
-      return "Pointer<number>";
+      result = "Pointer<number>";
+      break;
 
     case "Uint8*":
-      return "Pointer<number>";
+      result = "Pointer<number>";
+      break;
 
     case "void*":
-      return "TypedArray";
+      result = "TypedArray";
+      break;
+  }
+
+  if (result) {
+    if (param.nullable) {
+      result += "| null";
+    }
+
+    return result;
   }
 
   switch (param.type) {
-    case "i8":
-    case "u8":
-    case "i16":
-    case "u16":
-    case "i32":
-    case "u32":
-    case "i64":
-    case "u64":
-    case "f32":
-    case "f64":
-      return param.type;
-
     case "pointer":
       throw new Error(`Unable to map param ${JSON.stringify(param)}`);
   }
 
-  return param.type;
+  if (result === "") {
+    result = param.type;
+  }
+
+  if (param.nullable) {
+    result += "| null";
+  }
+
+  return result;
 }
 
 function getGenericParam(type: string): string {
@@ -531,6 +553,11 @@ function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
 
 function hasDoublePointerParams(func: CodeGenFunction): boolean {
   return Object.values(func.parameters).some(isFunctionParamDoublePointer);
+}
+
+function isFunctionParamString(param: CodeGenFunctionParam): boolean {
+  const paramType = mapFunctionParamType(param);
+  return paramType === "string" || paramType === "RWMode";
 }
 
 async function writeFunctions(): Promise<void> {
@@ -575,11 +602,7 @@ const context: SDLContext = {
     lines.push(`export function ${shortenName(funcName)}(`);
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
-      if (param.overrideType) {
-        lines.push(`${paramName}: ${param.overrideType},`);
-      } else {
-        lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
-      }
+      lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
     }
 
     lines.push(`): ${returnType} {`);
@@ -607,10 +630,14 @@ const context: SDLContext = {
         returnStatement += "return ";
       }
 
-      if (isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)) {
-        returnStatement += `new PlatformPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
-      } else if (returnType === "string") {
+      if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tfromCString(";
+      } else if (
+        isFunctionParamPointer(func.result) ||
+        isFunctionParamOpaqueStruct(func.result) ||
+        isFunctionParamStruct(func.result)
+      ) {
+        returnStatement += `new PlatformPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
       }
 
       returnStatement += `context.symbols.${symbolName}(`;
@@ -621,11 +648,15 @@ const context: SDLContext = {
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
       const paramType = mapFunctionParamType(param);
-      if (isFunctionParamDoublePointer(param)) {
+      if (isFunctionParamString(param)) {
+        lines.push(`\t\ttoCString(${paramName}),`);
+      } else if (isFunctionParamVoidPointer(param)) {
+        lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
+      } else if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\t${paramName}DoublePointer,`);
       } else if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
-      } else if (isFunctionParamStruct(param)) {
+      } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {
         if (param.nullable) {
           lines.push(
             `\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}> | null)?._pointer ?? NULL_POINTER,`,
@@ -633,20 +664,20 @@ const context: SDLContext = {
         } else {
           lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
         }
-      } else if (paramType === "string") {
-        lines.push(`\t\ttoCString(${paramName}),`);
-      } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
       } else {
         lines.push(`\t\t${paramName},`);
       }
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamOpaqueStruct(func.result) || returnType === "string") {
-        lines.push(`\t) as Deno.UnsafePointer);`);
-      } else if (isFunctionParamStruct(func.result)) {
+      if (isFunctionParamStruct(func.result)) {
         lines.push(`\t) as Deno.UnsafePointer, ${getGenericParam(returnType)});`);
+      } else if (
+        isFunctionParamPointer(func.result) ||
+        isFunctionParamOpaqueStruct(func.result) ||
+        returnType === "string"
+      ) {
+        lines.push(`\t) as Deno.UnsafePointer);`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
       } else {

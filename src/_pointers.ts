@@ -1,7 +1,14 @@
+import { PlatformPointer } from "platform";
 import { Pointer } from "./types.ts";
 
 export interface PointerInternal<T> extends Pointer<T> {
+  isPlatformPointer: boolean;
+
   setValue(value: T): void;
+}
+
+export function isPlatformPointer<T>(pointer: Pointer<T>): pointer is PlatformPointer<T> {
+  return (pointer as PointerInternal<T>).isPlatformPointer;
 }
 
 export class ArrayPointer<T> implements PointerInternal<T> {
@@ -11,6 +18,10 @@ export class ArrayPointer<T> implements PointerInternal<T> {
     private _array: T[],
     private _offset: number,
   ) {
+  }
+
+  public get isPlatformPointer(): boolean {
+    return false;
   }
 
   public get isNull(): boolean {
