@@ -1,10 +1,9 @@
+import { Pointer } from "../types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
 export const NULL_POINTER = new Deno.UnsafePointer(0n);
 
-// DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
-// has dynamic members.
-export class PlatformPointer<T> /* implements Pointer<T> */ {
+export class PlatformPointer<T> implements Pointer<T> {
   public _pointer: Deno.UnsafePointer;
   private readonly _constructor: (new (pointer: PlatformPointer<T>) => T) | null = null;
   private _value: T | null = null;
