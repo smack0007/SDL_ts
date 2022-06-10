@@ -39,14 +39,14 @@ export function toCString(value: string): Uint8Array {
 
 // DataPointer cannot explicitly implement Pointer<T> because Pointer<T>
 // has dynamic members.
-export class DataPointer<T> /* implements Pointer<T> */ {
+export class PlatformPointer<T> /* implements Pointer<T> */ {
   public _pointer: Deno.UnsafePointer;
-  private readonly _constructor: (new (pointer: DataPointer<T>) => T) | null = null;
+  private readonly _constructor: (new (pointer: PlatformPointer<T>) => T) | null = null;
   private _value: T | null = null;
 
   constructor(
     pointer: Deno.UnsafePointer | bigint,
-    constructorOrValue: (new (pointer: DataPointer<T>) => T) | T | null = null,
+    constructorOrValue: (new (pointer: PlatformPointer<T>) => T) | T | null = null,
   ) {
     if (typeof pointer === "bigint") {
       pointer = new Deno.UnsafePointer(pointer);
@@ -56,7 +56,7 @@ export class DataPointer<T> /* implements Pointer<T> */ {
 
     if (constructorOrValue) {
       if (typeof constructorOrValue === "function") {
-        this._constructor = constructorOrValue as (new (pointer: DataPointer<T>) => T);
+        this._constructor = constructorOrValue as (new (pointer: PlatformPointer<T>) => T);
       } else {
         this._value = constructorOrValue;
       }
@@ -88,7 +88,7 @@ export class DataPointer<T> /* implements Pointer<T> */ {
   }
 }
 
-export class DataView<T> {
+export class PlatformDataView<T> {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
@@ -96,7 +96,7 @@ export class DataView<T> {
   private _dataView: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    private _data: Uint8Array | DataPointer<T>,
+    private _data: Uint8Array | PlatformPointer<T>,
   ) {
     if (this._data instanceof Uint8Array) {
       this._dataView = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
@@ -114,11 +114,11 @@ export class DataView<T> {
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._dataView.getBigUint64(byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getInt32(byteOffset: number): number {
-    return this._dataView.getInt32(byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getInt32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {
@@ -126,31 +126,31 @@ export class DataView<T> {
   }
 
   public getUint16(byteOffset: number): number {
-    return this._dataView.getUint16(byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getUint16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint32(byteOffset: number): number {
-    return this._dataView.getUint32(byteOffset, DataView.LITTLE_ENDIAN);
+    return this._dataView.getUint32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public setInt32(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
-      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setInt32(byteOffset, value, DataView.LITTLE_ENDIAN);
+    this._dataView.setInt32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public setUint8(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
-      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
     this._dataView.setUint8(byteOffset, value);
   }
 
   public setUint32(byteOffset: number, value: number): void {
     if (!(this._dataView instanceof globalThis.DataView)) {
-      throw new Error(DataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint32(byteOffset, value, DataView.LITTLE_ENDIAN);
+    this._dataView.setUint32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
   }
 }

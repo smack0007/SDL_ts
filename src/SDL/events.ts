@@ -4,10 +4,10 @@
 
 import { Keysym } from "./structs.ts";
 import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
-import { DataPointer, DataView } from "../_utils.ts";
+import { PlatformDataView, PlatformPointer } from "../_utils.ts";
 
 export class CommonEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -20,7 +20,7 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -53,7 +53,7 @@ export class DisplayEvent {
 export class KeyboardEvent {
   private _keysym: Keysym;
 
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
     this._keysym = new Keysym(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
   }
 
@@ -87,7 +87,7 @@ export class KeyboardEvent {
 }
 
 export class WindowEvent {
-  constructor(private _data: Uint8Array, private _view: DataView<Event>) {
+  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -123,8 +123,8 @@ export class WindowEvent {
 
 export class Event {
   private _data = new Uint8Array(64);
-  private _view = new DataView<Event>(this._data);
-  private _pointer = new DataPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
+  private _view = new PlatformDataView<Event>(this._data);
+  private _pointer = new PlatformPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
 
   public get pointer(): Pointer<Event> {
     return this._pointer;

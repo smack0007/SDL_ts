@@ -380,18 +380,18 @@ export const functions: Record<string, CodeGenFunction> = {
     },
   },
 
-  SDL_GetKeyboardState: {
-    parameters: {
-      numkeys: {
-        nativeType: "int*",
-        type: "pointer",
-      },
-    },
-    result: {
-      nativeType: "Uint8*",
-      type: "pointer",
-    },
-  },
+  // SDL_GetKeyboardState: {
+  //   parameters: {
+  //     numkeys: {
+  //       nativeType: "int*",
+  //       type: "pointer",
+  //     },
+  //   },
+  //   result: {
+  //     nativeType: "Uint8*",
+  //     type: "pointer",
+  //   },
+  // },
 
   SDL_GetRendererInfo: {
     parameters: {

@@ -7,7 +7,7 @@ const SDL_PATH = "../src/SDL";
 
 const allStructNames = Object.keys(structs).concat(opaqueStructs);
 
-const dataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
+const PlatformDataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
   "u16": (offset, _) => `getUint16(${offset})`,
@@ -18,7 +18,7 @@ const dataViewGetMethods: Record<string, (offset: number, length: number) => str
   "struct": (offset, length) => `getArray(${length}, ${offset})`,
 } as const;
 
-const dataViewSetMethods: Record<string, (offset: number, length: number) => string> = {
+const PlatformDataViewSetMethods: Record<string, (offset: number, length: number) => string> = {
   "i32": (offset, _) => `setInt32(${offset}, value)`,
   "u8": (offset, _) => `setUint8(${offset}, value)`,
   "u32": (offset, _) => `setUint32(${offset}, value)`,
@@ -134,7 +134,7 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`import { Keysym } from "./structs.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
-  lines.push(`import { DataPointer, DataView } from "../_utils.ts";`);
+  lines.push(`import { PlatformPointer, PlatformDataView } from "../_utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -150,7 +150,7 @@ async function writeEvents(): Promise<void> {
       lines.push("");
     }
 
-    lines.push("\tconstructor(private _data: Uint8Array, private _view: DataView<Event>) {");
+    lines.push("\tconstructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
       const memberTypeName = shortenName(member.nativeType);
@@ -175,15 +175,15 @@ async function writeEvents(): Promise<void> {
       if (isStruct(member)) {
         lines.push(`return this._${memberName};`);
       } else {
-        const dataViewMethod = dataViewGetMethods[member.type];
+        const PlatformDataViewMethod = PlatformDataViewGetMethods[member.type];
 
-        if (dataViewMethod === undefined) {
-          console.error(`dataViewMethods is missing ${member.type}.`);
+        if (PlatformDataViewMethod === undefined) {
+          console.error(`PlatformDataViewMethods is missing ${member.type}.`);
         }
 
         const length = 0;
         lines.push(
-          `\t\treturn this._view.${dataViewGetMethods[member.type](member.offset, length)};`,
+          `\t\treturn this._view.${PlatformDataViewGetMethods[member.type](member.offset, length)};`,
         );
       }
       lines.push("\t}");
@@ -196,8 +196,8 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`export class Event {
   private _data = new Uint8Array(64);
-  private _view = new DataView<Event>(this._data);
-  private _pointer = new DataPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
+  private _view = new PlatformDataView<Event>(this._data);
+  private _pointer = new PlatformPointer<Event>(Deno.UnsafePointer.of(this._data), Event);
 
   public get pointer(): Pointer<Event> {
     return this._pointer;
@@ -230,7 +230,7 @@ async function writeStructs(): Promise<void> {
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
-  lines.push(`import { DataPointer, DataView, fromCString } from "../_utils.ts";`);
+  lines.push(`import { PlatformPointer, PlatformDataView, fromCString } from "../_utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -250,8 +250,8 @@ async function writeStructs(): Promise<void> {
 
     lines.push(`
   private _data: Uint8Array | Pointer<${className}>;
-  private _view: DataView<${className}>;
-  private _pointer: DataPointer<${className}>;
+  private _view: PlatformDataView<${className}>;
+  private _pointer: PlatformPointer<${className}>;
 `);
 
     if (struct.allocatable) {
@@ -266,29 +266,29 @@ async function writeStructs(): Promise<void> {
     if (!struct.allocatable) {
       lines.push(`constructor(data: Uint8Array | Pointer<${className}>) {
         this._data = data;
-        this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
+        this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
         
         if (this._data instanceof Uint8Array) {
-          this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
+          this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
         } else {
-          this._pointer = this._data as DataPointer<${className}>;
+          this._pointer = this._data as PlatformPointer<${className}>;
         }
       }
 `);
     } else if (!struct.writable) {
       lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
-  if (data instanceof Uint8Array || data instanceof DataPointer) {
+  if (data instanceof Uint8Array || data instanceof PlatformPointer) {
     this._data = data;
-    this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
+    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
   } else {
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
+    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
   }
   
   if (this._data instanceof Uint8Array) {
-    this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
+    this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
   } else {
-    this._pointer = this._data as DataPointer<${className}>;
+    this._pointer = this._data as PlatformPointer<${className}>;
   }
 }
 `);
@@ -312,12 +312,12 @@ async function writeStructs(): Promise<void> {
       ).join("\n");
 
       lines.push(`
-    if (_1 instanceof Uint8Array || _1 instanceof DataPointer) {
+    if (_1 instanceof Uint8Array || _1 instanceof PlatformPointer) {
       this._data = _1;
-      this._view = new DataView(this._data as Uint8Array | DataPointer<${className}>);
+      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
     } else {
       this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-      this._view = new DataView(this._data);
+      this._view = new PlatformDataView(this._data);
 
       if (_1 !== undefined) {
         if (_2 === undefined) {
@@ -329,9 +329,9 @@ async function writeStructs(): Promise<void> {
     }
 
     if (this._data instanceof Uint8Array) {
-      this._pointer = new DataPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
+      this._pointer = new PlatformPointer<${className}>(Deno.UnsafePointer.of(this._data), this);
     } else {
-      this._pointer = this._data as DataPointer<${className}>;
+      this._pointer = this._data as PlatformPointer<${className}>;
     }
   }
 `);
@@ -356,7 +356,7 @@ async function writeStructs(): Promise<void> {
       } else if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
-        readOp += `new DataPointer<${subStructName}>(`;
+        readOp += `new PlatformPointer<${subStructName}>(`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -366,10 +366,10 @@ async function writeStructs(): Promise<void> {
 
       lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
-      const getMethod = dataViewGetMethods[member.type];
+      const getMethod = PlatformDataViewGetMethods[member.type];
 
       if (getMethod === undefined) {
-        console.error(`dataViewGetMethods is missing ${member.type}.`);
+        console.error(`PlatformDataViewGetMethods is missing ${member.type}.`);
       }
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
@@ -393,10 +393,10 @@ async function writeStructs(): Promise<void> {
 
         lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
 
-        const setMethod = dataViewSetMethods[member.type];
+        const setMethod = PlatformDataViewSetMethods[member.type];
 
         if (setMethod === undefined) {
-          console.error(`dataViewSetMethods is missing ${member.type}.`);
+          console.error(`PlatformDataViewSetMethods is missing ${member.type}.`);
         }
 
         writeOp += `this._view.${setMethod(member.offset, length)}`;
@@ -574,7 +574,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { Pointer } from "../types.ts";`);
-  lines.push(`import { DataPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";`);
+  lines.push(`import { PlatformPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -637,7 +637,7 @@ const context: SDLContext = {
       }
 
       if (isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)) {
-        returnStatement += `new DataPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
+        returnStatement += `new PlatformPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
       } else if (returnType === "string") {
         returnStatement += "\t\tfromCString(";
       }
@@ -653,14 +653,14 @@ const context: SDLContext = {
       if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\t${paramName}DoublePointer,`);
       } else if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._pointer,`);
+        lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
       } else if (isFunctionParamStruct(param)) {
         if (param.nullable) {
           lines.push(
-            `\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}> | null)?._pointer ?? NULL_POINTER,`,
+            `\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}> | null)?._pointer ?? NULL_POINTER,`,
           );
         } else {
-          lines.push(`\t\t(${paramName} as DataPointer<${getGenericParam(paramType)}>)._pointer,`);
+          lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
         }
       } else if (paramType === "string") {
         lines.push(`\t\ttoCString(${paramName}),`);
@@ -692,9 +692,9 @@ const context: SDLContext = {
         const [paramName, param] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
       ) {
         lines.push(
-          `(${paramName} as DataPointer<${
+          `(${paramName} as PlatformPointer<${
             getGenericParam(mapFunctionParamType(param))
-          }>).setValue(new DataPointer(${paramName}DoublePointer[0]));`,
+          }>).setValue(new PlatformPointer(${paramName}DoublePointer[0]));`,
         );
       }
 
