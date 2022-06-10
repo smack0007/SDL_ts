@@ -2,8 +2,8 @@
 
 // deno-lint-ignore-file no-empty-interface no-unused-vars
 
+import { fromCString, PlatformDataView, PlatformPointer } from "platform";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
-import { fromCString, PlatformDataView, PlatformPointer } from "../_utils.ts";
 
 export interface BlitMap {}
 export interface PixelFormat {}

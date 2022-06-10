@@ -132,9 +132,9 @@ async function writeEvents(): Promise<void> {
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
+  lines.push(`import { PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(`import { Keysym } from "./structs.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
-  lines.push(`import { PlatformPointer, PlatformDataView } from "../_utils.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -227,10 +227,10 @@ async function writeStructs(): Promise<void> {
   lines.push("// deno-lint-ignore-file no-empty-interface no-unused-vars");
   lines.push("");
 
+  lines.push(`import { fromCString, PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
-  lines.push(`import { PlatformPointer, PlatformDataView, fromCString } from "../_utils.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -569,12 +569,12 @@ async function writeFunctions(): Promise<void> {
 
   const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
 
+  lines.push(`import { fromCString, NULL_POINTER, PlatformDataView, PlatformPointer, toCString } from "platform";`);
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(`import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push(`import { Pointer } from "../types.ts";`);
-  lines.push(`import { PlatformPointer, fromCString, NULL_POINTER, toCString } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {

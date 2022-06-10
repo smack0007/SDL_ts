@@ -2,6 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
+import { fromCString, NULL_POINTER, PlatformDataView, PlatformPointer, toCString } from "platform";
 import { Event } from "./events.ts";
 import {
   BlitMap,
@@ -19,7 +20,6 @@ import {
 import { Symbols, symbols } from "./_symbols.ts";
 import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { Pointer } from "../types.ts";
-import { fromCString, NULL_POINTER, PlatformPointer, toCString } from "../_utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;

@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "platform": "./mod.deno.ts"
+  }
+}
