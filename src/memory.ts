@@ -1,6 +1,13 @@
 import { PlatformDataView, PlatformPointer } from "platform";
-import { AllocatableStruct, AllocatableStructConstructor, Pointer, u8 } from "./types.ts";
-import { ArrayPointer } from "./_pointers.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  BoxableValue,
+  BoxableValueConstructor,
+  Pointer,
+  u8,
+} from "./types.ts";
+import { ArrayPointer, BoxedValue } from "./_pointers.ts";
 import { isStruct } from "./_structs.ts";
 
 interface MemoryPointerCache<T> {
@@ -27,7 +34,15 @@ export class Memory {
     return new MemoryArray<T>(array, memory, Memory.pointer(array, 0));
   }
 
-  public static pointer<T>(value: T[] | T, offset?: number): Pointer<T> {
+  public static boxedValue<T extends BoxableValue>(constructor: BoxableValueConstructor): BoxedValue<T> {
+    return new BoxedValue(constructor);
+  }
+
+  public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<T>;
+  public static pointer<T>(value: T[], offset: number): Pointer<T>;
+  public static pointer<T>(value: T): Pointer<T>;
+  // deno-lint-ignore no-explicit-any
+  public static pointer<T>(value: BoxedValue<any> | T[] | T, offset?: number): Pointer<T> {
     if (offset === undefined) {
       offset = 0;
     }
@@ -36,7 +51,9 @@ export class Memory {
       throw new Error("offset must be >= 0.");
     }
 
-    if (Array.isArray(value)) {
+    if (value instanceof BoxedValue) {
+      return (value as unknown as MemoryPointerCache<T>)._pointer as Pointer<T>;
+    } else if (Array.isArray(value)) {
       return new ArrayPointer<T>(value, offset);
     } else if (isStruct<T>(value)) {
       if (value._data instanceof Uint8Array) {

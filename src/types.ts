@@ -4,38 +4,43 @@
 
 // Simple types
 
+export type Constructor<T> = (...args: unknown[]) => T;
+
 export enum i8 {}
+export const I8 = Symbol("i8");
 export enum u8 {}
+export const U8 = Symbol("u8");
 export enum i16 {}
+export const I16 = Symbol("i16");
 export enum u16 {}
+export const U16 = Symbol("u16");
 export enum i32 {}
+export const I32 = Symbol("i32");
 export enum u32 {}
+export const U32 = Symbol("u32");
 export enum i64 {}
+export const I64 = Symbol("i64");
 export enum u64 {}
+export const U64 = Symbol("u64");
 export enum f32 {}
+export const F32 = Symbol("f32");
 export enum f64 {}
+export const F64 = Symbol("f64");
+export enum int {}
+export const Int = Symbol("int");
 
-// Complex types
-
-export type AllocatableStructConstructor<T extends AllocatableStruct> = {
-  new (data: Uint8Array): T;
-  SIZE_IN_BYTES: number;
-};
-
-export interface AllocatableStruct extends Struct {}
-
-export interface Pointer<T> {
-  readonly isNull: boolean;
-
-  readonly address: bigint;
-
-  readonly value: T;
-}
-
-// TODO: Move this to it's own file as it's not generic.
-export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
-
-export interface Struct {}
+export type PrimitiveType =
+  | i8
+  | u8
+  | i16
+  | u16
+  | i32
+  | u32
+  | i64
+  | u64
+  | f32
+  | f64
+  | int;
 
 export type TypedArray =
   | Int8Array
@@ -49,3 +54,32 @@ export type TypedArray =
   | Float64Array
   | BigInt64Array
   | BigUint64Array;
+
+// Complex types
+
+export type AllocatableStructConstructor<T extends AllocatableStruct> = {
+  new (data: Uint8Array): T;
+  SIZE_IN_BYTES: number;
+};
+
+export interface AllocatableStruct extends Struct {}
+
+export type BoxableValue = number | PrimitiveType;
+
+export type BoxableValueConstructor = NumberConstructor | symbol;
+
+export interface BoxedValue<T extends BoxableValue> extends Pointer<T> {
+}
+
+export interface Pointer<T> {
+  readonly isNull: boolean;
+
+  readonly address: bigint;
+
+  readonly value: T;
+}
+
+// TODO: Move this to it's own file as it's not generic.
+export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
+
+export interface Struct {}

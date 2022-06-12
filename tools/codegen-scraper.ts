@@ -80,7 +80,7 @@ async function main(): Promise<number> {
   }
 
   await Deno.copyFile(
-    `${SDL_PATH}/lib/x64/SDL2.dll`,
+    `${SDL_PATH}/lib/x64/libSDL2.dll`,
     `${OUTPUT_PATH}/SDL2.dll`,
   );
 
@@ -98,6 +98,7 @@ function writeStartCode(): void {
   write("");
   write("int main(int argc, char* args[]) {");
   write("SDL_Init(SDL_INIT_VIDEO);");
+  writePrintF("sizeof(int) === %llu", "sizeof(int)");
 }
 
 function writeEndCode(): void {
