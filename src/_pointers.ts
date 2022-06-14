@@ -86,3 +86,11 @@ export class BoxedValue<T extends BoxableValue> implements PointerInternal<T> {
     this._platformPointer.setValue(value);
   }
 }
+
+export interface BoxedValueInternal {
+  _data: Uint8Array;
+}
+
+export function isBoxedValue(value: unknown): value is BoxedValueInternal {
+  return (value instanceof BoxedValue);
+}

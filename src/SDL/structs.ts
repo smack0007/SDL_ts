@@ -10,7 +10,7 @@ export interface PixelFormat {}
 export interface Renderer {}
 export interface RWops {}
 export interface Texture {}
-export interface Window {}
+export class Window implements Struct {}
 
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;

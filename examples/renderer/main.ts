@@ -8,20 +8,21 @@ function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
   const pointers: Pointer<Window | Renderer>[] = [];
+  const windowBox = Memory.boxedValue(SDL.Window);
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
     SDL.WINDOW_SHOWN,
-    Memory.pointer(pointers, 0),
+    Memory.pointer(windowBox),
     Memory.pointer(pointers, 1),
   );
 
-  const window = pointers[0] as Pointer<Window>;
+  const window = windowBox.value;
   const renderer = pointers[1] as Pointer<Renderer>;
   console.info(window, renderer);
 
-  if (window.isNull) {
+  if (windowBox.isNull) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
     return 1;
   }
@@ -119,7 +120,7 @@ function main(): number {
 
   SDL.DestroyTexture(texture);
   SDL.DestroyRenderer(renderer);
-  SDL.DestroyWindow(window);
+  SDL.DestroyWindow(windowBox);
   SDL.Quit();
 
   return 0;

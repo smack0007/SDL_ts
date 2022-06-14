@@ -37,6 +37,7 @@ import type {
 import type {
   AllocatableStruct,
   AllocatableStructConstructor,
+  BoxedValue,
   Pointer,
   RWMode,
   Struct,
@@ -47,6 +48,7 @@ export type {
   AllocatableStruct,
   AllocatableStructConstructor,
   BlitMap,
+  BoxedValue,
   Keysym,
   PixelFormat,
   Point,

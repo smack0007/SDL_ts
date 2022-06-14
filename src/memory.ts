@@ -7,11 +7,11 @@ import {
   Pointer,
   u8,
 } from "./types.ts";
-import { ArrayPointer, BoxedValue } from "./_pointers.ts";
+import { ArrayPointer, BoxedValue, isBoxedValue } from "./_pointers.ts";
 import { isStruct } from "./_structs.ts";
 
 interface MemoryPointerCache<T> {
-  _pointer?: Pointer<T>;
+  __pointer?: Pointer<T>;
 }
 
 export class Memory {
@@ -38,11 +38,10 @@ export class Memory {
     return new BoxedValue(constructor);
   }
 
-  public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<T>;
+  public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<BoxedValue<T>>;
   public static pointer<T>(value: T[], offset: number): Pointer<T>;
   public static pointer<T>(value: T): Pointer<T>;
-  // deno-lint-ignore no-explicit-any
-  public static pointer<T>(value: BoxedValue<any> | T[] | T, offset?: number): Pointer<T> {
+  public static pointer<T>(value: BoxedValue<BoxableValue> | T[] | T, offset?: number): Pointer<T> {
     if (offset === undefined) {
       offset = 0;
     }
@@ -51,19 +50,26 @@ export class Memory {
       throw new Error("offset must be >= 0.");
     }
 
-    if (value instanceof BoxedValue) {
-      return (value as unknown as MemoryPointerCache<T>)._pointer as Pointer<T>;
+    if (isBoxedValue(value)) {
+      const cache = value as unknown as MemoryPointerCache<T>;
+
+      if (cache.__pointer === undefined) {
+        // deno-lint-ignore no-explicit-any
+        cache.__pointer = PlatformPointer.of<T>(value._data, value as any);
+      }
+
+      return cache.__pointer;
     } else if (Array.isArray(value)) {
       return new ArrayPointer<T>(value, offset);
     } else if (isStruct<T>(value)) {
       if (value._data instanceof Uint8Array) {
         const cache = value as unknown as MemoryPointerCache<T>;
 
-        if (cache._pointer === undefined) {
-          cache._pointer = PlatformPointer.of(value._data, value);
+        if (cache.__pointer === undefined) {
+          cache.__pointer = PlatformPointer.of(value._data, value);
         }
 
-        return cache._pointer;
+        return cache.__pointer;
       } else {
         return value._data;
       }

@@ -3,6 +3,7 @@
 
 import { PlatformDataView } from "platform";
 import { BoxableValueConstructor, F32, F64, I16, I32, I64, I8, Int, U16, U32, U64, U8 } from "./types.ts";
+import { Window } from "./SDL/structs.ts";
 
 //
 // Constants
@@ -14,7 +15,7 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
   return new Int16Array(buffer)[0] === 256 ? "LE" : "BE";
 })();
 
-export const DATA_VIEW_METHODS = new Map<NumberConstructor | symbol, keyof PlatformDataView<unknown>>([
+export const DATA_VIEW_METHODS = new Map<BoxableValueConstructor, keyof PlatformDataView<unknown>>([
   [I8, "getInt8"],
   [U8, "getUint8"],
 
@@ -31,6 +32,9 @@ export const DATA_VIEW_METHODS = new Map<NumberConstructor | symbol, keyof Platf
   [F64, "getFloat64"],
 
   [Number, "getInt32"],
+
+  // TODO: Just hardcode this for now.
+  [Window, "getBigUint64"],
 ]);
 
 //
@@ -63,6 +67,11 @@ export function sizeof<T>(constructor: BoxableValueConstructor): number {
     case I64:
     case U64:
     case F64:
+      return 8;
+
+    // TODO: Just hardcode this for now.
+
+    case Window:
       return 8;
   }
 

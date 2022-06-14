@@ -64,9 +64,9 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 
 export interface AllocatableStruct extends Struct {}
 
-export type BoxableValue = number | PrimitiveType;
+export type BoxableValue = number | PrimitiveType | Struct;
 
-export type BoxableValueConstructor = NumberConstructor | symbol;
+export type BoxableValueConstructor = NumberConstructor | symbol | (new () => Struct);
 
 export interface BoxedValue<T extends BoxableValue> extends Pointer<T> {
 }
