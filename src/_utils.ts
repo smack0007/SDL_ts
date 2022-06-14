@@ -2,7 +2,7 @@
 // exposed as part of the API.
 
 import { PlatformDataView } from "platform";
-import { BoxableValueConstructor, I16, I32, I64, I8, U16, U32, U64, U8 } from "./types.ts";
+import { BoxableValueConstructor, F32, F64, I16, I32, I64, I8, Int, U16, U32, U64, U8 } from "./types.ts";
 
 //
 // Constants
@@ -15,7 +15,21 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 })();
 
 export const DATA_VIEW_METHODS = new Map<NumberConstructor | symbol, keyof PlatformDataView<unknown>>([
+  [I8, "getInt8"],
   [U8, "getUint8"],
+
+  [I16, "getInt16"],
+  [U16, "getUint16"],
+
+  [I32, "getInt32"],
+  [U32, "getUint32"],
+
+  [I64, "getBigInt64"],
+  [U64, "getBigUint64"],
+
+  [F32, "getFloat32"],
+  [F64, "getFloat64"],
+
   [Number, "getInt32"],
 ]);
 
@@ -39,16 +53,17 @@ export function sizeof<T>(constructor: BoxableValueConstructor): number {
     case U16:
       return 2;
 
+    case Int:
     case I32:
     case U32:
+    case F32:
+    case Number:
       return 4;
 
     case I64:
     case U64:
+    case F64:
       return 8;
-
-    case Number:
-      return 4;
   }
 
   throw new Error(
