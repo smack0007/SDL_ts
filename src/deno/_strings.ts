@@ -1,4 +1,4 @@
-export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
+export function fromPlatformString(value: Uint8Array | Deno.UnsafePointer): string {
   if (value instanceof Deno.UnsafePointer) {
     return new Deno.UnsafePointerView(value).getCString();
   }
@@ -6,6 +6,6 @@ export function fromCString(value: Uint8Array | Deno.UnsafePointer): string {
   return new TextDecoder().decode(value);
 }
 
-export function toCString(value: string): Uint8Array {
+export function toPlatformString(value: string): Uint8Array {
   return new TextEncoder().encode(value + "\0");
 }

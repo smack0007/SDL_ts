@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromCString, NULL_POINTER, PlatformDataView, PlatformPointer, toCString } from "platform";
+import { fromPlatformString, NULL_POINTER, PlatformDataView, PlatformPointer, toPlatformString } from "platform";
 import { Event } from "./events.ts";
 import {
   BlitMap,
@@ -156,7 +156,7 @@ export function CreateWindow(
   flags: u32,
 ): Pointer<Window> {
   return new PlatformPointer<Window>(context.symbols.SDL_CreateWindow(
-    toCString(title),
+    toPlatformString(title),
     x,
     y,
     w,
@@ -242,7 +242,7 @@ export function FreeSurface(
 }
 
 export function GetError(): string {
-  return fromCString(context.symbols.SDL_GetError() as Deno.UnsafePointer);
+  return fromPlatformString(context.symbols.SDL_GetError() as Deno.UnsafePointer);
 }
 
 export function GetKeyboardState(
@@ -274,7 +274,7 @@ export function GetScancodeFromKey(
 export function GetScancodeName(
   scancode: u32,
 ): string {
-  return fromCString(context.symbols.SDL_GetScancodeName(
+  return fromPlatformString(context.symbols.SDL_GetScancodeName(
     scancode,
   ) as Deno.UnsafePointer);
 }
@@ -561,8 +561,8 @@ export function RWFromFile(
   mode: RWMode,
 ): Pointer<RWops> {
   return new PlatformPointer<RWops>(context.symbols.SDL_RWFromFile(
-    toCString(file),
-    toCString(mode),
+    toPlatformString(file),
+    toPlatformString(mode),
   ) as Deno.UnsafePointer);
 }
 

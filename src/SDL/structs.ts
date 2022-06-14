@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-empty-interface no-unused-vars
 
-import { fromCString, PlatformDataView, PlatformPointer } from "platform";
+import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 export interface BlitMap {}
@@ -174,7 +174,7 @@ export class RendererInfo implements AllocatableStruct {
   }
 
   public get name(): string {
-    return fromCString(new Deno.UnsafePointer(this._view.getBigUint64(0)));
+    return fromPlatformString(new Deno.UnsafePointer(this._view.getBigUint64(0)));
   }
 
   public get flags(): u32 {

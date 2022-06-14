@@ -66,64 +66,84 @@ export class PlatformDataView<T> {
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
 
-  private _dataView: globalThis.DataView | Deno.UnsafePointerView;
+  private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
     private _data: Uint8Array | PlatformPointer<T>,
   ) {
     if (this._data instanceof Uint8Array) {
-      this._dataView = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
+      this._view = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
     } else {
-      this._dataView = new Deno.UnsafePointerView(this._data._pointer);
+      this._view = new Deno.UnsafePointerView(this._data._pointer);
     }
   }
 
   public getArray(byteLength: number, byteOffset: number): Uint8Array {
-    if (this._dataView instanceof globalThis.DataView) {
+    if (this._view instanceof globalThis.DataView) {
       throw new Error("Not implemented.");
     } else {
-      return new Uint8Array(this._dataView.getArrayBuffer(byteLength, byteOffset));
+      return new Uint8Array(this._view.getArrayBuffer(byteLength, byteOffset));
     }
+  }
+
+  public getBigInt64(byteOffset: number): bigint {
+    return this._view.getBigInt64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._dataView.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public getInt8(byteOffset: number): number {
+    return this._view.getInt8(byteOffset);
+  }
+
+  public getInt16(byteOffset: number): number {
+    return this._view.getInt16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getInt32(byteOffset: number): number {
-    return this._dataView.getInt32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getInt32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public getFloat32(byteOffset: number): number {
+    return this._view.getFloat32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public getFloat64(byteOffset: number): number {
+    return this._view.getFloat64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {
-    return this._dataView.getUint8(byteOffset);
+    return this._view.getUint8(byteOffset);
   }
 
   public getUint16(byteOffset: number): number {
-    return this._dataView.getUint16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getUint16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint32(byteOffset: number): number {
-    return this._dataView.getUint32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getUint32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public setInt32(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof globalThis.DataView)) {
+    if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setInt32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
+    this._view.setInt32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public setUint8(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof globalThis.DataView)) {
+    if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint8(byteOffset, value);
+    this._view.setUint8(byteOffset, value);
   }
 
   public setUint32(byteOffset: number, value: number): void {
-    if (!(this._dataView instanceof globalThis.DataView)) {
+    if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._dataView.setUint32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
+    this._view.setUint32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
   }
 }
