@@ -18,7 +18,9 @@ export const SDL = {
   ...SDL_structs,
 };
 
+export * from "./src/boxedValue.ts";
 export * from "./src/memory.ts";
+export * from "./src/pointer.ts";
 
 import type {
   BlitMap,
@@ -37,11 +39,7 @@ import type {
 import type {
   AllocatableStruct,
   AllocatableStructConstructor,
-  BoxableValue,
-  BoxableValueConstructor,
-  BoxedValue,
   Constructor,
-  Pointer,
   PrimitiveType,
   RWMode,
   Struct,
@@ -52,14 +50,10 @@ export type {
   AllocatableStruct,
   AllocatableStructConstructor,
   BlitMap,
-  BoxableValue,
-  BoxableValueConstructor,
-  BoxedValue,
   Constructor,
   Keysym,
   PixelFormat,
   Point,
-  Pointer,
   PrimitiveType,
   Rect,
   Renderer,

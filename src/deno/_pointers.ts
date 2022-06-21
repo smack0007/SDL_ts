@@ -1,5 +1,5 @@
 import { TypedArray } from "../types.ts";
-import { PointerInternal } from "../_pointers.ts";
+import { PointerInternal } from "../_pointer.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
 export const NULL_POINTER = new Deno.UnsafePointer(0n);

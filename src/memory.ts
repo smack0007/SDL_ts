@@ -1,13 +1,8 @@
 import { PlatformDataView, PlatformPointer } from "platform";
-import {
-  AllocatableStruct,
-  AllocatableStructConstructor,
-  BoxableValue,
-  BoxableValueConstructor,
-  Pointer,
-  u8,
-} from "./types.ts";
-import { ArrayPointer, BoxedValue, isBoxedValue } from "./_pointers.ts";
+import { BoxableValue, BoxedValue, isBoxedValue } from "./boxedValue.ts";
+import { Pointer } from "./pointer.ts";
+import { AllocatableStruct, AllocatableStructConstructor, u8 } from "./types.ts";
+import { ArrayPointer } from "./_pointer.ts";
 import { isStruct } from "./_structs.ts";
 
 interface MemoryPointerCache<T> {
@@ -32,10 +27,6 @@ export class Memory {
     }
 
     return new MemoryArray<T>(array, memory, Memory.pointer(array, 0));
-  }
-
-  public static boxedValue<T extends BoxableValue>(constructor: BoxableValueConstructor): BoxedValue<T> {
-    return new BoxedValue(constructor);
   }
 
   public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<BoxedValue<T>>;

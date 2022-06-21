@@ -1,50 +1,24 @@
 import { PlatformDataView, PlatformPointer } from "platform";
-import { BoxableValue, BoxableValueConstructor, Pointer } from "./types.ts";
+import { Pointer } from "./pointer.ts";
+import { PrimitiveType, Struct } from "./types.ts";
+import { PointerInternal } from "./_pointer.ts";
 import { DATA_VIEW_METHODS, sizeof } from "./_utils.ts";
 
-export interface PointerInternal<T> extends Pointer<T> {
-  readonly isPlatformPointer: boolean;
+export type BoxableValue = number | PrimitiveType | Struct;
 
-  _pointer: unknown;
+export type BoxableValueConstructor = NumberConstructor | symbol | (new () => Struct);
 
-  setValue(value: T): void;
+// deno-lint-ignore no-empty-interface
+export interface BoxedValue<T extends BoxableValue> extends Pointer<T> {
 }
 
-export function isPlatformPointer<T>(pointer: Pointer<T>): pointer is PlatformPointer<T> {
-  return (pointer as PointerInternal<T>).isPlatformPointer;
-}
+export const BoxedValue = {
+  create: function <T>(constructor: BoxableValueConstructor): BoxedValue<T> {
+    return new BoxedValueImpl(constructor);
+  },
+} as const;
 
-export class ArrayPointer<T> implements PointerInternal<T> {
-  public _pointer: Deno.UnsafePointer = null!;
-
-  constructor(
-    private _array: T[],
-    private _offset: number,
-  ) {
-  }
-
-  public get isPlatformPointer(): boolean {
-    return false;
-  }
-
-  public get isNull(): boolean {
-    return false;
-  }
-
-  public get address(): bigint {
-    return 0n;
-  }
-
-  public get value(): T {
-    return this._array[this._offset];
-  }
-
-  public setValue(value: T): void {
-    this._array[this._offset] = value;
-  }
-}
-
-export class BoxedValue<T extends BoxableValue> implements PointerInternal<T> {
+class BoxedValueImpl<T extends BoxableValue> implements BoxedValue<T>, PointerInternal<T> {
   private readonly _data: Uint8Array;
   private readonly _platformPointer: PlatformPointer<T>;
   private readonly _view: PlatformDataView<T>;
@@ -92,5 +66,5 @@ export interface BoxedValueInternal {
 }
 
 export function isBoxedValue(value: unknown): value is BoxedValueInternal {
-  return (value instanceof BoxedValue);
+  return (value instanceof BoxedValueImpl);
 }

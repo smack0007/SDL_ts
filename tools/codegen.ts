@@ -134,7 +134,8 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`import { PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(`import { Keysym } from "./structs.ts";`);
-  lines.push(`import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";`);
+  lines.push(`import { Pointer } from "../pointer.ts";`);
+  lines.push(`import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "../types.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -223,8 +224,9 @@ async function writeStructs(): Promise<void> {
   lines.push("");
 
   lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
+  lines.push(`import { Pointer } from "../pointer.ts";`);
   lines.push(
-    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push("");
 
@@ -741,7 +743,9 @@ async function writeMod(): Promise<void> {
     lines.push("");
   }
 
+  lines.push(`export * from "./src/boxedValue.ts";`);
   lines.push(`export * from "./src/memory.ts";`);
+  lines.push(`export * from "./src/pointer.ts";`);
   lines.push("");
 
   const typesToExport: string[] = [];

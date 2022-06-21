@@ -3,7 +3,8 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
-import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { Pointer } from "../pointer.ts";
+import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 export class BlitMap implements Struct {}
 export class PixelFormat implements Struct {}

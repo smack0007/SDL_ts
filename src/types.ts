@@ -64,21 +64,6 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 
 export interface AllocatableStruct extends Struct {}
 
-export type BoxableValue = number | PrimitiveType | Struct;
-
-export type BoxableValueConstructor = NumberConstructor | symbol | (new () => Struct);
-
-export interface BoxedValue<T extends BoxableValue> extends Pointer<T> {
-}
-
-export interface Pointer<T> {
-  readonly isNull: boolean;
-
-  readonly address: bigint;
-
-  readonly value: T;
-}
-
 // TODO: Move this to it's own file as it's not generic.
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 
