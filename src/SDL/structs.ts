@@ -1,15 +1,15 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-// deno-lint-ignore-file no-empty-interface no-unused-vars
+// deno-lint-ignore-file no-unused-vars
 
 import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 
-export interface BlitMap {}
-export interface PixelFormat {}
-export interface Renderer {}
-export interface RWops {}
-export interface Texture {}
+export class BlitMap implements Struct {}
+export class PixelFormat implements Struct {}
+export class Renderer implements Struct {}
+export class RWops implements Struct {}
+export class Texture implements Struct {}
 export class Window implements Struct {}
 
 export class Keysym implements Struct {

@@ -219,10 +219,10 @@ async function writeEvents(): Promise<void> {
 
 async function writeStructs(): Promise<void> {
   const lines = createLines();
-  lines.push("// deno-lint-ignore-file no-empty-interface no-unused-vars");
+  lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  lines.push(`import { fromCString, PlatformPointer, PlatformDataView } from "platform";`);
+  lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
@@ -230,7 +230,7 @@ async function writeStructs(): Promise<void> {
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export interface ${className} {}`);
+    lines.push(`export class ${className} implements Struct {}`);
   }
 
   lines.push("");
@@ -323,7 +323,7 @@ async function writeStructs(): Promise<void> {
       let memberType = mapStructMemberType(member);
 
       if (memberType === "string") {
-        readOp += `fromCString(new Deno.UnsafePointer(`;
+        readOp += `fromPlatformString(new Deno.UnsafePointer(`;
       } else if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
@@ -567,7 +567,9 @@ async function writeFunctions(): Promise<void> {
 
   const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
 
-  lines.push(`import { fromCString, NULL_POINTER, PlatformDataView, PlatformPointer, toCString } from "platform";`);
+  lines.push(
+    `import { fromPlatformString, NULL_POINTER, PlatformDataView, PlatformPointer, toPlatformString } from "platform";`,
+  );
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
@@ -631,7 +633,7 @@ const context: SDLContext = {
       }
 
       if (isFunctionParamString(func.result)) {
-        returnStatement += "\t\tfromCString(";
+        returnStatement += "\t\tfromPlatformString(";
       } else if (
         isFunctionParamPointer(func.result) ||
         isFunctionParamOpaqueStruct(func.result) ||
@@ -649,7 +651,7 @@ const context: SDLContext = {
     for (const [paramName, param] of Object.entries(func.parameters)) {
       const paramType = mapFunctionParamType(param);
       if (isFunctionParamString(param)) {
-        lines.push(`\t\ttoCString(${paramName}),`);
+        lines.push(`\t\ttoPlatformString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
         lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
