@@ -60,12 +60,12 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window.isNull) {
+  if (window == 0) {
     console.error("Failed to create window.");
     return 1;
   }
 
-  const frontBuffer = SDL.GetWindowSurface(window);
+  const frontBuffer = Memory.structView(SDL.GetWindowSurface(window), SDL.Surface);
 
   const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
 

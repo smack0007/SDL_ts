@@ -1,13 +1,8 @@
 import { PlatformDataView, PlatformPointer } from "platform";
+import { Struct } from "../mod.ts";
 import { BoxableValue, BoxedValue, isBoxedValue } from "./boxedValue.ts";
-import { Pointer } from "./pointer.ts";
-import { AllocatableStruct, AllocatableStructConstructor, u8 } from "./types.ts";
-import { ArrayPointer } from "./_pointer.ts";
+import { AllocatableStruct, AllocatableStructConstructor, Pointer, u8 } from "./types.ts";
 import { isStruct } from "./_structs.ts";
-
-interface MemoryPointerCache<T> {
-  __pointer?: Pointer<T>;
-}
 
 export class Memory {
   public static allocateArray<T extends AllocatableStruct>(
@@ -29,6 +24,10 @@ export class Memory {
     return new MemoryArray<T>(array, memory, Memory.pointer(array, 0));
   }
 
+  public static isPointer(value: unknown): value is Pointer<unknown> {
+    return typeof value === "bigint" || typeof value === "number";
+  }
+
   public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<BoxedValue<T>>;
   public static pointer<T>(value: T[], offset: number): Pointer<T>;
   public static pointer<T>(value: T): Pointer<T>;
@@ -42,25 +41,12 @@ export class Memory {
     }
 
     if (isBoxedValue(value)) {
-      const cache = value as unknown as MemoryPointerCache<T>;
-
-      if (cache.__pointer === undefined) {
-        // deno-lint-ignore no-explicit-any
-        cache.__pointer = PlatformPointer.of<T>(value._data, value as any);
-      }
-
-      return cache.__pointer;
-    } else if (Array.isArray(value)) {
-      return new ArrayPointer<T>(value, offset);
+      return PlatformPointer.of(value._data);
+      // } else if (Array.isArray(value)) {
+      //   return new ArrayPointer<T>(value, offset);
     } else if (isStruct<T>(value)) {
       if (value._data instanceof Uint8Array) {
-        const cache = value as unknown as MemoryPointerCache<T>;
-
-        if (cache.__pointer === undefined) {
-          cache.__pointer = PlatformPointer.of(value._data, value);
-        }
-
-        return cache.__pointer;
+        return PlatformPointer.of(value._data);
       } else {
         return value._data;
       }
@@ -71,8 +57,15 @@ export class Memory {
 
   public static readUint8<T>(pointer: Pointer<T>, byteOffset: number): u8 {
     // TODO: See if we can cache this somewhere.
-    const dataView = new PlatformDataView(pointer as PlatformPointer<T>);
+    const dataView = new PlatformDataView(pointer);
     return dataView.getUint8(byteOffset);
+  }
+
+  public static structView<T extends Struct>(
+    pointer: Pointer<T>,
+    _constructor: new (pointer: Pointer<T>) => T,
+  ): T {
+    return new _constructor(pointer);
   }
 }
 

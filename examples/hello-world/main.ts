@@ -1,4 +1,4 @@
-import { Memory, SDL } from "../../mod.ts";
+import { Memory, SDL, Surface } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
@@ -15,24 +15,26 @@ const window = SDL.CreateWindow(
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
-if (window.isNull) {
+if (window == 0) {
   console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 
-let surface = SDL.GetWindowSurface(window);
+let surfacePtr = SDL.GetWindowSurface(window);
 
-if (surface.isNull) {
+if (surfacePtr == 0) {
   console.error(`Failed to create surface: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 
-console.info(surface.value.flags);
-console.info("Width", surface.value.w, "Height", surface.value.h);
+const surface = Memory.structView(surfacePtr, SDL.Surface);
+
+console.info(surface.flags);
+console.info("Width", surface.w, "Height", surface.h);
 SDL.FillRect(
-  surface,
+  surfacePtr,
   null,
-  SDL.MapRGB(surface.value.format, 0x64, 0x95, 0xED),
+  SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
 );
 SDL.UpdateWindowSurface(window);
 
@@ -56,11 +58,11 @@ while (!done) {
         console.info(`Window ${event.window.windowID} restored.`);
       } else if (event.window.event === SDL.WINDOWEVENT_RESIZED) {
         console.info(`Window ${event.window.windowID} resized: ${event.window.data1} ${event.window.data2}`);
-        surface = SDL.GetWindowSurface(window);
+        surfacePtr = SDL.GetWindowSurface(window);
         SDL.FillRect(
-          surface,
+          surfacePtr,
           null,
-          SDL.MapRGB(surface.value.format, 0x64, 0x95, 0xED),
+          SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
         );
         SDL.UpdateWindowSurface(window);
       }

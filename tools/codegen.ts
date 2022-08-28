@@ -13,7 +13,7 @@ const PlatformDataViewGetMethods: Record<string, (offset: number, length: number
   "u16": (offset, _) => `getUint16(${offset})`,
   "u32": (offset, _) => `getUint32(${offset})`,
 
-  "pointer": (offset, _) => `getBigUint64(${offset})`,
+  "pointer": (offset, _) => `getPointer(${offset})`,
 
   "struct": (offset, length) => `getArray(${length}, ${offset})`,
 } as const;
@@ -101,7 +101,7 @@ function mapStructMemberType(member: CodeGenStructMember): string {
       return member.type;
 
     case "pointer":
-      return "Deno.UnsafePointer";
+      return "Deno.PointerValue";
 
     case "struct":
       return shortenName(member.nativeType);
@@ -134,8 +134,7 @@ async function writeEvents(): Promise<void> {
 
   lines.push(`import { PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(`import { Keysym } from "./structs.ts";`);
-  lines.push(`import { Pointer } from "../pointer.ts";`);
-  lines.push(`import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "../types.ts";`);
+  lines.push(`import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8, Pointer } from "../types.ts";`);
   lines.push("");
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -224,9 +223,9 @@ async function writeStructs(): Promise<void> {
   lines.push("");
 
   lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
-  lines.push(`import { Pointer } from "../pointer.ts";`);
+  lines.push(`import { Memory } from "../memory.ts";`);
   lines.push(
-    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push("");
 
@@ -262,17 +261,17 @@ async function writeStructs(): Promise<void> {
     if (!struct.allocatable) {
       lines.push(`constructor(data: Uint8Array | Pointer<${className}>) {
         this._data = data;
-        this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
+        this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
       }
 `);
     } else if (!struct.writable) {
       lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
-  if (data instanceof Uint8Array || data instanceof PlatformPointer) {
+  if (data instanceof Uint8Array || Memory.isPointer(data)) {
     this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
+    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
   } else {
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
+    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
   }
 }
 `);
@@ -296,9 +295,9 @@ async function writeStructs(): Promise<void> {
       ).join("\n");
 
       lines.push(`
-    if (_1 instanceof Uint8Array || _1 instanceof PlatformPointer) {
+    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
       this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<${className}>);
+      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
     } else {
       this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
       this._view = new PlatformDataView(this._data);
@@ -325,11 +324,10 @@ async function writeStructs(): Promise<void> {
       let memberType = mapStructMemberType(member);
 
       if (memberType === "string") {
-        readOp += `fromPlatformString(new Deno.UnsafePointer(`;
+        readOp += `fromPlatformString(`;
       } else if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `Pointer<${subStructName}>`;
-        readOp += `new PlatformPointer<${subStructName}>(`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -347,9 +345,7 @@ async function writeStructs(): Promise<void> {
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
-      if (memberType === "string") {
-        readOp += "))";
-      } else if ((member.type === "pointer" || member.type === "struct")) {
+      if (memberType === "string" || member.type === "struct") {
         readOp += ")";
       }
 
@@ -575,13 +571,18 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { Event } from "./events.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
-  lines.push(`import { f32, f64, i16, i32, i64, i8, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`);
-  lines.push(`import { Pointer } from "../types.ts";`);
+  lines.push(
+    `import { f32, f64, i16, i32, i64, i8, Pointer, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
+  );
   lines.push("");
 
   lines.push(`interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
-  symbols: Deno.StaticForeignLibraryInterface<Symbols>;
+
+  // TODO: Figure out the correct typing again. Don't know why this seems to have broken.
+  // deno-lint-ignore no-explicit-any
+  symbols: any;
+  // symbols: Deno.StaticForeignLibraryInterface<Symbols>;
 }
 
 const context: SDLContext = {
@@ -636,12 +637,6 @@ const context: SDLContext = {
 
       if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tfromPlatformString(";
-      } else if (
-        isFunctionParamPointer(func.result) ||
-        isFunctionParamOpaqueStruct(func.result) ||
-        isFunctionParamStruct(func.result)
-      ) {
-        returnStatement += `new PlatformPointer<${getGenericParam(mapFunctionReturnType(func.result))}>(`;
       }
 
       returnStatement += `context.symbols.${symbolName}(`;
@@ -659,14 +654,14 @@ const context: SDLContext = {
       } else if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\t${paramName}DoublePointer,`);
       } else if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
+        lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {
         if (param.nullable) {
           lines.push(
-            `\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}> | null)?._pointer ?? NULL_POINTER,`,
+            `\t\t${paramName} ?? NULL_POINTER,`,
           );
         } else {
-          lines.push(`\t\t(${paramName} as PlatformPointer<${getGenericParam(paramType)}>)._pointer,`);
+          lines.push(`\t\t${paramName},`);
         }
       } else {
         lines.push(`\t\t${paramName},`);
@@ -674,14 +669,14 @@ const context: SDLContext = {
     }
 
     if (returnType !== "void") {
-      if (isFunctionParamStruct(func.result)) {
-        lines.push(`\t) as Deno.UnsafePointer, ${getGenericParam(returnType)});`);
+      if (returnType === "string") {
+        lines.push(`\t) as Pointer<unknown>);`);
       } else if (
+        isFunctionParamStruct(func.result) ||
         isFunctionParamPointer(func.result) ||
-        isFunctionParamOpaqueStruct(func.result) ||
-        returnType === "string"
+        isFunctionParamOpaqueStruct(func.result)
       ) {
-        lines.push(`\t) as Deno.UnsafePointer);`);
+        lines.push(`\t) as Pointer<${getGenericParam(returnType)}>;`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
       } else {

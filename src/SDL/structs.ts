@@ -3,8 +3,8 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
-import { Pointer } from "../pointer.ts";
-import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { Memory } from "../memory.ts";
+import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 export class BlitMap implements Struct {}
 export class PixelFormat implements Struct {}
@@ -23,7 +23,7 @@ export class Keysym implements Struct {
   constructor(data: Pointer<Keysym>);
   constructor(data: Uint8Array | Pointer<Keysym>) {
     this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Keysym>);
+    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Keysym>);
   }
 
   public get scancode(): u32 {
@@ -55,9 +55,9 @@ export class Point implements AllocatableStruct {
   constructor(data: Partial<Point>);
   constructor(x: i32, y: i32);
   constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
-    if (_1 instanceof Uint8Array || _1 instanceof PlatformPointer) {
+    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
       this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Point>);
+      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Point>);
     } else {
       this._data = new Uint8Array(Point.SIZE_IN_BYTES);
       this._view = new PlatformDataView(this._data);
@@ -102,9 +102,9 @@ export class Rect implements AllocatableStruct {
   constructor(data: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
   constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
-    if (_1 instanceof Uint8Array || _1 instanceof PlatformPointer) {
+    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
       this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Rect>);
+      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Rect>);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
       this._view = new PlatformDataView(this._data);
@@ -165,17 +165,17 @@ export class RendererInfo implements AllocatableStruct {
   constructor(data: Uint8Array);
   constructor(data: Pointer<RendererInfo>);
   constructor(data?: Uint8Array | Pointer<RendererInfo>) {
-    if (data instanceof Uint8Array || data instanceof PlatformPointer) {
+    if (data instanceof Uint8Array || Memory.isPointer(data)) {
       this._data = data;
-      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<RendererInfo>);
+      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
     } else {
       this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-      this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<RendererInfo>);
+      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
     }
   }
 
   public get name(): string {
-    return fromPlatformString(new Deno.UnsafePointer(this._view.getBigUint64(0)));
+    return fromPlatformString(this._view.getPointer(0));
   }
 
   public get flags(): u32 {
@@ -205,7 +205,7 @@ export class Surface implements Struct {
   constructor(data: Pointer<Surface>);
   constructor(data: Uint8Array | Pointer<Surface>) {
     this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | PlatformPointer<Surface>);
+    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Surface>);
   }
 
   public get flags(): u32 {
@@ -213,7 +213,7 @@ export class Surface implements Struct {
   }
 
   public get format(): Pointer<PixelFormat> {
-    return new PlatformPointer<PixelFormat>(this._view.getBigUint64(8));
+    return this._view.getPointer(8);
   }
 
   public get w(): i32 {
@@ -229,11 +229,11 @@ export class Surface implements Struct {
   }
 
   public get pixels(): Pointer<void> {
-    return new PlatformPointer<void>(this._view.getBigUint64(32));
+    return this._view.getPointer(32);
   }
 
   public get userdata(): Pointer<void> {
-    return new PlatformPointer<void>(this._view.getBigUint64(40));
+    return this._view.getPointer(40);
   }
 
   public get locked(): i32 {
@@ -241,7 +241,7 @@ export class Surface implements Struct {
   }
 
   public get list_blitmap(): Pointer<void> {
-    return new PlatformPointer<void>(this._view.getBigUint64(56));
+    return this._view.getPointer(56);
   }
 
   public get clip_rect(): Rect {
@@ -249,7 +249,7 @@ export class Surface implements Struct {
   }
 
   public get map(): Pointer<BlitMap> {
-    return new PlatformPointer<BlitMap>(this._view.getBigUint64(80));
+    return this._view.getPointer(80);
   }
 
   public get refcount(): i32 {

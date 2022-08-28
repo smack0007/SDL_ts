@@ -2,8 +2,9 @@
 // exposed as part of the API.
 
 import { PlatformDataView } from "platform";
-import { BoxableValueConstructor, F32, F64, I16, I32, I64, I8, Int, U16, U32, U64, U8 } from "./types.ts";
+import { F32, F64, I16, I32, I64, I8, Int, U16, U32, U64, U8 } from "./types.ts";
 import { Window } from "./SDL/structs.ts";
+import { BoxableValueConstructor } from "./boxedValue.ts";
 
 //
 // Constants

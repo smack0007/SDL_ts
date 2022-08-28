@@ -29,6 +29,8 @@ export const F64 = Symbol("f64");
 export enum int {}
 export const Int = Symbol("int");
 
+export type Pointer<T> = number | bigint;
+
 export type PrimitiveType =
   | i8
   | u8

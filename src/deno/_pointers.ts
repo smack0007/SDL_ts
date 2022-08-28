@@ -1,63 +1,11 @@
-import { TypedArray } from "../types.ts";
-import { PointerInternal } from "../_pointer.ts";
+import { Pointer, TypedArray } from "../types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
-export const NULL_POINTER = new Deno.UnsafePointer(0n);
+export const NULL_POINTER = 0n;
 
-export class PlatformPointer<T> implements PointerInternal<T> {
-  public get isPlatformPointer(): boolean {
-    return true;
-  }
-
-  public _pointer: Deno.UnsafePointer;
-  private readonly _constructor: (new (pointer: PlatformPointer<T>) => T) | null = null;
-  private _value: T | null = null;
-
-  constructor(
-    pointer: Deno.UnsafePointer | bigint,
-    constructorOrValue: (new (pointer: PlatformPointer<T>) => T) | T | null = null,
-  ) {
-    if (typeof pointer === "bigint") {
-      pointer = new Deno.UnsafePointer(pointer);
-    }
-
-    this._pointer = pointer;
-
-    if (constructorOrValue) {
-      if (typeof constructorOrValue === "function") {
-        this._constructor = constructorOrValue as (new (pointer: PlatformPointer<T>) => T);
-      } else {
-        this._value = constructorOrValue;
-      }
-    }
-  }
-
-  public static of<T>(memory: TypedArray, value?: T): PlatformPointer<T> {
-    return new PlatformPointer(Deno.UnsafePointer.of(memory), value);
-  }
-
-  public get isNull(): boolean {
-    return this._pointer.value === 0n;
-  }
-
-  public get address(): bigint {
-    return this._pointer.value;
-  }
-
-  public get value(): T {
-    if (this._value === null) {
-      if (!this._constructor) {
-        throw new Error("Unable to create type pointed to by pointer as no constructor was provided.");
-      }
-
-      this._value = new this._constructor(this);
-    }
-
-    return this._value as T;
-  }
-
-  public setValue(value: T): void {
-    this._value = value;
+export class PlatformPointer {
+  public static of<T>(memory: TypedArray): Pointer<T> {
+    return Deno.UnsafePointer.of(memory);
   }
 }
 
@@ -69,12 +17,14 @@ export class PlatformDataView<T> {
   private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    private _data: Uint8Array | PlatformPointer<T>,
+    private _data: Uint8Array | Pointer<T>,
   ) {
     if (this._data instanceof Uint8Array) {
       this._view = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
     } else {
-      this._view = new Deno.UnsafePointerView(this._data._pointer);
+      // TODO: bigint cast is currently necessary but will hopefully be removed in future versions
+      // of Deno.
+      this._view = new Deno.UnsafePointerView(this._data as bigint);
     }
   }
 
@@ -87,11 +37,11 @@ export class PlatformDataView<T> {
   }
 
   public getBigInt64(byteOffset: number): bigint {
-    return this._view.getBigInt64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getBigInt64(byteOffset, PlatformDataView.LITTLE_ENDIAN) as bigint;
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN) as bigint;
   }
 
   public getInt8(byteOffset: number): number {
@@ -112,6 +62,11 @@ export class PlatformDataView<T> {
 
   public getFloat64(byteOffset: number): number {
     return this._view.getFloat64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public getPointer<T>(byteOffset: number): Pointer<T> {
+    // TODO: We should test here if we're on 32 or 64 bit.
+    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {

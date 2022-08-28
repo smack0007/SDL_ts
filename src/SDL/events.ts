@@ -4,8 +4,7 @@
 
 import { PlatformDataView, PlatformPointer } from "platform";
 import { Keysym } from "./structs.ts";
-import { Pointer } from "../pointer.ts";
-import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 
 export class CommonEvent {
   constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
