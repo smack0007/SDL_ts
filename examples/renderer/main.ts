@@ -1,4 +1,4 @@
-import { BoxedValue, Memory, Pointer, Renderer, SDL, Window } from "../../mod.ts";
+import { BoxedValue, Memory, Pointer, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -7,30 +7,30 @@ const WINDOW_HEIGHT = 768;
 function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
-  const pointers: Pointer<Window | Renderer>[] = [];
-  const windowBox = BoxedValue.create(SDL.Window);
+  const windowBox: PointerTarget<Window> = { value: 0 };
+  const rendererBox: PointerTarget<Renderer> = { value: 0 };
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
     SDL.WINDOW_SHOWN,
-    Memory.pointer(windowBox),
-    Memory.pointer(pointers, 1),
+    windowBox,
+    rendererBox,
   );
 
-  const window = windowBox.value;
-  const renderer = pointers[1] as Pointer<Renderer>;
-  console.info(window, renderer);
-
-  if (windowBox.isNull) {
+  if (windowBox.value == 0) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
     return 1;
   }
 
-  if (renderer.isNull) {
+  if (rendererBox.value == 0) {
     console.error(`Failed to create renderer: ${SDL.GetError()}`);
     return 1;
   }
+
+  const window = windowBox.value;
+  const renderer = rendererBox.value;
+  console.info(window, renderer);
 
   const rendererInfo = new SDL.RendererInfo();
   if (SDL.GetRendererInfo(renderer, Memory.pointer(rendererInfo)) != 0) {
@@ -48,15 +48,15 @@ function main(): number {
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
-  const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
-  const srcRect = new SDL.Rect(0, 0, denoSurface.value.w, denoSurface.value.h);
+  const denoSurface = Memory.structView(SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp")), SDL.Surface);
+  const srcRect = new SDL.Rect(0, 0, denoSurface.w, denoSurface.h);
   const destRect = new SDL.Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-  const textureCenter = new SDL.Point(denoSurface.value.w / 2, denoSurface.value.h / 2);
+  const textureCenter = new SDL.Point(denoSurface.w / 2, denoSurface.h / 2);
   let textureRotation = 0;
-  const texture = SDL.CreateTextureFromSurface(renderer, denoSurface);
-  SDL.FreeSurface(denoSurface);
+  const texture = SDL.CreateTextureFromSurface(renderer, Memory.pointer(denoSurface));
+  SDL.FreeSurface(Memory.pointer(denoSurface));
 
-  if (texture.isNull) {
+  if (texture == 0) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
     return 1;
   }
@@ -71,7 +71,7 @@ function main(): number {
   points.array[3].x = 0;
   points.array[3].y = 1;
 
-  const numkeys = BoxedValue.create<number>(Number);
+  // const numkeys = BoxedValue.create<number>(Number);
 
   const event = new SDL.Event();
   let done = false;
@@ -87,8 +87,8 @@ function main(): number {
       break;
     }
 
-    const state = SDL.GetKeyboardState(numkeys);
-    console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
+    // const state = SDL.GetKeyboardState(numkeys);
+    // console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
@@ -120,7 +120,7 @@ function main(): number {
 
   SDL.DestroyTexture(texture);
   SDL.DestroyRenderer(renderer);
-  SDL.DestroyWindow(windowBox);
+  SDL.DestroyWindow(window);
   SDL.Quit();
 
   return 0;

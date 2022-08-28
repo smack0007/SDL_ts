@@ -18,7 +18,23 @@ import {
   Window,
 } from "./structs.ts";
 import { Symbols, symbols } from "./_symbols.ts";
-import { f32, f64, i16, i32, i64, i8, Pointer, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import {
+  f32,
+  f64,
+  i16,
+  i32,
+  i64,
+  i8,
+  Pointer,
+  PointerTarget,
+  RWMode,
+  TypedArray,
+  u16,
+  u32,
+  u64,
+  u8,
+} from "../types.ts";
+import { setPointerTarget } from "../_utils.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -166,8 +182,8 @@ export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
   window_flags: u32,
-  window: Pointer<Pointer<Window>>,
-  renderer: Pointer<Pointer<Renderer>>,
+  window: PointerTarget<Window>,
+  renderer: PointerTarget<Renderer>,
 ): i32 {
   const windowDoublePointer = new BigUint64Array(1);
   const rendererDoublePointer = new BigUint64Array(1);
@@ -176,12 +192,12 @@ export function CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    windowDoublePointer,
-    rendererDoublePointer,
+    Deno.UnsafePointer.of(windowDoublePointer),
+    Deno.UnsafePointer.of(rendererDoublePointer),
   ) as i32;
 
-  // (window as PlatformPointer<Pointer<Window>>).setValue(new PlatformPointer(windowDoublePointer[0]));
-  // (renderer as PlatformPointer<Pointer<Renderer>>).setValue(new PlatformPointer(rendererDoublePointer[0]));
+  setPointerTarget(window, windowDoublePointer[0]);
+  setPointerTarget(renderer, rendererDoublePointer[0]);
 
   return result;
 }

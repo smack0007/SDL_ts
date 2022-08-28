@@ -1,9 +1,11 @@
+import { NativeType } from "./codegen-types.ts";
+
 export interface CodeGenFunctionParam {
   // SDL type.
   nativeType: string;
 
   // FFI type.
-  type: Deno.NativeType;
+  type: NativeType;
 
   // Can the parameter be null.
   nullable?: boolean;
@@ -21,7 +23,7 @@ export interface CodeGenFunction {
 
   result: {
     nativeType: string;
-    type: Deno.NativeType;
+    type: NativeType;
 
     // If set this type will be used as the script type.
     overrideType?: string;

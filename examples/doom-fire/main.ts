@@ -82,7 +82,7 @@ function main(): number {
     0xFF000000,
   );
 
-  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.value.w, HALF_WINDOW_HEIGHT);
+  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.w, HALF_WINDOW_HEIGHT);
 
   firePixels.fill(0x00000000);
 
@@ -106,9 +106,9 @@ function main(): number {
 
     draw(firePixels);
 
-    SDL.FillRect(frontBuffer, null, 0x00000000);
-    SDL.BlitScaled(denoSurface, null, frontBuffer, null);
-    SDL.BlitScaled(fireSurface, null, frontBuffer, Memory.pointer(flamesRect));
+    SDL.FillRect(Memory.pointer(frontBuffer), null, 0x00000000);
+    SDL.BlitScaled(denoSurface, null, Memory.pointer(frontBuffer), null);
+    SDL.BlitScaled(fireSurface, null, Memory.pointer(frontBuffer), Memory.pointer(flamesRect));
     SDL.UpdateWindowSurface(window);
 
     SDL.Delay(16);

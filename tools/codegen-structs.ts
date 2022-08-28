@@ -1,9 +1,11 @@
+import { NativeType } from "./codegen-types.ts";
+
 export interface CodeGenStructMember {
   // SDL type.
   nativeType: string;
 
   // FFI type.
-  type: Deno.NativeType | "struct";
+  type: NativeType;
 
   // Offset of the member in bytes.
   offset: number;

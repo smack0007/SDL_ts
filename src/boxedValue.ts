@@ -1,4 +1,4 @@
-import { PlatformDataView, PlatformPointer } from "platform";
+import { PlatformDataView } from "platform";
 import { Memory } from "./memory.ts";
 import { Pointer, PrimitiveType, Struct } from "./types.ts";
 import { DATA_VIEW_METHODS, sizeof } from "./_utils.ts";

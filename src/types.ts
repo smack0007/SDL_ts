@@ -31,6 +31,8 @@ export const Int = Symbol("int");
 
 export type Pointer<T> = number | bigint;
 
+export type PointerTarget<T> = Pointer<T>[] | { value: Pointer<T> };
+
 export type PrimitiveType =
   | i8
   | u8

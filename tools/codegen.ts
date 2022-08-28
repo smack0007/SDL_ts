@@ -461,6 +461,19 @@ function isFunctionParamVoidPointer(param: CodeGenFunctionParam): boolean {
   return param.nativeType === "void*";
 }
 
+function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
+  return param.nativeType.endsWith("**");
+}
+
+function hasDoublePointerParams(func: CodeGenFunction): boolean {
+  return Object.values(func.parameters).some(isFunctionParamDoublePointer);
+}
+
+function isFunctionParamString(param: CodeGenFunctionParam): boolean {
+  const paramType = mapFunctionParamType(param);
+  return paramType === "string" || paramType === "RWMode";
+}
+
 function mapFunctionReturnType(param: CodeGenFunctionParam): string {
   return mapFunctionParamType(param /*, true */);
 }
@@ -479,7 +492,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `Pointer<Pointer<${structName}>>`;
+      structName = `PointerTarget<${structName}>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       structName = `Pointer<${structName}>`;
@@ -545,19 +558,6 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
-function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
-  return param.nativeType.endsWith("**");
-}
-
-function hasDoublePointerParams(func: CodeGenFunction): boolean {
-  return Object.values(func.parameters).some(isFunctionParamDoublePointer);
-}
-
-function isFunctionParamString(param: CodeGenFunctionParam): boolean {
-  const paramType = mapFunctionParamType(param);
-  return paramType === "string" || paramType === "RWMode";
-}
-
 async function writeFunctions(): Promise<void> {
   const lines = createLines();
   lines.push("// deno-lint-ignore-file no-unused-vars");
@@ -572,8 +572,9 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(
-    `import { f32, f64, i16, i32, i64, i8, Pointer, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { f32, f64, i16, i32, i64, i8, Pointer, PointerTarget, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
   );
+  lines.push(`import { setPointerTarget } from "../_utils.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -646,7 +647,7 @@ const context: SDLContext = {
     }
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
-      const paramType = mapFunctionParamType(param);
+      // const paramType = mapFunctionParamType(param);
       if (isFunctionParamString(param)) {
         lines.push(`\t\ttoPlatformString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
@@ -690,12 +691,10 @@ const context: SDLContext = {
       lines.push("");
 
       for (
-        const [paramName, param] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
+        const [paramName] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
       ) {
         lines.push(
-          `(${paramName} as PlatformPointer<${
-            getGenericParam(mapFunctionParamType(param))
-          }>).setValue(new PlatformPointer(${paramName}DoublePointer[0]));`,
+          `setPointerTarget(${paramName}, ${paramName}DoublePointer[0]);`,
         );
       }
 
@@ -740,7 +739,6 @@ async function writeMod(): Promise<void> {
 
   lines.push(`export * from "./src/boxedValue.ts";`);
   lines.push(`export * from "./src/memory.ts";`);
-  lines.push(`export * from "./src/pointer.ts";`);
   lines.push("");
 
   const typesToExport: string[] = [];

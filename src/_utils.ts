@@ -2,7 +2,7 @@
 // exposed as part of the API.
 
 import { PlatformDataView } from "platform";
-import { F32, F64, I16, I32, I64, I8, Int, U16, U32, U64, U8 } from "./types.ts";
+import { F32, F64, I16, I32, I64, I8, Int, Pointer, PointerTarget, U16, U32, U64, U8 } from "./types.ts";
 import { Window } from "./SDL/structs.ts";
 import { BoxableValueConstructor } from "./boxedValue.ts";
 
@@ -47,6 +47,14 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 //
 // Functions
 //
+
+export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>): void {
+  if (Array.isArray(target)) {
+    target[0] = value;
+  } else {
+    target.value = value;
+  }
+}
 
 export function sizeof<T>(constructor: BoxableValueConstructor): number {
   switch (constructor) {
