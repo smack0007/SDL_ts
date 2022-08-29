@@ -9,6 +9,7 @@ export type BoxableValueConstructor = NumberConstructor | symbol | (new () => St
 
 // deno-lint-ignore no-empty-interface
 export interface BoxedValue<T extends BoxableValue> {
+  get value(): T;
 }
 
 export const BoxedValue = {
@@ -27,11 +28,15 @@ class BoxedValueImpl<T extends BoxableValue> implements BoxedValue<T> {
     const dataLength = sizeof(constructor);
 
     this._data = new Uint8Array(dataLength);
-    this._pointer = Memory.pointer<T>(this._data);
+    this._pointer = Memory.pointer(this._data) as Pointer<T>;
     this._view = new PlatformDataView(this._data);
 
     const viewMethodName = DATA_VIEW_METHODS.get(constructor)!;
     this._viewMethod = this._view[viewMethodName].bind(this._view) as (byteOffset: number) => T;
+  }
+
+  public get value(): T {
+    return this._viewMethod(0);
   }
 }
 

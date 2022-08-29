@@ -1,4 +1,4 @@
-import { Memory, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
+import { BoxedValue, Memory, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -71,7 +71,7 @@ function main(): number {
   points.array[3].x = 0;
   points.array[3].y = 1;
 
-  // const numkeys = BoxedValue.create<number>(Number);
+  const numkeys = BoxedValue.create<number>(Number);
 
   const event = new SDL.Event();
   let done = false;
@@ -87,8 +87,8 @@ function main(): number {
       break;
     }
 
-    // const state = SDL.GetKeyboardState(numkeys);
-    // console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
+    const state = SDL.GetKeyboardState(Memory.pointer(numkeys));
+    console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
