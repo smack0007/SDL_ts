@@ -4,8 +4,9 @@ import { ENDIANNESS } from "../_utils.ts";
 export const NULL_POINTER = 0n;
 
 export class PlatformPointer {
-  public static of<T>(memory: TypedArray): Pointer<T> {
-    return Deno.UnsafePointer.of(memory);
+  public static of<T>(memory: TypedArray, offsetInBytes: Deno.PointerValue = 0): Pointer<T> {
+    // Note: As bigint is just to make TypeScript happy.
+    return (Deno.UnsafePointer.of(memory) as bigint) + (offsetInBytes as bigint);
   }
 }
 

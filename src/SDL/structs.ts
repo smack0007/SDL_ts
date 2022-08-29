@@ -16,14 +16,14 @@ export class Window implements Struct {}
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data: Uint8Array | Pointer<Keysym>;
-  private _view: PlatformDataView<Keysym>;
+  private _data!: Uint8Array | Pointer<Keysym>;
+  private _view!: PlatformDataView<Keysym>;
 
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<Keysym>);
-  constructor(data: Uint8Array | Pointer<Keysym>) {
-    this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Keysym>);
+  public static createView(data: Uint8Array | Pointer<Keysym>): Keysym {
+    const struct = new Keysym();
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct;
   }
 
   public get scancode(): u32 {
@@ -46,31 +46,31 @@ export class Keysym implements Struct {
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
-  private _data: Uint8Array | Pointer<Point>;
-  private _view: PlatformDataView<Point>;
+  private _data!: Uint8Array | Pointer<Point>;
+  private _view!: PlatformDataView<Point>;
 
   constructor();
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<Point>);
-  constructor(data: Partial<Point>);
+  constructor(props: Partial<Point>);
   constructor(x: i32, y: i32);
-  constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
-    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
-      this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Point>);
-    } else {
-      this._data = new Uint8Array(Point.SIZE_IN_BYTES);
-      this._view = new PlatformDataView(this._data);
+  constructor(_1?: Partial<Point> | i32, _2?: i32) {
+    this._data = new Uint8Array(Point.SIZE_IN_BYTES);
+    this._view = new PlatformDataView(this._data);
 
-      if (_1 !== undefined) {
-        if (_2 === undefined) {
-          Object.assign(this, _1);
-        } else {
-          this.x = _1 as i32;
-          this.y = _2 as i32;
-        }
+    if (_1 !== undefined) {
+      if (typeof _2 === "object") {
+        Object.assign(this, _1);
+      } else {
+        this.x = _1 as i32;
+        this.y = _2 as i32;
       }
     }
+  }
+
+  public static createView(data: Uint8Array | Pointer<Point>): Point {
+    const struct = new Point();
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct;
   }
 
   public get x(): i32 {
@@ -93,33 +93,38 @@ export class Point implements AllocatableStruct {
 export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data: Uint8Array | Pointer<Rect>;
-  private _view: PlatformDataView<Rect>;
+  private _data!: Uint8Array | Pointer<Rect>;
+  private _view!: PlatformDataView<Rect>;
 
   constructor();
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<Rect>);
-  constructor(data: Partial<Rect>);
+  constructor(props: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
-  constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
-    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
-      this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Rect>);
-    } else {
-      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-      this._view = new PlatformDataView(this._data);
+  constructor(_1?: Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
+    this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
+    this._view = new PlatformDataView(this._data);
 
-      if (_1 !== undefined) {
-        if (_2 === undefined) {
-          Object.assign(this, _1);
-        } else {
-          this.x = _1 as i32;
-          this.y = _2 as i32;
-          this.w = _3 as i32;
-          this.h = _4 as i32;
-        }
+    if (_1 !== undefined) {
+      if (typeof _2 === "object") {
+        Object.assign(this, _1);
+      } else {
+        this._view.setInt32(0, _1 as i32);
+        this._view.setInt32(4, _2 as i32);
+        this._view.setInt32(8, _3 as i32);
+        this._view.setInt32(12, _4 as i32);
+
+        // this.x = _1 as i32;
+        // this.y = _2 as i32;
+        // this.w = _3 as i32;
+        // this.h = _4 as i32;
       }
     }
+  }
+
+  public static createView(data: Uint8Array | Pointer<Rect>): Rect {
+    const struct = new Rect();
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct;
   }
 
   public get x(): i32 {
@@ -158,20 +163,20 @@ export class Rect implements AllocatableStruct {
 export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
-  private _data: Uint8Array | Pointer<RendererInfo>;
-  private _view: PlatformDataView<RendererInfo>;
+  private _data!: Uint8Array | Pointer<RendererInfo>;
+  private _view!: PlatformDataView<RendererInfo>;
 
   constructor();
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<RendererInfo>);
-  constructor(data?: Uint8Array | Pointer<RendererInfo>) {
-    if (data instanceof Uint8Array || Memory.isPointer(data)) {
-      this._data = data;
-      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
-    } else {
-      this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
-    }
+  constructor() {
+    this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
+    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
+  }
+
+  public static createView(data: Uint8Array | Pointer<RendererInfo>): RendererInfo {
+    const struct = new RendererInfo();
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct;
   }
 
   public get name(): string {
@@ -198,14 +203,14 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  private _data: Uint8Array | Pointer<Surface>;
-  private _view: PlatformDataView<Surface>;
+  private _data!: Uint8Array | Pointer<Surface>;
+  private _view!: PlatformDataView<Surface>;
 
-  constructor(data: Uint8Array);
-  constructor(data: Pointer<Surface>);
-  constructor(data: Uint8Array | Pointer<Surface>) {
-    this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<Surface>);
+  public static createView(data: Uint8Array | Pointer<Surface>): Surface {
+    const struct = new Surface();
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct;
   }
 
   public get flags(): u32 {
@@ -245,7 +250,7 @@ export class Surface implements Struct {
   }
 
   public get clip_rect(): Rect {
-    return new Rect(this._view.getArray(16, 64));
+    return Rect.createView(this._view.getArray(16, 64));
   }
 
   public get map(): Pointer<BlitMap> {

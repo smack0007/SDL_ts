@@ -27,7 +27,7 @@ if (surfacePtr == 0) {
   Deno.exit(1);
 }
 
-const surface = Memory.structView(surfacePtr, SDL.Surface);
+const surface = Memory.structView(SDL.Surface, surfacePtr);
 
 console.info(surface.flags);
 console.info("Width", surface.w, "Height", surface.h);

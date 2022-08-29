@@ -1,4 +1,4 @@
-import { BoxedValue, Memory, Pointer, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
+import { Memory, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -48,7 +48,7 @@ function main(): number {
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
-  const denoSurface = Memory.structView(SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp")), SDL.Surface);
+  const denoSurface = SDL.Surface.createView(SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp")));
   const srcRect = new SDL.Rect(0, 0, denoSurface.w, denoSurface.h);
   const destRect = new SDL.Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
   const textureCenter = new SDL.Point(denoSurface.w / 2, denoSurface.h / 2);
@@ -61,7 +61,7 @@ function main(): number {
     return 1;
   }
 
-  const points = Memory.allocateArray(SDL.Point, 4);
+  const points = Memory.createStructArray(SDL.Point, 4);
   points.array[0].x = 0;
   points.array[0].y = 0;
   points.array[1].x = 1;
@@ -105,9 +105,10 @@ function main(): number {
     );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawPoints(renderer, points.pointer, 4);
-    // SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    const rect = new SDL.Rect(100, 100, 200, 400);
+    SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     SDL.RenderFillRect(renderer, Memory.pointer(rect));
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL.RenderDrawRect(renderer, Memory.pointer(rect));

@@ -156,7 +156,7 @@ async function writeEvents(): Promise<void> {
       const memberTypeName = shortenName(member.nativeType);
 
       lines.push(
-        `\t\tthis._${memberName} = new ${memberTypeName}(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
+        `\t\tthis._${memberName} = ${memberTypeName}.createView(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
       );
     }
 
@@ -245,74 +245,64 @@ async function writeStructs(): Promise<void> {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     lines.push(`
-  private _data: Uint8Array | Pointer<${className}>;
-  private _view: PlatformDataView<${className}>;
+  private _data!: Uint8Array | Pointer<${className}>;
+  private _view!: PlatformDataView<${className}>;
 `);
 
     if (struct.allocatable) {
       lines.push("\t\tconstructor();");
     }
 
-    lines.push(
-      `constructor(data: Uint8Array);
-  constructor(data: Pointer<${className}>);`,
-    );
-
-    if (!struct.allocatable) {
-      lines.push(`constructor(data: Uint8Array | Pointer<${className}>) {
-        this._data = data;
-        this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
-      }
-`);
-    } else if (!struct.writable) {
-      lines.push(`constructor(data?: Uint8Array | Pointer<${className}>) {
-  if (data instanceof Uint8Array || Memory.isPointer(data)) {
-    this._data = data;
-    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
-  } else {
-    this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
-  }
+    if (struct.allocatable) {
+      if (!struct.writable) {
+        lines.push(`constructor() {
+  this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
+  this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
 }
 `);
-    } else {
-      lines.push(`constructor(data: Partial<${className}>);`);
-      const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-        `${memberName}: ${mapStructMemberType(member)}`
-      ).join(", ");
-      lines.push(`constructor(${constructorParams});`);
+      } else {
+        lines.push(`constructor(props: Partial<${className}>);`);
 
-      const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
-      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-        `, _${index + 2}?: ${mapStructMemberType(member)}`
-      ).join("");
-      lines.push(
-        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
-      );
+        const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
+          `${memberName}: ${mapStructMemberType(member)}`
+        ).join(", ");
+        lines.push(`constructor(${constructorParams});`);
 
-      const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-        `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
-      ).join("\n");
+        const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
+        const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
+          `, _${index + 2}?: ${mapStructMemberType(member)}`
+        ).join("");
+        lines.push(
+          `constructor(_1?: Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+        );
 
-      lines.push(`
-    if (_1 instanceof Uint8Array || Memory.isPointer(_1)) {
-      this._data = _1;
-      this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
-    } else {
-      this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-      this._view = new PlatformDataView(this._data);
+        const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
+          `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
+        ).join("\n");
 
-      if (_1 !== undefined) {
-        if (_2 === undefined) {
-          Object.assign(this, _1);
-        } else {
-          ${assignMemmbers}
-        }
+        lines.push(`
+    this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
+    this._view = new PlatformDataView(this._data);
+
+    if (_1 !== undefined) {
+      if (typeof _2 === "object") {
+        Object.assign(this, _1);
+      } else {
+        ${assignMemmbers}
       }
     }
   }
 `);
+      }
     }
+
+    lines.push(`public static createView(data: Uint8Array | Pointer<${className}>): ${className} {
+      const struct = new ${className}();
+      struct._data = data;
+      struct._view = new PlatformDataView(data);
+      return struct;
+    }
+`);
 
     const structMembers = Object.entries(struct.members);
     structMembers.sort(sortStructMembers);
@@ -331,7 +321,7 @@ async function writeStructs(): Promise<void> {
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
-        readOp += `new ${subStructName}(`;
+        readOp += `${subStructName}.createView(`;
         length = structs[member.nativeType].size;
       }
 
@@ -575,6 +565,7 @@ async function writeFunctions(): Promise<void> {
     `import { f32, f64, i16, i32, i64, i8, Pointer, PointerTarget, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push(`import { setPointerTarget } from "../_utils.ts";`);
+  lines.push(`import { Memory } from "../memory.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -653,7 +644,7 @@ const context: SDLContext = {
       } else if (isFunctionParamVoidPointer(param)) {
         lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\t${paramName}DoublePointer,`);
+        lines.push(`\t\tMemory.pointer(${paramName}DoublePointer),`);
       } else if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {

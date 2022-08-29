@@ -35,6 +35,7 @@ import {
   u8,
 } from "../types.ts";
 import { setPointerTarget } from "../_utils.ts";
+import { Memory } from "../memory.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -192,8 +193,8 @@ export function CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    Deno.UnsafePointer.of(windowDoublePointer),
-    Deno.UnsafePointer.of(rendererDoublePointer),
+    Memory.pointer(windowDoublePointer),
+    Memory.pointer(rendererDoublePointer),
   ) as i32;
 
   setPointerTarget(window, windowDoublePointer[0]);

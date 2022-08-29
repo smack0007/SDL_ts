@@ -1,11 +1,12 @@
 import { PlatformDataView, PlatformPointer } from "platform";
-import { Struct } from "../mod.ts";
+import { Struct, TypedArray } from "../mod.ts";
 import { BoxableValue, BoxedValue, isBoxedValue } from "./boxedValue.ts";
 import { AllocatableStruct, AllocatableStructConstructor, Pointer, u8 } from "./types.ts";
 import { isStruct } from "./_structs.ts";
+import { isTypedArray } from "./_utils.ts";
 
 export class Memory {
-  public static allocateArray<T extends AllocatableStruct>(
+  public static createStructArray<T extends AllocatableStruct>(
     _constructor: AllocatableStructConstructor<T>,
     length: number,
   ): MemoryArray<T> {
@@ -21,7 +22,7 @@ export class Memory {
       array[i] = new _constructor(memoryOffset);
     }
 
-    return new MemoryArray<T>(array, memory, Memory.pointer(array, 0));
+    return new MemoryArray<T>(array, memory, Memory.pointer(memory, 0));
   }
 
   public static isPointer(value: unknown): value is Pointer<unknown> {
@@ -29,7 +30,7 @@ export class Memory {
   }
 
   public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<BoxedValue<T>>;
-  public static pointer<T>(value: T[], offset: number): Pointer<T>;
+  public static pointer<T>(value: TypedArray, offset: number): Pointer<T>;
   public static pointer<T>(value: T): Pointer<T>;
   public static pointer<T>(value: BoxedValue<BoxableValue> | T[] | T, offset?: number): Pointer<T> {
     if (offset === undefined) {
@@ -42,13 +43,13 @@ export class Memory {
 
     if (isBoxedValue(value)) {
       return PlatformPointer.of(value._data);
-      // } else if (Array.isArray(value)) {
-      //   return new ArrayPointer<T>(value, offset);
+    } else if (isTypedArray(value)) {
+      return PlatformPointer.of(value, offset);
     } else if (isStruct<T>(value)) {
-      if (value._data instanceof Uint8Array) {
-        return PlatformPointer.of(value._data);
-      } else {
+      if (Memory.isPointer(value._data)) {
         return value._data;
+      } else {
+        return PlatformPointer.of(value._data);
       }
     } else {
       throw new Error("Unable to create pointer.");
@@ -62,10 +63,10 @@ export class Memory {
   }
 
   public static structView<T extends Struct>(
+    _constructor: { createView: (pointer: Pointer<T>) => T },
     pointer: Pointer<T>,
-    _constructor: new (pointer: Pointer<T>) => T,
   ): T {
-    return new _constructor(pointer);
+    return _constructor.createView(pointer);
   }
 }
 

@@ -54,7 +54,7 @@ export class KeyboardEvent {
   private _keysym: Keysym;
 
   constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
-    this._keysym = new Keysym(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
+    this._keysym = Keysym.createView(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
   }
 
   public get type(): u32 {

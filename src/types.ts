@@ -49,11 +49,11 @@ export type PrimitiveType =
 export type TypedArray =
   | Int8Array
   | Uint8Array
+  | Uint8ClampedArray
   | Int16Array
   | Uint16Array
   | Int32Array
   | Uint32Array
-  | Uint8ClampedArray
   | Float32Array
   | Float64Array
   | BigInt64Array

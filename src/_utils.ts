@@ -5,6 +5,7 @@ import { PlatformDataView } from "platform";
 import { F32, F64, I16, I32, I64, I8, Int, Pointer, PointerTarget, U16, U32, U64, U8 } from "./types.ts";
 import { Window } from "./SDL/structs.ts";
 import { BoxableValueConstructor } from "./boxedValue.ts";
+import { TypedArray } from "../mod.ts";
 
 //
 // Constants
@@ -47,6 +48,22 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 //
 // Functions
 //
+
+export function isTypedArray(value: unknown): value is TypedArray {
+  return (
+    value instanceof Uint8Array ||
+    value instanceof Uint8ClampedArray ||
+    value instanceof Int8Array ||
+    value instanceof Uint16Array ||
+    value instanceof Int16Array ||
+    value instanceof Uint32Array ||
+    value instanceof Int32Array ||
+    value instanceof BigUint64Array ||
+    value instanceof BigInt64Array ||
+    value instanceof Float32Array ||
+    value instanceof Float64Array
+  );
+}
 
 export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>): void {
   if (Array.isArray(target)) {
