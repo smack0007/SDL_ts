@@ -107,15 +107,10 @@ export class Rect implements AllocatableStruct {
       if (typeof _2 === "object") {
         Object.assign(this, _1);
       } else {
-        this._view.setInt32(0, _1 as i32);
-        this._view.setInt32(4, _2 as i32);
-        this._view.setInt32(8, _3 as i32);
-        this._view.setInt32(12, _4 as i32);
-
-        // this.x = _1 as i32;
-        // this.y = _2 as i32;
-        // this.w = _3 as i32;
-        // this.h = _4 as i32;
+        this.x = _1 as i32;
+        this.y = _2 as i32;
+        this.w = _3 as i32;
+        this.h = _4 as i32;
       }
     }
   }

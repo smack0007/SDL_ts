@@ -7,7 +7,6 @@ export type BoxableValue = number | PrimitiveType | Struct;
 
 export type BoxableValueConstructor = NumberConstructor | symbol | (new () => Struct);
 
-// deno-lint-ignore no-empty-interface
 export interface BoxedValue<T extends BoxableValue> {
   get value(): T;
 }
