@@ -396,7 +396,7 @@ export const functions: Record<string, CodeGenFunction> = {
     result: {
       nativeType: "Uint8*",
       type: "pointer",
-      overrideType: "Pointer<u8[]>",
+      overrideType: "PointerValue<u8[]>",
     },
   },
 

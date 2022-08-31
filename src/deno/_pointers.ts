@@ -1,11 +1,17 @@
-import { Pointer, TypedArray } from "../types.ts";
+import { PointerValue, TypedArray } from "../types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
 export const NULL_POINTER = 0n;
 
 export class PlatformPointer {
-  public static of<T>(memory: TypedArray, offsetInBytes: Deno.PointerValue = 0): Pointer<T> {
-    // Note: As bigint is just to make TypeScript happy.
+  // TODO: Is there any way to detect this correctly?
+  public static readonly SIZE_IN_BYTES = 8;
+  
+  private constructor() {
+  }
+  
+  public static of<T>(memory: TypedArray, offsetInBytes: Deno.PointerValue = 0): PointerValue<T> {
+    // Note: as bigint is just to make TypeScript happy.
     return (Deno.UnsafePointer.of(memory) as bigint) + (offsetInBytes as bigint);
   }
 }
@@ -18,7 +24,7 @@ export class PlatformDataView<T> {
   private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    private _data: Uint8Array | Pointer<T>,
+    private _data: Uint8Array | PointerValue<T>,
   ) {
     if (this._data instanceof Uint8Array) {
       this._view = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
@@ -65,7 +71,7 @@ export class PlatformDataView<T> {
     return this._view.getFloat64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }
 
-  public getPointer<T>(byteOffset: number): Pointer<T> {
+  public getPointer<T>(byteOffset: number): PointerValue<T> {
     // TODO: We should test here if we're on 32 or 64 bit.
     return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
   }

@@ -4,22 +4,39 @@
 
 import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
 import { Memory } from "../memory.ts";
-import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
 
-export class BlitMap implements Struct {}
-export class PixelFormat implements Struct {}
-export class Renderer implements Struct {}
-export class RWops implements Struct {}
-export class Texture implements Struct {}
-export class Window implements Struct {}
+export class BlitMap implements Struct {
+  public static IS_OPAQUE = true;
+}
+
+export class PixelFormat implements Struct {
+  public static IS_OPAQUE = true;
+}
+
+export class Renderer implements Struct {
+  public static IS_OPAQUE = true;
+}
+
+export class RWops implements Struct {
+  public static IS_OPAQUE = true;
+}
+
+export class Texture implements Struct {
+  public static IS_OPAQUE = true;
+}
+
+export class Window implements Struct {
+  public static IS_OPAQUE = true;
+}
 
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data!: Uint8Array | Pointer<Keysym>;
+  private _data!: Uint8Array | PointerValue<Keysym>;
   private _view!: PlatformDataView<Keysym>;
 
-  public static createView(data: Uint8Array | Pointer<Keysym>): Keysym {
+  public static createView(data: Uint8Array | PointerValue<Keysym>): Keysym {
     const struct = new Keysym();
     struct._data = data;
     struct._view = new PlatformDataView(data);
@@ -46,7 +63,7 @@ export class Keysym implements Struct {
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
-  private _data!: Uint8Array | Pointer<Point>;
+  private _data!: Uint8Array | PointerValue<Point>;
   private _view!: PlatformDataView<Point>;
 
   constructor();
@@ -66,7 +83,7 @@ export class Point implements AllocatableStruct {
     }
   }
 
-  public static createView(data: Uint8Array | Pointer<Point>): Point {
+  public static createView(data: Uint8Array | PointerValue<Point>): Point {
     const struct = new Point();
     struct._data = data;
     struct._view = new PlatformDataView(data);
@@ -93,7 +110,7 @@ export class Point implements AllocatableStruct {
 export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data!: Uint8Array | Pointer<Rect>;
+  private _data!: Uint8Array | PointerValue<Rect>;
   private _view!: PlatformDataView<Rect>;
 
   constructor();
@@ -115,7 +132,7 @@ export class Rect implements AllocatableStruct {
     }
   }
 
-  public static createView(data: Uint8Array | Pointer<Rect>): Rect {
+  public static createView(data: Uint8Array | PointerValue<Rect>): Rect {
     const struct = new Rect();
     struct._data = data;
     struct._view = new PlatformDataView(data);
@@ -158,16 +175,16 @@ export class Rect implements AllocatableStruct {
 export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
-  private _data!: Uint8Array | Pointer<RendererInfo>;
+  private _data!: Uint8Array | PointerValue<RendererInfo>;
   private _view!: PlatformDataView<RendererInfo>;
 
   constructor();
   constructor() {
     this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data as Uint8Array | Pointer<RendererInfo>);
+    this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<RendererInfo>);
   }
 
-  public static createView(data: Uint8Array | Pointer<RendererInfo>): RendererInfo {
+  public static createView(data: Uint8Array | PointerValue<RendererInfo>): RendererInfo {
     const struct = new RendererInfo();
     struct._data = data;
     struct._view = new PlatformDataView(data);
@@ -198,10 +215,10 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  private _data!: Uint8Array | Pointer<Surface>;
+  private _data!: Uint8Array | PointerValue<Surface>;
   private _view!: PlatformDataView<Surface>;
 
-  public static createView(data: Uint8Array | Pointer<Surface>): Surface {
+  public static createView(data: Uint8Array | PointerValue<Surface>): Surface {
     const struct = new Surface();
     struct._data = data;
     struct._view = new PlatformDataView(data);
@@ -212,7 +229,7 @@ export class Surface implements Struct {
     return this._view.getUint32(0);
   }
 
-  public get format(): Pointer<PixelFormat> {
+  public get format(): PointerValue<PixelFormat> {
     return this._view.getPointer(8);
   }
 
@@ -228,11 +245,11 @@ export class Surface implements Struct {
     return this._view.getInt32(24);
   }
 
-  public get pixels(): Pointer<void> {
+  public get pixels(): PointerValue<void> {
     return this._view.getPointer(32);
   }
 
-  public get userdata(): Pointer<void> {
+  public get userdata(): PointerValue<void> {
     return this._view.getPointer(40);
   }
 
@@ -240,7 +257,7 @@ export class Surface implements Struct {
     return this._view.getInt32(48);
   }
 
-  public get list_blitmap(): Pointer<void> {
+  public get list_blitmap(): PointerValue<void> {
     return this._view.getPointer(56);
   }
 
@@ -248,7 +265,7 @@ export class Surface implements Struct {
     return Rect.createView(this._view.getArray(16, 64));
   }
 
-  public get map(): Pointer<BlitMap> {
+  public get map(): PointerValue<BlitMap> {
     return this._view.getPointer(80);
   }
 

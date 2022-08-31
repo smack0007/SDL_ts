@@ -1,4 +1,4 @@
-import { BoxedValue, Memory, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
+import { BoxedArray, BoxedValue, Memory, PointerTarget, Renderer, SDL, Window } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -61,15 +61,15 @@ function main(): number {
     return 1;
   }
 
-  const points = Memory.createStructArray(SDL.Point, 4);
-  points.array[0].x = 0;
-  points.array[0].y = 0;
-  points.array[1].x = 1;
-  points.array[1].y = 0;
-  points.array[2].x = 1;
-  points.array[2].y = 1;
-  points.array[3].x = 0;
-  points.array[3].y = 1;
+  const points = BoxedArray.create(SDL.Point, 4);
+  points.at(0).x = 0;
+  points.at(0).y = 0;
+  points.at(1).x = 1;
+  points.at(1).y = 0;
+  points.at(2).x = 1;
+  points.at(2).y = 1;
+  points.at(3).x = 0;
+  points.at(3).y = 1;
 
   const numkeys = BoxedValue.create<number>(Number);
 
@@ -105,7 +105,7 @@ function main(): number {
     );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL.RenderDrawPoints(renderer, points.pointer, 4);
+    SDL.RenderDrawPoints(renderer, points, 4);
 
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);

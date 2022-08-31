@@ -4,6 +4,14 @@
 
 // Simple types
 
+export type BoxableValue = number | PrimitiveType | Struct;
+
+export type BoxableValueConstructor =
+  | NumberConstructor
+  | symbol
+  | (new () => Struct)
+  | AllocatableStructConstructor<AllocatableStruct>;
+
 export type Constructor<T> = (...args: unknown[]) => T;
 
 export enum i8 {}
@@ -29,9 +37,9 @@ export const F64 = Symbol("f64");
 export enum int {}
 export const Int = Symbol("int");
 
-export type Pointer<T> = number | bigint;
+export type PointerValue<T> = number | bigint;
 
-export type PointerTarget<T> = Pointer<T>[] | { value: Pointer<T> };
+export type PointerTarget<T> = PointerValue<T>[] | { value: PointerValue<T> };
 
 export type PrimitiveType =
   | i8

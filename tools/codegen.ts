@@ -225,13 +225,16 @@ async function writeStructs(): Promise<void> {
   lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
   lines.push(`import { Memory } from "../memory.ts";`);
   lines.push(
-    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Pointer, Struct, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push("");
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
-    lines.push(`export class ${className} implements Struct {}`);
+    lines.push(`export class ${className} implements Struct {
+  public static IS_OPAQUE = true;
+}
+`);
   }
 
   lines.push("");
@@ -245,7 +248,7 @@ async function writeStructs(): Promise<void> {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     lines.push(`
-  private _data!: Uint8Array | Pointer<${className}>;
+  private _data!: Uint8Array | PointerValue<${className}>;
   private _view!: PlatformDataView<${className}>;
 `);
 
@@ -257,7 +260,7 @@ async function writeStructs(): Promise<void> {
       if (!struct.writable) {
         lines.push(`constructor() {
   this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-  this._view = new PlatformDataView(this._data as Uint8Array | Pointer<${className}>);
+  this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<${className}>);
 }
 `);
       } else {
@@ -296,7 +299,7 @@ async function writeStructs(): Promise<void> {
       }
     }
 
-    lines.push(`public static createView(data: Uint8Array | Pointer<${className}>): ${className} {
+    lines.push(`public static createView(data: Uint8Array | PointerValue<${className}>): ${className} {
       const struct = new ${className}();
       struct._data = data;
       struct._view = new PlatformDataView(data);
@@ -317,7 +320,7 @@ async function writeStructs(): Promise<void> {
         readOp += `fromPlatformString(`;
       } else if (member.type === "pointer") {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
-        memberType = `Pointer<${subStructName}>`;
+        memberType = `PointerValue<${subStructName}>`;
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
@@ -485,7 +488,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
       structName = `PointerTarget<${structName}>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
-      structName = `Pointer<${structName}>`;
+      structName = `PointerValue<${structName}>`;
     }
 
     if (param.nullable) {
@@ -503,11 +506,8 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
       break;
 
     case "int*":
-      result = "Pointer<number>";
-      break;
-
     case "Uint8*":
-      result = "Pointer<number>";
+      result = "PointerValue<number>";
       break;
 
     case "void*":
@@ -562,7 +562,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(
-    `import { f32, f64, i16, i32, i64, i8, Pointer, PointerTarget, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { f32, f64, i16, i32, i64, i8, PointerValue, PointerTarget, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push(`import { setPointerTarget } from "../_utils.ts";`);
   lines.push(`import { Memory } from "../memory.ts";`);
@@ -662,13 +662,13 @@ const context: SDLContext = {
 
     if (returnType !== "void") {
       if (returnType === "string") {
-        lines.push(`\t) as Pointer<unknown>);`);
+        lines.push(`\t) as PointerValue<unknown>);`);
       } else if (
         isFunctionParamStruct(func.result) ||
         isFunctionParamPointer(func.result) ||
         isFunctionParamOpaqueStruct(func.result)
       ) {
-        lines.push(`\t) as Pointer<${getGenericParam(returnType)}>;`);
+        lines.push(`\t) as PointerValue<${getGenericParam(returnType)}>;`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
       } else {
@@ -728,7 +728,7 @@ async function writeMod(): Promise<void> {
     lines.push("");
   }
 
-  lines.push(`export * from "./src/boxedValue.ts";`);
+  lines.push(`export * from "./src/boxes.ts";`);
   lines.push(`export * from "./src/memory.ts";`);
   lines.push("");
 

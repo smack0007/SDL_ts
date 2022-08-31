@@ -1,6 +1,6 @@
-import { Pointer } from "../types.ts";
+import { PointerValue } from "../types.ts";
 
-export function fromPlatformString(value: Uint8Array | Pointer<unknown>): string {
+export function fromPlatformString(value: Uint8Array | PointerValue<unknown>): string {
   if (value instanceof Uint8Array) {
     return new TextDecoder().decode(value);
   }

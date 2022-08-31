@@ -2,10 +2,24 @@
 // exposed as part of the API.
 
 import { PlatformDataView } from "platform";
-import { F32, F64, I16, I32, I64, I8, Int, Pointer, PointerTarget, U16, U32, U64, U8 } from "./types.ts";
+import {
+  BoxableValueConstructor,
+  F32,
+  F64,
+  I16,
+  I32,
+  I64,
+  I8,
+  Int,
+  PointerTarget,
+  PointerValue,
+  U16,
+  U32,
+  U64,
+  U8,
+} from "./types.ts";
 import { Window } from "./SDL/structs.ts";
-import { BoxableValueConstructor } from "./boxedValue.ts";
-import { TypedArray } from "../mod.ts";
+import { AllocatableStruct, AllocatableStructConstructor, TypedArray } from "../mod.ts";
 
 //
 // Constants
@@ -65,7 +79,7 @@ export function isTypedArray(value: unknown): value is TypedArray {
   );
 }
 
-export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>): void {
+export function setPointerTarget<T>(target: PointerTarget<T>, value: PointerValue<T>): void {
   if (Array.isArray(target)) {
     target[0] = value;
   } else {
@@ -73,8 +87,12 @@ export function setPointerTarget<T>(target: PointerTarget<T>, value: Pointer<T>)
   }
 }
 
-export function sizeof<T>(constructor: BoxableValueConstructor): number {
-  switch (constructor) {
+export function sizeof<T>(_constructor: BoxableValueConstructor): number {
+  if ("SIZE_IN_BYTES" in (_constructor as AllocatableStructConstructor<AllocatableStruct>)) {
+    return (_constructor as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
+  }
+  
+  switch (_constructor) {
     case I8:
     case U8:
       return 1;
@@ -102,6 +120,6 @@ export function sizeof<T>(constructor: BoxableValueConstructor): number {
   }
 
   throw new Error(
-    `sizeof not implemented for ${(constructor as NumberConstructor)?.name ?? (constructor as symbol).description}`,
+    `sizeof not implemented for ${(_constructor as NumberConstructor)?.name ?? (_constructor as symbol).description}`,
   );
 }

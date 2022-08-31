@@ -1,38 +1,19 @@
 import { PlatformDataView, PlatformPointer } from "platform";
 import { Struct, TypedArray } from "../mod.ts";
-import { BoxableValue, BoxedValue, isBoxedValue } from "./boxedValue.ts";
-import { AllocatableStruct, AllocatableStructConstructor, Pointer, u8 } from "./types.ts";
+import { BoxedValue, isBoxedValue } from "./boxes.ts";
+import { BoxableValue, PointerValue, u8 } from "./types.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
 
 export class Memory {
-  public static createStructArray<T extends AllocatableStruct>(
-    _constructor: AllocatableStructConstructor<T>,
-    length: number,
-  ): MemoryArray<T> {
-    if (length <= 0) {
-      throw new Error("length must be > 0.");
-    }
-
-    const array = new Array<T>(length);
-    const memory = new Uint8Array(_constructor.SIZE_IN_BYTES * length);
-
-    for (let i = 0; i < length; i++) {
-      const memoryOffset = new Uint8Array(memory.buffer, _constructor.SIZE_IN_BYTES * i, _constructor.SIZE_IN_BYTES);
-      array[i] = new _constructor(memoryOffset);
-    }
-
-    return new MemoryArray<T>(array, memory, Memory.pointer(memory, 0));
-  }
-
-  public static isPointer(value: unknown): value is Pointer<unknown> {
+  public static isPointer(value: unknown): value is PointerValue<unknown> {
     return typeof value === "bigint" || typeof value === "number";
   }
 
-  public static pointer<T extends BoxableValue>(value: BoxedValue<T>): Pointer<BoxedValue<T>>;
-  public static pointer<T>(value: TypedArray, offset: number): Pointer<T>;
-  public static pointer<T>(value: T): Pointer<T>;
-  public static pointer<T>(value: BoxedValue<BoxableValue> | T[] | T, offset?: number): Pointer<T> {
+  public static pointer<T extends BoxableValue>(value: BoxedValue<T>): PointerValue<BoxedValue<T>>;
+  public static pointer<T>(value: TypedArray, offset: number): PointerValue<T>;
+  public static pointer<T>(value: T): PointerValue<T>;
+  public static pointer<T>(value: BoxedValue<BoxableValue> | T[] | T, offset?: number): PointerValue<T> {
     if (offset === undefined) {
       offset = 0;
     }
@@ -56,25 +37,16 @@ export class Memory {
     }
   }
 
-  public static readUint8<T>(pointer: Pointer<T>, byteOffset: number): u8 {
+  public static readUint8<T>(pointer: PointerValue<T>, byteOffset: number): u8 {
     // TODO: See if we can cache this somewhere.
     const dataView = new PlatformDataView(pointer);
     return dataView.getUint8(byteOffset);
   }
 
   public static structView<T extends Struct>(
-    _constructor: { createView: (pointer: Pointer<T>) => T },
-    pointer: Pointer<T>,
+    _constructor: { createView: (pointer: PointerValue<T>) => T },
+    pointer: PointerValue<T>,
   ): T {
     return _constructor.createView(pointer);
-  }
-}
-
-export class MemoryArray<T extends AllocatableStruct> {
-  constructor(
-    public readonly array: T[],
-    public readonly memory: Uint8Array,
-    public readonly pointer: Pointer<T>,
-  ) {
   }
 }
