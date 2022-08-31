@@ -1,39 +1,24 @@
 import { PlatformDataView } from "platform";
-import { Memory } from "./memory.ts";
-import {
-  AllocatableStruct,
-  AllocatableStructConstructor,
-  BoxableValue,
-  BoxableValueConstructor,
-  PointerValue,
-} from "./types.ts";
+import { AllocatableStruct, AllocatableStructConstructor, BoxableValue, BoxableValueConstructor } from "./types.ts";
 import { DATA_VIEW_METHODS, sizeof } from "./_utils.ts";
 
-export interface BoxedValue<T extends BoxableValue> {
-  get value(): T;
-}
-
-export const BoxedValue = {
-  create: function <T>(constructor: BoxableValueConstructor): BoxedValue<T> {
-    return new BoxedValueImpl(constructor);
-  },
-} as const;
-
-export class BoxedValueImpl<T extends BoxableValue> implements BoxedValue<T> {
-  private readonly _data: Uint8Array;
-  private readonly _pointer: PointerValue<T>;
+export class BoxedValue<T extends BoxableValue> {
+  public readonly _data: Uint8Array;
   private readonly _view: PlatformDataView<T>;
   private readonly _viewMethod: (byteOffset: number) => T;
 
-  constructor(constructor: BoxableValueConstructor) {
-    const dataLength = sizeof(constructor);
+  private constructor(_constructor: BoxableValueConstructor) {
+    const dataLength = sizeof(_constructor);
 
     this._data = new Uint8Array(dataLength);
-    this._pointer = Memory.pointer(this._data) as PointerValue<T>;
     this._view = new PlatformDataView(this._data);
 
-    const viewMethodName = DATA_VIEW_METHODS.get(constructor)!;
+    const viewMethodName = DATA_VIEW_METHODS.get(_constructor)!;
     this._viewMethod = this._view[viewMethodName].bind(this._view) as (byteOffset: number) => T;
+  }
+
+  public static create<T>(_constructor: BoxableValueConstructor): BoxedValue<T> {
+    return new BoxedValue(_constructor);
   }
 
   public get value(): T {
@@ -41,19 +26,15 @@ export class BoxedValueImpl<T extends BoxableValue> implements BoxedValue<T> {
   }
 }
 
-export interface BoxedValueInternal {
-  _data: Uint8Array;
-}
-
-export function isBoxedValue(value: unknown): value is BoxedValueInternal {
-  return (value instanceof BoxedValueImpl);
+export function isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
+  return (value instanceof BoxedValue);
 }
 
 export class BoxedArray<T extends AllocatableStruct> {
   private constructor(
     public readonly array: T[],
-    public readonly memory: Uint8Array,
-    public readonly sizeOfElement: number,
+    public readonly _data: Uint8Array,
+    public readonly sizeOfElementInBytes: number,
   ) {
   }
 
@@ -65,17 +46,19 @@ export class BoxedArray<T extends AllocatableStruct> {
       throw new Error("length must be > 0.");
     }
 
+    const sizeInBytes = sizeof(_constructor);
+
     const array = new Array<T>(length);
-    const memory = new Uint8Array(_constructor.SIZE_IN_BYTES * length);
+    const data = new Uint8Array(sizeInBytes * length);
 
     for (let i = 0; i < length; i++) {
-      const memoryOffset = new Uint8Array(memory.buffer, _constructor.SIZE_IN_BYTES * i, _constructor.SIZE_IN_BYTES);
-      array[i] = new _constructor(memoryOffset);
+      const dataOffset = new Uint8Array(data.buffer, sizeInBytes * i, sizeInBytes);
+      array[i] = new _constructor(dataOffset);
     }
 
     return new BoxedArray<T>(
       array,
-      memory,
+      data,
       sizeof(_constructor),
     );
   }

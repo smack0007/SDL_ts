@@ -468,10 +468,10 @@ function isFunctionParamString(param: CodeGenFunctionParam): boolean {
 }
 
 function mapFunctionReturnType(param: CodeGenFunctionParam): string {
-  return mapFunctionParamType(param /*, true */);
+  return mapFunctionParamType(param, true);
 }
 
-function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = false */): string {
+function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false): string {
   if (param.overrideType) {
     if (param.nullable) {
       return param.overrideType + "| null";
@@ -488,7 +488,11 @@ function mapFunctionParamType(param: CodeGenFunctionParam /*, isReturnType = fal
       structName = `PointerTarget<${structName}>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
-      structName = `PointerValue<${structName}>`;
+      if (isReturnType) {
+        structName = `PointerValue<${structName}>`;
+      } else {
+        structName = `PointerTo<${structName}>`;
+      }
     }
 
     if (param.nullable) {
@@ -566,6 +570,7 @@ async function writeFunctions(): Promise<void> {
   );
   lines.push(`import { setPointerTarget } from "../_utils.ts";`);
   lines.push(`import { Memory } from "../memory.ts";`);
+  lines.push(`import { Pointer, PointerTo } from "../pointers.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {
@@ -648,13 +653,7 @@ const context: SDLContext = {
       } else if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {
-        if (param.nullable) {
-          lines.push(
-            `\t\t${paramName} ?? NULL_POINTER,`,
-          );
-        } else {
-          lines.push(`\t\t${paramName},`);
-        }
+        lines.push(`\t\tPointer.of(${paramName}),`);
       } else {
         lines.push(`\t\t${paramName},`);
       }
