@@ -1,4 +1,4 @@
-import { PlatformDataView } from "platform";
+import { PlatformDataView, PlatformPointer } from "platform";
 import { AllocatableStruct } from "../mod.ts";
 import { PointerValue, Struct } from "./types.ts";
 
@@ -23,5 +23,21 @@ export class NumberStruct implements AllocatableStruct {
 
   public get value(): number {
     return this._view.getInt32(0);
+  }
+}
+
+export class PointerStruct implements AllocatableStruct {
+  public static SIZE_IN_BYTES = PlatformPointer.SIZE_IN_BYTES;
+
+  private _data!: Uint8Array | PointerValue<unknown>;
+  private _view!: PlatformDataView<PointerStruct>;
+
+  public constructor(data: Uint8Array) {
+    this._data = data;
+    this._view = new PlatformDataView(this._data);
+  }
+
+  public get value(): PointerValue<unknown> {
+    return this._view.getPointer(0);
   }
 }

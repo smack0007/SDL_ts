@@ -485,7 +485,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `PointerTarget<${structName}>`;
+      structName = `BoxedValue<PointerValue<${structName}>>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       if (isReturnType) {
@@ -566,10 +566,9 @@ async function writeFunctions(): Promise<void> {
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
   lines.push(
-    `import { f32, f64, i16, i32, i64, i8, PointerValue, PointerTarget, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
   );
-  lines.push(`import { setPointerTarget } from "../_utils.ts";`);
-  lines.push(`import { Memory } from "../memory.ts";`);
+  lines.push(`import { BoxedValue } from "../boxes.ts";`);
   lines.push(`import { Pointer, PointerTo } from "../pointers.ts";`);
   lines.push("");
 
@@ -614,23 +613,8 @@ const context: SDLContext = {
       symbolName = func.symbolName;
     }
 
-    if (hasDoublePointerParams(func)) {
-      for (
-        const [paramName] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
-      ) {
-        lines.push(`const ${paramName}DoublePointer = new BigUint64Array(1);`);
-      }
-      lines.push("");
-    }
-
     if (returnType !== "void") {
-      let returnStatement = "\t";
-
-      if (hasDoublePointerParams(func)) {
-        returnStatement += "const result = ";
-      } else {
-        returnStatement += "return ";
-      }
+      let returnStatement = "\treturn ";
 
       if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tfromPlatformString(";
@@ -649,7 +633,7 @@ const context: SDLContext = {
       } else if (isFunctionParamVoidPointer(param)) {
         lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\tMemory.pointer(${paramName}DoublePointer),`);
+        lines.push(`\t\tPlatformPointer.of(${paramName}._data),`);
       } else if (isFunctionParamOpaqueStruct(param)) {
         lines.push(`\t\t${paramName},`);
       } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {
@@ -675,21 +659,6 @@ const context: SDLContext = {
       }
     } else {
       lines.push(`\t);`);
-    }
-
-    if (hasDoublePointerParams(func)) {
-      lines.push("");
-
-      for (
-        const [paramName] of Object.entries(func.parameters).filter((x) => isFunctionParamDoublePointer(x[1]))
-      ) {
-        lines.push(
-          `setPointerTarget(${paramName}, ${paramName}DoublePointer[0]);`,
-        );
-      }
-
-      lines.push("");
-      lines.push("return result;");
     }
 
     lines.push("}");
@@ -729,6 +698,7 @@ async function writeMod(): Promise<void> {
 
   lines.push(`export * from "./src/boxes.ts";`);
   lines.push(`export * from "./src/memory.ts";`);
+  lines.push(`export * from "./src/pointers.ts";`);
   lines.push("");
 
   const typesToExport: string[] = [];

@@ -1,14 +1,15 @@
+// deno-lint-ignore-file no-empty-enum no-empty-interface
 // This file is for types exposed as part of the API.
 
-// deno-lint-ignore-file no-empty-enum no-empty-interface
+import { Pointer } from "./pointers.ts";
 
 // Simple types
 
 export type BoxableValue = number | PrimitiveType | Struct;
 
 export type BoxableValueConstructor =
-  | NumberConstructor
-  | symbol
+  | typeof Number
+  | typeof Pointer
   | (new () => Struct)
   | AllocatableStructConstructor<AllocatableStruct>;
 
@@ -39,8 +40,6 @@ export const Int = Symbol("int");
 
 export type PointerValue<T> = number | bigint;
 
-export type PointerTarget<T> = PointerValue<T>[] | { value: PointerValue<T> };
-
 export type PrimitiveType =
   | i8
   | u8
@@ -67,6 +66,8 @@ export type TypedArray =
   | BigInt64Array
   | BigUint64Array;
 
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
 // Complex types
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
@@ -76,7 +77,7 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 
 export interface AllocatableStruct extends Struct {}
 
-// TODO: Move this to it's own file as it's not generic.
+// TODO: Move this to it's own file as it's not generic and SDL specific.
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 
 export interface Struct {}

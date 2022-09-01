@@ -1,5 +1,6 @@
+import { Pointer } from "../mod.ts";
 import { AllocatableStruct, AllocatableStructConstructor, BoxableValue, BoxableValueConstructor } from "./types.ts";
-import { NumberStruct } from "./_structs.ts";
+import { NumberStruct, PointerStruct } from "./_structs.ts";
 import { sizeof } from "./_utils.ts";
 
 export function getBoxableValueConsturctor(
@@ -7,6 +8,8 @@ export function getBoxableValueConsturctor(
 ): AllocatableStructConstructor<AllocatableStruct> {
   if (_constructor === Number) {
     _constructor = NumberStruct;
+  } else if (_constructor === Pointer) {
+    _constructor = PointerStruct;
   }
 
   return _constructor as AllocatableStructConstructor<AllocatableStruct>;
@@ -17,12 +20,12 @@ export class BoxedValue<T extends BoxableValue> {
   private readonly _value: T;
 
   private constructor(_constructor: BoxableValueConstructor) {
-    _constructor = getBoxableValueConsturctor(_constructor);
+    const realConstructor = getBoxableValueConsturctor(_constructor);
 
     const dataLength = sizeof(_constructor);
 
     this._data = new Uint8Array(dataLength);
-    this._value = new _constructor(this._data) as T;
+    this._value = new realConstructor(this._data) as T;
   }
 
   public static create<T>(_constructor: BoxableValueConstructor): BoxedValue<T> {
@@ -30,7 +33,7 @@ export class BoxedValue<T extends BoxableValue> {
   }
 
   public get value(): T {
-    if (this._value instanceof NumberStruct) {
+    if (this._value instanceof NumberStruct || this._value instanceof PointerStruct) {
       return this._value.value as T;
     }
 
@@ -58,7 +61,7 @@ export class BoxedArray<T extends BoxableValue> {
       throw new Error("length must be > 0.");
     }
 
-    _constructor = getBoxableValueConsturctor(_constructor);
+    const realConstructor = getBoxableValueConsturctor(_constructor);
 
     const sizeInBytes = sizeof(_constructor);
 
@@ -67,7 +70,7 @@ export class BoxedArray<T extends BoxableValue> {
 
     for (let i = 0; i < length; i++) {
       const dataOffset = new Uint8Array(data.buffer, sizeInBytes * i, sizeInBytes);
-      array[i] = new _constructor(dataOffset) as T;
+      array[i] = new realConstructor(dataOffset) as T;
     }
 
     return new BoxedArray<T>(

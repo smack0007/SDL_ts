@@ -18,24 +18,8 @@ import {
   Window,
 } from "./structs.ts";
 import { Symbols, symbols } from "./_symbols.ts";
-import {
-  f32,
-  f64,
-  i16,
-  i32,
-  i64,
-  i8,
-  PointerTarget,
-  PointerValue,
-  RWMode,
-  TypedArray,
-  u16,
-  u32,
-  u64,
-  u8,
-} from "../types.ts";
-import { setPointerTarget } from "../_utils.ts";
-import { Memory } from "../memory.ts";
+import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { BoxedValue } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 
 interface SDLContext {
@@ -184,24 +168,16 @@ export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
   window_flags: u32,
-  window: PointerTarget<Window>,
-  renderer: PointerTarget<Renderer>,
+  window: BoxedValue<PointerValue<Window>>,
+  renderer: BoxedValue<PointerValue<Renderer>>,
 ): i32 {
-  const windowDoublePointer = new BigUint64Array(1);
-  const rendererDoublePointer = new BigUint64Array(1);
-
-  const result = context.symbols.SDL_CreateWindowAndRenderer(
+  return context.symbols.SDL_CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    Memory.pointer(windowDoublePointer),
-    Memory.pointer(rendererDoublePointer),
+    PlatformPointer.of(window._data),
+    PlatformPointer.of(renderer._data),
   ) as i32;
-
-  setPointerTarget(window, windowDoublePointer[0]);
-  setPointerTarget(renderer, rendererDoublePointer[0]);
-
-  return result;
 }
 
 export function Delay(
