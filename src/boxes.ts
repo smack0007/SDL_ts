@@ -1,4 +1,4 @@
-import { Pointer } from "../mod.ts";
+import { Pointer, PointerValue } from "../mod.ts";
 import { AllocatableStruct, AllocatableStructConstructor, BoxableValue, BoxableValueConstructor } from "./types.ts";
 import { NumberStruct, PointerStruct } from "./_structs.ts";
 import { sizeof } from "./_utils.ts";
@@ -19,7 +19,7 @@ export class BoxedValue<T extends BoxableValue> {
   public readonly _data: Uint8Array;
   private readonly _value: T;
 
-  private constructor(_constructor: BoxableValueConstructor) {
+  protected constructor(_constructor: BoxableValueConstructor) {
     const realConstructor = getBoxableValueConsturctor(_constructor);
 
     const dataLength = sizeof(_constructor);
@@ -87,4 +87,11 @@ export class BoxedArray<T extends BoxableValue> {
 
 export function isBoxedArray(value: unknown): value is BoxedArray<AllocatableStruct> {
   return value instanceof BoxedArray;
+}
+
+// @ts-ignore TypeScript doesn't like that we're declaring a new create method.
+export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
+  public static create<T>(): BoxedValue<PointerValue<T>> {
+    return BoxedValue.create<PointerValue<T>>(Pointer);
+  }
 }

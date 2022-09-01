@@ -19,7 +19,7 @@ import {
 } from "./structs.ts";
 import { Symbols, symbols } from "./_symbols.ts";
 import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
-import { BoxedValue } from "../boxes.ts";
+import { BoxedPointer, BoxedValue } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 
 interface SDLContext {
@@ -168,8 +168,8 @@ export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
   window_flags: u32,
-  window: BoxedValue<PointerValue<Window>>,
-  renderer: BoxedValue<PointerValue<Renderer>>,
+  window: BoxedPointer<Window>,
+  renderer: BoxedPointer<Renderer>,
 ): i32 {
   return context.symbols.SDL_CreateWindowAndRenderer(
     width,

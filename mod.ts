@@ -47,6 +47,7 @@ import type {
   RWMode,
   Struct,
   TypedArray,
+  Writeable,
 } from "./src/types.ts";
 
 export type {
@@ -71,4 +72,5 @@ export type {
   Texture,
   TypedArray,
   Window,
+  Writeable,
 };

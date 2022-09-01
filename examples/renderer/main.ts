@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedValue, Memory, Point, Pointer, PointerValue, Renderer, SDL, Window } from "../../mod.ts";
+import { BoxedArray, BoxedPointer, BoxedValue, Memory, Point, Renderer, SDL, Window } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -7,8 +7,8 @@ const WINDOW_HEIGHT = 768;
 function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
-  const windowBox = BoxedValue.create<PointerValue<Window>>(Pointer);
-  const rendererBox = BoxedValue.create<PointerValue<Renderer>>(Pointer);
+  const windowBox = BoxedPointer.create<Window>();
+  const rendererBox = BoxedPointer.create<Renderer>();
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,

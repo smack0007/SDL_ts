@@ -485,7 +485,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `BoxedValue<PointerValue<${structName}>>`;
+      structName = `BoxedPointer<${structName}>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       if (isReturnType) {
@@ -568,7 +568,7 @@ async function writeFunctions(): Promise<void> {
   lines.push(
     `import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
   );
-  lines.push(`import { BoxedValue } from "../boxes.ts";`);
+  lines.push(`import { BoxedPointer, BoxedValue } from "../boxes.ts";`);
   lines.push(`import { Pointer, PointerTo } from "../pointers.ts";`);
   lines.push("");
 

@@ -5,7 +5,7 @@ import { Pointer } from "./pointers.ts";
 
 // Simple types
 
-export type BoxableValue = number | PrimitiveType | Struct;
+export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Struct;
 
 export type BoxableValueConstructor =
   | typeof Number
