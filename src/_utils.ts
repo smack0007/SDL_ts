@@ -1,8 +1,7 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { BoxableValueConstructor } from "./types.ts";
-import { AllocatableStruct, AllocatableStructConstructor, TypedArray } from "../mod.ts";
+import { AllocatableStruct, AllocatableStructConstructor, BoxableValueConstructor, TypedArray } from "./types.ts";
 
 //
 // Constants

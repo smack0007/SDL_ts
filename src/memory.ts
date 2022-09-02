@@ -1,7 +1,6 @@
 import { PlatformDataView, PlatformPointer } from "platform";
-import { Struct, TypedArray } from "../mod.ts";
 import { BoxedValue, isBoxedValue } from "./boxes.ts";
-import { BoxableValue, PointerValue, u8 } from "./types.ts";
+import { BoxableValue, PointerValue, Struct, TypedArray, u8 } from "./types.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
 

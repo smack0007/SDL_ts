@@ -32,7 +32,6 @@ async function main(): Promise<void> {
   await writeStructs();
   await writeSymbols();
   await writeFunctions();
-  await writeMod();
 }
 
 function createLines(): string[] {
@@ -666,98 +665,4 @@ const context: SDLContext = {
   }
 
   await writeLinesToFile(`${SDL_PATH}/functions.ts`, lines);
-}
-
-async function writeMod(): Promise<void> {
-  const lines = createLines();
-
-  const sdlProjects = ["SDL"];
-
-  for (const sdlProject of sdlProjects) {
-    const modulesToExport: string[] = [];
-
-    for await (const entry of Deno.readDir(`../src/${sdlProject}`)) {
-      if (!entry.isFile || entry.name.startsWith("_")) {
-        continue;
-      }
-      const variableName = entry.name.slice(0, -".ts".length);
-      lines.push(`import * as ${sdlProject}_${variableName} from "./src/${sdlProject}/${entry.name}";`);
-      modulesToExport.push(variableName);
-    }
-
-    lines.push("");
-    lines.push(`export const ${sdlProject} = {`);
-
-    for (const module of modulesToExport) {
-      lines.push(`...${sdlProject}_${module},`);
-    }
-
-    lines.push("};");
-    lines.push("");
-  }
-
-  lines.push(`export * from "./src/boxes.ts";`);
-  lines.push(`export * from "./src/memory.ts";`);
-  lines.push(`export * from "./src/pointers.ts";`);
-  lines.push("");
-
-  const typesToExport: string[] = [];
-
-  lines.push("import type {");
-  for (const strcutName of allStructNames) {
-    const strcutNameShort = strcutName.substring("SDL_".length);
-    typesToExport.push(strcutNameShort);
-    lines.push(`\t${strcutNameShort},`);
-  }
-  lines.push(`} from "./src/SDL/structs.ts";`);
-  lines.push("");
-
-  const typeExportLines = (await Deno.readTextFile("../src/types.ts")).split("\n").filter((x) =>
-    x.startsWith("export type ") || x.startsWith("export interface ")
-  );
-
-  lines.push("import type {");
-  for (let typeName of typeExportLines) {
-    if (typeName.startsWith("export type ")) {
-      typeName = typeName.substring("export type ".length);
-    } else if (typeName.startsWith("export interface ")) {
-      typeName = typeName.substring("export interface ".length);
-
-      const extendsIndex = typeName.indexOf(" extends ");
-      if (extendsIndex >= 0) {
-        typeName = typeName.substring(0, extendsIndex);
-      }
-    }
-
-    // The order of these ifs is important and they cannot be
-    // joined with an else.
-
-    if (typeName.indexOf("<") !== -1) {
-      typeName = typeName.substring(0, typeName.indexOf("<"));
-    }
-
-    if (typeName.indexOf("=") !== -1) {
-      typeName = typeName.substring(0, typeName.indexOf("="));
-    }
-
-    if (typeName.indexOf("{") !== -1) {
-      typeName = typeName.substring(0, typeName.indexOf("{"));
-    }
-
-    typeName = typeName.trim();
-
-    typesToExport.push(typeName);
-    lines.push(`${typeName},`);
-  }
-  lines.push(`} from "./src/types.ts"`);
-  lines.push("");
-
-  lines.push("export type {");
-  for (const type of typesToExport) {
-    lines.push(`\t${type},`);
-  }
-  lines.push("};");
-  lines.push("");
-
-  await writeLinesToFile("../mod.ts", lines);
 }

@@ -1,5 +1,11 @@
-import { Pointer, PointerValue } from "../mod.ts";
-import { AllocatableStruct, AllocatableStructConstructor, BoxableValue, BoxableValueConstructor } from "./types.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  BoxableValue,
+  BoxableValueConstructor,
+  PointerValue,
+} from "./types.ts";
+import { Pointer } from "./pointers.ts";
 import { NumberStruct, PointerStruct } from "./_structs.ts";
 import { sizeof } from "./_utils.ts";
 
