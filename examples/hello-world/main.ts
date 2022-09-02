@@ -1,4 +1,4 @@
-import { Memory, SDL, Surface } from "../../mod.ts";
+import { Memory, SDL } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);

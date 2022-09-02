@@ -7,8 +7,8 @@ const WINDOW_HEIGHT = 768;
 function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
-  const windowBox = BoxedPointer.create<SDL.Window>();
-  const rendererBox = BoxedPointer.create<SDL.Renderer>();
+  const windowBox = new BoxedPointer<SDL.Window>();
+  const rendererBox = new BoxedPointer<SDL.Renderer>();
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
@@ -61,7 +61,7 @@ function main(): number {
     return 1;
   }
 
-  const points = BoxedArray.create<SDL.Point>(SDL.Point, 4);
+  const points = new BoxedArray<SDL.Point>(SDL.Point, 4);
   points.at(0).x = 0;
   points.at(0).y = 0;
   points.at(1).x = 1;
@@ -71,7 +71,7 @@ function main(): number {
   points.at(3).x = 0;
   points.at(3).y = 1;
 
-  const numkeys = BoxedValue.create<number>(Number);
+  const numkeys = new BoxedValue<number>(Number);
 
   const event = new SDL.Event();
   let done = false;
