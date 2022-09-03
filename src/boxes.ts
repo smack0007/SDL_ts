@@ -33,6 +33,10 @@ export class BoxedValue<T extends BoxableValue> {
     this._data = new Uint8Array(dataLength);
     this._value = new realConstructor(this._data) as T;
   }
+  
+  public static isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
+    return (value instanceof BoxedValue);
+  }
 
   public get value(): T {
     if (this._value instanceof NumberStruct || this._value instanceof PointerStruct) {
@@ -41,10 +45,6 @@ export class BoxedValue<T extends BoxableValue> {
 
     return this._value;
   }
-}
-
-export function isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
-  return (value instanceof BoxedValue);
 }
 
 export class BoxedArray<T extends BoxableValue> {
@@ -73,17 +73,21 @@ export class BoxedArray<T extends BoxableValue> {
     }
   }
 
+  public static isBoxedArray(value: unknown): value is BoxedArray<BoxableValue> {
+    return value instanceof BoxedArray;
+  }
+
   public at(index: number): T {
     return this.array[index];
   }
 }
 
-export function isBoxedArray(value: unknown): value is BoxedArray<AllocatableStruct> {
-  return value instanceof BoxedArray;
-}
-
 export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
   public constructor() {
     super(Pointer);
+  }
+
+  public static isBoxedPointer(value: unknown): value is BoxedPointer<unknown> {
+    return value instanceof BoxedPointer;
   }
 }

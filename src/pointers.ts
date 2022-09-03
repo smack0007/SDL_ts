@@ -1,5 +1,5 @@
 import { NULL_POINTER, PlatformPointer } from "platform";
-import { BoxedArray, BoxedValue, isBoxedArray, isBoxedValue } from "./boxes.ts";
+import { BoxedArray, BoxedValue } from "./boxes.ts";
 import { PointerValue, Struct, TypedArray } from "./types.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
@@ -32,9 +32,9 @@ export class Pointer {
 
     if (isTypedArray(value)) {
       return PlatformPointer.of(value, offset);
-    } else if (isBoxedArray(value)) {
+    } else if (BoxedArray.isBoxedArray(value)) {
       return PlatformPointer.of(value._data, offset * value.sizeOfElementInBytes);
-    } else if (isBoxedValue(value)) {
+    } else if (BoxedValue.isBoxedValue(value)) {
       return PlatformPointer.of(value._data);
     } else if (isStruct(value)) {
       if (Pointer.isPointer(value._data)) {
