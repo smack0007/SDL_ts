@@ -45,7 +45,7 @@ SDL.RestoreWindow(window);
 
 let done = false;
 while (!done) {
-  while (SDL.PollEvent(Memory.pointer(event)) != 0) {
+  while (SDL.PollEvent(event) != 0) {
     if (event.type === SDL.QUIT) {
       console.info("Done.");
       done = true;

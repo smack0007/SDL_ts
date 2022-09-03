@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedPointer, BoxedValue, Memory, SDL } from "../../mod.ts";
+import { BoxedArray, BoxedPointer, BoxedValue, Memory, Pointer, SDL } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -33,7 +33,7 @@ function main(): number {
   console.info(window, renderer);
 
   const rendererInfo = new SDL.RendererInfo();
-  if (SDL.GetRendererInfo(renderer, Memory.pointer(rendererInfo)) != 0) {
+  if (SDL.GetRendererInfo(renderer, rendererInfo) != 0) {
     console.error(`Failed to get renderer info: ${SDL.GetError()}`);
     return 1;
   }
@@ -53,8 +53,8 @@ function main(): number {
   const destRect = new SDL.Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
   const textureCenter = new SDL.Point(denoSurface.w / 2, denoSurface.h / 2);
   let textureRotation = 0;
-  const texture = SDL.CreateTextureFromSurface(renderer, Memory.pointer(denoSurface));
-  SDL.FreeSurface(Memory.pointer(denoSurface));
+  const texture = SDL.CreateTextureFromSurface(renderer, denoSurface);
+  SDL.FreeSurface(denoSurface);
 
   if (texture == 0) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
@@ -76,7 +76,7 @@ function main(): number {
   const event = new SDL.Event();
   let done = false;
   while (!done) {
-    while (SDL.PollEvent(Memory.pointer(event)) != 0) {
+    while (SDL.PollEvent(event) != 0) {
       if (event.type === SDL.QUIT) {
         done = true;
         break;
@@ -87,7 +87,7 @@ function main(): number {
       break;
     }
 
-    const state = SDL.GetKeyboardState(Memory.pointer(numkeys));
+    const state = SDL.GetKeyboardState(Pointer.of(numkeys));
     console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -97,10 +97,10 @@ function main(): number {
     SDL.RenderCopyEx(
       renderer,
       texture,
-      Memory.pointer(srcRect),
-      Memory.pointer(destRect),
+      srcRect,
+      destRect,
       textureRotation,
-      Memory.pointer(textureCenter),
+      textureCenter,
       SDL.FLIP_NONE,
     );
 
@@ -109,9 +109,9 @@ function main(): number {
 
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    SDL.RenderFillRect(renderer, Memory.pointer(rect));
+    SDL.RenderFillRect(renderer, rect);
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL.RenderDrawRect(renderer, Memory.pointer(rect));
+    SDL.RenderDrawRect(renderer, rect);
 
     SDL.RenderPresent(renderer);
     SDL.RenderFlush(renderer);
