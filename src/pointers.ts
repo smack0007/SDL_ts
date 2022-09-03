@@ -18,6 +18,10 @@ export class Pointer {
     return typeof value === "bigint" || typeof value === "number";
   }
 
+  public static isNullPointer(value: PointerValue<unknown>): boolean {
+    return value == 0;
+  }
+
   public static of<T>(
     value: TypedArray | PointerValue<T> | PointerLike<T> | null | undefined,
     offset = 0,
