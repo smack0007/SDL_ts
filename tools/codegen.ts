@@ -574,10 +574,9 @@ async function writeFunctions(): Promise<void> {
   lines.push(`interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
 
-  // TODO: Figure out the correct typing again. Don't know why this seems to have broken.
-  // deno-lint-ignore no-explicit-any
+  // TODO: In order to use the correct types we'll have to do a bunch of casts.
   symbols: any;
-  // symbols: Deno.StaticForeignLibraryInterface<Symbols>;
+  // symbols: Deno.DynamicLibrary<Symbols>["symbols"];
 }
 
 const context: SDLContext = {
