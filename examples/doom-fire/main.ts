@@ -60,14 +60,24 @@ function main(): number {
     SDL.WINDOW_SHOWN,
   );
 
-  if (window == 0) {
+  if (window == null) {
     console.error("Failed to create window.");
     return 1;
   }
 
-  const frontBuffer = SDL.Surface.of(SDL.GetWindowSurface(window));
+  const frontBuffer = SDL.GetWindowSurface(window);
+
+  if (frontBuffer == null) {
+    console.error("Failed to get window surface.");
+    return 1;
+  }
 
   const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
+
+  if (denoSurface == null) {
+    console.error("Failed to load jurassicDeno.bmp.");
+    return 1;
+  }
 
   const firePixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
   const fireSurface = SDL.CreateRGBSurfaceFrom(
@@ -81,6 +91,11 @@ function main(): number {
     0x00FF0000,
     0xFF000000,
   );
+
+  if (fireSurface == null) {
+    console.error("Failed to create fireSurface.");
+    return 1;
+  }
 
   const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.w, HALF_WINDOW_HEIGHT);
 

@@ -71,12 +71,12 @@ export function CreateRenderer(
   window: PointerTo<Window>,
   index: i32,
   flags: u32,
-): PointerValue<Renderer> {
-  return context.symbols.SDL_CreateRenderer(
-    window,
+): Renderer | null {
+  return Renderer.of(context.symbols.SDL_CreateRenderer(
+    Pointer.of(window),
     index,
     flags,
-  ) as PointerValue<Renderer>;
+  ) as PointerValue<Renderer>);
 }
 
 export function CreateRGBSurfaceFrom(
@@ -89,9 +89,9 @@ export function CreateRGBSurfaceFrom(
   Gmask: u32,
   Bmask: u32,
   Amask: u32,
-): PointerValue<Surface> {
-  return context.symbols.SDL_CreateRGBSurfaceFrom(
-    Deno.UnsafePointer.of(pixels),
+): Surface | null {
+  return Surface.of(context.symbols.SDL_CreateRGBSurfaceFrom(
+    PlatformPointer.of(pixels),
     width,
     height,
     depth,
@@ -100,7 +100,7 @@ export function CreateRGBSurfaceFrom(
     Gmask,
     Bmask,
     Amask,
-  ) as PointerValue<Surface>;
+  ) as PointerValue<Surface>);
 }
 
 export function CreateRGBSurfaceWithFormat(
@@ -109,14 +109,14 @@ export function CreateRGBSurfaceWithFormat(
   height: i32,
   depth: i32,
   format: u32,
-): PointerValue<Surface> {
-  return context.symbols.SDL_CreateRGBSurfaceWithFormat(
+): Surface | null {
+  return Surface.of(context.symbols.SDL_CreateRGBSurfaceWithFormat(
     flags,
     width,
     height,
     depth,
     format,
-  ) as PointerValue<Surface>;
+  ) as PointerValue<Surface>);
 }
 
 export function CreateTexture(
@@ -125,24 +125,24 @@ export function CreateTexture(
   access: i32,
   w: i32,
   h: i32,
-): PointerValue<Texture> {
-  return context.symbols.SDL_CreateTexture(
-    renderer,
+): Texture | null {
+  return Texture.of(context.symbols.SDL_CreateTexture(
+    Pointer.of(renderer),
     format,
     access,
     w,
     h,
-  ) as PointerValue<Texture>;
+  ) as PointerValue<Texture>);
 }
 
 export function CreateTextureFromSurface(
   renderer: PointerTo<Renderer>,
   surface: PointerTo<Surface>,
-): PointerValue<Texture> {
-  return context.symbols.SDL_CreateTextureFromSurface(
-    renderer,
+): Texture | null {
+  return Texture.of(context.symbols.SDL_CreateTextureFromSurface(
+    Pointer.of(renderer),
     Pointer.of(surface),
-  ) as PointerValue<Texture>;
+  ) as PointerValue<Texture>);
 }
 
 export function CreateWindow(
@@ -152,15 +152,15 @@ export function CreateWindow(
   w: i32,
   h: i32,
   flags: u32,
-): PointerValue<Window> {
-  return context.symbols.SDL_CreateWindow(
+): Window | null {
+  return Window.of(context.symbols.SDL_CreateWindow(
     toPlatformString(title),
     x,
     y,
     w,
     h,
     flags,
-  ) as PointerValue<Window>;
+  ) as PointerValue<Window>);
 }
 
 export function CreateWindowAndRenderer(
@@ -191,7 +191,7 @@ export function DestroyRenderer(
   renderer: PointerTo<Renderer>,
 ): void {
   context.symbols.SDL_DestroyRenderer(
-    renderer,
+    Pointer.of(renderer),
   );
 }
 
@@ -199,7 +199,7 @@ export function DestroyTexture(
   texture: PointerTo<Texture>,
 ): void {
   context.symbols.SDL_DestroyTexture(
-    texture,
+    Pointer.of(texture),
   );
 }
 
@@ -207,7 +207,7 @@ export function DestroyWindow(
   window: PointerTo<Window>,
 ): void {
   context.symbols.SDL_DestroyWindow(
-    window,
+    Pointer.of(window),
   );
 }
 
@@ -248,7 +248,7 @@ export function GetRendererInfo(
   info: PointerTo<RendererInfo>,
 ): i32 {
   return context.symbols.SDL_GetRendererInfo(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(info),
   ) as i32;
 }
@@ -283,10 +283,10 @@ export function GetTicks64(): u64 {
 
 export function GetWindowSurface(
   window: PointerTo<Window>,
-): PointerValue<Surface> {
-  return context.symbols.SDL_GetWindowSurface(
-    window,
-  ) as PointerValue<Surface>;
+): Surface | null {
+  return Surface.of(context.symbols.SDL_GetWindowSurface(
+    Pointer.of(window),
+  ) as PointerValue<Surface>);
 }
 
 export function Init(flags: number, libraryPath?: string): number {
@@ -304,11 +304,11 @@ export function Init(flags: number, libraryPath?: string): number {
 export function LoadBMP_RW(
   src: PointerTo<RWops>,
   freesrc: i32,
-): PointerValue<Surface> {
-  return context.symbols.SDL_LoadBMP_RW(
-    src,
+): Surface | null {
+  return Surface.of(context.symbols.SDL_LoadBMP_RW(
+    Pointer.of(src),
     freesrc,
-  ) as PointerValue<Surface>;
+  ) as PointerValue<Surface>);
 }
 
 export function LockSurface(
@@ -326,7 +326,7 @@ export function MapRGB(
   b: u8,
 ): u32 {
   return context.symbols.SDL_MapRGB(
-    format,
+    Pointer.of(format),
     r,
     g,
     b,
@@ -341,7 +341,7 @@ export function MapRGBA(
   a: u8,
 ): u32 {
   return context.symbols.SDL_MapRGBA(
-    format,
+    Pointer.of(format),
     r,
     g,
     b,
@@ -353,7 +353,7 @@ export function MaximizeWindow(
   window: PointerTo<Window>,
 ): void {
   context.symbols.SDL_MaximizeWindow(
-    window,
+    Pointer.of(window),
   );
 }
 
@@ -361,7 +361,7 @@ export function MinimizeWindow(
   window: PointerTo<Window>,
 ): void {
   context.symbols.SDL_MinimizeWindow(
-    window,
+    Pointer.of(window),
   );
 }
 
@@ -382,7 +382,7 @@ export function RenderClear(
   renderer: PointerTo<Renderer>,
 ): i32 {
   return context.symbols.SDL_RenderClear(
-    renderer,
+    Pointer.of(renderer),
   ) as i32;
 }
 
@@ -393,8 +393,8 @@ export function RenderCopy(
   dstrect: PointerTo<Rect> | null,
 ): i32 {
   return context.symbols.SDL_RenderCopy(
-    renderer,
-    texture,
+    Pointer.of(renderer),
+    Pointer.of(texture),
     Pointer.of(srcrect),
     Pointer.of(dstrect),
   ) as i32;
@@ -410,8 +410,8 @@ export function RenderCopyEx(
   flip: u32,
 ): i32 {
   return context.symbols.SDL_RenderCopyEx(
-    renderer,
-    texture,
+    Pointer.of(renderer),
+    Pointer.of(texture),
     Pointer.of(srcrect),
     Pointer.of(dstrect),
     angle,
@@ -428,7 +428,7 @@ export function RenderDrawLine(
   y2: i32,
 ): i32 {
   return context.symbols.SDL_RenderDrawLine(
-    renderer,
+    Pointer.of(renderer),
     x1,
     y1,
     x2,
@@ -442,7 +442,7 @@ export function RenderDrawLines(
   count: i32,
 ): i32 {
   return context.symbols.SDL_RenderDrawLines(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(points),
     count,
   ) as i32;
@@ -454,7 +454,7 @@ export function RenderDrawPoint(
   y: i32,
 ): i32 {
   return context.symbols.SDL_RenderDrawPoint(
-    renderer,
+    Pointer.of(renderer),
     x,
     y,
   ) as i32;
@@ -466,7 +466,7 @@ export function RenderDrawPoints(
   count: i32,
 ): i32 {
   return context.symbols.SDL_RenderDrawPoints(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(points),
     count,
   ) as i32;
@@ -477,7 +477,7 @@ export function RenderDrawRect(
   rect: PointerTo<Rect>,
 ): i32 {
   return context.symbols.SDL_RenderDrawRect(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(rect),
   ) as i32;
 }
@@ -488,7 +488,7 @@ export function RenderDrawRects(
   count: i32,
 ): i32 {
   return context.symbols.SDL_RenderDrawRects(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(rects),
     count,
   ) as i32;
@@ -499,7 +499,7 @@ export function RenderFillRect(
   rect: PointerTo<Rect>,
 ): i32 {
   return context.symbols.SDL_RenderFillRect(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(rect),
   ) as i32;
 }
@@ -510,7 +510,7 @@ export function RenderFillRects(
   count: i32,
 ): i32 {
   return context.symbols.SDL_RenderFillRects(
-    renderer,
+    Pointer.of(renderer),
     Pointer.of(rects),
     count,
   ) as i32;
@@ -520,7 +520,7 @@ export function RenderFlush(
   renderer: PointerTo<Renderer>,
 ): i32 {
   return context.symbols.SDL_RenderFlush(
-    renderer,
+    Pointer.of(renderer),
   ) as i32;
 }
 
@@ -528,7 +528,7 @@ export function RenderPresent(
   renderer: PointerTo<Renderer>,
 ): void {
   context.symbols.SDL_RenderPresent(
-    renderer,
+    Pointer.of(renderer),
   );
 }
 
@@ -536,18 +536,18 @@ export function RestoreWindow(
   window: PointerTo<Window>,
 ): void {
   context.symbols.SDL_RestoreWindow(
-    window,
+    Pointer.of(window),
   );
 }
 
 export function RWFromFile(
   file: string,
   mode: RWMode,
-): PointerValue<RWops> {
-  return context.symbols.SDL_RWFromFile(
+): RWops | null {
+  return RWops.of(context.symbols.SDL_RWFromFile(
     toPlatformString(file),
     toPlatformString(mode),
-  ) as PointerValue<RWops>;
+  ) as PointerValue<RWops>);
 }
 
 export function SetRenderDrawColor(
@@ -558,7 +558,7 @@ export function SetRenderDrawColor(
   a: u8,
 ): i32 {
   return context.symbols.SDL_SetRenderDrawColor(
-    renderer,
+    Pointer.of(renderer),
     r,
     g,
     b,
@@ -578,6 +578,6 @@ export function UpdateWindowSurface(
   window: PointerTo<Window>,
 ): i32 {
   return context.symbols.SDL_UpdateWindowSurface(
-    window,
+    Pointer.of(window),
   ) as i32;
 }

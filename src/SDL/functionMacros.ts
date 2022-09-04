@@ -4,6 +4,12 @@
 import { LoadBMP_RW, RWFromFile } from "./functions.ts";
 import { Surface } from "./structs.ts";
 
-export function LoadBMP(file: string): Surface {
-  return Surface.of(LoadBMP_RW(RWFromFile(file, "rb"), 1));
+export function LoadBMP(file: string): Surface | null {
+  const rw = RWFromFile(file, "rb");
+
+  if (rw == null) {
+    throw new Error("RWFromFile failed.");
+  }
+
+  return LoadBMP_RW(rw, 1);
 }

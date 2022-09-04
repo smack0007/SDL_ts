@@ -222,16 +222,28 @@ async function writeStructs(): Promise<void> {
   lines.push("");
 
   lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
+  lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
+  lines.push(`import { Pointer } from "../pointers.ts";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
-  lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
     const className = shortenName(structName);
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
+  public readonly _data!: PointerValue<${className}>;
+
+  public static of(data: PointerValue<${className}>): ${className} | null {
+    if (Pointer.isNullPointer(data)) {
+      return null;
+    }
+
+    const struct = (new ${className}() as unknown as StructInternal<${className}>);
+    struct._data = data;
+    return struct as unknown as ${className};
+  }
 }
 `);
   }
@@ -305,7 +317,11 @@ async function writeStructs(): Promise<void> {
 
     const shouldNotAllocate = struct.allocatable ? "STRUCT_NO_ALLOCATE" : "";
 
-    lines.push(`public static of(data: Uint8Array | PointerValue<${className}>): ${className} {
+    lines.push(`public static of(data: Uint8Array | PointerValue<${className}>): ${className} | null {
+      if (Pointer.isNullPointer(data)) {
+        return null;
+      }
+
       const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
       struct._data = data;
       struct._view = new PlatformDataView(data);
@@ -321,6 +337,7 @@ async function writeStructs(): Promise<void> {
       let writeOp = "";
       let length = 0;
       let memberType = mapStructMemberType(member);
+      let memberStructName = "";
 
       if (memberType === "string") {
         readOp += `fromPlatformString(`;
@@ -328,9 +345,9 @@ async function writeStructs(): Promise<void> {
         const subStructName = shortenName(removePointerPostfix(member.nativeType));
         memberType = `PointerValue<${subStructName}>`;
       } else if (member.type === "struct") {
-        const subStructName = shortenName(member.nativeType);
-        memberType = subStructName;
-        readOp += `${subStructName}.of(`;
+        memberStructName = shortenName(member.nativeType);
+        memberType = memberStructName;
+        readOp += `${memberStructName}.of(`;
         length = structs[member.nativeType].size;
       }
 
@@ -344,8 +361,10 @@ async function writeStructs(): Promise<void> {
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
-      if (memberType === "string" || member.type === "struct") {
+      if (memberType === "string") {
         readOp += ")";
+      } else if (member.type === "struct") {
+        readOp += `) as ${memberStructName}`;
       }
 
       lines.push(`\t\treturn ${readOp};`);
@@ -495,7 +514,7 @@ function mapFunctionParamType(param: CodeGenFunctionParam, isReturnType = false)
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       if (isReturnType) {
-        structName = `PointerValue<${structName}>`;
+        structName = `${structName}`;
       } else {
         structName = `PointerTo<${structName}>`;
       }
@@ -611,7 +630,10 @@ const context: SDLContext = {
       lines.push(`${paramName}: ${mapFunctionParamType(param)},`);
     }
 
-    lines.push(`): ${returnType} {`);
+    const returnTypeOrNull = isFunctionParamOpaqueStruct(func.result) || isFunctionParamStruct(func.result)
+      ? "| null"
+      : "";
+    lines.push(`): ${returnType}${returnTypeOrNull} {`);
 
     let symbolName = funcName;
     if (func.symbolName !== undefined) {
@@ -623,6 +645,11 @@ const context: SDLContext = {
 
       if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tfromPlatformString(";
+      } else if (
+        isFunctionParamOpaqueStruct(func.result) ||
+        isFunctionParamStruct(func.result)
+      ) {
+        returnStatement += `\t\t${returnType}.of(`;
       }
 
       returnStatement += `context.symbols.${symbolName}(`;
@@ -636,12 +663,14 @@ const context: SDLContext = {
       if (isFunctionParamString(param)) {
         lines.push(`\t\ttoPlatformString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tDeno.UnsafePointer.of(${paramName}),`);
+        lines.push(`\t\tPlatformPointer.of(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\tPlatformPointer.of(${paramName}._data),`);
-      } else if (isFunctionParamOpaqueStruct(param)) {
-        lines.push(`\t\t${paramName},`);
-      } else if (isFunctionParamPointer(param) || isFunctionParamStruct(param)) {
+      } else if (
+        isFunctionParamPointer(param) ||
+        isFunctionParamOpaqueStruct(param) ||
+        isFunctionParamStruct(param)
+      ) {
         lines.push(`\t\tPointer.of(${paramName}),`);
       } else {
         lines.push(`\t\t${paramName},`);
@@ -652,10 +681,11 @@ const context: SDLContext = {
       if (returnType === "string") {
         lines.push(`\t) as PointerValue<unknown>);`);
       } else if (
-        isFunctionParamStruct(func.result) ||
-        isFunctionParamPointer(func.result) ||
-        isFunctionParamOpaqueStruct(func.result)
+        isFunctionParamOpaqueStruct(func.result) ||
+        isFunctionParamStruct(func.result)
       ) {
+        lines.push(`\t) as PointerValue<${returnType}>);`);
+      } else if (isFunctionParamPointer(func.result)) {
         lines.push(`\t) as PointerValue<${getGenericParam(returnType)}>;`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);

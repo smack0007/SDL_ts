@@ -15,24 +15,22 @@ const window = SDL.CreateWindow(
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
 );
 
-if (window == 0) {
+if (window == null) {
   console.error(`Failed to create window: ${SDL.GetError()}`);
   Deno.exit(1);
 }
 
-let surfacePtr = SDL.GetWindowSurface(window);
+let surface = SDL.GetWindowSurface(window);
 
-if (surfacePtr == 0) {
-  console.error(`Failed to create surface: ${SDL.GetError()}`);
+if (surface == null) {
+  console.error(`Failed to get window surface: ${SDL.GetError()}`);
   Deno.exit(1);
 }
-
-const surface = SDL.Surface.of(surfacePtr);
 
 console.info(surface.flags);
 console.info("Width", surface.w, "Height", surface.h);
 SDL.FillRect(
-  surfacePtr,
+  surface,
   null,
   SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
 );
@@ -58,9 +56,15 @@ while (!done) {
         console.info(`Window ${event.window.windowID} restored.`);
       } else if (event.window.event === SDL.WINDOWEVENT_RESIZED) {
         console.info(`Window ${event.window.windowID} resized: ${event.window.data1} ${event.window.data2}`);
-        surfacePtr = SDL.GetWindowSurface(window);
+        surface = SDL.GetWindowSurface(window);
+
+        if (surface == null) {
+          console.error(`Failed to get window surface: ${SDL.GetError()}`);
+          Deno.exit(1);
+        }
+
         SDL.FillRect(
-          surfacePtr,
+          surface,
           null,
           SDL.MapRGB(surface.format, 0x64, 0x95, 0xED),
         );

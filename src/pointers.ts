@@ -18,8 +18,8 @@ export class Pointer {
     return typeof value === "bigint" || typeof value === "number";
   }
 
-  public static isNullPointer(value: PointerValue<unknown>): boolean {
-    return value == 0;
+  public static isNullPointer(value: unknown): boolean {
+    return Pointer.isPointer(value) && value == 0;
   }
 
   public static of<T>(

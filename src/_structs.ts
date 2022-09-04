@@ -11,7 +11,8 @@ export interface StructInternal<T extends Struct> {
 }
 
 export function isStruct<T extends Struct>(value: unknown): value is T & StructInternal<T> {
-  return typeof value === "object" && ("_data" in (value as Struct));
+  return typeof value === "object" &&
+    ("_data" in (value as Struct));
 }
 
 export class NumberStruct implements AllocatableStruct {

@@ -49,6 +49,12 @@ function main(): number {
   SDL.RenderFlush(renderer);
 
   const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
+
+  if (denoSurface == null) {
+    console.error("Failed to load jurassicDeno.bmp.");
+    return 1;
+  }
+
   const srcRect = new SDL.Rect(0, 0, denoSurface.w, denoSurface.h);
   const destRect = new SDL.Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
   const textureCenter = new SDL.Point(denoSurface.w / 2, denoSurface.h / 2);
@@ -56,7 +62,7 @@ function main(): number {
   const texture = SDL.CreateTextureFromSurface(renderer, denoSurface);
   SDL.FreeSurface(denoSurface);
 
-  if (texture == 0) {
+  if (texture == null) {
     console.error(`Failed to create texture: ${SDL.GetError()}`);
     return 1;
   }
