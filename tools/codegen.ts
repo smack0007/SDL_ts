@@ -149,13 +149,13 @@ async function writeEvents(): Promise<void> {
       lines.push("");
     }
 
-    lines.push("\tconstructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {");
+    lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
       const memberTypeName = shortenName(member.nativeType);
 
       lines.push(
-        `\t\tthis._${memberName} = ${memberTypeName}.createView(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
+        `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
       );
     }
 
@@ -194,8 +194,8 @@ async function writeEvents(): Promise<void> {
   }
 
   lines.push(`export class Event {
-  private _data = new Uint8Array(64);
-  private _view = new PlatformDataView<Event>(this._data);
+  public readonly _data = new Uint8Array(64);
+  private readonly _view = new PlatformDataView<Event>(this._data);
   
   public get type(): number {
     return this._view.getUint32(0);
@@ -222,10 +222,10 @@ async function writeStructs(): Promise<void> {
   lines.push("");
 
   lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
-  lines.push(`import { Memory } from "../memory.ts";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
+  lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -247,22 +247,23 @@ async function writeStructs(): Promise<void> {
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     lines.push(`
-  private _data!: Uint8Array | PointerValue<${className}>;
-  private _view!: PlatformDataView<${className}>;
+  public readonly _data!: Uint8Array | PointerValue<${className}>;
+  private readonly _view!: PlatformDataView<${className}>;
 `);
 
     if (struct.allocatable) {
-      lines.push("\t\tconstructor();");
-    }
-
-    if (struct.allocatable) {
       if (!struct.writable) {
-        lines.push(`constructor() {
+        lines.push(`constructor(command?: StructCommand) {
+  if (command === STRUCT_NO_ALLOCATE) {
+    return;
+  }
+
   this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
   this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<${className}>);
 }
 `);
       } else {
+        lines.push("constructor(command: StructCommand);");
         lines.push(`constructor(props: Partial<${className}>);`);
 
         const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
@@ -275,7 +276,7 @@ async function writeStructs(): Promise<void> {
           `, _${index + 2}?: ${mapStructMemberType(member)}`
         ).join("");
         lines.push(
-          `constructor(_1?: Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+          `constructor(_1?: StructCommand | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
         );
 
         const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
@@ -283,6 +284,10 @@ async function writeStructs(): Promise<void> {
         ).join("\n");
 
         lines.push(`
+    if (_1 === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+    
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
     this._view = new PlatformDataView(this._data);
 
@@ -298,11 +303,13 @@ async function writeStructs(): Promise<void> {
       }
     }
 
-    lines.push(`public static createView(data: Uint8Array | PointerValue<${className}>): ${className} {
-      const struct = new ${className}();
+    const shouldNotAllocate = struct.allocatable ? "STRUCT_NO_ALLOCATE" : "";
+
+    lines.push(`public static of(data: Uint8Array | PointerValue<${className}>): ${className} {
+      const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
       struct._data = data;
       struct._view = new PlatformDataView(data);
-      return struct;
+      return struct as unknown as ${className};
     }
 `);
 
@@ -323,7 +330,7 @@ async function writeStructs(): Promise<void> {
       } else if (member.type === "struct") {
         const subStructName = shortenName(member.nativeType);
         memberType = subStructName;
-        readOp += `${subStructName}.createView(`;
+        readOp += `${subStructName}.of(`;
         length = structs[member.nativeType].size;
       }
 

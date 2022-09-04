@@ -1,4 +1,4 @@
-import { Memory, SDL } from "../../mod.ts";
+import { SDL } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
 SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
@@ -27,7 +27,7 @@ if (surfacePtr == 0) {
   Deno.exit(1);
 }
 
-const surface = Memory.structView(SDL.Surface, surfacePtr);
+const surface = SDL.Surface.of(surfacePtr);
 
 console.info(surface.flags);
 console.info("Width", surface.w, "Height", surface.h);

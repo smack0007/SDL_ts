@@ -3,8 +3,8 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { fromPlatformString, PlatformDataView, PlatformPointer } from "platform";
-import { Memory } from "../memory.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
 
 export class BlitMap implements Struct {
   public static IS_OPAQUE = true;
@@ -33,14 +33,14 @@ export class Window implements Struct {
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data!: Uint8Array | PointerValue<Keysym>;
-  private _view!: PlatformDataView<Keysym>;
+  public readonly _data!: Uint8Array | PointerValue<Keysym>;
+  private readonly _view!: PlatformDataView<Keysym>;
 
-  public static createView(data: Uint8Array | PointerValue<Keysym>): Keysym {
-    const struct = new Keysym();
+  public static of(data: Uint8Array | PointerValue<Keysym>): Keysym {
+    const struct = (new Keysym() as unknown as StructInternal<Keysym>);
     struct._data = data;
     struct._view = new PlatformDataView(data);
-    return struct;
+    return struct as unknown as Keysym;
   }
 
   public get scancode(): u32 {
@@ -63,13 +63,17 @@ export class Keysym implements Struct {
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
-  private _data!: Uint8Array | PointerValue<Point>;
-  private _view!: PlatformDataView<Point>;
+  public readonly _data!: Uint8Array | PointerValue<Point>;
+  private readonly _view!: PlatformDataView<Point>;
 
-  constructor();
+  constructor(command: StructCommand);
   constructor(props: Partial<Point>);
   constructor(x: i32, y: i32);
-  constructor(_1?: Partial<Point> | i32, _2?: i32) {
+  constructor(_1?: StructCommand | Partial<Point> | i32, _2?: i32) {
+    if (_1 === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+
     this._data = new Uint8Array(Point.SIZE_IN_BYTES);
     this._view = new PlatformDataView(this._data);
 
@@ -83,11 +87,11 @@ export class Point implements AllocatableStruct {
     }
   }
 
-  public static createView(data: Uint8Array | PointerValue<Point>): Point {
-    const struct = new Point();
+  public static of(data: Uint8Array | PointerValue<Point>): Point {
+    const struct = (new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>);
     struct._data = data;
     struct._view = new PlatformDataView(data);
-    return struct;
+    return struct as unknown as Point;
   }
 
   public get x(): i32 {
@@ -110,13 +114,17 @@ export class Point implements AllocatableStruct {
 export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
-  private _data!: Uint8Array | PointerValue<Rect>;
-  private _view!: PlatformDataView<Rect>;
+  public readonly _data!: Uint8Array | PointerValue<Rect>;
+  private readonly _view!: PlatformDataView<Rect>;
 
-  constructor();
+  constructor(command: StructCommand);
   constructor(props: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
-  constructor(_1?: Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
+  constructor(_1?: StructCommand | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
+    if (_1 === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+
     this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
     this._view = new PlatformDataView(this._data);
 
@@ -132,11 +140,11 @@ export class Rect implements AllocatableStruct {
     }
   }
 
-  public static createView(data: Uint8Array | PointerValue<Rect>): Rect {
-    const struct = new Rect();
+  public static of(data: Uint8Array | PointerValue<Rect>): Rect {
+    const struct = (new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>);
     struct._data = data;
     struct._view = new PlatformDataView(data);
-    return struct;
+    return struct as unknown as Rect;
   }
 
   public get x(): i32 {
@@ -175,20 +183,23 @@ export class Rect implements AllocatableStruct {
 export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
-  private _data!: Uint8Array | PointerValue<RendererInfo>;
-  private _view!: PlatformDataView<RendererInfo>;
+  public readonly _data!: Uint8Array | PointerValue<RendererInfo>;
+  private readonly _view!: PlatformDataView<RendererInfo>;
 
-  constructor();
-  constructor() {
+  constructor(command?: StructCommand) {
+    if (command === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+
     this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
     this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<RendererInfo>);
   }
 
-  public static createView(data: Uint8Array | PointerValue<RendererInfo>): RendererInfo {
-    const struct = new RendererInfo();
+  public static of(data: Uint8Array | PointerValue<RendererInfo>): RendererInfo {
+    const struct = (new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>);
     struct._data = data;
     struct._view = new PlatformDataView(data);
-    return struct;
+    return struct as unknown as RendererInfo;
   }
 
   public get name(): string {
@@ -215,14 +226,14 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  private _data!: Uint8Array | PointerValue<Surface>;
-  private _view!: PlatformDataView<Surface>;
+  public readonly _data!: Uint8Array | PointerValue<Surface>;
+  private readonly _view!: PlatformDataView<Surface>;
 
-  public static createView(data: Uint8Array | PointerValue<Surface>): Surface {
-    const struct = new Surface();
+  public static of(data: Uint8Array | PointerValue<Surface>): Surface {
+    const struct = (new Surface() as unknown as StructInternal<Surface>);
     struct._data = data;
     struct._view = new PlatformDataView(data);
-    return struct;
+    return struct as unknown as Surface;
   }
 
   public get flags(): u32 {
@@ -262,7 +273,7 @@ export class Surface implements Struct {
   }
 
   public get clip_rect(): Rect {
-    return Rect.createView(this._view.getArray(16, 64));
+    return Rect.of(this._view.getArray(16, 64));
   }
 
   public get map(): PointerValue<BlitMap> {

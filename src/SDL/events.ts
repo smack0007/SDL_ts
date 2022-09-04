@@ -7,7 +7,7 @@ import { Keysym } from "./structs.ts";
 import { f32, f64, i16, i32, i64, i8, Pointer, u16, u32, u64, u8 } from "../types.ts";
 
 export class CommonEvent {
-  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -20,7 +20,7 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -53,8 +53,8 @@ export class DisplayEvent {
 export class KeyboardEvent {
   private _keysym: Keysym;
 
-  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
-    this._keysym = Keysym.createView(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+    this._keysym = Keysym.of(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES));
   }
 
   public get type(): u32 {
@@ -87,7 +87,7 @@ export class KeyboardEvent {
 }
 
 export class WindowEvent {
-  constructor(private _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
   public get type(): u32 {
@@ -122,8 +122,8 @@ export class WindowEvent {
 }
 
 export class Event {
-  private _data = new Uint8Array(64);
-  private _view = new PlatformDataView<Event>(this._data);
+  public readonly _data = new Uint8Array(64);
+  private readonly _view = new PlatformDataView<Event>(this._data);
 
   public get type(): number {
     return this._view.getUint32(0);

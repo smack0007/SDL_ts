@@ -33,7 +33,7 @@ export function isTypedArray(value: unknown): value is TypedArray {
   );
 }
 
-export function sizeof<T>(_constructor: BoxableValueConstructor): number {
+export function sizeof(_constructor: BoxableValueConstructor): number {
   if ("SIZE_IN_BYTES" in (_constructor as AllocatableStructConstructor<AllocatableStruct>)) {
     return (_constructor as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
   }

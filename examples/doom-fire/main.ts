@@ -65,7 +65,7 @@ function main(): number {
     return 1;
   }
 
-  const frontBuffer = SDL.Surface.createView(SDL.GetWindowSurface(window));
+  const frontBuffer = SDL.Surface.of(SDL.GetWindowSurface(window));
 
   const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
 

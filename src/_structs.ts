@@ -1,8 +1,13 @@
 import { PlatformDataView, PlatformPointer } from "platform";
 import { AllocatableStruct, PointerValue, Struct } from "./types.ts";
 
+export const STRUCT_NO_ALLOCATE = Symbol("STRUCT_NO_ALLOCATE");
+
+export type StructCommand = typeof STRUCT_NO_ALLOCATE;
+
 export interface StructInternal<T extends Struct> {
   _data: Uint8Array | PointerValue<T>;
+  _view: PlatformDataView<T>;
 }
 
 export function isStruct<T extends Struct>(value: unknown): value is T & StructInternal<T> {
