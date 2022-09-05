@@ -72,10 +72,12 @@ while (!done) {
       }
     } else if (event.type === SDL.KEYDOWN) {
       console.info(`KeyDown: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
+    } else if (event.type === SDL.KEYUP) {
+      console.info(`KeyUp: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
     }
   }
   SDL.Delay(100);
-  console.info(SDL.GetTicks64());
+  // console.info(SDL.GetTicks64());
 }
 
 console.info("Destroying SDL Window...");
