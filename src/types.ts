@@ -71,13 +71,8 @@ export interface AllocatableStruct extends Struct {}
 
 export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Struct;
 
-export type BoxableValueConstructor =
-  | typeof Number
-  | typeof Pointer
-  | {
-    SIZE_IN_BYTES: number;
-    of(data: PointerValue<Struct>): Struct;
-  };
+// deno-lint-ignore no-explicit-any
+export type BoxableValueConstructor<T extends BoxableValue> = new (...args: any[]) => T;
 
 // TODO: Move this to it's own file as it's not generic and SDL specific.
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";

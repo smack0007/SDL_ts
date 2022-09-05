@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedPointer, BoxedValue, Memory, Pointer, SDL } from "../../mod.ts";
+import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "../../mod.ts";
 import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -77,7 +77,7 @@ function main(): number {
   points.at(3).x = 0;
   points.at(3).y = 1;
 
-  const numkeys = new BoxedValue<number>(Number);
+  const numkeys = new BoxedNumber();
 
   const event = new SDL.Event();
   let done = false;

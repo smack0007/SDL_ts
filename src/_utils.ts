@@ -1,7 +1,13 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
-import { AllocatableStruct, AllocatableStructConstructor, BoxableValueConstructor, TypedArray } from "./types.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  BoxableValue,
+  BoxableValueConstructor,
+  TypedArray,
+} from "./types.ts";
 
 //
 // Constants
@@ -33,17 +39,17 @@ export function isTypedArray(value: unknown): value is TypedArray {
   );
 }
 
-export function sizeof(_constructor: BoxableValueConstructor): number {
-  if ("SIZE_IN_BYTES" in (_constructor as AllocatableStructConstructor<AllocatableStruct>)) {
-    return (_constructor as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
+export function sizeof<T extends BoxableValue>(_constructor: BoxableValueConstructor<T>): number {
+  if ("SIZE_IN_BYTES" in (_constructor as unknown as AllocatableStructConstructor<AllocatableStruct>)) {
+    return (_constructor as unknown as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
   }
 
   switch (_constructor) {
-    case Number:
+    case Number as unknown as BoxableValueConstructor<T>:
       return 4;
   }
 
   throw new Error(
-    `sizeof not implemented for ${(_constructor as NumberConstructor)?.name}`,
+    `sizeof not implemented for ${(_constructor)?.name}`,
   );
 }
