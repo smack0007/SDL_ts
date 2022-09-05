@@ -74,6 +74,14 @@ while (!done) {
       console.info(`KeyDown: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
     } else if (event.type === SDL.KEYUP) {
       console.info(`KeyUp: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
+    } else if (event.type === SDL.MOUSEMOTION) {
+      console.info(`MouseMotion: (${event.mousebutton.x}, ${event.mousebutton.y})`);
+    } else if (event.type === SDL.MOUSEBUTTONDOWN) {
+      console.info(`MouseButtonDown: ${event.mousebutton.button} (${event.mousebutton.x}, ${event.mousebutton.y})`);
+    } else if (event.type === SDL.MOUSEBUTTONUP) {
+      console.info(`MouseButtonUp: ${event.mousebutton.button} (${event.mousebutton.x}, ${event.mousebutton.y})`);
+    } else if (event.type === SDL.MOUSEWHEEL) {
+      console.info(`MouseWheel: ${event.mousewheel.direction} (${event.mousebutton.x}, ${event.mousebutton.y})`);
     }
   }
   SDL.Delay(100);

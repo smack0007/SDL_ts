@@ -78,7 +78,7 @@ async function main(): Promise<number> {
   }
 
   await Deno.copyFile(
-    `${SDL_PATH}/lib/x64/libSDL2.dll`,
+    `${SDL_PATH}/lib/x64/SDL2.dll`,
     `${OUTPUT_PATH}/SDL2.dll`,
   );
 
@@ -399,6 +399,7 @@ function outputStruct(capture: string): void {
     structName.startsWith("SDLTest_") ||
     [
       "SDL_AudioCVT",
+      "SDL_VirtualJoystickDesc",
     ].includes(structName)
   ) {
     return;

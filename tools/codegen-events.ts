@@ -116,6 +116,164 @@ export const events: Record<string, CodeGenEventType> = {
     },
   },
 
+  SDL_MouseButtonEvent: {
+    size: 28,
+    members: {
+      type: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 0,
+      },
+      timestamp: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 4,
+      },
+      windowID: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 8,
+      },
+      which: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 12,
+      },
+      button: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 16,
+      },
+      state: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 17,
+      },
+      clicks: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 18,
+      },
+      padding1: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 19,
+      },
+      x: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 20,
+      },
+      y: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 24,
+      },
+    },
+  },
+
+  SDL_MouseMotionEvent: {
+    size: 36,
+    members: {
+      type: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 0,
+      },
+      timestamp: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 4,
+      },
+      windowID: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 8,
+      },
+      which: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 12,
+      },
+      state: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 16,
+      },
+      x: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 20,
+      },
+      y: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 24,
+      },
+      xrel: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 28,
+      },
+      yrel: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 32,
+      },
+    },
+  },
+
+  SDL_MouseWheelEvent: {
+    size: 36,
+    members: {
+      type: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 0,
+      },
+      timestamp: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 4,
+      },
+      windowID: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 8,
+      },
+      which: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 12,
+      },
+      x: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 16,
+      },
+      y: {
+        nativeType: "Sint32",
+        type: "i32",
+        offset: 20,
+      },
+      direction: {
+        nativeType: "Uint32",
+        type: "u32",
+        offset: 24,
+      },
+      preciseX: {
+        nativeType: "float",
+        type: "f32",
+        offset: 28,
+      },
+      preciseY: {
+        nativeType: "float",
+        type: "f32",
+        offset: 32,
+      },
+    },
+  },
+
   SDL_WindowEvent: {
     size: 24,
     members: {

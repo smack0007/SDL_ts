@@ -8,6 +8,7 @@ const SDL_PATH = "../src/SDL";
 const allStructNames = Object.keys(structs).concat(opaqueStructs);
 
 const PlatformDataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
+  "f32": (offset, _) => `getFloat32(${offset})`,
   "i32": (offset, _) => `getInt32(${offset})`,
   "u8": (offset, _) => `getUint8(${offset})`,
   "u16": (offset, _) => `getUint16(${offset})`,
@@ -132,7 +133,7 @@ async function writeEvents(): Promise<void> {
   lines.push(
     `import { PlatformDataView } from "platform";
 import { Keysym } from "./structs.ts";
-import { i32, u32, u8 } from "../types.ts";
+import { f32, i32, u32, u8 } from "../types.ts";
 
 `,
   );
