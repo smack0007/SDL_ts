@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "lib": ["deno.window", "deno.unstable"]
+    "lib": [
+      "deno.window",
+      "deno.unstable"
+    ]
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"],
-      "include": ["explicit-function-return-type"]
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "explicit-function-return-type"
+      ]
     }
   },
   "fmt": {
@@ -16,7 +23,9 @@
     }
   },
   "tasks": {
-    "build": "deno compile --unstable --allow-ffi --output ./bin/hello.exe ./src/main.ts",
+    "build": "cd ./scripts && deno run --allow-read --allow-run ./build.ts",
+    "build:ci": "deno task build --ci",
+    "check": "deno check --import-map ./imports.deno.json",
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-read --allow-write ./codegen.ts",
     "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write --allow-run ./codegen-scraper.ts > ../tmp/codegen-scraper.out",
     "run-doom-fire": "cd ./examples/doom-fire && deno run --unstable --allow-ffi --import-map ./../../imports.deno.json ./main.ts",

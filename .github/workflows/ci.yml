@@ -1,0 +1,22 @@
+name: CI
+
+on: push
+
+env:
+  GITHUB_USER: smack0007
+  GITHUB_REPO: smack0007/sdl2-ts
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deno Setup
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: "1.25.1"
+
+      - name: Build
+        run: |
+          deno task build:ci
