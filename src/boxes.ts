@@ -10,15 +10,17 @@ import { NumberStruct, PointerStruct } from "./_structs.ts";
 import { sizeof } from "./_utils.ts";
 
 export function getBoxableValueConsturctor(
-  _constructor: BoxableValueConstructor,
+  _constructor: typeof Number | BoxableValueConstructor,
 ): AllocatableStructConstructor<AllocatableStruct> {
+  let result = _constructor as unknown as AllocatableStructConstructor<AllocatableStruct>;
+  
   if (_constructor === Number) {
-    _constructor = NumberStruct;
+    result = NumberStruct;
   } else if (_constructor === Pointer) {
-    _constructor = PointerStruct;
+    result = PointerStruct;
   }
 
-  return _constructor as AllocatableStructConstructor<AllocatableStruct>;
+  return result;
 }
 
 export class BoxedValue<T extends BoxableValue> {
@@ -31,7 +33,7 @@ export class BoxedValue<T extends BoxableValue> {
     const dataLength = sizeof(_constructor);
 
     this._data = new Uint8Array(dataLength);
-    this._value = new realConstructor(this._data) as T;
+    this._value = realConstructor.of(this._data) as T;
   }
   
   public static isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
@@ -69,7 +71,7 @@ export class BoxedArray<T extends BoxableValue> {
 
     for (let i = 0; i < length; i++) {
       const dataOffset = new Uint8Array(this._data.buffer, this.sizeOfElementInBytes * i, this.sizeOfElementInBytes);
-      this.array[i] = new realConstructor(dataOffset) as T;
+      this.array[i] = realConstructor.of(dataOffset) as T;
     }
   }
 

@@ -5,14 +5,6 @@ import { Pointer } from "./pointers.ts";
 
 // Simple types
 
-export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Struct;
-
-export type BoxableValueConstructor =
-  | typeof Number
-  | typeof Pointer
-  | (new () => Struct)
-  | AllocatableStructConstructor<AllocatableStruct>;
-
 export type Constructor<T> = (...args: unknown[]) => T;
 
 export enum i8 {}
@@ -71,13 +63,28 @@ export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 // Complex types
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
-  new (data: Uint8Array): T;
   SIZE_IN_BYTES: number;
+  of(data: Uint8Array): T;
 };
 
 export interface AllocatableStruct extends Struct {}
 
+export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Struct;
+
+export type BoxableValueConstructor =
+  | typeof Number
+  | typeof Pointer
+  | {
+    SIZE_IN_BYTES: number;
+    of(data: PointerValue<Struct>): Struct;
+  };
+
 // TODO: Move this to it's own file as it's not generic and SDL specific.
 export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
+
+export interface StructConstructor<T extends Struct> {
+  SIZE_IN_BYTES: number;
+  of(data: PointerValue<T>): T;
+}
 
 export interface Struct {}

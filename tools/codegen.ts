@@ -128,13 +128,14 @@ function isStruct(member: CodeGenStructMember): boolean {
 
 async function writeEvents(): Promise<void> {
   const lines = createLines();
-  lines.push("// deno-lint-ignore-file no-unused-vars");
-  lines.push("");
 
-  lines.push(`import { PlatformPointer, PlatformDataView } from "platform";`);
-  lines.push(`import { Keysym } from "./structs.ts";`);
-  lines.push(`import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8, Pointer } from "../types.ts";`);
-  lines.push("");
+  lines.push(
+    `import { PlatformDataView } from "platform";
+import { Keysym } from "./structs.ts";
+import { i32, u32, u8 } from "../types.ts";
+
+`,
+  );
 
   for (const [eventName, event] of Object.entries(events)) {
     const className = shortenName(eventName);
@@ -155,7 +156,7 @@ async function writeEvents(): Promise<void> {
       const memberTypeName = shortenName(member.nativeType);
 
       lines.push(
-        `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES));`,
+        `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`,
       );
     }
 
