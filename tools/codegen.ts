@@ -604,6 +604,7 @@ import { Symbols, symbols } from "./_symbols.ts";
   library: Deno.DynamicLibrary<Symbols>;
 
   // TODO: In order to use the correct types we'll have to do a bunch of casts.
+  // deno-lint-ignore no-explicit-any
   symbols: any;
   // symbols: Deno.DynamicLibrary<Symbols>["symbols"];
 }
