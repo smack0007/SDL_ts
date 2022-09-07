@@ -587,16 +587,17 @@ async function writeFunctions(): Promise<void> {
   const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
 
   lines.push(
-    `import { fromPlatformString, NULL_POINTER, PlatformDataView, PlatformPointer, toPlatformString } from "platform";`,
+    `import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
+import { BoxedPointer } from "../boxes.ts";
+import { Pointer, PointerTo } from "../pointers.ts";
+import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
+import { Event } from "./events.ts";
+import { RWMode } from "./types.ts";
+import { Symbols, symbols } from "./_symbols.ts";
+`,
   );
-  lines.push(`import { Event } from "./events.ts";`);
+
   lines.push(`import { ${structNames} } from "./structs.ts";`);
-  lines.push(`import { Symbols, symbols } from "./_symbols.ts";`);
-  lines.push(
-    `import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";`,
-  );
-  lines.push(`import { BoxedPointer, BoxedValue } from "../boxes.ts";`);
-  lines.push(`import { Pointer, PointerTo } from "../pointers.ts";`);
   lines.push("");
 
   lines.push(`interface SDLContext {

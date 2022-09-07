@@ -2,8 +2,14 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, NULL_POINTER, PlatformDataView, PlatformPointer, toPlatformString } from "platform";
+import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
+import { BoxedPointer } from "../boxes.ts";
+import { Pointer, PointerTo } from "../pointers.ts";
+import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { Event } from "./events.ts";
+import { RWMode } from "./types.ts";
+import { Symbols, symbols } from "./_symbols.ts";
+
 import {
   BlitMap,
   Keysym,
@@ -17,10 +23,6 @@ import {
   Texture,
   Window,
 } from "./structs.ts";
-import { Symbols, symbols } from "./_symbols.ts";
-import { f32, f64, i16, i32, i64, i8, PointerValue, RWMode, TypedArray, u16, u32, u64, u8 } from "../types.ts";
-import { BoxedPointer, BoxedValue } from "../boxes.ts";
-import { Pointer, PointerTo } from "../pointers.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;

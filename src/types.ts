@@ -1,8 +1,6 @@
 // deno-lint-ignore-file no-empty-enum no-empty-interface
 // This file is for types exposed as part of the API.
 
-import { Pointer } from "./pointers.ts";
-
 // Simple types
 
 export type Constructor<T> = (...args: unknown[]) => T;
@@ -73,9 +71,6 @@ export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Stru
 
 // deno-lint-ignore no-explicit-any
 export type BoxableValueConstructor<T extends BoxableValue> = new (...args: any[]) => T;
-
-// TODO: Move this to it's own file as it's not generic and SDL specific.
-export type RWMode = "a" | "a+" | "r" | "r+" | "w" | "w+" | "ab" | "ab+" | "rb" | "rb+" | "wb" | "wb+";
 
 export interface StructConstructor<T extends Struct> {
   SIZE_IN_BYTES: number;
