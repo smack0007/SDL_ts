@@ -1,31 +1,4 @@
-import { NativeType } from "./codegen-types.ts";
-
-export interface CodeGenStructMember {
-  // SDL type.
-  nativeType: string;
-
-  // FFI type.
-  type: NativeType;
-
-  // Offset of the member in bytes.
-  offset: number;
-}
-
-export interface CodeGenStructType {
-  // Indicates whether the struct can be allocated in
-  // in script. If false it will only be allocated by SDL.
-  allocatable?: boolean;
-
-  // Indicates whether the struct can be written to in
-  // in script. If false it will only be written to by SDL.
-  writable?: boolean;
-
-  // Size of the struct in bytes.
-  size: number;
-
-  // Struct members.
-  members: Record<string, CodeGenStructMember>;
-}
+import { CodeGenStructs } from "../types.ts";
 
 export const opaqueStructs: string[] = [
   // TODO: Figure out how to implement SDL_RWops in deno.
@@ -37,7 +10,7 @@ export const opaqueStructs: string[] = [
   "SDL_Window",
 ];
 
-export const structs: Record<string, CodeGenStructType> = {
+export const structs: CodeGenStructs = {
   SDL_Keysym: {
     size: 16,
     members: {

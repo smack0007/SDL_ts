@@ -1,36 +1,6 @@
-import { NativeType } from "./codegen-types.ts";
+import { CodeGenFunctionImplementations, CodeGenFunctions } from "../types.ts";
 
-export interface CodeGenFunctionParam {
-  // SDL type.
-  nativeType: string;
-
-  // FFI type.
-  type: NativeType;
-
-  // Can the parameter be null.
-  nullable?: boolean;
-
-  // If set this type will be used as the script type.
-  overrideType?: string;
-}
-
-export interface CodeGenFunction {
-  // Some functions are (i.e. SDL_BlitSurface) are just
-  // macros that proxy to another name.
-  symbolName?: string;
-
-  parameters: Record<string, CodeGenFunctionParam>;
-
-  result: {
-    nativeType: string;
-    type: NativeType;
-
-    // If set this type will be used as the script type.
-    overrideType?: string;
-  };
-}
-
-export const functions: Record<string, CodeGenFunction> = {
+export const functions: CodeGenFunctions = {
   SDL_BlitScaled: {
     symbolName: "SDL_UpperBlitScaled",
     parameters: {
@@ -982,7 +952,7 @@ export const functions: Record<string, CodeGenFunction> = {
   },
 };
 
-export const functionImplementations: Record<string, string> = {
+export const functionImplementations: CodeGenFunctionImplementations = {
   SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
   // TODO: Improve this logic.
   if (!libraryPath) {

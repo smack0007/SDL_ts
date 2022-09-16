@@ -1,12 +1,6 @@
-import { CodeGenStructType } from "./codegen-structs.ts";
+import { CodeGenEvents } from "../types.ts";
 
-export interface CodeGenEventType extends CodeGenStructType {
-  // The name struct has in the event union in cases
-  // where the name can simply not be infered (i.e. KeyboardEvent).
-  unionName?: string;
-}
-
-export const events: Record<string, CodeGenEventType> = {
+export const events: CodeGenEvents = {
   SDL_CommonEvent: {
     size: 8,
     members: {
