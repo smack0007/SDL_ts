@@ -1,4 +1,6 @@
-export const enums: Record<string, Record<string, string>> = {
+import { CodeGenEnums } from "../types.ts";
+
+export const enums: CodeGenEnums = {
   SDL_ArrayOrder: {
     SDL_ARRAYORDER_NONE: "0",
     SDL_ARRAYORDER_RGB: "1",

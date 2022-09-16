@@ -56,10 +56,14 @@ async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
 }
 
-export async function writeEnums(filePath: string, enums: CodeGenEnums): Promise<void> {
+export async function writeEnums(
+  filePath: string,
+  enums: CodeGenEnums,
+  imports: string[],
+): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { SCANCODE_TO_KEYCODE } from "./keycode.ts";`);
+  lines.push(...imports);
   lines.push("");
 
   for (const enumName of Object.keys(enums)) {
