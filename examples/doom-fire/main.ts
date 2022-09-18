@@ -131,7 +131,6 @@ function main(): number {
 
     draw(firePixels);
 
-    SDL.FillRect(frontBuffer, null, 0x00000000);
     SDL.BlitScaled(denoSurface, null, frontBuffer, null);
     SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect);
     SDL.UpdateWindowSurface(window);
