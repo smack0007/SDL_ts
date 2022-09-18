@@ -226,6 +226,7 @@ function outputEnum(capture: string): void {
 
   writePrintF("/* enum */");
   writePrintF(`${enumName}: {`);
+  writePrintF(`\tvalues: {`);
 
   for (let i = 0; i < parts.length - 1; i++) {
     const key = parts[i];
@@ -247,12 +248,13 @@ function outputEnum(capture: string): void {
 
     if (value !== null) {
       value = value.replaceAll("\\", "\\\\");
-      writePrintF(`\t${key}: "${value}",`);
+      writePrintF(`\t\t${key}: "${value}",`);
     } else {
-      writePrintF(`\t${key}: "%d",`, key);
+      writePrintF(`\t\t${key}: "%d",`, key);
     }
   }
 
+  writePrintF(`\t}`);
   writePrintF("},");
 }
 

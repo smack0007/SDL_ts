@@ -13,7 +13,11 @@ export type NativeType =
   | "u64"
   | "void";
 
-export type CodeGenEnums = Record<string, Record<string, string>>;
+export type CodeGenEnums = Record<string, CodeGenEnum>;
+
+export interface CodeGenEnum {
+  values: Record<string, string>;
+}
 
 export type CodeGenEvents = Record<string, CodeGenEventType>;
 

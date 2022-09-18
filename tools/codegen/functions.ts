@@ -69,8 +69,8 @@ export async function writeEnums(
   for (const enumName of Object.keys(enums)) {
     const shortEnumName = shortenName(enumName);
     lines.push(`// ${shortEnumName}`);
-    for (const key of Object.keys(enums[enumName])) {
-      lines.push(`export const ${shortenName(key)} = ${stripSDLPrefixes(enums[enumName][key])}`);
+    for (const key of Object.keys(enums[enumName].values)) {
+      lines.push(`export const ${shortenName(key)} = ${stripSDLPrefixes(enums[enumName].values[key])}`);
     }
     lines.push("");
   }
