@@ -1,6 +1,6 @@
-import { CodeGenStructs } from "../types.ts";
+import { CodeGenOpaqueStructs, CodeGenStructs } from "../types.ts";
 
-export const opaqueStructs: string[] = [
+export const opaqueStructs: CodeGenOpaqueStructs = [
   // TODO: Figure out how to implement SDL_RWops in deno.
   "SDL_BlitMap",
   "SDL_PixelFormat", // TODO: Implement PixelFormat struct.

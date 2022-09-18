@@ -318,4 +318,4 @@ export const events: CodeGenEvents = {
       },
     },
   },
-};
+} as const;

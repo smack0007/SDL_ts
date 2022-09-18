@@ -1,5 +1,5 @@
-import { SDL } from "../../mod.ts";
-import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
+import { IMG, SDL } from "../../mod.ts";
+import { ASSETS_PATH, joinPath, SDL_IMAGE_LIB_PATH, SDL_LIB_PATH } from "../paths.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -50,6 +50,7 @@ const FIRE_COLORS = [
 
 function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
+  IMG.Init(IMG.INIT_PNG, SDL_IMAGE_LIB_PATH);
 
   const window = SDL.CreateWindow(
     "Doom Fire",
@@ -72,12 +73,21 @@ function main(): number {
     return 1;
   }
 
-  const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
+  const denoSurfaceUnoptimized = IMG.Load(joinPath(ASSETS_PATH, "jurassicDeno.png"));
 
-  if (denoSurface == null) {
-    console.error("Failed to load jurassicDeno.bmp.");
+  if (denoSurfaceUnoptimized == null) {
+    console.error("Failed to load jurassicDeno.png.");
     return 1;
   }
+
+  const denoSurface = SDL.ConvertSurface(denoSurfaceUnoptimized, frontBuffer.format, 0);
+
+  if (denoSurface == null) {
+    console.error("Failed to convert surface format of jurassicDeno.png.");
+    return 1;
+  }
+
+  SDL.FreeSurface(denoSurfaceUnoptimized);
 
   const firePixels = new Uint32Array(FIRE_WIDTH * FIRE_HEIGHT);
   const fireSurface = SDL.CreateRGBSurfaceFrom(
@@ -132,6 +142,8 @@ function main(): number {
   SDL.FreeSurface(denoSurface);
   SDL.FreeSurface(fireSurface);
   SDL.DestroyWindow(window);
+
+  IMG.Quit();
   SDL.Quit();
 
   return 0;

@@ -6,8 +6,6 @@ import { fromPlatformString, PlatformPointer, toPlatformString } from "platform"
 import { BoxedPointer } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
-import { Event } from "./events.ts";
-import { RWMode } from "./types.ts";
 import { Symbols, symbols } from "./_symbols.ts";
 
 import {
@@ -23,6 +21,9 @@ import {
   Texture,
   Window,
 } from "./structs.ts";
+
+import { Event } from "./events.ts";
+import { RWMode } from "./types.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -68,6 +69,18 @@ export function BlitSurface(
     Pointer.of(dst),
     Pointer.of(dstrect),
   ) as i32;
+}
+
+export function ConvertSurface(
+  src: PointerTo<Surface>,
+  fmt: PointerTo<PixelFormat>,
+  flags: u32,
+): Surface | null {
+  return Surface.of(context.symbols.SDL_ConvertSurface(
+    Pointer.of(src),
+    Pointer.of(fmt),
+    flags,
+  ) as PointerValue<Surface>);
 }
 
 export function CreateRenderer(

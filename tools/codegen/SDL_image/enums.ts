@@ -11,4 +11,4 @@ export const enums: CodeGenEnums = {
       IMG_INIT_AVIF: "0x00000020",
     },
   },
-};
+} as const;

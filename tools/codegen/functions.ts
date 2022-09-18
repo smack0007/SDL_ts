@@ -608,25 +608,32 @@ export async function writeFunctions(
   functionImplementations: CodeGenFunctionImplementations,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  const structNames = Object.keys(structs).concat(opaqueStructs).map(stripSDLPrefixes).join(", ");
+  const structNames = Object.entries(structs)
+    .filter((x) => !x[1].doNotImport)
+    .map((x) => x[0])
+    .concat(opaqueStructs)
+    .map(stripSDLPrefixes)
+    .join(", ");
 
   lines.push(
     `import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
 import { BoxedPointer } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
-import { Event } from "./events.ts";
-import { RWMode } from "./types.ts";
 import { Symbols, symbols } from "./_symbols.ts";
 `,
   );
 
   lines.push(`import { ${structNames} } from "./structs.ts";`);
+  lines.push("");
+
+  lines.push(...imports);
   lines.push("");
 
   lines.push(`interface SDLContext {

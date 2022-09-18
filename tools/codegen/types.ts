@@ -79,6 +79,9 @@ export interface CodeGenStruct {
 
   // Struct members.
   members: Record<string, CodeGenStructMember>;
+
+  // Used when including structs from different libraries.
+  doNotImport?: boolean;
 }
 
 export interface CodeGenStructMember {

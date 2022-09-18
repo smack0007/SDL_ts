@@ -739,4 +739,4 @@ export const enums: CodeGenEnums = {
       SDL_WINDOWPOS_CENTERED: "0x2FFF0000",
     },
   },
-};
+} as const;

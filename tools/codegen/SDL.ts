@@ -12,5 +12,8 @@ export async function codegenSDL(): Promise<void> {
   await writeEvents(`${SDL_PATH}/events.ts`, events, structs, opaqueStructs);
   await writeStructs(`${SDL_PATH}/structs.ts`, structs, opaqueStructs);
   await writeSymbols(`${SDL_PATH}/_symbols.ts`, functions);
-  await writeFunctions(`${SDL_PATH}/functions.ts`, functions, functionImplementations, structs, opaqueStructs);
+  await writeFunctions(`${SDL_PATH}/functions.ts`, functions, functionImplementations, structs, opaqueStructs, [
+    `import { Event } from "./events.ts";`,
+`import { RWMode } from "./types.ts";`
+  ]);
 }

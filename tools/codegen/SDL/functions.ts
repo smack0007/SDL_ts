@@ -57,6 +57,27 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_ConvertSurface: {
+    parameters: {
+      src: {
+        nativeType: "SDL_Surface*",
+        type: "pointer",
+      },
+      fmt: {
+        nativeType: "SDL_PixelFormat*",
+        type: "pointer",
+      },
+      flags: {
+        nativeType: "Uint32",
+        type: "u32",
+      },
+    },
+    result: {
+      nativeType: "SDL_Surface*",
+      type: "pointer",
+    },
+  },
+
   SDL_CreateRenderer: {
     parameters: {
       window: {
@@ -950,7 +971,7 @@ export const functions: CodeGenFunctions = {
       type: "i32",
     },
   },
-};
+} as const;
 
 export const functionImplementations: CodeGenFunctionImplementations = {
   SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
