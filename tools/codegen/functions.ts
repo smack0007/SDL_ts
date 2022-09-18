@@ -35,10 +35,6 @@ function createLines(): string[] {
   ];
 }
 
-function shortenName(name: string): string {
-  return name.startsWith("SDL_") ? name.substring("SDL_".length) : name;
-}
-
 function removePointerPostfix(name: string): string {
   while (name.endsWith("*")) {
     name = name.substring(0, name.length - 1);
@@ -48,7 +44,19 @@ function removePointerPostfix(name: string): string {
 }
 
 function stripSDLPrefixes(value: string): string {
-  return value.replaceAll("SDL_", "");
+  if (value.startsWith("SDL_")) {
+    value = value.substring("SDL_".length);
+  }
+
+  if (value.indexOf("SDL_") !== 0) {
+    value = value.replaceAll("SDL_", "");
+  }
+
+  if (value.startsWith("IMG_")) {
+    return value.substring("IMG_".length);
+  }
+
+  return value;
 }
 
 async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
@@ -67,10 +75,10 @@ export async function writeEnums(
   lines.push("");
 
   for (const enumName of Object.keys(enums)) {
-    const shortEnumName = shortenName(enumName);
+    const shortEnumName = stripSDLPrefixes(enumName);
     lines.push(`// ${shortEnumName}`);
     for (const key of Object.keys(enums[enumName].values)) {
-      lines.push(`export const ${shortenName(key)} = ${stripSDLPrefixes(enums[enumName].values[key])}`);
+      lines.push(`export const ${stripSDLPrefixes(key)} = ${stripSDLPrefixes(enums[enumName].values[key])}`);
     }
     lines.push("");
   }
@@ -101,7 +109,7 @@ function mapStructMemberType(member: CodeGenStructMember): string {
       return "Deno.PointerValue";
 
     case "struct":
-      return shortenName(member.nativeType);
+      return stripSDLPrefixes(member.nativeType);
   }
 
   return member.type;
@@ -142,14 +150,14 @@ import { f32, i32, u32, u8 } from "../types.ts";
   );
 
   for (const [eventName, event] of Object.entries(events)) {
-    const className = shortenName(eventName);
+    const className = stripSDLPrefixes(eventName);
     lines.push(`export class ${className} {`);
 
     const subStructMembers = Object.entries(event.members).filter((x) => isStruct(structs, opaqueStructs, x[1]));
 
     if (subStructMembers.length > 0) {
       for (const [memberName, member] of subStructMembers) {
-        lines.push(`private _${memberName}: ${shortenName(member.nativeType)}`);
+        lines.push(`private _${memberName}: ${stripSDLPrefixes(member.nativeType)}`);
       }
       lines.push("");
     }
@@ -157,7 +165,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
     lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
-      const memberTypeName = shortenName(member.nativeType);
+      const memberTypeName = stripSDLPrefixes(member.nativeType);
 
       lines.push(
         `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`,
@@ -209,9 +217,9 @@ import { f32, i32, u32, u8 } from "../types.ts";
 `);
 
   for (const [eventName, event] of Object.entries(events)) {
-    const propName = event.unionName ?? shortenName(eventName).slice(0, -"Event".length).toLowerCase();
+    const propName = event.unionName ?? stripSDLPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
 
-    lines.push(`public readonly ${propName} = new ${shortenName(eventName)}(this._data, this._view);`);
+    lines.push(`public readonly ${propName} = new ${stripSDLPrefixes(eventName)}(this._data, this._view);`);
     lines.push("");
   }
 
@@ -239,7 +247,7 @@ export async function writeStructs(
   lines.push("");
 
   for (const structName of opaqueStructs) {
-    const className = shortenName(structName);
+    const className = stripSDLPrefixes(structName);
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
   public readonly _data!: PointerValue<${className}>;
@@ -260,7 +268,7 @@ export async function writeStructs(
   lines.push("");
 
   for (const [structName, struct] of Object.entries(structs)) {
-    const className = shortenName(structName);
+    const className = stripSDLPrefixes(structName);
 
     const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
@@ -351,10 +359,10 @@ export async function writeStructs(
       if (memberType === "string") {
         readOp += `fromPlatformString(`;
       } else if (member.type === "pointer") {
-        const subStructName = shortenName(removePointerPostfix(member.nativeType));
+        const subStructName = stripSDLPrefixes(removePointerPostfix(member.nativeType));
         memberType = `PointerValue<${subStructName}>`;
       } else if (member.type === "struct") {
-        memberStructName = shortenName(member.nativeType);
+        memberStructName = stripSDLPrefixes(member.nativeType);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
         length = structs[member.nativeType].size;
@@ -605,7 +613,7 @@ export async function writeFunctions(
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  const structNames = Object.keys(structs).concat(opaqueStructs).map(shortenName).join(", ");
+  const structNames = Object.keys(structs).concat(opaqueStructs).map(stripSDLPrefixes).join(", ");
 
   lines.push(
     `import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
@@ -649,7 +657,7 @@ const context: SDLContext = {
 
     const returnType = mapFunctionReturnType(structs, opaqueStructs, func.result);
 
-    lines.push(`export function ${shortenName(funcName)}(`);
+    lines.push(`export function ${stripSDLPrefixes(funcName)}(`);
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
       lines.push(`${paramName}: ${mapFunctionParamType(structs, opaqueStructs, param)},`);
