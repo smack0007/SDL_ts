@@ -124,6 +124,8 @@ function main(): number {
     firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] = FIRE_COLORS[FIRE_COLORS.length - 1];
   }
 
+  let lastFrame = SDL.GetTicks64();
+
   const event = new SDL.Event();
   let done = false;
   while (!done) {
@@ -138,13 +140,18 @@ function main(): number {
       break;
     }
 
-    draw(firePixels);
+    const current = SDL.GetTicks64();
+    const elapsed = current - lastFrame;
 
-    SDL.BlitScaled(denoSurface, null, frontBuffer, null);
-    SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect);
-    SDL.UpdateWindowSurface(window);
+    if (elapsed >= 16) {
+      update(firePixels);
 
-    SDL.Delay(16);
+      SDL.BlitScaled(denoSurface, null, frontBuffer, null);
+      SDL.BlitScaled(fireSurface, null, frontBuffer, flamesRect);
+      SDL.UpdateWindowSurface(window);
+
+      lastFrame = current;
+    }
   }
 
   SDL.FreeSurface(denoSurface);
@@ -157,7 +164,7 @@ function main(): number {
   return 0;
 }
 
-function draw(firePixels: Uint32Array): void {
+function update(firePixels: Uint32Array): void {
   for (let x = 0; x < FIRE_WIDTH; x += 1) {
     for (let y = 1; y < FIRE_HEIGHT; y += 1) {
       spreadFire(firePixels, y * FIRE_WIDTH + x);
