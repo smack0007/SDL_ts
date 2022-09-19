@@ -151,6 +151,7 @@ function main(): number {
       SDL.UpdateWindowSurface(window);
 
       lastFrame = current;
+      SDL.Delay(1);
     }
   }
 
