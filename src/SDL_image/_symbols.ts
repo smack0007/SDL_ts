@@ -2,6 +2,7 @@
 
 export interface Symbols extends Deno.ForeignLibraryInterface {
   IMG_Init: Deno.ForeignFunction;
+  IMG_Linked_Version: Deno.ForeignFunction;
   IMG_Load: Deno.ForeignFunction;
   IMG_Quit: Deno.ForeignFunction;
 }
@@ -12,6 +13,10 @@ export const symbols: Symbols = {
       "i32", /* int flags */
     ],
     result: "i32", /* int */
+  },
+  IMG_Linked_Version: {
+    parameters: [],
+    result: "pointer", /* SDL_version* */
   },
   IMG_Load: {
     parameters: [

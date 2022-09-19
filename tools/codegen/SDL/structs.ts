@@ -187,4 +187,26 @@ export const structs: CodeGenStructs = {
       },
     },
   },
+
+  SDL_version: {
+    allocatable: true,
+    size: 3,
+    members: {
+      major: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 0,
+      },
+      minor: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 1,
+      },
+      patch: {
+        nativeType: "Uint8",
+        type: "u8",
+        offset: 2,
+      },
+    },
+  },
 } as const;

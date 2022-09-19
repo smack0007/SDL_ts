@@ -14,6 +14,14 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  IMG_Linked_Version: {
+    parameters: {},
+    result: {
+      nativeType: "SDL_version*",
+      type: "pointer",
+    },
+  },
+
   IMG_Load: {
     parameters: {
       file: {

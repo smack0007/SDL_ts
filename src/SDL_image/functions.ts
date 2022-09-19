@@ -10,7 +10,7 @@ import { Symbols, symbols } from "./_symbols.ts";
 
 import {} from "./structs.ts";
 
-import { Surface } from "../SDL/structs.ts";
+import { Surface, version } from "../SDL/structs.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -40,6 +40,10 @@ export function Init(flags: number, libraryPath?: string): number {
   context.symbols = context.library.symbols;
 
   return context.symbols.IMG_Init(flags) as number;
+}
+
+export function Linked_Version(): version | null {
+  return version.of(context.symbols.IMG_Linked_Version() as PointerValue<version>);
 }
 
 export function Load(

@@ -371,3 +371,42 @@ export class Surface implements Struct {
     return this._view.getInt32(88);
   }
 }
+
+export class version implements AllocatableStruct {
+  public static SIZE_IN_BYTES = 3;
+
+  public readonly _data!: Uint8Array | PointerValue<version>;
+  private readonly _view!: PlatformDataView<version>;
+
+  constructor(command?: StructCommand) {
+    if (command === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+
+    this._data = new Uint8Array(version.SIZE_IN_BYTES);
+    this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<version>);
+  }
+
+  public static of(data: Uint8Array | PointerValue<version>): version | null {
+    if (Pointer.isNullPointer(data)) {
+      return null;
+    }
+
+    const struct = (new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>);
+    struct._data = data;
+    struct._view = new PlatformDataView(data);
+    return struct as unknown as version;
+  }
+
+  public get major(): u8 {
+    return this._view.getUint8(0);
+  }
+
+  public get minor(): u8 {
+    return this._view.getUint8(1);
+  }
+
+  public get patch(): u8 {
+    return this._view.getUint8(2);
+  }
+}

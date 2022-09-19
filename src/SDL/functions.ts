@@ -19,6 +19,7 @@ import {
   RWops,
   Surface,
   Texture,
+  version,
   Window,
 } from "./structs.ts";
 
@@ -269,6 +270,10 @@ export function GetRendererInfo(
   ) as i32;
 }
 
+export function GetRevision(): string {
+  return fromPlatformString(context.symbols.SDL_GetRevision() as PointerValue<unknown>);
+}
+
 export function GetScancodeFromKey(
   key: u32,
 ): u32 {
@@ -295,6 +300,14 @@ export function GetTicks(): u32 {
 
 export function GetTicks64(): u64 {
   return context.symbols.SDL_GetTicks64() as u64;
+}
+
+export function GetVersion(
+  ver: PointerTo<version>,
+): void {
+  context.symbols.SDL_GetVersion(
+    Pointer.of(ver),
+  );
 }
 
 export function GetWindowSurface(

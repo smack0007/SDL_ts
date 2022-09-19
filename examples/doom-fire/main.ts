@@ -52,6 +52,15 @@ function main(): number {
   SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
   IMG.Init(IMG.INIT_PNG, SDL_IMAGE_LIB_PATH);
 
+  const version = IMG.Linked_Version();
+
+  if (version == null) {
+    console.error("Failed to get SDL_image version.");
+    return 1;
+  }
+
+  console.info(`SDL_image Version: ${version.major}.${version.minor}.${version.patch}`);
+
   const window = SDL.CreateWindow(
     "Doom Fire",
     SDL.WINDOWPOS_CENTERED,

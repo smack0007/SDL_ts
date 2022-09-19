@@ -4,6 +4,12 @@ import { SDL_LIB_PATH } from "../paths.ts";
 SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
 
 console.info("SDL Initialized.");
+
+const version = new SDL.version();
+SDL.GetVersion(version);
+console.info(`SDL Version: ${version.major}.${version.minor}.${version.patch}`);
+console.info(`SDL Revision: ${SDL.GetRevision()}`);
+
 console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
 const window = SDL.CreateWindow(

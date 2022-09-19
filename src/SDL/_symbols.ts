@@ -20,11 +20,13 @@ export interface Symbols extends Deno.ForeignLibraryInterface {
   SDL_GetError: Deno.ForeignFunction;
   SDL_GetKeyboardState: Deno.ForeignFunction;
   SDL_GetRendererInfo: Deno.ForeignFunction;
+  SDL_GetRevision: Deno.ForeignFunction;
   SDL_GetScancodeFromKey: Deno.ForeignFunction;
   SDL_GetScancodeName: Deno.ForeignFunction;
   SDL_GetSystemRAM: Deno.ForeignFunction;
   SDL_GetTicks: Deno.ForeignFunction;
   SDL_GetTicks64: Deno.ForeignFunction;
+  SDL_GetVersion: Deno.ForeignFunction;
   SDL_GetWindowSurface: Deno.ForeignFunction;
   SDL_Init: Deno.ForeignFunction;
   SDL_LoadBMP_RW: Deno.ForeignFunction;
@@ -207,6 +209,10 @@ export const symbols: Symbols = {
     ],
     result: "i32", /* int */
   },
+  SDL_GetRevision: {
+    parameters: [],
+    result: "pointer", /* char* */
+  },
   SDL_GetScancodeFromKey: {
     parameters: [
       "u32", /* SDL_Keycode key */
@@ -230,6 +236,12 @@ export const symbols: Symbols = {
   SDL_GetTicks64: {
     parameters: [],
     result: "u64", /* Uint64 */
+  },
+  SDL_GetVersion: {
+    parameters: [
+      "pointer", /* SDL_version* ver */
+    ],
+    result: "void", /* void */
   },
   SDL_GetWindowSurface: {
     parameters: [

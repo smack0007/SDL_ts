@@ -408,6 +408,15 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_GetRevision: {
+    parameters: {
+    },
+    result: {
+      nativeType: "char*",
+      type: "pointer",
+    },
+  },
+
   SDL_GetScancodeFromKey: {
     parameters: {
       key: {
@@ -455,6 +464,19 @@ export const functions: CodeGenFunctions = {
     result: {
       nativeType: "Uint64",
       type: "u64",
+    },
+  },
+
+  SDL_GetVersion: {
+    parameters: {
+      ver: {
+        nativeType: "SDL_version*",
+        type: "pointer",
+      },
+    },
+    result: {
+      nativeType: "void",
+      type: "void",
     },
   },
 

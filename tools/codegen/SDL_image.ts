@@ -20,11 +20,15 @@ export async function codegenSDL_image(): Promise<void> {
         ...SDL_structs["SDL_Surface"],
         doNotImport: true,
       },
+      SDL_version: {
+        ...SDL_structs["SDL_version"],
+        doNotImport: true,
+      },
       ...structs,
     },
     opaqueStructs,
     [
-      `import { Surface } from "../SDL/structs.ts";`,
+      `import { Surface, version } from "../SDL/structs.ts";`,
     ],
   );
 }
