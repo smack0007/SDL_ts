@@ -11,9 +11,9 @@ export async function codegenSDL(): Promise<void> {
   await writeEnums(`${SDL_PATH}/enums.ts`, enums, [`import { SCANCODE_TO_KEYCODE } from "./keycode.ts";`]);
   await writeEvents(`${SDL_PATH}/events.ts`, events, structs, opaqueStructs);
   await writeStructs(`${SDL_PATH}/structs.ts`, structs, opaqueStructs);
-  await writeSymbols(`${SDL_PATH}/_symbols.ts`, functions);
+  await writeSymbols(`${SDL_PATH}/_symbols.ts`, functions, structs, opaqueStructs);
   await writeFunctions(`${SDL_PATH}/functions.ts`, functions, functionImplementations, structs, opaqueStructs, [
     `import { Event } from "./events.ts";`,
-`import { RWMode } from "./types.ts";`
+    `import { RWMode } from "./types.ts";`,
   ]);
 }

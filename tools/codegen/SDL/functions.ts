@@ -5,27 +5,22 @@ export const functions: CodeGenFunctions = {
     symbolName: "SDL_UpperBlitScaled",
     parameters: {
       src: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       srcrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
         nullable: true,
       },
       dst: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       dstrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
         nullable: true,
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
@@ -33,263 +28,212 @@ export const functions: CodeGenFunctions = {
     symbolName: "SDL_UpperBlit",
     parameters: {
       src: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       srcrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
+
         nullable: true,
       },
       dst: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       dstrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
+
         nullable: true,
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_ConvertSurface: {
     parameters: {
       src: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       fmt: {
-        nativeType: "SDL_PixelFormat*",
-        type: "pointer",
+        type: "SDL_PixelFormat*",
       },
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   SDL_CreateRenderer: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
       index: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "SDL_Renderer*",
-      type: "pointer",
+      type: "SDL_Renderer*",
     },
   },
 
   SDL_CreateRGBSurfaceFrom: {
     parameters: {
       pixels: {
-        nativeType: "void*",
-        type: "pointer",
+        type: "void*",
       },
       width: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       height: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       depth: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       pitch: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       Rmask: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       Gmask: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       Bmask: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       Amask: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: {
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       width: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       height: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       depth: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       format: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   SDL_CreateTexture: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       format: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       access: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       w: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       h: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "SDL_Texture*",
-      type: "pointer",
+      type: "SDL_Texture*",
     },
   },
 
   SDL_CreateTextureFromSurface: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       surface: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
     },
     result: {
-      nativeType: "SDL_Texture*",
-      type: "pointer",
+      type: "SDL_Texture*",
     },
   },
 
   SDL_CreateWindow: {
     parameters: {
       title: {
-        nativeType: "char*",
-        type: "pointer",
+        type: "char*",
       },
       x: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       y: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       w: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       h: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "SDL_Window*",
-      type: "pointer",
+      type: "SDL_Window*",
     },
   },
 
   SDL_CreateWindowAndRenderer: {
     parameters: {
       width: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       height: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       window_flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
       window: {
-        nativeType: "SDL_Window**",
-        type: "pointer",
+        type: "SDL_Window**",
       },
       renderer: {
-        nativeType: "SDL_Renderer**",
-        type: "pointer",
+        type: "SDL_Renderer**",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_Delay: {
     parameters: {
       ms: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -297,12 +241,10 @@ export const functions: CodeGenFunctions = {
   SDL_DestroyRenderer: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -310,12 +252,10 @@ export const functions: CodeGenFunctions = {
   SDL_DestroyTexture: {
     parameters: {
       texture: {
-        nativeType: "SDL_Texture*",
-        type: "pointer",
+        type: "SDL_Texture*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -323,12 +263,10 @@ export const functions: CodeGenFunctions = {
   SDL_DestroyWindow: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -336,34 +274,29 @@ export const functions: CodeGenFunctions = {
   SDL_FillRect: {
     parameters: {
       dst: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
       rect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
+
         nullable: true,
       },
       color: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_FreeSurface: {
     parameters: {
       surface: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -371,22 +304,21 @@ export const functions: CodeGenFunctions = {
   SDL_GetError: {
     parameters: {},
     result: {
-      nativeType: "char*",
-      type: "pointer",
+      type: "char*",
     },
   },
 
   SDL_GetKeyboardState: {
     parameters: {
       numkeys: {
-        nativeType: "int*",
-        type: "pointer",
+        type: "int*",
+
         nullable: true,
       },
     },
     result: {
-      nativeType: "Uint8*",
-      type: "pointer",
+      type: "Uint8*",
+
       overrideType: "PointerValue<u8[]>",
     },
   },
@@ -394,88 +326,74 @@ export const functions: CodeGenFunctions = {
   SDL_GetRendererInfo: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       info: {
-        nativeType: "SDL_RendererInfo*",
-        type: "pointer",
+        type: "SDL_RendererInfo*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_GetRevision: {
-    parameters: {
-    },
+    parameters: {},
     result: {
-      nativeType: "char*",
-      type: "pointer",
+      type: "char*",
     },
   },
 
   SDL_GetScancodeFromKey: {
     parameters: {
       key: {
-        nativeType: "SDL_Keycode",
-        type: "u32",
+        type: "SDL_Keycode",
       },
     },
     result: {
-      nativeType: "SDL_Scancode",
-      type: "u32",
+      type: "SDL_Scancode",
     },
   },
 
   SDL_GetScancodeName: {
     parameters: {
       scancode: {
-        nativeType: "SDL_Scancode",
-        type: "u32",
+        type: "SDL_Scancode",
       },
     },
     result: {
-      nativeType: "char*",
-      type: "pointer",
+      type: "char*",
     },
   },
 
   SDL_GetSystemRAM: {
     parameters: {},
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_GetTicks: {
     parameters: {},
     result: {
-      nativeType: "Uint32",
-      type: "u32",
+      type: "Uint32",
     },
   },
 
   SDL_GetTicks64: {
     parameters: {},
     result: {
-      nativeType: "Uint64",
-      type: "u64",
+      type: "Uint64",
     },
   },
 
   SDL_GetVersion: {
     parameters: {
       ver: {
-        nativeType: "SDL_version*",
-        type: "pointer",
+        type: "SDL_version*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -483,122 +401,100 @@ export const functions: CodeGenFunctions = {
   SDL_GetWindowSurface: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   SDL_Init: {
     parameters: {
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_LoadBMP_RW: {
     parameters: {
       src: {
-        nativeType: "SDL_RWops*",
-        type: "pointer",
+        type: "SDL_RWops*",
       },
       freesrc: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   SDL_LockSurface: {
     parameters: {
       surface: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_MapRGB: {
     parameters: {
       format: {
-        nativeType: "SDL_PixelFormat*",
-        type: "pointer",
+        type: "SDL_PixelFormat*",
       },
       r: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       g: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       b: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
     },
     result: {
-      nativeType: "Uint32",
-      type: "u32",
+      type: "Uint32",
     },
   },
 
   SDL_MapRGBA: {
     parameters: {
       format: {
-        nativeType: "SDL_PixelFormat*",
-        type: "pointer",
+        type: "SDL_PixelFormat*",
       },
       r: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       g: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       b: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       a: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
     },
     result: {
-      nativeType: "Uint32",
-      type: "u32",
+      type: "Uint32",
     },
   },
 
   SDL_MaximizeWindow: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -606,12 +502,10 @@ export const functions: CodeGenFunctions = {
   SDL_MinimizeWindow: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -619,20 +513,17 @@ export const functions: CodeGenFunctions = {
   SDL_PollEvent: {
     parameters: {
       event: {
-        nativeType: "SDL_Event*",
-        type: "pointer",
+        type: "SDL_Event*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_Quit: {
     parameters: {},
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -640,270 +531,221 @@ export const functions: CodeGenFunctions = {
   SDL_RenderClear: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderCopy: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       texture: {
-        nativeType: "SDL_Texture*",
-        type: "pointer",
+        type: "SDL_Texture*",
       },
       srcrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
+
         nullable: true,
       },
       dstrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
+
         nullable: true,
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderCopyEx: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       texture: {
-        nativeType: "SDL_Texture*",
-        type: "pointer",
+        type: "SDL_Texture*",
       },
       srcrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
       dstrect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
       angle: {
-        nativeType: "double",
-        type: "f64",
+        type: "double",
       },
       center: {
-        nativeType: "SDL_Point*",
-        type: "pointer",
+        type: "SDL_Point*",
       },
       flip: {
-        nativeType: "SDL_RendererFlip",
-        type: "u32",
+        type: "SDL_RendererFlip",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawLine: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       x1: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       y1: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       x2: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       y2: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawLines: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       points: {
-        nativeType: "SDL_Point*",
-        type: "pointer",
+        type: "SDL_Point*",
       },
       count: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawPoint: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       x: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
       y: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawPoints: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       points: {
-        nativeType: "SDL_Point*",
-        type: "pointer",
+        type: "SDL_Point*",
       },
       count: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawRect: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       rect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderDrawRects: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       rects: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
       count: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderFillRect: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       rect: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderFillRects: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       rects: {
-        nativeType: "SDL_Rect*",
-        type: "pointer",
+        type: "SDL_Rect*",
       },
       count: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderFlush: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_RenderPresent: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -911,12 +753,10 @@ export const functions: CodeGenFunctions = {
   SDL_RestoreWindow: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -924,59 +764,49 @@ export const functions: CodeGenFunctions = {
   SDL_RWFromFile: {
     parameters: {
       file: {
-        nativeType: "char*",
-        type: "pointer",
+        type: "char*",
       },
       mode: {
-        nativeType: "char*",
-        type: "pointer",
+        type: "char*",
+
         overrideType: "RWMode",
       },
     },
     result: {
-      nativeType: "SDL_RWops*",
-      type: "pointer",
+      type: "SDL_RWops*",
     },
   },
 
   SDL_SetRenderDrawColor: {
     parameters: {
       renderer: {
-        nativeType: "SDL_Renderer*",
-        type: "pointer",
+        type: "SDL_Renderer*",
       },
       r: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       g: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       b: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
       a: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   SDL_UnlockSurface: {
     parameters: {
       surface: {
-        nativeType: "SDL_Surface*",
-        type: "pointer",
+        type: "SDL_Surface*",
       },
     },
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
@@ -984,13 +814,11 @@ export const functions: CodeGenFunctions = {
   SDL_UpdateWindowSurface: {
     parameters: {
       window: {
-        nativeType: "SDL_Window*",
-        type: "pointer",
+        type: "SDL_Window*",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 } as const;

@@ -86,33 +86,90 @@ export async function writeEnums(
   await writeLinesToFile(filePath, lines);
 }
 
-function mapStructMemberType(member: CodeGenStructMember): string {
-  switch (member.nativeType) {
+type FFIType =
+  | "f32"
+  | "f64"
+  | "i8"
+  | "i16"
+  | "i32"
+  | "i64"
+  | "pointer"
+  | "struct"
+  | "u8"
+  | "u16"
+  | "u32"
+  | "u64"
+  | "void";
+
+function mapTypeToFFIType(
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+  type: string,
+): FFIType {
+  if (type.endsWith("*")) {
+    return "pointer";
+  }
+
+  if (isStruct(structs, opaqueStructs, type)) {
+    return "struct";
+  }
+
+  switch (type) {
+    case "double":
+      return "f64";
+
+    case "float":
+      return "f32";
+
+    case "int":
+      return "i32";
+
+    case "Sint16":
+      return "i16";
+
+    case "Sint32":
+      return "i32";
+
+    case "Uint8":
+      return "u8";
+
+    case "Uint16":
+      return "u16";
+
+    case "SDL_Keycode":
+    case "SDL_RendererFlip":
+    case "SDL_Scancode":
+    case "Uint32":
+      return "u32";
+
+    case "Uint64":
+      return "u64";
+  }
+
+  return type as FFIType;
+}
+
+function mapStructMemberType(
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+  member: CodeGenStructMember,
+): string {
+  switch (member.type) {
     case "char*":
       return "string";
   }
 
-  switch (member.type) {
-    case "i8":
-    case "u8":
-    case "i16":
-    case "u16":
-    case "i32":
-    case "u32":
-    case "i64":
-    case "u64":
-    case "f32":
-    case "f64":
-      return member.type;
+  const ffiType = mapTypeToFFIType(structs, opaqueStructs, member.type);
 
+  switch (ffiType) {
     case "pointer":
       return "Deno.PointerValue";
 
     case "struct":
-      return stripSDLPrefixes(member.nativeType);
+      return stripSDLPrefixes(member.type);
   }
 
-  return member.type;
+  return ffiType;
 }
 
 function sortStructMembers(
@@ -128,9 +185,9 @@ function sortStructMembers(
   return a[0].localeCompare(b[0]);
 }
 
-function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, member: CodeGenStructMember): boolean {
+function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, type: string): boolean {
   const allStructNames = Object.keys(structs).concat(opaqueStructs);
-  return allStructNames.some((x) => x === member.nativeType);
+  return allStructNames.some((x) => x === type);
 }
 
 export async function writeEvents(
@@ -153,11 +210,11 @@ import { f32, i32, u32, u8 } from "../types.ts";
     const className = stripSDLPrefixes(eventName);
     lines.push(`export class ${className} {`);
 
-    const subStructMembers = Object.entries(event.members).filter((x) => isStruct(structs, opaqueStructs, x[1]));
+    const subStructMembers = Object.entries(event.members).filter((x) => isStruct(structs, opaqueStructs, x[1].type));
 
     if (subStructMembers.length > 0) {
       for (const [memberName, member] of subStructMembers) {
-        lines.push(`private _${memberName}: ${stripSDLPrefixes(member.nativeType)}`);
+        lines.push(`private _${memberName}: ${stripSDLPrefixes(member.type)}`);
       }
       lines.push("");
     }
@@ -165,7 +222,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
     lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
-      const memberTypeName = stripSDLPrefixes(member.nativeType);
+      const memberTypeName = stripSDLPrefixes(member.type);
 
       lines.push(
         `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`,
@@ -182,20 +239,23 @@ import { f32, i32, u32, u8 } from "../types.ts";
         continue;
       }
 
-      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(member)} {`);
+      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(structs, opaqueStructs, member)} {`);
 
-      if (isStruct(structs, opaqueStructs, member)) {
+      if (isStruct(structs, opaqueStructs, member.type)) {
         lines.push(`return this._${memberName};`);
       } else {
-        const PlatformDataViewMethod = PlatformDataViewGetMethods[member.type];
+        const PlatformDataViewMethod =
+          PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
 
         if (PlatformDataViewMethod === undefined) {
-          console.error(`PlatformDataViewMethods is missing ${member.type}.`);
+          console.error(`PlatformDataViewMethods is missing ${mapTypeToFFIType(structs, opaqueStructs, member.type)}.`);
         }
 
         const length = 0;
         lines.push(
-          `\t\treturn this._view.${PlatformDataViewGetMethods[member.type](member.offset, length)};`,
+          `\t\treturn this._view.${
+            PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)](member.offset, length)
+          };`,
         );
       }
       lines.push("\t}");
@@ -296,20 +356,20 @@ export async function writeStructs(
         lines.push(`constructor(props: Partial<${className}>);`);
 
         const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-          `${memberName}: ${mapStructMemberType(member)}`
+          `${memberName}: ${mapStructMemberType(structs, opaqueStructs, member)}`
         ).join(", ");
         lines.push(`constructor(${constructorParams});`);
 
-        const firstMemberType = mapStructMemberType(Object.values(struct.members)[0]);
+        const firstMemberType = mapStructMemberType(structs, opaqueStructs, Object.values(struct.members)[0]);
         const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-          `, _${index + 2}?: ${mapStructMemberType(member)}`
+          `, _${index + 2}?: ${mapStructMemberType(structs, opaqueStructs, member)}`
         ).join("");
         lines.push(
           `constructor(_1?: StructCommand | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
         );
 
         const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-          `this.${memberName} = _${index + 1} as ${mapStructMemberType(member)};`
+          `this.${memberName} = _${index + 1} as ${mapStructMemberType(structs, opaqueStructs, member)};`
         ).join("\n");
 
         lines.push(`
@@ -353,34 +413,38 @@ export async function writeStructs(
       let readOp = "";
       let writeOp = "";
       let length = 0;
-      let memberType = mapStructMemberType(member);
+      let memberType = mapStructMemberType(structs, opaqueStructs, member);
       let memberStructName = "";
 
       if (memberType === "string") {
         readOp += `fromPlatformString(`;
-      } else if (member.type === "pointer") {
-        const subStructName = stripSDLPrefixes(removePointerPostfix(member.nativeType));
+      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "pointer") {
+        const subStructName = stripSDLPrefixes(removePointerPostfix(member.type));
         memberType = `PointerValue<${subStructName}>`;
-      } else if (member.type === "struct") {
-        memberStructName = stripSDLPrefixes(member.nativeType);
+      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct") {
+        memberStructName = stripSDLPrefixes(member.type);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
-        length = structs[member.nativeType].size;
+        length = structs[member.type].size;
       }
 
       lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
-      const getMethod = PlatformDataViewGetMethods[member.type];
+      const getMethod = PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
 
       if (getMethod === undefined) {
-        console.error(`PlatformDataViewGetMethods is missing ${member.type}.`);
+        console.error(
+          `Failure while generating ${structName}: PlatformDataViewGetMethods is missing ${
+            mapTypeToFFIType(structs, opaqueStructs, member.type)
+          }.`,
+        );
       }
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
       if (memberType === "string") {
         readOp += ")";
-      } else if (member.type === "struct") {
+      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct") {
         readOp += `) as ${memberStructName}`;
       }
 
@@ -391,21 +455,26 @@ export async function writeStructs(
 
       if (struct.writable) {
         // TODO: Can we write to pointers / structs?
-        if (member.type === "pointer" || member.type === "struct") {
+        if (
+          mapTypeToFFIType(structs, opaqueStructs, member.type) === "pointer" ||
+          mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct"
+        ) {
           continue;
         }
 
         lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
 
-        const setMethod = PlatformDataViewSetMethods[member.type];
+        const setMethod = PlatformDataViewSetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
 
         if (setMethod === undefined) {
-          console.error(`PlatformDataViewSetMethods is missing ${member.type}.`);
+          console.error(
+            `PlatformDataViewSetMethods is missing ${mapTypeToFFIType(structs, opaqueStructs, member.type)}.`,
+          );
         }
 
         writeOp += `this._view.${setMethod(member.offset, length)}`;
 
-        // if (member.type === "pointer" || member.type === "struct") {
+        // if (mapTypeToFFIType(member.type) === "pointer" || mapTypeToFFIType(member.type) === "struct") {
         //   writeOp += ")";
         // }
 
@@ -423,7 +492,12 @@ export async function writeStructs(
   await writeLinesToFile(filePath, lines);
 }
 
-export async function writeSymbols(filePath: string, functions: CodeGenFunctions): Promise<void> {
+export async function writeSymbols(
+  filePath: string,
+  functions: CodeGenFunctions,
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+): Promise<void> {
   const lines = createLines();
 
   lines.push("export interface Symbols extends Deno.ForeignLibraryInterface {");
@@ -450,13 +524,13 @@ export async function writeSymbols(filePath: string, functions: CodeGenFunctions
     for (const paramName of Object.keys(func.parameters)) {
       const param = func.parameters[paramName];
       lines.push(
-        `\t\t\t"${param.type}", /* ${param.nativeType} ${paramName} */`,
+        `\t\t\t"${mapTypeToFFIType(structs, opaqueStructs, param.type)}", /* ${param.type} ${paramName} */`,
       );
     }
 
-    lines.push(`\t\t],`);
-    lines.push(`\t\tresult: "${func.result.type}" /* ${func.result.nativeType} */`);
-    lines.push(`\t},`);
+    lines.push("\t\t],");
+    lines.push(`\t\tresult: "${mapTypeToFFIType(structs, opaqueStructs, func.result.type)}" /* ${func.result.type} */`);
+    lines.push("\t},");
   }
   lines.push("};");
   lines.push("");
@@ -465,7 +539,7 @@ export async function writeSymbols(filePath: string, functions: CodeGenFunctions
 }
 
 function isFunctionParamOpaqueStruct(opaqueStructs: CodeGenOpaqueStructs, param: CodeGenFunctionParam): boolean {
-  let structName = param.nativeType;
+  let structName = param.type;
 
   while (structName.endsWith("*")) {
     structName = structName.slice(0, -1);
@@ -475,7 +549,7 @@ function isFunctionParamOpaqueStruct(opaqueStructs: CodeGenOpaqueStructs, param:
 }
 
 function isFunctionParamStruct(structs: CodeGenStructs, param: CodeGenFunctionParam): boolean {
-  let structName = param.nativeType;
+  let structName = param.type;
 
   while (structName.endsWith("*")) {
     structName = structName.slice(0, -1);
@@ -489,15 +563,15 @@ function isFunctionParamStruct(structs: CodeGenStructs, param: CodeGenFunctionPa
 }
 
 function isFunctionParamPointer(param: CodeGenFunctionParam): boolean {
-  return param.type === "pointer";
+  return param.type.endsWith("*");
 }
 
 function isFunctionParamVoidPointer(param: CodeGenFunctionParam): boolean {
-  return param.nativeType === "void*";
+  return param.type === "void*";
 }
 
 function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
-  return param.nativeType.endsWith("**");
+  return param.type.endsWith("**");
 }
 
 function hasDoublePointerParams(func: CodeGenFunction): boolean {
@@ -505,7 +579,7 @@ function hasDoublePointerParams(func: CodeGenFunction): boolean {
 }
 
 function isFunctionParamString(param: CodeGenFunctionParam): boolean {
-  return param.nativeType === "char*";
+  return param.type === "char*";
 }
 
 function mapFunctionReturnType(
@@ -531,7 +605,7 @@ function mapFunctionParamType(
   }
 
   if (isFunctionParamOpaqueStruct(opaqueStructs, param) || isFunctionParamStruct(structs, param)) {
-    let structName = param.nativeType.substring("SDL_".length);
+    let structName = param.type.substring("SDL_".length);
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
@@ -554,7 +628,7 @@ function mapFunctionParamType(
 
   let result = "";
 
-  switch (param.nativeType) {
+  switch (param.type) {
     case "char*":
       result = "string";
       break;
@@ -577,13 +651,13 @@ function mapFunctionParamType(
     return result;
   }
 
-  switch (param.type) {
+  switch (mapTypeToFFIType(structs, opaqueStructs, param.type)) {
     case "pointer":
       throw new Error(`Unable to map param ${JSON.stringify(param)}`);
   }
 
   if (result === "") {
-    result = param.type;
+    result = mapTypeToFFIType(structs, opaqueStructs, param.type);
   }
 
   if (param.nullable) {

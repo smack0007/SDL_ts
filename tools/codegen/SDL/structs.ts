@@ -15,23 +15,19 @@ export const structs: CodeGenStructs = {
     size: 16,
     members: {
       scancode: {
-        nativeType: "SDL_Scancode",
-        type: "u32",
+        type: "SDL_Scancode",
         offset: 0,
       },
       sym: {
-        nativeType: "SDL_Keycode",
-        type: "u32",
+        type: "SDL_Keycode",
         offset: 4,
       },
       mod: {
-        nativeType: "Uint16",
-        type: "u16",
+        type: "Uint16",
         offset: 8,
       },
       unused: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
         offset: 12,
       },
     },
@@ -43,13 +39,11 @@ export const structs: CodeGenStructs = {
     size: 8,
     members: {
       x: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 0,
       },
       y: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 4,
       },
     },
@@ -61,23 +55,19 @@ export const structs: CodeGenStructs = {
     size: 16,
     members: {
       x: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 0,
       },
       y: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 4,
       },
       w: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 8,
       },
       h: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 12,
       },
     },
@@ -89,34 +79,29 @@ export const structs: CodeGenStructs = {
     size: 88,
     members: {
       name: {
-        nativeType: "char*",
-        type: "pointer",
+        type: "char*",
         offset: 0,
       },
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
         offset: 8,
       },
       num_texture_formats: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
         offset: 12,
       },
       // TODO: Add support for arrays in structs.
       // texture_formats: {
-      //   nativeType: "Uint32",
+      //   type: "Uint32",
       //   type: "u32",
       //   offset: 16,
       // },
       max_texture_width: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 80,
       },
       max_texture_height: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 84,
       },
     },
@@ -126,63 +111,51 @@ export const structs: CodeGenStructs = {
     size: 96,
     members: {
       flags: {
-        nativeType: "Uint32",
-        type: "u32",
+        type: "Uint32",
         offset: 0,
       },
       format: {
-        nativeType: "SDL_PixelFormat*",
-        type: "pointer",
+        type: "SDL_PixelFormat*",
         offset: 8,
       },
       w: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 16,
       },
       h: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 20,
       },
       pitch: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 24,
       },
       pixels: {
-        nativeType: "void*",
-        type: "pointer",
+        type: "void*",
         offset: 32,
       },
       userdata: {
-        nativeType: "void*",
-        type: "pointer",
+        type: "void*",
         offset: 40,
       },
       locked: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 48,
       },
       list_blitmap: {
-        nativeType: "void*",
-        type: "pointer",
+        type: "void*",
         offset: 56,
       },
       clip_rect: {
-        nativeType: "SDL_Rect",
-        type: "struct",
+        type: "SDL_Rect",
         offset: 64,
       },
       map: {
-        nativeType: "SDL_BlitMap*",
-        type: "pointer",
+        type: "SDL_BlitMap*",
         offset: 80,
       },
       refcount: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
         offset: 88,
       },
     },
@@ -193,18 +166,15 @@ export const structs: CodeGenStructs = {
     size: 3,
     members: {
       major: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
         offset: 0,
       },
       minor: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
         offset: 1,
       },
       patch: {
-        nativeType: "Uint8",
-        type: "u8",
+        type: "Uint8",
         offset: 2,
       },
     },

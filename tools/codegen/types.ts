@@ -1,18 +1,3 @@
-export type NativeType =
-  | "f32"
-  | "f64"
-  | "i8"
-  | "i16"
-  | "i32"
-  | "i64"
-  | "pointer"
-  | "struct"
-  | "u8"
-  | "u16"
-  | "u32"
-  | "u64"
-  | "void";
-
 export type CodeGenEnums = Record<string, CodeGenEnum>;
 
 export interface CodeGenEnum {
@@ -39,8 +24,8 @@ export interface CodeGenFunction {
   parameters: Record<string, CodeGenFunctionParam>;
 
   result: {
-    nativeType: string;
-    type: NativeType;
+    // SDL type
+    type: string;
 
     // If set this type will be used as the script type.
     overrideType?: string;
@@ -49,10 +34,7 @@ export interface CodeGenFunction {
 
 export interface CodeGenFunctionParam {
   // SDL type.
-  nativeType: string;
-
-  // FFI type.
-  type: NativeType;
+  type: string;
 
   // Can the parameter be null.
   nullable?: boolean;
@@ -86,10 +68,7 @@ export interface CodeGenStruct {
 
 export interface CodeGenStructMember {
   // SDL type.
-  nativeType: string;
-
-  // FFI type.
-  type: NativeType;
+  type: string;
 
   // Offset of the member in bytes.
   offset: number;

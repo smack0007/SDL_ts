@@ -4,41 +4,35 @@ export const functions: CodeGenFunctions = {
   IMG_Init: {
     parameters: {
       flags: {
-        nativeType: "int",
-        type: "i32",
+        type: "int",
       },
     },
     result: {
-      nativeType: "int",
-      type: "i32",
+      type: "int",
     },
   },
 
   IMG_Linked_Version: {
     parameters: {},
     result: {
-      nativeType: "SDL_version*",
-      type: "pointer",
+      type: "SDL_version*",
     },
   },
 
   IMG_Load: {
     parameters: {
       file: {
-        nativeType: "char*",
-        type: "pointer",
+        type: "char*",
       },
     },
     result: {
-      nativeType: "SDL_Surface*",
-      type: "pointer",
+      type: "SDL_Surface*",
     },
   },
 
   IMG_Quit: {
     parameters: {},
     result: {
-      nativeType: "void",
       type: "void",
     },
   },
