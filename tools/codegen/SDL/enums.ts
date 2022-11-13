@@ -349,7 +349,7 @@ export const enums: CodeGenEnums = {
     },
   },
 
-  SDL_KeyCode: {
+  SDL_Keycode: {
     values: {
       SDLK_UNKNOWN: "0",
       SDLK_RETURN: "'\\r'",

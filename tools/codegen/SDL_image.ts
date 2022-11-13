@@ -10,11 +10,12 @@ const SDL_IMAGE_PATH = joinPath(SRC_PATH, "SDL_image");
 export async function codegenSDL_image(): Promise<void> {
   await writeEnums(`${SDL_IMAGE_PATH}/enums.ts`, enums, []);
   // await writeStructs(`${SDL_IMAGE_PATH}/structs.ts`, structs, opaqueStructs);
-  await writeSymbols(`${SDL_IMAGE_PATH}/_symbols.ts`, functions, structs, opaqueStructs);
+  await writeSymbols(`${SDL_IMAGE_PATH}/_symbols.ts`, functions, enums, structs, opaqueStructs);
   await writeFunctions(
     `${SDL_IMAGE_PATH}/functions.ts`,
     functions,
     functionImplementations,
+    enums,
     {
       SDL_Surface: {
         ...SDL_structs["SDL_Surface"],

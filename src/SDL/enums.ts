@@ -335,7 +335,7 @@ export const SCANCODE_AUDIOREWIND = 285;
 export const SCANCODE_AUDIOFASTFORWARD = 286;
 export const NUM_SCANCODES = 512;
 
-// KeyCode
+// Keycode
 export const SDLK_UNKNOWN = 0;
 export const SDLK_RETURN = "\r";
 export const SDLK_ESCAPE = "\x1B";

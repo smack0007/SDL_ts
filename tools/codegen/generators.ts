@@ -86,6 +86,38 @@ export async function writeEnums(
   await writeLinesToFile(filePath, lines);
 }
 
+function isEnum(enums: CodeGenEnums, type: string): boolean {
+  for (const [enumGroupName, enumData] of Object.entries(enums)) {
+    if (enumGroupName === type) {
+      return true;
+    }
+
+    for (const [enumValueName, _] of Object.entries(enumData.values)) {
+      if (enumValueName === type) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, type: string): boolean {
+  for (const structName of Object.keys(structs)) {
+    if (structName === type) {
+      return true;
+    }
+  }
+
+  for (const structName of opaqueStructs) {
+    if (structName === type) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 type FFIType =
   | "f32"
   | "f64"
@@ -102,12 +134,17 @@ type FFIType =
   | "void";
 
 function mapTypeToFFIType(
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   type: string,
 ): FFIType {
   if (type.endsWith("*")) {
     return "pointer";
+  }
+
+  if (isEnum(enums, type)) {
+    return "u32";
   }
 
   if (isStruct(structs, opaqueStructs, type)) {
@@ -136,9 +173,6 @@ function mapTypeToFFIType(
     case "Uint16":
       return "u16";
 
-    case "SDL_Keycode":
-    case "SDL_RendererFlip":
-    case "SDL_Scancode":
     case "Uint32":
       return "u32";
 
@@ -150,6 +184,7 @@ function mapTypeToFFIType(
 }
 
 function mapStructMemberType(
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   member: CodeGenStructMember,
@@ -159,7 +194,7 @@ function mapStructMemberType(
       return "string";
   }
 
-  const ffiType = mapTypeToFFIType(structs, opaqueStructs, member.type);
+  const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, member.type);
 
   switch (ffiType) {
     case "pointer":
@@ -185,14 +220,10 @@ function sortStructMembers(
   return a[0].localeCompare(b[0]);
 }
 
-function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, type: string): boolean {
-  const allStructNames = Object.keys(structs).concat(opaqueStructs);
-  return allStructNames.some((x) => x === type);
-}
-
 export async function writeEvents(
   filePath: string,
   events: CodeGenEvents,
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
 ): Promise<void> {
@@ -239,22 +270,27 @@ import { f32, i32, u32, u8 } from "../types.ts";
         continue;
       }
 
-      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(structs, opaqueStructs, member)} {`);
+      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(enums, structs, opaqueStructs, member)} {`);
 
       if (isStruct(structs, opaqueStructs, member.type)) {
         lines.push(`return this._${memberName};`);
       } else {
         const PlatformDataViewMethod =
-          PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
+          PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
 
         if (PlatformDataViewMethod === undefined) {
-          console.error(`PlatformDataViewMethods is missing ${mapTypeToFFIType(structs, opaqueStructs, member.type)}.`);
+          console.error(
+            `PlatformDataViewMethods is missing ${mapTypeToFFIType(enums, structs, opaqueStructs, member.type)}.`,
+          );
         }
 
         const length = 0;
         lines.push(
           `\t\treturn this._view.${
-            PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)](member.offset, length)
+            PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)](
+              member.offset,
+              length,
+            )
           };`,
         );
       }
@@ -291,6 +327,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
 
 export async function writeStructs(
   filePath: string,
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
 ): Promise<void> {
@@ -356,20 +393,20 @@ export async function writeStructs(
         lines.push(`constructor(props: Partial<${className}>);`);
 
         const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-          `${memberName}: ${mapStructMemberType(structs, opaqueStructs, member)}`
+          `${memberName}: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
         ).join(", ");
         lines.push(`constructor(${constructorParams});`);
 
-        const firstMemberType = mapStructMemberType(structs, opaqueStructs, Object.values(struct.members)[0]);
+        const firstMemberType = mapStructMemberType(enums, structs, opaqueStructs, Object.values(struct.members)[0]);
         const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-          `, _${index + 2}?: ${mapStructMemberType(structs, opaqueStructs, member)}`
+          `, _${index + 2}?: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
         ).join("");
         lines.push(
           `constructor(_1?: StructCommand | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
         );
 
         const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-          `this.${memberName} = _${index + 1} as ${mapStructMemberType(structs, opaqueStructs, member)};`
+          `this.${memberName} = _${index + 1} as ${mapStructMemberType(enums, structs, opaqueStructs, member)};`
         ).join("\n");
 
         lines.push(`
@@ -413,15 +450,15 @@ export async function writeStructs(
       let readOp = "";
       let writeOp = "";
       let length = 0;
-      let memberType = mapStructMemberType(structs, opaqueStructs, member);
+      let memberType = mapStructMemberType(enums, structs, opaqueStructs, member);
       let memberStructName = "";
 
       if (memberType === "string") {
         readOp += `fromPlatformString(`;
-      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "pointer") {
+      } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
         const subStructName = stripSDLPrefixes(removePointerPostfix(member.type));
         memberType = `PointerValue<${subStructName}>`;
-      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct") {
+      } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
         memberStructName = stripSDLPrefixes(member.type);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
@@ -430,12 +467,12 @@ export async function writeStructs(
 
       lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
-      const getMethod = PlatformDataViewGetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
+      const getMethod = PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
 
       if (getMethod === undefined) {
         console.error(
           `Failure while generating ${structName}: PlatformDataViewGetMethods is missing ${
-            mapTypeToFFIType(structs, opaqueStructs, member.type)
+            mapTypeToFFIType(enums, structs, opaqueStructs, member.type)
           }.`,
         );
       }
@@ -444,7 +481,7 @@ export async function writeStructs(
 
       if (memberType === "string") {
         readOp += ")";
-      } else if (mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct") {
+      } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
         readOp += `) as ${memberStructName}`;
       }
 
@@ -456,19 +493,19 @@ export async function writeStructs(
       if (struct.writable) {
         // TODO: Can we write to pointers / structs?
         if (
-          mapTypeToFFIType(structs, opaqueStructs, member.type) === "pointer" ||
-          mapTypeToFFIType(structs, opaqueStructs, member.type) === "struct"
+          mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer" ||
+          mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct"
         ) {
           continue;
         }
 
         lines.push(`\tpublic set ${memberName}(value: ${memberType}) {`);
 
-        const setMethod = PlatformDataViewSetMethods[mapTypeToFFIType(structs, opaqueStructs, member.type)];
+        const setMethod = PlatformDataViewSetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
 
         if (setMethod === undefined) {
           console.error(
-            `PlatformDataViewSetMethods is missing ${mapTypeToFFIType(structs, opaqueStructs, member.type)}.`,
+            `PlatformDataViewSetMethods is missing ${mapTypeToFFIType(enums, structs, opaqueStructs, member.type)}.`,
           );
         }
 
@@ -495,6 +532,7 @@ export async function writeStructs(
 export async function writeSymbols(
   filePath: string,
   functions: CodeGenFunctions,
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
 ): Promise<void> {
@@ -524,12 +562,14 @@ export async function writeSymbols(
     for (const paramName of Object.keys(func.parameters)) {
       const param = func.parameters[paramName];
       lines.push(
-        `\t\t\t"${mapTypeToFFIType(structs, opaqueStructs, param.type)}", /* ${param.type} ${paramName} */`,
+        `\t\t\t"${mapTypeToFFIType(enums, structs, opaqueStructs, param.type)}", /* ${param.type} ${paramName} */`,
       );
     }
 
     lines.push("\t\t],");
-    lines.push(`\t\tresult: "${mapTypeToFFIType(structs, opaqueStructs, func.result.type)}" /* ${func.result.type} */`);
+    lines.push(
+      `\t\tresult: "${mapTypeToFFIType(enums, structs, opaqueStructs, func.result.type)}" /* ${func.result.type} */`,
+    );
     lines.push("\t},");
   }
   lines.push("};");
@@ -583,14 +623,16 @@ function isFunctionParamString(param: CodeGenFunctionParam): boolean {
 }
 
 function mapFunctionReturnType(
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   param: CodeGenFunctionParam,
 ): string {
-  return mapFunctionParamType(structs, opaqueStructs, param, true);
+  return mapFunctionParamType(enums, structs, opaqueStructs, param, true);
 }
 
 function mapFunctionParamType(
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   param: CodeGenFunctionParam,
@@ -651,13 +693,13 @@ function mapFunctionParamType(
     return result;
   }
 
-  switch (mapTypeToFFIType(structs, opaqueStructs, param.type)) {
+  switch (mapTypeToFFIType(enums, structs, opaqueStructs, param.type)) {
     case "pointer":
       throw new Error(`Unable to map param ${JSON.stringify(param)}`);
   }
 
   if (result === "") {
-    result = mapTypeToFFIType(structs, opaqueStructs, param.type);
+    result = mapTypeToFFIType(enums, structs, opaqueStructs, param.type);
   }
 
   if (param.nullable) {
@@ -680,6 +722,7 @@ export async function writeFunctions(
   filePath: string,
   functions: CodeGenFunctions,
   functionImplementations: CodeGenFunctionImplementations,
+  enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   imports: string[],
@@ -736,12 +779,12 @@ const context: SDLContext = {
       continue;
     }
 
-    const returnType = mapFunctionReturnType(structs, opaqueStructs, func.result);
+    const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, func.result);
 
     lines.push(`export function ${stripSDLPrefixes(funcName)}(`);
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
-      lines.push(`${paramName}: ${mapFunctionParamType(structs, opaqueStructs, param)},`);
+      lines.push(`${paramName}: ${mapFunctionParamType(enums, structs, opaqueStructs, param)},`);
     }
 
     const returnTypeOrNull =
