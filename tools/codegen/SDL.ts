@@ -1,5 +1,5 @@
 import { joinPath, SRC_PATH } from "../paths.ts";
-import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./functions.ts";
+import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL/enums.ts";
 import { events } from "./SDL/events.ts";
 import { functionImplementations, functions } from "./SDL/functions.ts";
