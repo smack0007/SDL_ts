@@ -258,46 +258,6 @@ function outputEnum(capture: string): void {
   writePrintF("},");
 }
 
-function guessFFIType(type: string): string {
-  if (type.endsWith("*")) {
-    return "pointer";
-  }
-
-  switch (type) {
-    case "double":
-      return "f64";
-
-    case "float":
-      return "f32";
-
-    case "int":
-      return "i32";
-
-    case "SDL_Rect":
-      return "struct";
-
-    case "Sint16":
-      return "i16";
-
-    case "Sint32":
-      return "i32";
-
-    case "Uint8":
-      return "u8";
-
-    case "Uint16":
-      return "u16";
-
-    case "Uint32":
-      return "u32";
-
-    case "Uint64":
-      return "u64";
-  }
-
-  return type;
-}
-
 function outputFunction(capture: string): void {
   capture = capture
     .replaceAll("extern DECLSPEC", "")
@@ -350,15 +310,13 @@ function outputFunction(capture: string): void {
     }
 
     writePrintF(`\t\t${paramName}: {`);
-    writePrintF(`\t\t\tnativeType: "${paramType}",`);
-    writePrintF(`\t\t\ttype: "${guessFFIType(paramType)}",`);
+    writePrintF(`\t\t\ttype: "${paramType}",`);
     writePrintF(`\t\t},`);
   }
 
   writePrintF("\t},");
   writePrintF("\tresult: {");
-  writePrintF(`\t\tnativeType: "${returnType}",`);
-  writePrintF(`\t\ttype: "${guessFFIType(returnType)}",`);
+  writePrintF(`\t\ttype: "${returnType}",`);
   writePrintF(`\t},`);
   writePrintF("},");
 }
@@ -441,8 +399,7 @@ function outputStruct(capture: string): void {
 
     for (const name of names) {
       writePrintF(`\t\t${name}: {`);
-      writePrintF(`\t\t\tnativeType: "${type}",`);
-      writePrintF(`\t\t\ttype: "${guessFFIType(type)}",`);
+      writePrintF(`\t\t\ttype: "${type}",`);
       writePrintF(`\t\t\toffset: %llu,`, `offsetof(${structName}, ${name})`);
       writePrintF("\t\t},");
     }
