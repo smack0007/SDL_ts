@@ -1,7 +1,7 @@
 import { SDL } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
-SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
+SDL.Init(SDL.INIT.VIDEO, SDL_LIB_PATH);
 
 console.info("SDL Initialized.");
 
@@ -14,8 +14,8 @@ console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
 const window = SDL.CreateWindow(
   "Hello World!",
-  SDL.WINDOWPOS_CENTERED,
-  SDL.WINDOWPOS_CENTERED,
+  SDL.WINDOWPOS.CENTERED,
+  SDL.WINDOWPOS.CENTERED,
   1024,
   768,
   SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,

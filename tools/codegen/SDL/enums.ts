@@ -22,6 +22,7 @@ export const enums: CodeGenEnums = {
   },
 
   SDL_EventType: {
+    doNotGroup: true,
     values: {
       SDL_FIRSTEVENT: "0",
       SDL_QUIT: "0x100",
@@ -350,6 +351,7 @@ export const enums: CodeGenEnums = {
   },
 
   SDL_Keycode: {
+    overrideGroupName: "KEYCODE",
     values: {
       SDLK_UNKNOWN: "0",
       SDLK_RETURN: "'\\r'",

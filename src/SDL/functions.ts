@@ -25,6 +25,7 @@ import {
 
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
+import { WINDOWPOS } from "./enums.ts";
 
 interface SDLContext {
   library: Deno.DynamicLibrary<Symbols>;
@@ -164,8 +165,8 @@ export function CreateTextureFromSurface(
 
 export function CreateWindow(
   title: string,
-  x: i32,
-  y: i32,
+  x: i32 | WINDOWPOS,
+  y: i32 | WINDOWPOS,
   w: i32,
   h: i32,
   flags: u32,

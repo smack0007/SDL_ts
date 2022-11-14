@@ -43,7 +43,11 @@ function removePointerPostfix(name: string): string {
   return name;
 }
 
-function stripSDLPrefixes(value: string): string {
+function isDigit(value: string): boolean {
+  return !!value.match(/[0-9]/i);
+}
+
+function stripSDLPrefixes(value: string, ...prefixes: string[]): string {
   if (value.startsWith("SDL_")) {
     value = value.substring("SDL_".length);
   }
@@ -53,7 +57,13 @@ function stripSDLPrefixes(value: string): string {
   }
 
   if (value.startsWith("IMG_")) {
-    return value.substring("IMG_".length);
+    value = value.substring("IMG_".length);
+  }
+
+  for (const prefix of prefixes) {
+    if (value.startsWith(`${prefix}_`)) {
+      value = value.substring(`${prefix}_`.length);
+    }
   }
 
   return value;
@@ -74,12 +84,45 @@ export async function writeEnums(
   lines.push(...imports);
   lines.push("");
 
-  for (const enumName of Object.keys(enums)) {
-    const shortEnumName = stripSDLPrefixes(enumName);
-    lines.push(`// ${shortEnumName}`);
-    for (const key of Object.keys(enums[enumName].values)) {
-      lines.push(`export const ${stripSDLPrefixes(key)} = ${stripSDLPrefixes(enums[enumName].values[key])}`);
+  for (const [enumName, enumData] of Object.entries(enums)) {
+    if (!enumData.doNotGroup) {
+      let enumGroupName = enumData.overrideGroupName;
+
+      if (!enumGroupName) {
+        const enumGroupNameFromKeys = [
+          ...new Set(
+            // Split each enum value by _ and take the 2nd element as the
+            // first will be "SDL"
+            Object.keys(enumData.values).map((x) => x.split("_", 3)[1]),
+          ),
+        ];
+
+        if (enumGroupNameFromKeys.length > 1) {
+          console.error(`${enumName} has multiple names in enum values.`);
+        }
+
+        enumGroupName = enumGroupNameFromKeys[0];
+      }
+
+      lines.push(`export enum ${enumGroupName} {`);
+      for (const key of Object.keys(enumData.values)) {
+        let enumValueName = stripSDLPrefixes(key, enumGroupName);
+
+        if (isDigit(enumValueName[0])) {
+          enumValueName = "_" + enumValueName;
+        }
+
+        lines.push(`\t${enumValueName} = ${stripSDLPrefixes(enumData.values[key], enumGroupName)},`);
+      }
+      lines.push("}");
+    } else {
+      const shortEnumName = stripSDLPrefixes(enumName);
+      lines.push(`// ${shortEnumName}`);
+      for (const key of Object.keys(enumData.values)) {
+        lines.push(`export const ${stripSDLPrefixes(key)} = ${stripSDLPrefixes(enumData.values[key])}`);
+      }
     }
+
     lines.push("");
   }
 
@@ -735,7 +778,7 @@ export async function writeFunctions(
     .filter((x) => !x[1].doNotImport)
     .map((x) => x[0])
     .concat(opaqueStructs)
-    .map(stripSDLPrefixes)
+    .map((x) => stripSDLPrefixes(x))
     .join(", ");
 
   lines.push(
