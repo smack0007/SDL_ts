@@ -4,8 +4,9 @@ export interface CodeGenEnum {
   // If true the enum values should not be grouped together into an enum.
   doNotGroup?: boolean;
 
-  // Use to specify a name to use as the group instead of guessing.
-  overrideGroupName?: string;
+  // Use to specify a name to use as the prefix to strip if it's not the same
+  // as the enum name to uppercase.
+  prefixToStrip?: string;
 
   values: Record<string, string>;
 }
@@ -75,6 +76,9 @@ export interface CodeGenStruct {
 export interface CodeGenStructMember {
   // SDL type.
   type: string;
+
+  // A type override to use.
+  overrideType?: string;
 
   // Offset of the member in bytes.
   offset: number;

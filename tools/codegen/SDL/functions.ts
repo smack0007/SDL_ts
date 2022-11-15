@@ -185,9 +185,11 @@ export const functions: CodeGenFunctions = {
       },
       x: {
         type: "int",
+        overrideType: "i32 | WindowPos",
       },
       y: {
         type: "int",
+        overrideType: "i32 | WindowPos",
       },
       w: {
         type: "int",

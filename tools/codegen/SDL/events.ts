@@ -105,22 +105,18 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
         offset: 0,
       },
       timestamp: {
         type: "Uint32",
-
         offset: 4,
       },
       windowID: {
         type: "Uint32",
-
         offset: 8,
       },
       which: {
         type: "Uint32",
-
         offset: 12,
       },
       button: {
@@ -248,21 +244,19 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
         offset: 0,
       },
       timestamp: {
         type: "Uint32",
-
         offset: 4,
       },
       windowID: {
         type: "Uint32",
-
         offset: 8,
       },
       event: {
         type: "Uint8",
+        overrideType: "WindowEventID",
         offset: 12,
       },
       padding1: {

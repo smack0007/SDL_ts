@@ -6,6 +6,10 @@ const SDL_PATH = `${EXT_PATH}/SDL`;
 const KHRONOS_PATH = `${EXT_PATH}/khronos`;
 const OUTPUT_PATH = "../tmp";
 
+const MACROS_TO_COMPUTE = [
+  "SDL_SCANCODE_TO_KEYCODE",
+];
+
 let buffer = "";
 
 Deno.exit(await main());
@@ -248,7 +252,14 @@ function outputEnum(capture: string): void {
 
     if (value !== null) {
       value = value.replaceAll("\\", "\\\\");
-      writePrintF(`\t\t${key}: "${value}",`);
+
+      const computeMacroValue = MACROS_TO_COMPUTE.some((x) => value!.startsWith(x));
+
+      if (computeMacroValue) {
+        writePrintF(`\t\t${key}: "%d",`, value);
+      } else {
+        writePrintF(`\t\t${key}: "${value}",`);
+      }
     } else {
       writePrintF(`\t\t${key}: "%d",`, key);
     }

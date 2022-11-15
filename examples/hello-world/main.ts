@@ -1,7 +1,7 @@
 import { SDL } from "../../mod.ts";
 import { SDL_LIB_PATH } from "../paths.ts";
 
-SDL.Init(SDL.INIT.VIDEO, SDL_LIB_PATH);
+SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
 
 console.info("SDL Initialized.");
 
@@ -14,11 +14,11 @@ console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
 const window = SDL.CreateWindow(
   "Hello World!",
-  SDL.WINDOWPOS.CENTERED,
-  SDL.WINDOWPOS.CENTERED,
+  SDL.WindowPos.CENTERED,
+  SDL.WindowPos.CENTERED,
   1024,
   768,
-  SDL.WINDOW_SHOWN | SDL.WINDOW_RESIZABLE,
+  SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
 );
 
 if (window == null) {
@@ -50,17 +50,17 @@ SDL.RestoreWindow(window);
 let done = false;
 while (!done) {
   while (SDL.PollEvent(event) != 0) {
-    if (event.type === SDL.QUIT) {
+    if (event.type === SDL.EventType.QUIT) {
       console.info("Done.");
       done = true;
-    } else if (event.type === SDL.WINDOWEVENT) {
-      if (event.window.event === SDL.WINDOWEVENT_SHOWN) {
+    } else if (event.type === SDL.EventType.WINDOWEVENT) {
+      if (event.window.event === SDL.WindowEventID.SHOWN) {
         console.info(`Window ${event.window.windowID} shown.`);
-      } else if (event.window.event === SDL.WINDOWEVENT_MINIMIZED) {
+      } else if (event.window.event === SDL.WindowEventID.MINIMIZED) {
         console.info(`Window ${event.window.windowID} minimized.`);
-      } else if (event.window.event === SDL.WINDOWEVENT_RESTORED) {
+      } else if (event.window.event === SDL.WindowEventID.RESTORED) {
         console.info(`Window ${event.window.windowID} restored.`);
-      } else if (event.window.event === SDL.WINDOWEVENT_RESIZED) {
+      } else if (event.window.event === SDL.WindowEventID.RESIZED) {
         console.info(`Window ${event.window.windowID} resized: ${event.window.data1} ${event.window.data2}`);
         surface = SDL.GetWindowSurface(window);
 
@@ -76,17 +76,17 @@ while (!done) {
         );
         SDL.UpdateWindowSurface(window);
       }
-    } else if (event.type === SDL.KEYDOWN) {
+    } else if (event.type === SDL.EventType.KEYDOWN) {
       console.info(`KeyDown: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
-    } else if (event.type === SDL.KEYUP) {
+    } else if (event.type === SDL.EventType.KEYUP) {
       console.info(`KeyUp: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
-    } else if (event.type === SDL.MOUSEMOTION) {
+    } else if (event.type === SDL.EventType.MOUSEMOTION) {
       console.info(`MouseMotion: (${event.mousebutton.x}, ${event.mousebutton.y})`);
-    } else if (event.type === SDL.MOUSEBUTTONDOWN) {
+    } else if (event.type === SDL.EventType.MOUSEBUTTONDOWN) {
       console.info(`MouseButtonDown: ${event.mousebutton.button} (${event.mousebutton.x}, ${event.mousebutton.y})`);
-    } else if (event.type === SDL.MOUSEBUTTONUP) {
+    } else if (event.type === SDL.EventType.MOUSEBUTTONUP) {
       console.info(`MouseButtonUp: ${event.mousebutton.button} (${event.mousebutton.x}, ${event.mousebutton.y})`);
-    } else if (event.type === SDL.MOUSEWHEEL) {
+    } else if (event.type === SDL.EventType.MOUSEWHEEL) {
       console.info(`MouseWheel: ${event.mousewheel.direction} (${event.mousebutton.x}, ${event.mousebutton.y})`);
     }
   }

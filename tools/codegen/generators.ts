@@ -47,7 +47,17 @@ function isDigit(value: string): boolean {
   return !!value.match(/[0-9]/i);
 }
 
-function stripSDLPrefixes(value: string, ...prefixes: string[]): string {
+function stripPrefixes(value: string, ...prefixes: string[]): string {
+  for (const prefix of prefixes) {
+    if (value.startsWith(`${prefix}_`)) {
+      value = value.substring(`${prefix}_`.length);
+    }
+
+    if (value.indexOf(`${prefix}_`) !== 0) {
+      value = value.replaceAll(`${prefix}_`, "");
+    }
+  }
+
   if (value.startsWith("SDL_")) {
     value = value.substring("SDL_".length);
   }
@@ -60,18 +70,23 @@ function stripSDLPrefixes(value: string, ...prefixes: string[]): string {
     value = value.substring("IMG_".length);
   }
 
-  for (const prefix of prefixes) {
-    if (value.startsWith(`${prefix}_`)) {
-      value = value.substring(`${prefix}_`.length);
-    }
-  }
-
   return value;
 }
 
 async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await Deno.writeTextFile(path, lines.join("\n"));
   await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
+}
+
+function mapEnumValue(value: string, enumName?: string): string {
+  if (value.startsWith("'")) {
+    value = value
+      .substring(1, value.length - 1) // Trim single quotes
+      .charCodeAt(0)
+      .toString();
+  }
+
+  return enumName !== undefined ? stripPrefixes(value, enumName) : stripPrefixes(value);
 }
 
 export async function writeEnums(
@@ -86,40 +101,24 @@ export async function writeEnums(
 
   for (const [enumName, enumData] of Object.entries(enums)) {
     if (!enumData.doNotGroup) {
-      let enumGroupName = enumData.overrideGroupName;
+      const prefixToStrip = enumData.prefixToStrip ?? enumName.toUpperCase();
 
-      if (!enumGroupName) {
-        const enumGroupNameFromKeys = [
-          ...new Set(
-            // Split each enum value by _ and take the 2nd element as the
-            // first will be "SDL"
-            Object.keys(enumData.values).map((x) => x.split("_", 3)[1]),
-          ),
-        ];
-
-        if (enumGroupNameFromKeys.length > 1) {
-          console.error(`${enumName} has multiple names in enum values.`);
-        }
-
-        enumGroupName = enumGroupNameFromKeys[0];
-      }
-
-      lines.push(`export enum ${enumGroupName} {`);
+      lines.push(`export enum ${stripPrefixes(enumName)} {`);
       for (const key of Object.keys(enumData.values)) {
-        let enumValueName = stripSDLPrefixes(key, enumGroupName);
+        let enumValueName = stripPrefixes(key, prefixToStrip);
 
         if (isDigit(enumValueName[0])) {
           enumValueName = "_" + enumValueName;
         }
 
-        lines.push(`\t${enumValueName} = ${stripSDLPrefixes(enumData.values[key], enumGroupName)},`);
+        lines.push(`\t${enumValueName} = ${mapEnumValue(enumData.values[key], prefixToStrip)},`);
       }
       lines.push("}");
     } else {
-      const shortEnumName = stripSDLPrefixes(enumName);
+      const shortEnumName = stripPrefixes(enumName);
       lines.push(`// ${shortEnumName}`);
       for (const key of Object.keys(enumData.values)) {
-        lines.push(`export const ${stripSDLPrefixes(key)} = ${stripSDLPrefixes(enumData.values[key])}`);
+        lines.push(`export const ${stripPrefixes(key)} = ${mapEnumValue(enumData.values[key])}`);
       }
     }
 
@@ -232,6 +231,10 @@ function mapStructMemberType(
   opaqueStructs: CodeGenOpaqueStructs,
   member: CodeGenStructMember,
 ): string {
+  if (member.overrideType) {
+    return member.overrideType;
+  }
+
   switch (member.type) {
     case "char*":
       return "string";
@@ -244,7 +247,7 @@ function mapStructMemberType(
       return "Deno.PointerValue";
 
     case "struct":
-      return stripSDLPrefixes(member.type);
+      return stripPrefixes(member.type);
   }
 
   return ffiType;
@@ -274,6 +277,7 @@ export async function writeEvents(
 
   lines.push(
     `import { PlatformDataView } from "platform";
+import { WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
 
@@ -281,14 +285,14 @@ import { f32, i32, u32, u8 } from "../types.ts";
   );
 
   for (const [eventName, event] of Object.entries(events)) {
-    const className = stripSDLPrefixes(eventName);
+    const className = stripPrefixes(eventName);
     lines.push(`export class ${className} {`);
 
     const subStructMembers = Object.entries(event.members).filter((x) => isStruct(structs, opaqueStructs, x[1].type));
 
     if (subStructMembers.length > 0) {
       for (const [memberName, member] of subStructMembers) {
-        lines.push(`private _${memberName}: ${stripSDLPrefixes(member.type)}`);
+        lines.push(`private _${memberName}: ${stripPrefixes(member.type)}`);
       }
       lines.push("");
     }
@@ -296,7 +300,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
     lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {");
 
     for (const [memberName, member] of subStructMembers) {
-      const memberTypeName = stripSDLPrefixes(member.type);
+      const memberTypeName = stripPrefixes(member.type);
 
       lines.push(
         `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`,
@@ -356,9 +360,9 @@ import { f32, i32, u32, u8 } from "../types.ts";
 `);
 
   for (const [eventName, event] of Object.entries(events)) {
-    const propName = event.unionName ?? stripSDLPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
+    const propName = event.unionName ?? stripPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
 
-    lines.push(`public readonly ${propName} = new ${stripSDLPrefixes(eventName)}(this._data, this._view);`);
+    lines.push(`public readonly ${propName} = new ${stripPrefixes(eventName)}(this._data, this._view);`);
     lines.push("");
   }
 
@@ -387,7 +391,7 @@ export async function writeStructs(
   lines.push("");
 
   for (const structName of opaqueStructs) {
-    const className = stripSDLPrefixes(structName);
+    const className = stripPrefixes(structName);
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
   public readonly _data!: PointerValue<${className}>;
@@ -408,7 +412,7 @@ export async function writeStructs(
   lines.push("");
 
   for (const [structName, struct] of Object.entries(structs)) {
-    const className = stripSDLPrefixes(structName);
+    const className = stripPrefixes(structName);
 
     const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
@@ -499,10 +503,10 @@ export async function writeStructs(
       if (memberType === "string") {
         readOp += `fromPlatformString(`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
-        const subStructName = stripSDLPrefixes(removePointerPostfix(member.type));
+        const subStructName = stripPrefixes(removePointerPostfix(member.type));
         memberType = `PointerValue<${subStructName}>`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
-        memberStructName = stripSDLPrefixes(member.type);
+        memberStructName = stripPrefixes(member.type);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
         length = structs[member.type].size;
@@ -778,7 +782,7 @@ export async function writeFunctions(
     .filter((x) => !x[1].doNotImport)
     .map((x) => x[0])
     .concat(opaqueStructs)
-    .map((x) => stripSDLPrefixes(x))
+    .map((x) => stripPrefixes(x))
     .join(", ");
 
   lines.push(
@@ -824,7 +828,7 @@ const context: SDLContext = {
 
     const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, func.result);
 
-    lines.push(`export function ${stripSDLPrefixes(funcName)}(`);
+    lines.push(`export function ${stripPrefixes(funcName)}(`);
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
       lines.push(`${paramName}: ${mapFunctionParamType(enums, structs, opaqueStructs, param)},`);
