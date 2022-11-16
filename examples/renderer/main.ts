@@ -5,7 +5,7 @@ const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
 
 function main(): number {
-  SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
+  SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
 
   const windowBox = new BoxedPointer<SDL.Window>();
   const rendererBox = new BoxedPointer<SDL.Renderer>();
@@ -13,7 +13,7 @@ function main(): number {
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WINDOW_SHOWN,
+    SDL.WindowFlags.SHOWN,
     windowBox,
     rendererBox,
   );
@@ -41,7 +41,7 @@ function main(): number {
   console.info(rendererInfo.name);
   console.info(rendererInfo.max_texture_width);
   console.info(rendererInfo.max_texture_height);
-  console.info((rendererInfo.flags & SDL.RENDERER_ACCELERATED) === SDL.RENDERER_ACCELERATED);
+  console.info((rendererInfo.flags & SDL.RendererFlags.ACCELERATED) === SDL.RendererFlags.ACCELERATED);
 
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
@@ -83,7 +83,7 @@ function main(): number {
   let done = false;
   while (!done) {
     while (SDL.PollEvent(event) != 0) {
-      if (event.type === SDL.QUIT) {
+      if (event.type === SDL.EventType.QUIT) {
         done = true;
         break;
       }
@@ -94,7 +94,7 @@ function main(): number {
     }
 
     const state = SDL.GetKeyboardState(Pointer.of(numkeys));
-    console.info(numkeys.value, Memory.readUint8(state, SDL.SCANCODE_ESCAPE));
+    console.info(numkeys.value, Memory.readUint8(state, SDL.Scancode.ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);
@@ -107,7 +107,7 @@ function main(): number {
       destRect,
       textureRotation,
       textureCenter,
-      SDL.FLIP_NONE,
+      SDL.RendererFlip.NONE,
     );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);

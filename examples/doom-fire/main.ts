@@ -49,8 +49,8 @@ const FIRE_COLORS = [
 ];
 
 function main(): number {
-  SDL.Init(SDL.INIT_VIDEO, SDL_LIB_PATH);
-  IMG.Init(IMG.INIT_PNG, SDL_IMAGE_LIB_PATH);
+  SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
+  IMG.Init(IMG.InitFlags.PNG, SDL_IMAGE_LIB_PATH);
 
   const version = IMG.Linked_Version();
 
@@ -63,11 +63,11 @@ function main(): number {
 
   const window = SDL.CreateWindow(
     "Doom Fire",
-    SDL.WINDOWPOS_CENTERED,
-    SDL.WINDOWPOS_CENTERED,
+    SDL.WindowPos.CENTERED,
+    SDL.WindowPos.CENTERED,
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WINDOW_SHOWN,
+    SDL.WindowFlags.SHOWN,
   );
 
   if (window == null) {
@@ -130,7 +130,7 @@ function main(): number {
   let done = false;
   while (!done) {
     while (SDL.PollEvent(event) != 0) {
-      if (event.type === SDL.QUIT) {
+      if (event.type === SDL.EventType.QUIT) {
         done = true;
         break;
       }

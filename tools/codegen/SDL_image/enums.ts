@@ -2,6 +2,7 @@ import { CodeGenEnums } from "../types.ts";
 
 export const enums: CodeGenEnums = {
   IMG_InitFlags: {
+    prefixToStrip: "IMG_INIT",
     values: {
       IMG_INIT_JPG: "0x00000001",
       IMG_INIT_PNG: "0x00000002",

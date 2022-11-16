@@ -7,6 +7,26 @@ import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.t
 import { Pointer } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
 
+import {
+  ArrayOrder,
+  BitmapOrder,
+  EventType,
+  InitFlags,
+  Keycode,
+  PackedLayout,
+  PackedOrder,
+  PixelType,
+  RendererFlags,
+  RendererFlip,
+  ScaleMode,
+  Scancode,
+  TextureAccess,
+  TextureModulate,
+  WindowEventID,
+  WindowFlags,
+  WindowPos,
+} from "./enums.ts";
+
 export class BlitMap implements Struct {
   public static IS_OPAQUE = true;
   public readonly _data!: PointerValue<BlitMap>;
@@ -114,11 +134,11 @@ export class Keysym implements Struct {
     return struct as unknown as Keysym;
   }
 
-  public get scancode(): u32 {
+  public get scancode(): Scancode {
     return this._view.getUint32(0);
   }
 
-  public get sym(): u32 {
+  public get sym(): Keycode {
     return this._view.getUint32(4);
   }
 

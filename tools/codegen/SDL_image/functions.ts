@@ -5,6 +5,7 @@ export const functions: CodeGenFunctions = {
     parameters: {
       flags: {
         type: "int",
+        overrideType: "InitFlags",
       },
     },
     result: {

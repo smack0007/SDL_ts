@@ -235,6 +235,11 @@ function mapStructMemberType(
     return member.overrideType;
   }
 
+  if (isEnum(enums, member.type)) {
+    const enumData = enums[member.type];
+    return enumData?.prefixToStrip ? stripPrefixes(member.type, enumData.prefixToStrip) : stripPrefixes(member.type);
+  }
+
   switch (member.type) {
     case "char*":
       return "string";
@@ -277,7 +282,7 @@ export async function writeEvents(
 
   lines.push(
     `import { PlatformDataView } from "platform";
-import { WindowEventID } from "./enums.ts";
+import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
 
@@ -353,7 +358,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
   public readonly _data = new Uint8Array(64);
   private readonly _view = new PlatformDataView<Event>(this._data);
   
-  public get type(): number {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -388,6 +393,10 @@ export async function writeStructs(
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
+  lines.push("");
+
+  const enumNames = Object.keys(enums).map((x) => stripPrefixes(x)).join(", ");
+  lines.push(`import { ${enumNames} } from "./enums.ts";`);
   lines.push("");
 
   for (const structName of opaqueStructs) {
@@ -715,6 +724,11 @@ function mapFunctionParamType(
     return structName;
   }
 
+  if (isEnum(enums, param.type)) {
+    const enumData = enums[param.type];
+    return enumData?.prefixToStrip ? stripPrefixes(param.type, enumData.prefixToStrip) : stripPrefixes(param.type);
+  }
+
   let result = "";
 
   switch (param.type) {
@@ -778,6 +792,8 @@ export async function writeFunctions(
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
+  const enumNames = Object.keys(enums).map((x) => stripPrefixes(x)).join(", ");
+
   const structNames = Object.entries(structs)
     .filter((x) => !x[1].doNotImport)
     .map((x) => x[0])
@@ -794,6 +810,7 @@ import { Symbols, symbols } from "./_symbols.ts";
 `,
   );
 
+  lines.push(`import { ${enumNames} } from "./enums.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
   lines.push("");
 

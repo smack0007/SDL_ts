@@ -9,6 +9,25 @@ import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { Symbols, symbols } from "./_symbols.ts";
 
 import {
+  ArrayOrder,
+  BitmapOrder,
+  EventType,
+  InitFlags,
+  Keycode,
+  PackedLayout,
+  PackedOrder,
+  PixelType,
+  RendererFlags,
+  RendererFlip,
+  ScaleMode,
+  Scancode,
+  TextureAccess,
+  TextureModulate,
+  WindowEventID,
+  WindowFlags,
+  WindowPos,
+} from "./enums.ts";
+import {
   BlitMap,
   Keysym,
   PixelFormat,
@@ -23,7 +42,6 @@ import {
   Window,
 } from "./structs.ts";
 
-import { WindowPos } from "./enums.ts";
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
 
@@ -165,11 +183,11 @@ export function CreateTextureFromSurface(
 
 export function CreateWindow(
   title: string,
-  x: i32 | WindowPos,
-  y: i32 | WindowPos,
+  x: WindowPos | i32,
+  y: WindowPos | i32,
   w: i32,
   h: i32,
-  flags: u32,
+  flags: WindowFlags,
 ): Window | null {
   return Window.of(context.symbols.SDL_CreateWindow(
     toPlatformString(title),
@@ -184,7 +202,7 @@ export function CreateWindow(
 export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
-  window_flags: u32,
+  window_flags: WindowFlags,
   window: BoxedPointer<Window>,
   renderer: BoxedPointer<Renderer>,
 ): i32 {
@@ -276,15 +294,15 @@ export function GetRevision(): string {
 }
 
 export function GetScancodeFromKey(
-  key: u32,
-): u32 {
+  key: Keycode,
+): Scancode {
   return context.symbols.SDL_GetScancodeFromKey(
     key,
-  ) as u32;
+  ) as Scancode;
 }
 
 export function GetScancodeName(
-  scancode: u32,
+  scancode: Scancode,
 ): string {
   return fromPlatformString(context.symbols.SDL_GetScancodeName(
     scancode,
@@ -437,7 +455,7 @@ export function RenderCopyEx(
   dstrect: PointerTo<Rect>,
   angle: f64,
   center: PointerTo<Point>,
-  flip: u32,
+  flip: RendererFlip,
 ): i32 {
   return context.symbols.SDL_RenderCopyEx(
     Pointer.of(renderer),

@@ -376,22 +376,22 @@ export enum PixelType {
 }
 
 export enum RendererFlags {
-  RENDERER_SOFTWARE = 0x00000001,
-  RENDERER_ACCELERATED = 0x00000002,
-  RENDERER_PRESENTVSYNC = 0x00000004,
-  RENDERER_TARGETTEXTURE = 0x00000008,
+  SOFTWARE = 0x00000001,
+  ACCELERATED = 0x00000002,
+  PRESENTVSYNC = 0x00000004,
+  TARGETTEXTURE = 0x00000008,
 }
 
 export enum RendererFlip {
-  FLIP_NONE = 0x00000000,
-  FLIP_HORIZONTAL = 0x00000001,
-  FLIP_VERTICAL = 0x00000002,
+  NONE = 0x00000000,
+  HORIZONTAL = 0x00000001,
+  VERTICAL = 0x00000002,
 }
 
 export enum ScaleMode {
-  ScaleModeNearest = 0,
-  ScaleModeLinear = 1,
-  ScaleModeBest = 2,
+  Nearest = 0,
+  Linear = 1,
+  Best = 2,
 }
 
 export enum Scancode {

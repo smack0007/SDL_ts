@@ -8,6 +8,7 @@ import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { Symbols, symbols } from "./_symbols.ts";
 
+import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
 
 import { Surface, version } from "../SDL/structs.ts";

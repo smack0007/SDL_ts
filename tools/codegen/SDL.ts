@@ -13,7 +13,6 @@ export async function codegenSDL(): Promise<void> {
   await writeStructs(`${SDL_PATH}/structs.ts`, enums, structs, opaqueStructs);
   await writeSymbols(`${SDL_PATH}/_symbols.ts`, functions, enums, structs, opaqueStructs);
   await writeFunctions(`${SDL_PATH}/functions.ts`, functions, functionImplementations, enums, structs, opaqueStructs, [
-    `import { WindowPos } from "./enums.ts";`,
     `import { Event } from "./events.ts";`,
     `import { RWMode } from "./types.ts";`,
   ]);

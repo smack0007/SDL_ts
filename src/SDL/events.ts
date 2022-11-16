@@ -1,7 +1,7 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 import { PlatformDataView } from "platform";
-import { WindowEventID } from "./enums.ts";
+import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
 
@@ -9,7 +9,7 @@ export class CommonEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -22,7 +22,7 @@ export class DisplayEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -56,7 +56,7 @@ export class KeyboardEvent {
     this._keysym = Keysym.of(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES)) as Keysym;
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -89,7 +89,7 @@ export class MouseButtonEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -132,7 +132,7 @@ export class MouseMotionEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -173,7 +173,7 @@ export class MouseWheelEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -214,7 +214,7 @@ export class WindowEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
   }
 
-  public get type(): u32 {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 
@@ -249,7 +249,7 @@ export class Event {
   public readonly _data = new Uint8Array(64);
   private readonly _view = new PlatformDataView<Event>(this._data);
 
-  public get type(): number {
+  public get type(): EventType {
     return this._view.getUint32(0);
   }
 

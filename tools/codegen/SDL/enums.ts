@@ -396,6 +396,7 @@ export const enums: CodeGenEnums = {
   },
 
   SDL_RendererFlags: {
+    prefixToStrip: "SDL_RENDERER",
     values: {
       SDL_RENDERER_SOFTWARE: "0x00000001",
       SDL_RENDERER_ACCELERATED: "0x00000002",
@@ -405,6 +406,7 @@ export const enums: CodeGenEnums = {
   },
 
   SDL_RendererFlip: {
+    prefixToStrip: "SDL_FLIP",
     values: {
       SDL_FLIP_NONE: "0x00000000",
       SDL_FLIP_HORIZONTAL: "0x00000001",
@@ -412,11 +414,13 @@ export const enums: CodeGenEnums = {
     },
   },
 
+  // NOTE: An underscore is added to the values here to simplfy code generation.
   SDL_ScaleMode: {
+    prefixToStrip: "SDL_ScaleMode",
     values: {
-      SDL_ScaleModeNearest: "0",
-      SDL_ScaleModeLinear: "1",
-      SDL_ScaleModeBest: "2",
+      SDL_ScaleMode_Nearest: "0",
+      SDL_ScaleMode_Linear: "1",
+      SDL_ScaleMode_Best: "2",
     },
   },
 

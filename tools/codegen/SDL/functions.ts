@@ -185,11 +185,11 @@ export const functions: CodeGenFunctions = {
       },
       x: {
         type: "int",
-        overrideType: "i32 | WindowPos",
+        overrideType: "WindowPos | i32",
       },
       y: {
         type: "int",
-        overrideType: "i32 | WindowPos",
+        overrideType: "WindowPos | i32",
       },
       w: {
         type: "int",
@@ -199,6 +199,7 @@ export const functions: CodeGenFunctions = {
       },
       flags: {
         type: "Uint32",
+        overrideType: "WindowFlags",
       },
     },
     result: {
@@ -216,6 +217,7 @@ export const functions: CodeGenFunctions = {
       },
       window_flags: {
         type: "Uint32",
+        overrideType: "WindowFlags",
       },
       window: {
         type: "SDL_Window**",

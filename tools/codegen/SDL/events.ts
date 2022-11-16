@@ -6,12 +6,11 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
         type: "Uint32",
-
         offset: 4,
       },
     },
@@ -22,7 +21,7 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
@@ -64,7 +63,7 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
@@ -105,6 +104,7 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
@@ -151,27 +151,23 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
         type: "Uint32",
-
         offset: 4,
       },
       windowID: {
         type: "Uint32",
-
         offset: 8,
       },
       which: {
         type: "Uint32",
-
         offset: 12,
       },
       state: {
         type: "Uint32",
-
         offset: 16,
       },
       x: {
@@ -198,22 +194,19 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
-
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
         type: "Uint32",
-
         offset: 4,
       },
       windowID: {
         type: "Uint32",
-
         offset: 8,
       },
       which: {
         type: "Uint32",
-
         offset: 12,
       },
       x: {
@@ -244,6 +237,7 @@ export const events: CodeGenEvents = {
     members: {
       type: {
         type: "Uint32",
+        overrideType: "EventType",
         offset: 0,
       },
       timestamp: {
