@@ -1,3 +1,4 @@
 bin/
 ext/SDL/include/
 tmp/
+deno.lock
