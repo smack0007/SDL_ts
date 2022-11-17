@@ -4,9 +4,9 @@ import { BoxableValue, PointerValue, Struct, TypedArray } from "./types.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
 
-export type PointerLike<T> = T extends BoxableValue ? (BoxedArray<T> | BoxedValue<T> | Struct) : Struct;
+type PointerBoxableValue<T> = T extends BoxableValue ? BoxedArray<T> | BoxedValue<T> : never;
 
-export type PointerTo<T> = PointerValue<T> | PointerLike<T>;
+export type PointerTo<T> = PointerValue<T> | Struct | TypedArray | PointerBoxableValue<T>;
 
 export class Pointer {
   public static readonly SIZE_IN_BYTES = PlatformPointer.SIZE_IN_BYTES;
@@ -23,7 +23,7 @@ export class Pointer {
   }
 
   public static of<T>(
-    value: TypedArray | PointerTo<T> | null | undefined,
+    value: PointerTo<T> | null | undefined,
     offset = 0,
   ): PointerValue<T> {
     if (value === null || value === undefined) {
