@@ -1,6 +1,6 @@
-# sdl2-ts
+# sdl-ts
 
-[SDL2](https://www.libsdl.org/) bindings for [TypeScript](https://www.typescriptlang.org/).
+[SDL](https://www.libsdl.org/) bindings for [TypeScript](https://www.typescriptlang.org/).
 
 Currently working via [deno](https://deno.land/) on Windows using [FFI](https://deno.land/manual/runtime/ffi_api)
 (Foreign Function Interface).
