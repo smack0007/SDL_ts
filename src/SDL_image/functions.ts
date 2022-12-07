@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
+import { fromPlatformString, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";

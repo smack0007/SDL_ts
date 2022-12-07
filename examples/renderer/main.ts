@@ -1,5 +1,5 @@
 import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "../../mod.ts";
-import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "../paths.ts";
+import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "@shared/paths.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;

@@ -1,4 +1,4 @@
-import { joinPath, SRC_PATH } from "../paths.ts";
+import { joinPath, SRC_PATH } from "@shared/paths.ts";
 import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL/enums.ts";
 import { events } from "./SDL/events.ts";

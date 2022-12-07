@@ -1,4 +1,4 @@
-import { PlatformDataView } from "platform";
+import { PlatformDataView } from "@platform";
 import { PointerValue, u8 } from "./types.ts";
 
 export class Memory {

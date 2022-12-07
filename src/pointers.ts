@@ -1,4 +1,4 @@
-import { NULL_POINTER, PlatformPointer } from "platform";
+import { NULL_POINTER, PlatformPointer } from "@platform";
 import { BoxedArray, BoxedValue } from "./boxes.ts";
 import { BoxableValue, PointerValue, Struct, TypedArray } from "./types.ts";
 import { isStruct } from "./_structs.ts";

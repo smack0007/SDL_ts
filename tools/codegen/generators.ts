@@ -281,7 +281,7 @@ export async function writeEvents(
   const lines = createLines();
 
   lines.push(
-    `import { PlatformDataView } from "platform";
+    `import { PlatformDataView } from "@platform";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
@@ -387,7 +387,7 @@ export async function writeStructs(
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "platform";`);
+  lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "@platform";`);
   lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
   lines.push(`import { Pointer } from "../pointers.ts";`);
   lines.push(
@@ -802,7 +802,7 @@ export async function writeFunctions(
     .join(", ");
 
   lines.push(
-    `import { fromPlatformString, PlatformPointer, toPlatformString } from "platform";
+    `import { fromPlatformString, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";

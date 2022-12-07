@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { PlatformDataView } from "platform";
+import { PlatformDataView } from "@platform";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";

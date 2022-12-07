@@ -13,6 +13,8 @@ export const ROOT_PATH = new URL(import.meta.url).pathname
   .slice(0, -2)
   .join(PATH_SEPARATOR);
 
+export const SRC_PATH = joinPath(ROOT_PATH, "src");
+
 export const SDL_LIB_PATH = joinPath(ROOT_PATH, "ext", "SDL", "lib", "x64", IS_WINDOWS ? "SDL2" : "libSDL2");
 
 export const SDL_IMAGE_LIB_PATH = joinPath(

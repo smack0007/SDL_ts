@@ -1,5 +1,5 @@
 import { SDL } from "../../mod.ts";
-import { SDL_LIB_PATH } from "../paths.ts";
+import { SDL_LIB_PATH } from "@shared/paths.ts";
 
 SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
 

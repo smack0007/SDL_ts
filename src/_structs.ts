@@ -1,4 +1,4 @@
-import { PlatformDataView, PlatformPointer } from "platform";
+import { PlatformDataView, PlatformPointer } from "@platform";
 import { AllocatableStruct, PointerValue, Struct } from "./types.ts";
 
 export const STRUCT_NO_ALLOCATE = Symbol("STRUCT_NO_ALLOCATE");
