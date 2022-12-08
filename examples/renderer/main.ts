@@ -1,5 +1,6 @@
 import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "../../mod.ts";
-import { ASSETS_PATH, joinPath, SDL_LIB_PATH } from "@shared/paths.ts";
+import { ASSETS_PATH, SDL_LIB_PATH } from "@shared/constants.ts";
+import * as path from "@shared/path.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -48,7 +49,7 @@ function main(): number {
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
-  const denoSurface = SDL.LoadBMP(joinPath(ASSETS_PATH, "jurassicDeno.bmp"));
+  const denoSurface = SDL.LoadBMP(path.join(ASSETS_PATH, "jurassicDeno.bmp"));
 
   if (denoSurface == null) {
     console.error("Failed to load jurassicDeno.bmp.");
