@@ -41,9 +41,8 @@ export const functions: CodeGenFunctions = {
 
 export const functionImplementations: CodeGenFunctionImplementations = {
   IMG_Init: `export function Init(flags: number, libraryPath?: string): number {
-    // TODO: Improve this logic.
     if (!libraryPath) {
-      libraryPath = "libSDL2_image";
+      libraryPath = getLibraryPath("SDL2");
     }
   
     context.library = Deno.dlopen(libraryPath, symbols);

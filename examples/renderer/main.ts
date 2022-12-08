@@ -1,12 +1,12 @@
 import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "../../mod.ts";
-import { ASSETS_PATH, SDL_LIB_PATH } from "@shared/constants.ts";
+import { ASSETS_PATH } from "@shared/constants.ts";
 import * as path from "@shared/path.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
 
 function main(): number {
-  SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
+  SDL.Init(SDL.InitFlags.VIDEO);
 
   const windowBox = new BoxedPointer<SDL.Window>();
   const rendererBox = new BoxedPointer<SDL.Renderer>();

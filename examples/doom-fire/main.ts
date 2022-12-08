@@ -1,5 +1,5 @@
 import { IMG, SDL } from "../../mod.ts";
-import { ASSETS_PATH, SDL_IMAGE_LIB_PATH, SDL_LIB_PATH } from "@shared/constants.ts";
+import { ASSETS_PATH } from "@shared/constants.ts";
 import * as path from "@shared/path.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -50,8 +50,8 @@ const FIRE_COLORS = [
 ];
 
 function main(): number {
-  SDL.Init(SDL.InitFlags.VIDEO, SDL_LIB_PATH);
-  IMG.Init(IMG.InitFlags.PNG, SDL_IMAGE_LIB_PATH);
+  SDL.Init(SDL.InitFlags.VIDEO);
+  IMG.Init(IMG.InitFlags.PNG);
 
   const version = IMG.Linked_Version();
 

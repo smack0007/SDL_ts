@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, PlatformPointer, toPlatformString } from "@platform";
+import { fromPlatformString, getLibraryPath, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
@@ -32,9 +32,8 @@ const context: SDLContext = {
 };
 
 export function Init(flags: number, libraryPath?: string): number {
-  // TODO: Improve this logic.
   if (!libraryPath) {
-    libraryPath = "libSDL2_image";
+    libraryPath = getLibraryPath("SDL2");
   }
 
   context.library = Deno.dlopen(libraryPath, symbols);

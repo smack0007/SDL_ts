@@ -1,0 +1,1 @@
+export const ENV_LIBRARY_PATH = "SDL_TS_LIBRARY_PATH";
