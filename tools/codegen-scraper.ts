@@ -68,7 +68,7 @@ async function main(): Promise<number> {
       exeOutputPath,
       `-I${SDL_PATH}/include`,
       `-I${KHRONOS_PATH}`,
-      `-L${SDL_PATH}/lib/x64`,
+      `-L${SDL_PATH}/lib/windows/x64`,
       "-Wl,/SUBSYSTEM:CONSOLE",
       "-lSDL2main",
       "-lSDL2",
@@ -82,7 +82,7 @@ async function main(): Promise<number> {
   }
 
   await Deno.copyFile(
-    `${SDL_PATH}/lib/x64/SDL2.dll`,
+    `${SDL_PATH}/lib/windows/x64/SDL2.dll`,
     `${OUTPUT_PATH}/SDL2.dll`,
   );
 
