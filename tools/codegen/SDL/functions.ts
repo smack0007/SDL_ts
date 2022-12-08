@@ -833,7 +833,7 @@ export const functionImplementations: CodeGenFunctionImplementations = {
     libraryPath = getLibraryPath("SDL2");
   }
 
-  context.library = Deno.dlopen(libraryPath, symbols);
+  context.library = loadLibrary(libraryPath, symbols);
   context.symbols = context.library.symbols;
 
   return context.symbols.SDL_Init(flags) as number;

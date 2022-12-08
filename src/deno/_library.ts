@@ -1,5 +1,6 @@
 import { join } from "@shared/path.ts";
 import { IS_WINDOWS } from "../../shared/os.ts";
+import { DynamicLibrary } from "../library.ts";
 import { ENV_LIBRARY_PATH } from "../_constants.ts";
 
 export function getLibraryPath(libraryName: string): string {
@@ -12,4 +13,9 @@ export function getLibraryPath(libraryName: string): string {
     "x64",
     libraryPrefix + libraryName,
   );
+}
+
+// deno-lint-ignore no-explicit-any
+export function loadLibrary<T>(libraryPath: string, symbols: any): DynamicLibrary<T> {
+  return Deno.dlopen(libraryPath, symbols) as unknown as DynamicLibrary<T>;
 }

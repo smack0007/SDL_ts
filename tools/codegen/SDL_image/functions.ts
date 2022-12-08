@@ -42,10 +42,10 @@ export const functions: CodeGenFunctions = {
 export const functionImplementations: CodeGenFunctionImplementations = {
   IMG_Init: `export function Init(flags: number, libraryPath?: string): number {
     if (!libraryPath) {
-      libraryPath = getLibraryPath("SDL2");
+      libraryPath = getLibraryPath("SDL2_image");
     }
   
-    context.library = Deno.dlopen(libraryPath, symbols);
+    context.library = loadLibrary(libraryPath, symbols);
     context.symbols = context.library.symbols;
   
     return context.symbols.IMG_Init(flags) as number;
