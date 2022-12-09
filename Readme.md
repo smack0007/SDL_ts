@@ -15,6 +15,16 @@ Currently working via [deno](https://deno.land/) on Windows using [FFI](https://
 
 - Creating a higher level API or Game Framework. This library's only purpose is to expose the SDL API to deno.
 
+## Getting Started
+
+### Creating a Project
+
+To aid in creating a new project which uses `sdl-ts` there is an `init.ts` script to aid in getting your project set up:
+
+```bash
+deno run --allow-read --allow-write --allow-net --import-map https://raw.githubusercontent.com/smack0007/sdl-ts/main/imports.deno.json https://raw.githubusercontent.com/smack0007/sdl-ts/main/init.ts /path/to/project
+```
+
 ## Credits
 
 Deno images taken from https://deno.land/artwork.
