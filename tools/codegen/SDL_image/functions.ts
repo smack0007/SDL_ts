@@ -45,14 +45,13 @@ export const functionImplementations: CodeGenFunctionImplementations = {
       libraryPath = getLibraryPath("SDL2_image");
     }
   
-    context.library = loadLibrary(libraryPath, symbols);
-    context.symbols = context.library.symbols;
+    _library = loadLibrary(libraryPath, symbols);
   
-    return context.symbols.IMG_Init(flags) as number;
+    return _library.symbols.IMG_Init(flags) as number;
   }`,
 
   IMG_Quit: `export function Quit(): void {
-    context.symbols.IMG_Quit();
-    context.library.close();
+    _library.symbols.IMG_Quit();
+    _library.close();
   }`,
 } as const;

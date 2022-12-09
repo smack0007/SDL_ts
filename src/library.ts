@@ -16,14 +16,10 @@ export type DynamicLibraryFunctionInterface = {
   readonly result: DynamicLibraryType | "void";
 };
 
-export type DynamicLibrarySymbolInterface = DynamicLibraryFunctionInterface;
-
-export type DynamicLibraryInterface = Record<string, DynamicLibrarySymbolInterface>;
-
-export type DynamicLibrarySymbols<T> = Record<keyof T, (...args: unknown[]) => unknown>;
+export type DynamicLibraryInterface = Record<string, DynamicLibraryFunctionInterface>;
 
 export type DynamicLibrary<T> = {
-  symbols: DynamicLibrarySymbols<T>;
+  symbols: Record<keyof T, (...args: unknown[]) => unknown>;
 
   close(): void;
 };

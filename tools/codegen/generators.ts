@@ -796,7 +796,7 @@ export async function writeFunctions(
   lines.push(
     `import { fromPlatformString, getLibraryPath, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
-import { DynamicLibrary, DynamicLibrarySymbols } from "../library.ts";
+import { DynamicLibrary } from "../library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
@@ -810,20 +810,8 @@ import { symbols } from "./_symbols.ts";
   lines.push(...imports);
   lines.push("");
 
-  lines.push(`interface Context {
-  library: DynamicLibrary<typeof symbols>;
-  symbols: DynamicLibrarySymbols<typeof symbols>;
-}
-
-const context: Context = {
-  // We don't want to check in every function if the
-  // library has been loaded so the following are
-  // set to null even though the type says it shouldn't
-  // be null.
-  library: null!,
-  symbols: null!,
-};
-`);
+  lines.push(`let _library: DynamicLibrary<typeof symbols> = null!;`);
+  lines.push("");
 
   for (const [funcName, func] of Object.entries(functions)) {
     if (functionImplementations[funcName] !== undefined) {
@@ -863,10 +851,10 @@ const context: Context = {
         returnStatement += `\t\t${returnType}.of(`;
       }
 
-      returnStatement += `context.symbols.${symbolName}(`;
+      returnStatement += `_library.symbols.${symbolName}(`;
       lines.push(returnStatement);
     } else {
-      lines.push(`\tcontext.symbols.${symbolName}(`);
+      lines.push(`\t_library.symbols.${symbolName}(`);
     }
 
     for (const [paramName, param] of Object.entries(func.parameters)) {
