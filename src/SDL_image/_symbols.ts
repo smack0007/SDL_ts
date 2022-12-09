@@ -1,13 +1,8 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-export interface Symbols extends Deno.ForeignLibraryInterface {
-  IMG_Init: Deno.ForeignFunction;
-  IMG_Linked_Version: Deno.ForeignFunction;
-  IMG_Load: Deno.ForeignFunction;
-  IMG_Quit: Deno.ForeignFunction;
-}
+import { DynamicLibraryInterface } from "../library.ts";
 
-export const symbols: Symbols = {
+export const symbols: DynamicLibraryInterface = {
   IMG_Init: {
     parameters: [
       "i32", /* int flags */
@@ -28,4 +23,4 @@ export const symbols: Symbols = {
     parameters: [],
     result: "void", /* void */
   },
-};
+} as const;

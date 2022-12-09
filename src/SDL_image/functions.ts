@@ -7,7 +7,7 @@ import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary, DynamicLibrarySymbols } from "../library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
-import { Symbols, symbols } from "./_symbols.ts";
+import { symbols } from "./_symbols.ts";
 
 import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
@@ -15,8 +15,8 @@ import {} from "./structs.ts";
 import { Surface, version } from "../SDL/structs.ts";
 
 interface Context {
-  library: DynamicLibrary<Symbols>;
-  symbols: DynamicLibrarySymbols<Symbols>;
+  library: DynamicLibrary<typeof symbols>;
+  symbols: DynamicLibrarySymbols<typeof symbols>;
 }
 
 const context: Context = {

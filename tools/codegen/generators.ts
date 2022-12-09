@@ -594,18 +594,10 @@ export async function writeSymbols(
 ): Promise<void> {
   const lines = createLines();
 
-  lines.push("export interface Symbols extends Deno.ForeignLibraryInterface {");
-  for (const [funcName, func] of Object.entries(functions)) {
-    if (func.symbolName !== undefined) {
-      lines.push(`\t${func.symbolName}: Deno.ForeignFunction;`);
-    } else {
-      lines.push(`\t${funcName}: Deno.ForeignFunction;`);
-    }
-  }
-  lines.push("}");
+  lines.push(`import { DynamicLibraryInterface } from "../library.ts";`);
   lines.push("");
 
-  lines.push("export const symbols: Symbols = {");
+  lines.push("export const symbols: DynamicLibraryInterface = {");
   for (const [funcName, func] of Object.entries(functions)) {
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: {`);
@@ -628,7 +620,7 @@ export async function writeSymbols(
     );
     lines.push("\t},");
   }
-  lines.push("};");
+  lines.push("} as const;");
   lines.push("");
 
   await writeLinesToFile(filePath, lines);
@@ -807,7 +799,7 @@ import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary, DynamicLibrarySymbols } from "../library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
-import { Symbols, symbols } from "./_symbols.ts";
+import { symbols } from "./_symbols.ts";
 `,
   );
 
@@ -819,8 +811,8 @@ import { Symbols, symbols } from "./_symbols.ts";
   lines.push("");
 
   lines.push(`interface Context {
-  library: DynamicLibrary<Symbols>;
-  symbols: DynamicLibrarySymbols<Symbols>;
+  library: DynamicLibrary<typeof symbols>;
+  symbols: DynamicLibrarySymbols<typeof symbols>;
 }
 
 const context: Context = {

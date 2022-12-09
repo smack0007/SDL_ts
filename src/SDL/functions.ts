@@ -7,7 +7,7 @@ import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary, DynamicLibrarySymbols } from "../library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
-import { Symbols, symbols } from "./_symbols.ts";
+import { symbols } from "./_symbols.ts";
 
 import {
   ArrayOrder,
@@ -47,8 +47,8 @@ import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
 
 interface Context {
-  library: DynamicLibrary<Symbols>;
-  symbols: DynamicLibrarySymbols<Symbols>;
+  library: DynamicLibrary<typeof symbols>;
+  symbols: DynamicLibrarySymbols<typeof symbols>;
 }
 
 const context: Context = {

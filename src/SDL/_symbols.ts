@@ -1,63 +1,8 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-export interface Symbols extends Deno.ForeignLibraryInterface {
-  SDL_UpperBlitScaled: Deno.ForeignFunction;
-  SDL_UpperBlit: Deno.ForeignFunction;
-  SDL_ConvertSurface: Deno.ForeignFunction;
-  SDL_CreateRenderer: Deno.ForeignFunction;
-  SDL_CreateRGBSurfaceFrom: Deno.ForeignFunction;
-  SDL_CreateRGBSurfaceWithFormat: Deno.ForeignFunction;
-  SDL_CreateTexture: Deno.ForeignFunction;
-  SDL_CreateTextureFromSurface: Deno.ForeignFunction;
-  SDL_CreateWindow: Deno.ForeignFunction;
-  SDL_CreateWindowAndRenderer: Deno.ForeignFunction;
-  SDL_Delay: Deno.ForeignFunction;
-  SDL_DestroyRenderer: Deno.ForeignFunction;
-  SDL_DestroyTexture: Deno.ForeignFunction;
-  SDL_DestroyWindow: Deno.ForeignFunction;
-  SDL_FillRect: Deno.ForeignFunction;
-  SDL_FreeSurface: Deno.ForeignFunction;
-  SDL_GetError: Deno.ForeignFunction;
-  SDL_GetKeyboardState: Deno.ForeignFunction;
-  SDL_GetRendererInfo: Deno.ForeignFunction;
-  SDL_GetRevision: Deno.ForeignFunction;
-  SDL_GetScancodeFromKey: Deno.ForeignFunction;
-  SDL_GetScancodeName: Deno.ForeignFunction;
-  SDL_GetSystemRAM: Deno.ForeignFunction;
-  SDL_GetTicks: Deno.ForeignFunction;
-  SDL_GetTicks64: Deno.ForeignFunction;
-  SDL_GetVersion: Deno.ForeignFunction;
-  SDL_GetWindowSurface: Deno.ForeignFunction;
-  SDL_Init: Deno.ForeignFunction;
-  SDL_LoadBMP_RW: Deno.ForeignFunction;
-  SDL_LockSurface: Deno.ForeignFunction;
-  SDL_MapRGB: Deno.ForeignFunction;
-  SDL_MapRGBA: Deno.ForeignFunction;
-  SDL_MaximizeWindow: Deno.ForeignFunction;
-  SDL_MinimizeWindow: Deno.ForeignFunction;
-  SDL_PollEvent: Deno.ForeignFunction;
-  SDL_Quit: Deno.ForeignFunction;
-  SDL_RenderClear: Deno.ForeignFunction;
-  SDL_RenderCopy: Deno.ForeignFunction;
-  SDL_RenderCopyEx: Deno.ForeignFunction;
-  SDL_RenderDrawLine: Deno.ForeignFunction;
-  SDL_RenderDrawLines: Deno.ForeignFunction;
-  SDL_RenderDrawPoint: Deno.ForeignFunction;
-  SDL_RenderDrawPoints: Deno.ForeignFunction;
-  SDL_RenderDrawRect: Deno.ForeignFunction;
-  SDL_RenderDrawRects: Deno.ForeignFunction;
-  SDL_RenderFillRect: Deno.ForeignFunction;
-  SDL_RenderFillRects: Deno.ForeignFunction;
-  SDL_RenderFlush: Deno.ForeignFunction;
-  SDL_RenderPresent: Deno.ForeignFunction;
-  SDL_RestoreWindow: Deno.ForeignFunction;
-  SDL_RWFromFile: Deno.ForeignFunction;
-  SDL_SetRenderDrawColor: Deno.ForeignFunction;
-  SDL_UnlockSurface: Deno.ForeignFunction;
-  SDL_UpdateWindowSurface: Deno.ForeignFunction;
-}
+import { DynamicLibraryInterface } from "../library.ts";
 
-export const symbols: Symbols = {
+export const symbols: DynamicLibraryInterface = {
   SDL_UpperBlitScaled: {
     parameters: [
       "pointer", /* SDL_Surface* src */
@@ -447,4 +392,4 @@ export const symbols: Symbols = {
     ],
     result: "i32", /* int */
   },
-};
+} as const;
