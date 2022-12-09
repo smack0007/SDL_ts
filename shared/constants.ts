@@ -1,6 +1,8 @@
 import { IS_WINDOWS } from "./os.ts";
 import * as path from "./path.ts";
 
+export const REPO_URL = "https://github.com/smack0007/sdl-ts/blob/main";
+
 export const ROOT_PATH = new URL(import.meta.url).pathname
   .replaceAll("/", IS_WINDOWS ? "\\" : "/")
   .substring(IS_WINDOWS ? 1 : 0)
