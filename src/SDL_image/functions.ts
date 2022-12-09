@@ -4,7 +4,7 @@
 
 import { fromPlatformString, getLibraryPath, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
-import { DynamicLibrary } from "../library.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";

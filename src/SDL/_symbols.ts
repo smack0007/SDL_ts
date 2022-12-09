@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { DynamicLibraryInterface } from "../library.ts";
+import { DynamicLibraryInterface } from "../_library.ts";
 
 export const symbols: DynamicLibraryInterface = {
   SDL_UpperBlitScaled: {

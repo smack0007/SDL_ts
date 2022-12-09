@@ -1,7 +1,7 @@
 import { join } from "@shared/path.ts";
 import { IS_WINDOWS } from "../../shared/os.ts";
 import { SDLError } from "../error.ts";
-import { DynamicLibrary, DynamicLibraryInterface } from "../library.ts";
+import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_LIBRARY_PATH } from "../_constants.ts";
 
 export function getLibraryPath(libraryName: string): string {

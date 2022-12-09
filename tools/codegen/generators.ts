@@ -594,7 +594,7 @@ export async function writeSymbols(
 ): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { DynamicLibraryInterface } from "../library.ts";`);
+  lines.push(`import { DynamicLibraryInterface } from "../_library.ts";`);
   lines.push("");
 
   lines.push("export const symbols: DynamicLibraryInterface = {");
@@ -796,7 +796,7 @@ export async function writeFunctions(
   lines.push(
     `import { fromPlatformString, getLibraryPath, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
-import { DynamicLibrary } from "../library.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
