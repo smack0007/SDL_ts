@@ -10,17 +10,17 @@ export async function main(args: string[]): Promise<number> {
   fs.ensureDirectory(path.join(destination, "windows", "x64"));
 
   await http.downloadFile(
-    REPO_URL + "/tools/init/deno.json",
+    REPO_URL + "/tools/init/deno.json?raw=true",
     path.join(destination, "deno.json"),
   );
 
   await http.downloadFile(
-    REPO_URL + "/tools/init/imports.deno.json",
+    REPO_URL + "/tools/init/imports.deno.json?raw=true",
     path.join(destination, "imports.deno.json"),
   );
 
   await http.downloadFile(
-    REPO_URL + "/tools/init/main.ts",
+    REPO_URL + "/tools/init/main.ts?raw=true",
     path.join(destination, "main.ts"),
   );
 
