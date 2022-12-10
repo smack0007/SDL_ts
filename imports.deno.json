@@ -1,6 +1,7 @@
 {
   "imports": {
     "@platform": "./mod.deno.ts",
-    "@shared/": "./shared/"
+    "@shared/": "./shared/",
+    "sdl-ts": "./mod.ts"
   }
 }

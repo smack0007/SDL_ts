@@ -23,5 +23,7 @@
     }
   },
   "importMap": "imports.deno.json",
-  "tasks": {}
+  "tasks": {
+    "start": "deno run --unstable --allow-env --allow-ffi ./main.ts"
+  }
 }

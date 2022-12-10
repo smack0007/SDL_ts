@@ -1,4 +1,4 @@
-import { SDL } from "../../mod.ts";
+import { SDL } from "sdl-ts";
 
 SDL.Init(SDL.InitFlags.VIDEO);
 
