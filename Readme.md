@@ -25,6 +25,12 @@ To aid in creating a new project which uses `sdl-ts` there is an `init.ts` scrip
 deno run --allow-read --allow-write --allow-net --import-map https://raw.githubusercontent.com/smack0007/sdl-ts/main/imports.deno.json https://raw.githubusercontent.com/smack0007/sdl-ts/main/init.ts /path/to/project
 ```
 
+After that the new project can be started via a deno task:
+
+```bash
+deno task start
+```
+
 ## Credits
 
 Deno images taken from https://deno.land/artwork.
