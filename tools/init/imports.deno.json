@@ -1,0 +1,8 @@
+{
+  "scopes": {
+    "https://raw.githubusercontent.com/smack0007/sdl-ts": {
+      "@platform": "https://raw.githubusercontent.com/smack0007/sdl-ts/main/mod.deno.ts",
+      "@shared/": "https://raw.githubusercontent.com/smack0007/sdl-ts/main/shared/"
+    }
+  }
+}

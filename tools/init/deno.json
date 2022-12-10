@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "deno.unstable"
+    ]
+  },
+  "fmt": {
+    "options": {
+      "useTabs": false,
+      "lineWidth": 120,
+      "indentWidth": 2
+    }
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "explicit-function-return-type"
+      ]
+    }
+  },
+  "importMap": "imports.deno.json",
+  "tasks": {}
+}
