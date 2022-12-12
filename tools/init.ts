@@ -3,31 +3,58 @@ import * as fs from "@shared/fs.ts";
 import * as http from "@shared/http.ts";
 import * as path from "@shared/path.ts";
 
+type ProjectFileData = {
+  readonly destination: readonly string[];
+  readonly overwrite: boolean;
+};
+
+const PROJECT_FILES: Record<string, ProjectFileData> = {
+  "/ext/SDL/windows/x64/SDL2.dll": {
+    destination: ["windows", "x64", "SDL2.dll"],
+    overwrite: true,
+  },
+
+  "/ext/SDL/README-SDL_image.txt": {
+    destination: ["README-SDL_image.txt"],
+    overwrite: true,
+  },
+
+  "/ext/SDL/README-SDL.txt": {
+    destination: ["README-SDL.txt"],
+    overwrite: true,
+  },
+
+  "/tools/init/deno.json": {
+    destination: ["deno.json"],
+    overwrite: false,
+  },
+
+  "/tools/init/imports.deno.json": {
+    destination: ["imports.deno.json"],
+    overwrite: false,
+  },
+
+  "/tools/init/main.ts": {
+    destination: ["main.ts"],
+    overwrite: false,
+  },
+} as const;
+
 export async function main(args: string[]): Promise<number> {
   const destination = args[0] ?? Deno.cwd();
 
-  fs.ensureDirectory(path.join(destination));
-  fs.ensureDirectory(path.join(destination, "windows", "x64"));
+  for (const [fileURL, fileData] of Object.entries(PROJECT_FILES)) {
+    if (fileData.destination.length > 1) {
+      await fs.ensureDirectory(
+        path.join(destination, ...fileData.destination.slice(0, fileData.destination.length - 1)),
+      );
+    }
 
-  await http.downloadFile(
-    REPO_URL + "/tools/init/deno.json?raw=true",
-    path.join(destination, "deno.json"),
-  );
-
-  await http.downloadFile(
-    REPO_URL + "/tools/init/imports.deno.json?raw=true",
-    path.join(destination, "imports.deno.json"),
-  );
-
-  await http.downloadFile(
-    REPO_URL + "/tools/init/main.ts?raw=true",
-    path.join(destination, "main.ts"),
-  );
-
-  await http.downloadFile(
-    REPO_URL + "/ext/SDL/windows/x64/SDL2.dll?raw=true",
-    path.join(destination, "windows", "x64", "SDL2.dll"),
-  );
+    const fileDestination = path.join(destination, ...fileData.destination);
+    if (fileData.overwrite || !await fs.exists(fileDestination)) {
+      await http.downloadFile(REPO_URL + fileURL, fileDestination);
+    }
+  }
 
   return 0;
 }
