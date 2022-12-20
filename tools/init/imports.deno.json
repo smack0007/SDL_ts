@@ -1,10 +1,10 @@
 {
   "imports": {
-    "SDL_ts": "https://deno.land/x/sdl_ts@0.0.3/mod.ts"
+    "SDL_ts": "https://deno.land/x/sdl_ts@0.0.4/mod.ts"
   },
   "scopes": {
-    "https://deno.land/x/sdl_ts@0.0.3/": {
-      "@platform": "https://deno.land/x/sdl_ts@0.0.3/mod.deno.ts",
+    "https://deno.land/x/sdl_ts@0.0.4/": {
+      "@platform": "https://deno.land/x/sdl_ts@0.0.4/mod.deno.ts",
       "std/": "https://deno.land/std@0.170.0/"
     }
   }
