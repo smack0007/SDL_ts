@@ -1,6 +1,6 @@
 {
   "imports": {
-    "sdl-ts": "https://deno.land/x/sdl_ts@0.0.3/mod.ts"
+    "SDL_ts": "https://deno.land/x/sdl_ts@0.0.3/mod.ts"
   },
   "scopes": {
     "https://deno.land/x/sdl_ts@0.0.3/": {

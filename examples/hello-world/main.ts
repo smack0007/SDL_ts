@@ -1,4 +1,4 @@
-import { SDL } from "sdl-ts";
+import { SDL } from "SDL_ts";
 
 SDL.Init(SDL.InitFlags.VIDEO);
 

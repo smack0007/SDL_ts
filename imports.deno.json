@@ -1,7 +1,7 @@
 {
   "imports": {
     "@platform": "./mod.deno.ts",
-    "sdl-ts": "./mod.ts",
+    "SDL_ts": "./mod.ts",
     "std/": "https://deno.land/std@0.170.0/"
   }
 }

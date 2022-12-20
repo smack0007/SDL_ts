@@ -1,10 +1,10 @@
-import { SDL } from "sdl-ts";
+import { SDL } from "SDL_ts";
 
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
 
   const window = SDL.CreateWindow(
-    "sdl-ts",
+    "SDL_ts",
     SDL.WindowPos.CENTERED,
     SDL.WindowPos.CENTERED,
     1024,

@@ -1,4 +1,4 @@
-import { IMG, SDL } from "sdl-ts";
+import { IMG, SDL } from "SDL_ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "std/path/mod.ts";
 

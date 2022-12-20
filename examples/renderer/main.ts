@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "sdl-ts";
+import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "SDL_ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "std/path/mod.ts";
 
