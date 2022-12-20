@@ -1,21 +1,30 @@
-import { ROOT_DIRECTORY } from "./config.ts";
-import { colors, path } from "./deps.ts";
+import { EXAMPLES_PATH, ROOT_PATH } from "../shared/constants.ts";
+import { green } from "std/fmt/colors.ts";
+import { join } from "std/path/mod.ts";
 
-let failure = false;
+async function main(): Promise<number> {
+  let failure = false;
 
-for await (const entry of Deno.readDir(path.join(ROOT_DIRECTORY, "examples"))) {
-  if (entry.isDirectory) {
-    const mainFilePath = path.join(ROOT_DIRECTORY, "examples", entry.name, "main.ts");
-    console.info(`${colors.green("Type checking:")} ${mainFilePath}`);
+  if (!await typeCheck(join(ROOT_PATH, "init.ts"))) {
+    failure = true;
+  }
 
-    const status = await Deno.run({
-      cmd: ["deno", "task", "-q", "check", mainFilePath],
-    }).status();
-
-    if (status.code !== 0) {
-      failure = true;
+  for await (const entry of Deno.readDir(EXAMPLES_PATH)) {
+    if (entry.isDirectory) {
+      if (!await typeCheck(join(EXAMPLES_PATH, entry.name, "main.ts"))) {
+        failure = true;
+      }
     }
   }
+
+  return failure ? 1 : 0;
 }
 
-Deno.exit(failure ? 1 : 0);
+async function typeCheck(filePath: string): Promise<boolean> {
+  console.info(`${green("Type checking:")} ${filePath}`);
+  return (await Deno.run({
+    cmd: ["deno", "task", "-q", "check", filePath],
+  }).status()).code === 0;
+}
+
+Deno.exit(await main());

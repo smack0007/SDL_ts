@@ -1,8 +1,9 @@
-import { join } from "@shared/path.ts";
-import { IS_WINDOWS } from "../../shared/os.ts";
+import { join } from "std/path/mod.ts";
 import { SDLError } from "../error.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_LIBRARY_PATH } from "../_constants.ts";
+
+const IS_WINDOWS = Deno.build.os === "windows";
 
 export function getLibraryPath(libraryName: string): string {
   const libraryPath = Deno.env.get(ENV_LIBRARY_PATH) ?? ".";

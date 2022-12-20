@@ -29,8 +29,9 @@
     "check": "deno check",
     "codegen": "cd ./tools && deno run --unstable --allow-run --allow-read --allow-write ./codegen.ts",
     "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write --allow-run ./codegen-scraper.ts > ../tmp/codegen-scraper.out",
-    "run-doom-fire": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/doom-fire && deno run --unstable --allow-env --allow-ffi ./main.ts",
-    "run-hello-world": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/hello-world && deno run --unstable --allow-env --allow-ffi ./main.ts",
-    "run-renderer": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/renderer && deno run --unstable --allow-env --allow-ffi ./main.ts"
+    "run:init": "deno run --allow-net --allow-read=. --allow-write=. ./init.ts ./tmp/init",
+    "run:doom-fire": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/doom-fire && deno run --unstable --allow-env --allow-ffi ./main.ts",
+    "run:hello-world": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/hello-world && deno run --unstable --allow-env --allow-ffi ./main.ts",
+    "run:renderer": "export SDL_TS_LIBRARY_PATH=$INIT_CWD/ext/SDL && cd ./examples/renderer && deno run --unstable --allow-env --allow-ffi ./main.ts"
   }
 }

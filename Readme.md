@@ -22,7 +22,7 @@ Currently working via [deno](https://deno.land/) on Windows using [FFI](https://
 To aid in creating a new project which uses `SDL_ts` there is an `init.ts` script to aid in getting your project set up:
 
 ```bash
-deno run --allow-read --allow-write --allow-net --import-map https://deno.land/x/sdl_ts@v0.0.2/imports.deno.json https://deno.land/x/sdl_ts@v0.0.2/init.ts /path/to/project
+deno run --allow-net --allow-read=. --allow-write=. --import-map https://deno.land/x/sdl_ts@0.0.3/imports.deno.json https://deno.land/x/sdl_ts@0.0.3/init.ts /path/to/project
 ```
 
 After that the new project can be started via a deno task:

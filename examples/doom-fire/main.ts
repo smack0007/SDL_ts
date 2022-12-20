@@ -1,6 +1,6 @@
 import { IMG, SDL } from "sdl-ts";
-import { ASSETS_PATH } from "@shared/constants.ts";
-import * as path from "@shared/path.ts";
+import { ASSETS_PATH } from "../../shared/constants.ts";
+import { join } from "std/path/mod.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -83,7 +83,7 @@ function main(): number {
     return 1;
   }
 
-  const denoSurfaceUnoptimized = IMG.Load(path.join(ASSETS_PATH, "jurassicDeno.png"));
+  const denoSurfaceUnoptimized = IMG.Load(join(ASSETS_PATH, "jurassicDeno.png"));
 
   if (denoSurfaceUnoptimized == null) {
     console.error("Failed to load jurassicDeno.png.");

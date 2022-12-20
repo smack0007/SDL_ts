@@ -51,7 +51,7 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run-doom-fire"],
+      "args": ["run:doom-fire"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -65,7 +65,7 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run-hello-world"],
+      "args": ["run:hello-world"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -79,7 +79,7 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run-renderer"],
+      "args": ["run:renderer"],
       "options": {
         "cwd": "${workspaceFolder}"
       },

@@ -1,11 +1,11 @@
 {
   "imports": {
-    "sdl-ts": "https://raw.githubusercontent.com/smack0007/sdl-ts/main/mod.ts"
+    "sdl-ts": "https://deno.land/x/sdl_ts@0.0.3/mod.ts"
   },
   "scopes": {
-    "https://raw.githubusercontent.com/smack0007/sdl-ts/": {
-      "@platform": "https://raw.githubusercontent.com/smack0007/sdl-ts/main/mod.deno.ts",
-      "@shared/": "https://raw.githubusercontent.com/smack0007/sdl-ts/main/shared/"
+    "https://deno.land/x/sdl_ts@0.0.3/": {
+      "@platform": "https://deno.land/x/sdl_ts@0.0.3/mod.deno.ts",
+      "std/": "https://deno.land/std@0.170.0/"
     }
   }
 }

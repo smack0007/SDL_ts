@@ -1,7 +1,7 @@
-import { REPO_URL } from "@shared/constants.ts";
-import * as fs from "@shared/fs.ts";
-import * as http from "@shared/http.ts";
-import * as path from "@shared/path.ts";
+import { REPO_URL } from "../shared/constants.ts";
+import { downloadFile } from "../shared/http.ts";
+import { ensureDir } from "std/fs/mod.ts";
+import { join } from "std/path/mod.ts";
 
 type ProjectFileData = {
   readonly destination: readonly string[];
@@ -45,15 +45,13 @@ export async function main(args: string[]): Promise<number> {
 
   for (const [fileURL, fileData] of Object.entries(PROJECT_FILES)) {
     if (fileData.destination.length > 1) {
-      await fs.ensureDirectory(
-        path.join(destination, ...fileData.destination.slice(0, fileData.destination.length - 1)),
+      await ensureDir(
+        join(destination, ...fileData.destination.slice(0, fileData.destination.length - 1)),
       );
     }
 
-    const fileDestination = path.join(destination, ...fileData.destination);
-    if (fileData.overwrite || !await fs.exists(fileDestination)) {
-      await http.downloadFile(REPO_URL + fileURL, fileDestination);
-    }
+    const fileDestination = join(destination, ...fileData.destination);
+    await downloadFile(REPO_URL + fileURL, fileDestination, fileData.overwrite);
   }
 
   return 0;
