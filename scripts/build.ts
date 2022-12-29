@@ -1,4 +1,4 @@
-import { EXAMPLES_PATH, ROOT_PATH } from "../shared/constants.ts";
+import { EXAMPLES_PATH, ROOT_PATH, TOOLS_PATH } from "../shared/constants.ts";
 import { green } from "std/fmt/colors.ts";
 import { join } from "std/path/mod.ts";
 
@@ -6,6 +6,10 @@ async function main(): Promise<number> {
   let failure = false;
 
   if (!await typeCheck(join(ROOT_PATH, "init.ts"))) {
+    failure = true;
+  }
+
+  if (!await typeCheck(join(TOOLS_PATH, "codegen.ts"))) {
     failure = true;
   }
 
