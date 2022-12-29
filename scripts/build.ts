@@ -13,6 +13,10 @@ async function main(): Promise<number> {
     failure = true;
   }
 
+  if (!await typeCheck(join(TOOLS_PATH, "codegen-scraper.ts"))) {
+    failure = true;
+  }
+
   for await (const entry of Deno.readDir(EXAMPLES_PATH)) {
     if (entry.isDirectory) {
       if (!await typeCheck(join(EXAMPLES_PATH, entry.name, "main.ts"))) {
