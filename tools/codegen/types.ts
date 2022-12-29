@@ -14,7 +14,7 @@ export interface CodeGenEnum {
 export type CodeGenEvents = Record<string, CodeGenEventType>;
 
 export interface CodeGenEventType extends CodeGenStruct {
-  // The name struct has in the event union in cases
+  // The name the struct has in the event union in cases
   // where the name can simply not be infered (i.e. KeyboardEvent).
   unionName?: string;
 }
@@ -23,6 +23,14 @@ export type CodeGenFunctions = Record<string, CodeGenFunction>;
 
 export type CodeGenFunctionImplementations = Record<string, string>;
 
+export interface CodeGenFunctionResult {
+  // SDL type
+  type: string;
+
+  // If set this type will be used as the script type.
+  overrideType?: string;
+}
+
 export interface CodeGenFunction {
   // Some functions are (i.e. SDL_BlitSurface) are just
   // macros that proxy to another name.
@@ -30,13 +38,12 @@ export interface CodeGenFunction {
 
   parameters: Record<string, CodeGenFunctionParam>;
 
-  result: {
-    // SDL type
-    type: string;
+  result: CodeGenFunctionResult;
 
-    // If set this type will be used as the script type.
-    overrideType?: string;
-  };
+  overloads?: ReadonlyArray<{
+    parameters?: Record<string, Partial<CodeGenFunctionParam>>;
+    result?: Partial<CodeGenFunctionResult>;
+  }>;
 }
 
 export interface CodeGenFunctionParam {

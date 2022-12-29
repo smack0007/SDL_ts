@@ -168,6 +168,22 @@ export function CreateTextureFromSurface(
 
 export function CreateWindow(
   title: string,
+  x: WindowPos,
+  y: WindowPos,
+  w: i32,
+  h: i32,
+  flags: WindowFlags,
+): Window | null;
+export function CreateWindow(
+  title: string,
+  x: i32,
+  y: i32,
+  w: i32,
+  h: i32,
+  flags: WindowFlags,
+): Window | null;
+export function CreateWindow(
+  title: string,
   x: WindowPos | i32,
   y: WindowPos | i32,
   w: i32,
@@ -322,7 +338,9 @@ export function GetWindowSurface(
   ) as PointerValue<Surface>);
 }
 
-export function Init(flags: number, libraryPath?: string): number {
+export function Init(flags: InitFlags, libraryPath?: string): number;
+export function Init(flags: number, libraryPath?: string): number;
+export function Init(flags: InitFlags | number, libraryPath?: string): number {
   if (!libraryPath) {
     libraryPath = getLibraryPath("SDL2");
   }

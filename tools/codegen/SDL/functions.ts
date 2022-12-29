@@ -205,6 +205,20 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Window*",
     },
+    overloads: [
+      {
+        parameters: {
+          x: { overrideType: "WindowPos" },
+          y: { overrideType: "WindowPos" },
+        },
+      },
+      {
+        parameters: {
+          x: { overrideType: "i32" },
+          y: { overrideType: "i32" },
+        },
+      },
+    ],
   },
 
   SDL_CreateWindowAndRenderer: {
@@ -828,7 +842,9 @@ export const functions: CodeGenFunctions = {
 } as const;
 
 export const functionImplementations: CodeGenFunctionImplementations = {
-  SDL_Init: `export function Init(flags: number, libraryPath?: string): number {
+  SDL_Init: `export function Init(flags: InitFlags, libraryPath?: string): number;
+  export function Init(flags: number, libraryPath?: string): number;
+  export function Init(flags: InitFlags | number, libraryPath?: string): number {
   if (!libraryPath) {
     libraryPath = getLibraryPath("SDL2");
   }

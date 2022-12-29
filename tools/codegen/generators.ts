@@ -4,6 +4,7 @@ import {
   CodeGenFunction,
   CodeGenFunctionImplementations,
   CodeGenFunctionParam,
+  CodeGenFunctionResult,
   CodeGenFunctions,
   CodeGenOpaqueStructs,
   CodeGenStructMember,
@@ -771,6 +772,16 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
+function getReturnTypePostfix(
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+  result: CodeGenFunctionResult,
+): string {
+  return isFunctionParamOpaqueStruct(opaqueStructs, result) || isFunctionParamStruct(structs, result)
+    ? "| null"
+    : "";
+}
+
 export async function writeFunctions(
   filePath: string,
   functions: CodeGenFunctions,
@@ -820,6 +831,24 @@ import { symbols } from "./_symbols.ts";
       continue;
     }
 
+    for (const overload of func.overloads ?? []) {
+      const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, { ...func.result, ...overload.result });
+
+      lines.push(`export function ${stripPrefixes(funcName)}(`);
+
+      for (const [paramName, param] of Object.entries(func.parameters)) {
+        lines.push(
+          `${paramName}: ${
+            mapFunctionParamType(enums, structs, opaqueStructs, { ...param, ...overload?.parameters?.[paramName] })
+          },`,
+        );
+      }
+
+      const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, { ...func.result, ...overload.result });
+
+      lines.push(`): ${returnType}${returnTypePostfix};`);
+    }
+
     const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, func.result);
 
     lines.push(`export function ${stripPrefixes(funcName)}(`);
@@ -828,11 +857,9 @@ import { symbols } from "./_symbols.ts";
       lines.push(`${paramName}: ${mapFunctionParamType(enums, structs, opaqueStructs, param)},`);
     }
 
-    const returnTypeOrNull =
-      isFunctionParamOpaqueStruct(opaqueStructs, func.result) || isFunctionParamStruct(structs, func.result)
-        ? "| null"
-        : "";
-    lines.push(`): ${returnType}${returnTypeOrNull} {`);
+    const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, func.result);
+
+    lines.push(`): ${returnType}${returnTypePostfix} {`);
 
     let symbolName = funcName;
     if (func.symbolName !== undefined) {
