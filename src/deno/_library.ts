@@ -1,9 +1,15 @@
-import { basename, join } from "std/path/mod.ts";
+import { join } from "std/path/mod.ts";
 import { SDLError } from "../error.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
+
+// An array of paths to search for SDL2 libraries on non Windows platforms
+const UNIX_LIBRARY_PATHS = [
+  "/usr/local/lib",
+  "/usr/lib64",
+];
 
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
@@ -17,43 +23,68 @@ function getLibrarySuffix(): string {
   return ".so";
 }
 
-export function getLibraryPath(libraryName: string): string {
-  const libraryPath = Deno.env.get(ENV_LIBRARY_PATH);
-
-  if (!libraryPath) {
-    return libraryName;
-  }
-
+function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   const libraryPrefix = !IS_WINDOWS ? "lib" : "";
   const librarySuffix = getLibrarySuffix();
+  const fullLibraryName = libraryPrefix + libraryName + librarySuffix;
 
-  return join(
-    libraryPath,
-    Deno.build.os,
-    "x64",
-    libraryPrefix + libraryName + librarySuffix,
-  );
+  const libraryPaths: string[] = [];
+
+  if (libraryPath) {
+    libraryPaths.push(join(
+      libraryPath,
+      Deno.build.os,
+      "x64",
+      fullLibraryName,
+    ));
+  }
+
+  libraryPath = Deno.env.get(ENV_LIBRARY_PATH);
+
+  if (libraryPath) {
+    libraryPaths.push(join(
+      libraryPath,
+      Deno.build.os,
+      "x64",
+      fullLibraryName,
+    ));
+  }
+
+  if (!IS_WINDOWS) {
+    const ldLibraryPath = Deno.env.get("LD_LIBRARY_PATH");
+
+    if (ldLibraryPath) {
+      libraryPaths.push(
+        ...ldLibraryPath
+          .split(":")
+          .map((path) => join(path, fullLibraryName)),
+      );
+    }
+
+    libraryPaths.push(...UNIX_LIBRARY_PATHS.map((path) => join(path, fullLibraryName)));
+  }
+
+  return libraryPaths;
 }
 
-export function loadLibrary<T>(libraryPath: string, symbols: DynamicLibraryInterface): DynamicLibrary<T> {
-  let loadError: Error | undefined;
+export function loadLibrary<T>(
+  libraryName: string,
+  symbols: DynamicLibraryInterface,
+  libraryPath?: string,
+): DynamicLibrary<T> {
+  const libraryPaths = getLibraryPaths(libraryName, libraryPath);
+  const errors: Error[] = [];
 
-  try {
-    return Deno.dlopen(libraryPath, symbols as Deno.ForeignLibraryInterface) as unknown as DynamicLibrary<T>;
-  } catch (error) {
-    loadError = error;
-
-    // If the basename is not the same as the given path then attempt
-    // to load a fallback library.
-    const libraryBasename = basename(libraryPath);
-    if (libraryBasename != libraryPath) {
-      try {
-        return Deno.dlopen(libraryPath, symbols as Deno.ForeignLibraryInterface) as unknown as DynamicLibrary<T>;
-      } catch {
-        // Just ignore the error if we can't load the fallback library.
-      }
+  for (const libraryPath of libraryPaths) {
+    try {
+      return Deno.dlopen(libraryPath, symbols as Deno.ForeignLibraryInterface) as unknown as DynamicLibrary<T>;
+    } catch (error) {
+      errors.push(error);
     }
   }
 
-  throw new SDLError(`Failed to load library "${libraryPath}"`, loadError);
+  throw new SDLError(
+    `Failed to load library "${libraryName}" from "${libraryPaths.join(", ")}"`,
+    new AggregateError(errors),
+  );
 }

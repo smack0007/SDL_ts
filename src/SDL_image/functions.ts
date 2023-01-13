@@ -17,12 +17,7 @@ import { Surface, version } from "../SDL/structs.ts";
 let _library: DynamicLibrary<typeof symbols> = null!;
 
 export function Init(flags: number, libraryPath?: string): number {
-  if (!libraryPath) {
-    libraryPath = getLibraryPath("SDL2_image");
-  }
-
-  _library = loadLibrary(libraryPath, symbols);
-
+  _library = loadLibrary("SDL2_image", symbols, libraryPath);
   return _library.symbols.IMG_Init(flags) as number;
 }
 

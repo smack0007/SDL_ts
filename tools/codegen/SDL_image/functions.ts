@@ -41,17 +41,12 @@ export const functions: CodeGenFunctions = {
 
 export const functionImplementations: CodeGenFunctionImplementations = {
   IMG_Init: `export function Init(flags: number, libraryPath?: string): number {
-    if (!libraryPath) {
-      libraryPath = getLibraryPath("SDL2_image");
-    }
-  
-    _library = loadLibrary(libraryPath, symbols);
-  
-    return _library.symbols.IMG_Init(flags) as number;
-  }`,
+  _library = loadLibrary("SDL2_image", symbols, libraryPath);  
+  return _library.symbols.IMG_Init(flags) as number;
+}`,
 
   IMG_Quit: `export function Quit(): void {
-    _library.symbols.IMG_Quit();
-    _library.close();
-  }`,
+  _library.symbols.IMG_Quit();
+  _library.close();
+}`,
 } as const;
