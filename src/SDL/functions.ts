@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, getLibraryPath, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
+import { fromPlatformString, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
