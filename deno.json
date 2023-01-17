@@ -22,7 +22,7 @@
       ]
     }
   },
-  "importMap": "imports.deno.json",
+  "importMap": "imports.json",
   "tasks": {
     "build": "cd ./scripts && deno run --allow-read --allow-run ./build.ts",
     "build:ci": "deno task build --ci",

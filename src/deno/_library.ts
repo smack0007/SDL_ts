@@ -1,4 +1,4 @@
-import { join } from "std/path/mod.ts";
+import { path } from "../../deps.ts";
 import { SDLError } from "../error.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_LIBRARY_PATH } from "../_constants.ts";
@@ -31,7 +31,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   const libraryPaths: string[] = [];
 
   if (libraryPath) {
-    libraryPaths.push(join(
+    libraryPaths.push(path.join(
       libraryPath,
       Deno.build.os,
       "x64",
@@ -42,7 +42,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   libraryPath = Deno.env.get(ENV_LIBRARY_PATH);
 
   if (libraryPath) {
-    libraryPaths.push(join(
+    libraryPaths.push(path.join(
       libraryPath,
       Deno.build.os,
       "x64",
@@ -57,11 +57,11 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
       libraryPaths.push(
         ...ldLibraryPath
           .split(":")
-          .map((path) => join(path, fullLibraryName)),
+          .map((libraryPath) => path.join(libraryPath, fullLibraryName)),
       );
     }
 
-    libraryPaths.push(...UNIX_LIBRARY_PATHS.map((path) => join(path, fullLibraryName)));
+    libraryPaths.push(...UNIX_LIBRARY_PATHS.map((libraryPath) => path.join(libraryPath, fullLibraryName)));
   }
 
   return libraryPaths;

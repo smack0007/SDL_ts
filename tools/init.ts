@@ -1,7 +1,6 @@
 import { REPO_URL } from "../shared/constants.ts";
 import { downloadFile } from "../shared/http.ts";
-import { ensureDir } from "std/fs/mod.ts";
-import { join } from "std/path/mod.ts";
+import { fs, path } from "../deps.ts";
 
 type ProjectFileData = {
   readonly destination: readonly string[];
@@ -45,12 +44,12 @@ export async function main(args: string[]): Promise<number> {
 
   for (const [fileURL, fileData] of Object.entries(PROJECT_FILES)) {
     if (fileData.destination.length > 1) {
-      await ensureDir(
-        join(destination, ...fileData.destination.slice(0, fileData.destination.length - 1)),
+      await fs.ensureDir(
+        path.join(destination, ...fileData.destination.slice(0, fileData.destination.length - 1)),
       );
     }
 
-    const fileDestination = join(destination, ...fileData.destination);
+    const fileDestination = path.join(destination, ...fileData.destination);
     await downloadFile(REPO_URL + fileURL, fileDestination, fileData.overwrite);
   }
 

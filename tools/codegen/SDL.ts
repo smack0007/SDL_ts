@@ -1,4 +1,4 @@
-import { join } from "std/path/mod.ts";
+import { path } from "../../deps.ts";
 import { SRC_PATH } from "../../shared/constants.ts";
 import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL/enums.ts";
@@ -6,7 +6,7 @@ import { events } from "./SDL/events.ts";
 import { functionImplementations, functions } from "./SDL/functions.ts";
 import { opaqueStructs, structs } from "./SDL/structs.ts";
 
-const SDL_SRC_PATH = join(SRC_PATH, "SDL");
+const SDL_SRC_PATH = path.join(SRC_PATH, "SDL");
 
 export async function codegenSDL(): Promise<void> {
   await writeEnums(`${SDL_SRC_PATH}/enums.ts`, enums, []);

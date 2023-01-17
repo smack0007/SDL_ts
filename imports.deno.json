@@ -1,6 +1,0 @@
-{
-  "imports": {
-    "SDL_ts": "./mod.ts",
-    "std/": "https://deno.land/std@0.170.0/"
-  }
-}

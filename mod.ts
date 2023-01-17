@@ -4,3 +4,4 @@ export * from "./src/boxes.ts";
 export * from "./src/error.ts";
 export * from "./src/memory.ts";
 export * from "./src/pointers.ts";
+export * from "./src/types.ts";
