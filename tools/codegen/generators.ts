@@ -889,9 +889,9 @@ import { symbols } from "./_symbols.ts";
       if (isFunctionParamString(param)) {
         lines.push(`\t\tplatform.toNativeString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tplatform.Pointer.of(${paramName}),`);
+        lines.push(`\t\tPointer.ofTypedArray(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\tplatform.Pointer.of(${paramName}._data),`);
+        lines.push(`\t\tPointer.ofTypedArray(${paramName}._data),`);
       } else if (
         isFunctionParamPointer(param) ||
         isFunctionParamOpaqueStruct(opaqueStructs, param) ||

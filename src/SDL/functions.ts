@@ -112,7 +112,7 @@ export function CreateRGBSurfaceFrom(
   Amask: u32,
 ): Surface | null {
   return Surface.of(_library.symbols.SDL_CreateRGBSurfaceFrom(
-    platform.Pointer.of(pixels),
+    Pointer.ofTypedArray(pixels),
     width,
     height,
     depth,
@@ -211,8 +211,8 @@ export function CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    platform.Pointer.of(window._data),
-    platform.Pointer.of(renderer._data),
+    Pointer.ofTypedArray(window._data),
+    Pointer.ofTypedArray(renderer._data),
   ) as i32;
 }
 

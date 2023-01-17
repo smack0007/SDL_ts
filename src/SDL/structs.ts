@@ -37,7 +37,7 @@ export class BlitMap implements Struct {
       return null;
     }
 
-    const struct = (new BlitMap() as unknown as StructInternal<BlitMap>);
+    const struct = new BlitMap() as unknown as StructInternal<BlitMap>;
     struct._data = data;
     return struct as unknown as BlitMap;
   }
@@ -52,7 +52,7 @@ export class PixelFormat implements Struct {
       return null;
     }
 
-    const struct = (new PixelFormat() as unknown as StructInternal<PixelFormat>);
+    const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
     struct._data = data;
     return struct as unknown as PixelFormat;
   }
@@ -67,7 +67,7 @@ export class Renderer implements Struct {
       return null;
     }
 
-    const struct = (new Renderer() as unknown as StructInternal<Renderer>);
+    const struct = new Renderer() as unknown as StructInternal<Renderer>;
     struct._data = data;
     return struct as unknown as Renderer;
   }
@@ -82,7 +82,7 @@ export class RWops implements Struct {
       return null;
     }
 
-    const struct = (new RWops() as unknown as StructInternal<RWops>);
+    const struct = new RWops() as unknown as StructInternal<RWops>;
     struct._data = data;
     return struct as unknown as RWops;
   }
@@ -97,7 +97,7 @@ export class Texture implements Struct {
       return null;
     }
 
-    const struct = (new Texture() as unknown as StructInternal<Texture>);
+    const struct = new Texture() as unknown as StructInternal<Texture>;
     struct._data = data;
     return struct as unknown as Texture;
   }
@@ -112,7 +112,7 @@ export class Window implements Struct {
       return null;
     }
 
-    const struct = (new Window() as unknown as StructInternal<Window>);
+    const struct = new Window() as unknown as StructInternal<Window>;
     struct._data = data;
     return struct as unknown as Window;
   }
@@ -129,7 +129,7 @@ export class Keysym implements Struct {
       return null;
     }
 
-    const struct = (new Keysym() as unknown as StructInternal<Keysym>);
+    const struct = new Keysym() as unknown as StructInternal<Keysym>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as Keysym;
@@ -184,7 +184,7 @@ export class Point implements AllocatableStruct {
       return null;
     }
 
-    const struct = (new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>);
+    const struct = new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as Point;
@@ -241,7 +241,7 @@ export class Rect implements AllocatableStruct {
       return null;
     }
 
-    const struct = (new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>);
+    const struct = new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as Rect;
@@ -300,7 +300,7 @@ export class RendererInfo implements AllocatableStruct {
       return null;
     }
 
-    const struct = (new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>);
+    const struct = new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as RendererInfo;
@@ -338,7 +338,7 @@ export class Surface implements Struct {
       return null;
     }
 
-    const struct = (new Surface() as unknown as StructInternal<Surface>);
+    const struct = new Surface() as unknown as StructInternal<Surface>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as Surface;
@@ -413,7 +413,7 @@ export class version implements AllocatableStruct {
       return null;
     }
 
-    const struct = (new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>);
+    const struct = new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>;
     struct._data = data;
     struct._view = new platform.DataView(data);
     return struct as unknown as version;

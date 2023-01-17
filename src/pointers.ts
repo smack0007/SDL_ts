@@ -35,7 +35,7 @@ export class Pointer {
     }
 
     if (isTypedArray(value)) {
-      return platform.Pointer.of(value, offset);
+      return Pointer.ofTypedArray(value, offset);
     } else if (BoxedArray.isBoxedArray(value)) {
       return platform.Pointer.of(value._data, offset * value.sizeOfElementInBytes);
     } else if (BoxedValue.isBoxedValue(value)) {
@@ -49,5 +49,12 @@ export class Pointer {
     }
 
     throw new Error(`Unable to get pointer of ${value}.`);
+  }
+
+  public static ofTypedArray<T>(
+    value: TypedArray,
+    offset = 0,
+  ): PointerValue<T> {
+    return platform.Pointer.of(value, offset);
   }
 }
