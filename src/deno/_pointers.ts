@@ -1,22 +1,22 @@
 import { PointerValue, TypedArray } from "../types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
-export const NULL_POINTER = 0n;
+export const DENO_NULL_POINTER = 0n;
 
-export class PlatformPointer {
+export class DenoPlatformPointer {
   // TODO: Is there any way to detect this correctly?
   public static readonly SIZE_IN_BYTES = 8;
-  
+
   private constructor() {
   }
-  
+
   public static of<T>(memory: TypedArray, offsetInBytes: Deno.PointerValue = 0): PointerValue<T> {
     // Note: as bigint is just to make TypeScript happy.
     return (Deno.UnsafePointer.of(memory) as bigint) + (offsetInBytes as bigint);
   }
 }
 
-export class PlatformDataView<T> {
+export class DenoPlatformDataView {
   private static DATA_MUST_BE_ARRAY_BUFFER_ERROR = "data must be an instance of ArrayBuffer in order to set values.";
 
   public static LITTLE_ENDIAN = ENDIANNESS === "LE";
@@ -24,7 +24,7 @@ export class PlatformDataView<T> {
   private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    private _data: Uint8Array | PointerValue<T>,
+    private _data: Uint8Array | PointerValue<unknown>,
   ) {
     if (this._data instanceof Uint8Array) {
       this._view = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
@@ -44,11 +44,11 @@ export class PlatformDataView<T> {
   }
 
   public getBigInt64(byteOffset: number): bigint {
-    return this._view.getBigInt64(byteOffset, PlatformDataView.LITTLE_ENDIAN) as bigint;
+    return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as bigint;
   }
 
   public getBigUint64(byteOffset: number): bigint {
-    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN) as bigint;
+    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as bigint;
   }
 
   public getInt8(byteOffset: number): number {
@@ -56,24 +56,24 @@ export class PlatformDataView<T> {
   }
 
   public getInt16(byteOffset: number): number {
-    return this._view.getInt16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getInt16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getInt32(byteOffset: number): number {
-    return this._view.getInt32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getInt32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getFloat32(byteOffset: number): number {
-    return this._view.getFloat32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getFloat32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getFloat64(byteOffset: number): number {
-    return this._view.getFloat64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getFloat64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getPointer<T>(byteOffset: number): PointerValue<T> {
     // TODO: We should test here if we're on 32 or 64 bit.
-    return this._view.getBigUint64(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint8(byteOffset: number): number {
@@ -81,31 +81,31 @@ export class PlatformDataView<T> {
   }
 
   public getUint16(byteOffset: number): number {
-    return this._view.getUint16(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getUint16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public getUint32(byteOffset: number): number {
-    return this._view.getUint32(byteOffset, PlatformDataView.LITTLE_ENDIAN);
+    return this._view.getUint32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public setInt32(byteOffset: number, value: number): void {
     if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._view.setInt32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
+    this._view.setInt32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
   public setUint8(byteOffset: number, value: number): void {
     if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
     this._view.setUint8(byteOffset, value);
   }
 
   public setUint32(byteOffset: number, value: number): void {
     if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(PlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
+      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
-    this._view.setUint32(byteOffset, value, PlatformDataView.LITTLE_ENDIAN);
+    this._view.setUint32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 }

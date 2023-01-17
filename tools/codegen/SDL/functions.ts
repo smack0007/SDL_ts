@@ -845,7 +845,7 @@ export const functionImplementations: CodeGenFunctionImplementations = {
   SDL_Init: `export function Init(flags: InitFlags, libraryPath?: string): number;
   export function Init(flags: number, libraryPath?: string): number;
   export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = loadLibrary("SDL2", symbols, libraryPath);
+  _library = platform.loadLibrary("SDL2", symbols, libraryPath);
   return _library.symbols.SDL_Init(flags) as number;
 }`,
 

@@ -1,5 +1,6 @@
-import { PlatformDataView, PlatformPointer } from "@platform";
+import platform from "./_platform.ts";
 import { AllocatableStruct, PointerValue, Struct } from "./types.ts";
+import type { PlatformDataView } from "./_types.ts";
 
 export const STRUCT_NO_ALLOCATE = Symbol("STRUCT_NO_ALLOCATE");
 
@@ -7,7 +8,7 @@ export type StructCommand = typeof STRUCT_NO_ALLOCATE;
 
 export interface StructInternal<T extends Struct> {
   _data: Uint8Array | PointerValue<T>;
-  _view: PlatformDataView<T>;
+  _view: PlatformDataView;
 }
 
 export function isStruct<T extends Struct>(value: unknown): value is T & StructInternal<T> {
@@ -19,7 +20,7 @@ export class NumberStruct implements AllocatableStruct {
   public static SIZE_IN_BYTES = 4;
 
   private _data!: Uint8Array;
-  private _view!: PlatformDataView<NumberStruct>;
+  private _view!: PlatformDataView;
 
   private constructor() {
   }
@@ -27,7 +28,7 @@ export class NumberStruct implements AllocatableStruct {
   public static of(data: Uint8Array): NumberStruct {
     const struct = new NumberStruct();
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct;
   }
 
@@ -41,10 +42,10 @@ export class NumberStruct implements AllocatableStruct {
 }
 
 export class PointerStruct implements AllocatableStruct {
-  public static SIZE_IN_BYTES = PlatformPointer.SIZE_IN_BYTES;
+  public static SIZE_IN_BYTES = platform.Pointer.SIZE_IN_BYTES;
 
   private _data!: Uint8Array;
-  private _view!: PlatformDataView<PointerStruct>;
+  private _view!: PlatformDataView;
 
   private constructor() {
   }
@@ -52,7 +53,7 @@ export class PointerStruct implements AllocatableStruct {
   public static of(data: Uint8Array): PointerStruct {
     const struct = new PointerStruct();
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct;
   }
 

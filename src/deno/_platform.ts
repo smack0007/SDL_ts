@@ -1,14 +1,17 @@
 import { Platform } from "../_types.ts";
-import { loadLibrary } from "./_library.ts";
-import { PlatformDataView } from "./_pointers.ts";
-import { fromPlatformString, toPlatformString } from "./_strings.ts";
+import { denoLoadLibrary } from "./_library.ts";
+import { DENO_NULL_POINTER, DenoPlatformDataView, DenoPlatformPointer } from "./_pointers.ts";
+import { denoFromNativeString, denoToNativeString } from "./_strings.ts";
 
-const platform: Platform = {
-  DataView: PlatformDataView,
+const denoPlatform: Platform = {
+  NULL_POINTER: DENO_NULL_POINTER,
 
-  fromPlatformString,
-  loadLibrary,
-  toPlatformString,
+  Pointer: DenoPlatformPointer,
+  DataView: DenoPlatformDataView,
+
+  fromNativeString: denoFromNativeString,
+  loadLibrary: denoLoadLibrary,
+  toNativeString: denoToNativeString,
 };
 
-export default platform;
+export default denoPlatform;

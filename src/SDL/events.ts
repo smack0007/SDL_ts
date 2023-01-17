@@ -1,12 +1,13 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import { PlatformDataView } from "@platform";
+import platform from "../_platform.ts";
+import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
 
 export class CommonEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -19,7 +20,7 @@ export class CommonEvent {
 }
 
 export class DisplayEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -52,7 +53,7 @@ export class DisplayEvent {
 export class KeyboardEvent {
   private _keysym: Keysym;
 
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
     this._keysym = Keysym.of(new Uint8Array(this._data.buffer, 16, Keysym.SIZE_IN_BYTES)) as Keysym;
   }
 
@@ -86,7 +87,7 @@ export class KeyboardEvent {
 }
 
 export class MouseButtonEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -129,7 +130,7 @@ export class MouseButtonEvent {
 }
 
 export class MouseMotionEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -170,7 +171,7 @@ export class MouseMotionEvent {
 }
 
 export class MouseWheelEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -211,7 +212,7 @@ export class MouseWheelEvent {
 }
 
 export class WindowEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {
+  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -247,7 +248,7 @@ export class WindowEvent {
 
 export class Event {
   public readonly _data = new Uint8Array(64);
-  private readonly _view = new PlatformDataView<Event>(this._data);
+  private readonly _view = new platform.DataView(this._data);
 
   public get type(): EventType {
     return this._view.getUint32(0);

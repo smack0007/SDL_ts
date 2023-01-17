@@ -1,4 +1,4 @@
-import { NULL_POINTER, PlatformPointer } from "@platform";
+import platform from "./_platform.ts";
 import { BoxedArray, BoxedValue } from "./boxes.ts";
 import { BoxableValue, PointerValue, Struct, TypedArray } from "./types.ts";
 import { isStruct } from "./_structs.ts";
@@ -9,7 +9,7 @@ type PointerBoxableValue<T> = T extends BoxableValue ? BoxedArray<T> | BoxedValu
 export type PointerTo<T> = PointerValue<T> | Struct | TypedArray | PointerBoxableValue<T>;
 
 export class Pointer {
-  public static readonly SIZE_IN_BYTES = PlatformPointer.SIZE_IN_BYTES;
+  public static readonly SIZE_IN_BYTES = platform.Pointer.SIZE_IN_BYTES;
 
   private constructor() {
   }
@@ -27,7 +27,7 @@ export class Pointer {
     offset = 0,
   ): PointerValue<T> {
     if (value === null || value === undefined) {
-      return NULL_POINTER;
+      return platform.NULL_POINTER;
     }
 
     if (Pointer.isPointer(value)) {
@@ -35,16 +35,16 @@ export class Pointer {
     }
 
     if (isTypedArray(value)) {
-      return PlatformPointer.of(value, offset);
+      return platform.Pointer.of(value, offset);
     } else if (BoxedArray.isBoxedArray(value)) {
-      return PlatformPointer.of(value._data, offset * value.sizeOfElementInBytes);
+      return platform.Pointer.of(value._data, offset * value.sizeOfElementInBytes);
     } else if (BoxedValue.isBoxedValue(value)) {
-      return PlatformPointer.of(value._data);
+      return platform.Pointer.of(value._data);
     } else if (isStruct(value)) {
       if (Pointer.isPointer(value._data)) {
         return value._data;
       } else {
-        return PlatformPointer.of(value._data);
+        return platform.Pointer.of(value._data);
       }
     }
 

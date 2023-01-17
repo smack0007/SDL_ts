@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
+import platform from "../_platform.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
@@ -112,7 +112,7 @@ export function CreateRGBSurfaceFrom(
   Amask: u32,
 ): Surface | null {
   return Surface.of(_library.symbols.SDL_CreateRGBSurfaceFrom(
-    PlatformPointer.of(pixels),
+    platform.Pointer.of(pixels),
     width,
     height,
     depth,
@@ -191,7 +191,7 @@ export function CreateWindow(
   flags: WindowFlags,
 ): Window | null {
   return Window.of(_library.symbols.SDL_CreateWindow(
-    toPlatformString(title),
+    platform.toNativeString(title),
     x,
     y,
     w,
@@ -211,8 +211,8 @@ export function CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    PlatformPointer.of(window._data),
-    PlatformPointer.of(renderer._data),
+    platform.Pointer.of(window._data),
+    platform.Pointer.of(renderer._data),
   ) as i32;
 }
 
@@ -269,7 +269,7 @@ export function FreeSurface(
 }
 
 export function GetError(): string {
-  return fromPlatformString(_library.symbols.SDL_GetError() as PointerValue<unknown>);
+  return platform.fromNativeString(_library.symbols.SDL_GetError() as PointerValue<unknown>);
 }
 
 export function GetKeyboardState(
@@ -291,7 +291,7 @@ export function GetRendererInfo(
 }
 
 export function GetRevision(): string {
-  return fromPlatformString(_library.symbols.SDL_GetRevision() as PointerValue<unknown>);
+  return platform.fromNativeString(_library.symbols.SDL_GetRevision() as PointerValue<unknown>);
 }
 
 export function GetScancodeFromKey(
@@ -305,7 +305,7 @@ export function GetScancodeFromKey(
 export function GetScancodeName(
   scancode: Scancode,
 ): string {
-  return fromPlatformString(_library.symbols.SDL_GetScancodeName(
+  return platform.fromNativeString(_library.symbols.SDL_GetScancodeName(
     scancode,
   ) as PointerValue<unknown>);
 }
@@ -341,7 +341,7 @@ export function GetWindowSurface(
 export function Init(flags: InitFlags, libraryPath?: string): number;
 export function Init(flags: number, libraryPath?: string): number;
 export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = loadLibrary("SDL2", symbols, libraryPath);
+  _library = platform.loadLibrary("SDL2", symbols, libraryPath);
   return _library.symbols.SDL_Init(flags) as number;
 }
 
@@ -589,8 +589,8 @@ export function RWFromFile(
   mode: RWMode,
 ): RWops | null {
   return RWops.of(_library.symbols.SDL_RWFromFile(
-    toPlatformString(file),
-    toPlatformString(mode),
+    platform.toNativeString(file),
+    platform.toNativeString(mode),
   ) as PointerValue<RWops>);
 }
 

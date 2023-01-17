@@ -2,7 +2,8 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, PlatformDataView, PlatformPointer } from "@platform";
+import platform from "../_platform.ts";
+import { PlatformDataView } from "../_types.ts";
 import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
 import { Pointer } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
@@ -36,7 +37,7 @@ export class BlitMap implements Struct {
       return null;
     }
 
-    const struct = new BlitMap() as unknown as StructInternal<BlitMap>;
+    const struct = (new BlitMap() as unknown as StructInternal<BlitMap>);
     struct._data = data;
     return struct as unknown as BlitMap;
   }
@@ -51,7 +52,7 @@ export class PixelFormat implements Struct {
       return null;
     }
 
-    const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
+    const struct = (new PixelFormat() as unknown as StructInternal<PixelFormat>);
     struct._data = data;
     return struct as unknown as PixelFormat;
   }
@@ -66,7 +67,7 @@ export class Renderer implements Struct {
       return null;
     }
 
-    const struct = new Renderer() as unknown as StructInternal<Renderer>;
+    const struct = (new Renderer() as unknown as StructInternal<Renderer>);
     struct._data = data;
     return struct as unknown as Renderer;
   }
@@ -81,7 +82,7 @@ export class RWops implements Struct {
       return null;
     }
 
-    const struct = new RWops() as unknown as StructInternal<RWops>;
+    const struct = (new RWops() as unknown as StructInternal<RWops>);
     struct._data = data;
     return struct as unknown as RWops;
   }
@@ -96,7 +97,7 @@ export class Texture implements Struct {
       return null;
     }
 
-    const struct = new Texture() as unknown as StructInternal<Texture>;
+    const struct = (new Texture() as unknown as StructInternal<Texture>);
     struct._data = data;
     return struct as unknown as Texture;
   }
@@ -111,7 +112,7 @@ export class Window implements Struct {
       return null;
     }
 
-    const struct = new Window() as unknown as StructInternal<Window>;
+    const struct = (new Window() as unknown as StructInternal<Window>);
     struct._data = data;
     return struct as unknown as Window;
   }
@@ -121,16 +122,16 @@ export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
   public readonly _data!: Uint8Array | PointerValue<Keysym>;
-  private readonly _view!: PlatformDataView<Keysym>;
+  private readonly _view!: PlatformDataView;
 
   public static of(data: Uint8Array | PointerValue<Keysym>): Keysym | null {
     if (Pointer.isNullPointer(data)) {
       return null;
     }
 
-    const struct = new Keysym() as unknown as StructInternal<Keysym>;
+    const struct = (new Keysym() as unknown as StructInternal<Keysym>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as Keysym;
   }
 
@@ -155,7 +156,7 @@ export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
   public readonly _data!: Uint8Array | PointerValue<Point>;
-  private readonly _view!: PlatformDataView<Point>;
+  private readonly _view!: PlatformDataView;
 
   constructor(command: StructCommand);
   constructor(props: Partial<Point>);
@@ -166,7 +167,7 @@ export class Point implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(Point.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data);
+    this._view = new platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -183,9 +184,9 @@ export class Point implements AllocatableStruct {
       return null;
     }
 
-    const struct = new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>;
+    const struct = (new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as Point;
   }
 
@@ -210,7 +211,7 @@ export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
   public readonly _data!: Uint8Array | PointerValue<Rect>;
-  private readonly _view!: PlatformDataView<Rect>;
+  private readonly _view!: PlatformDataView;
 
   constructor(command: StructCommand);
   constructor(props: Partial<Rect>);
@@ -221,7 +222,7 @@ export class Rect implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data);
+    this._view = new platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -240,9 +241,9 @@ export class Rect implements AllocatableStruct {
       return null;
     }
 
-    const struct = new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>;
+    const struct = (new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as Rect;
   }
 
@@ -283,7 +284,7 @@ export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
   public readonly _data!: Uint8Array | PointerValue<RendererInfo>;
-  private readonly _view!: PlatformDataView<RendererInfo>;
+  private readonly _view!: PlatformDataView;
 
   constructor(command?: StructCommand) {
     if (command === STRUCT_NO_ALLOCATE) {
@@ -291,7 +292,7 @@ export class RendererInfo implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<RendererInfo>);
+    this._view = new platform.DataView(this._data as Uint8Array | PointerValue<RendererInfo>);
   }
 
   public static of(data: Uint8Array | PointerValue<RendererInfo>): RendererInfo | null {
@@ -299,14 +300,14 @@ export class RendererInfo implements AllocatableStruct {
       return null;
     }
 
-    const struct = new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>;
+    const struct = (new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as RendererInfo;
   }
 
   public get name(): string {
-    return fromPlatformString(this._view.getPointer(0));
+    return platform.fromNativeString(this._view.getPointer(0));
   }
 
   public get flags(): u32 {
@@ -330,16 +331,16 @@ export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
   public readonly _data!: Uint8Array | PointerValue<Surface>;
-  private readonly _view!: PlatformDataView<Surface>;
+  private readonly _view!: PlatformDataView;
 
   public static of(data: Uint8Array | PointerValue<Surface>): Surface | null {
     if (Pointer.isNullPointer(data)) {
       return null;
     }
 
-    const struct = new Surface() as unknown as StructInternal<Surface>;
+    const struct = (new Surface() as unknown as StructInternal<Surface>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as Surface;
   }
 
@@ -396,7 +397,7 @@ export class version implements AllocatableStruct {
   public static SIZE_IN_BYTES = 3;
 
   public readonly _data!: Uint8Array | PointerValue<version>;
-  private readonly _view!: PlatformDataView<version>;
+  private readonly _view!: PlatformDataView;
 
   constructor(command?: StructCommand) {
     if (command === STRUCT_NO_ALLOCATE) {
@@ -404,7 +405,7 @@ export class version implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(version.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<version>);
+    this._view = new platform.DataView(this._data as Uint8Array | PointerValue<version>);
   }
 
   public static of(data: Uint8Array | PointerValue<version>): version | null {
@@ -412,9 +413,9 @@ export class version implements AllocatableStruct {
       return null;
     }
 
-    const struct = new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>;
+    const struct = (new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>);
     struct._data = data;
-    struct._view = new PlatformDataView(data);
+    struct._view = new platform.DataView(data);
     return struct as unknown as version;
   }
 

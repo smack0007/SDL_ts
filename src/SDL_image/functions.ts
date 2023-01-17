@@ -2,7 +2,7 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import { fromPlatformString, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
+import platform from "../_platform.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
@@ -17,7 +17,7 @@ import { Surface, version } from "../SDL/structs.ts";
 let _library: DynamicLibrary<typeof symbols> = null!;
 
 export function Init(flags: number, libraryPath?: string): number {
-  _library = loadLibrary("SDL2_image", symbols, libraryPath);
+  _library = platform.loadLibrary("SDL2_image", symbols, libraryPath);
   return _library.symbols.IMG_Init(flags) as number;
 }
 
@@ -29,7 +29,7 @@ export function Load(
   file: string,
 ): Surface | null {
   return Surface.of(_library.symbols.IMG_Load(
-    toPlatformString(file),
+    platform.toNativeString(file),
   ) as PointerValue<Surface>);
 }
 

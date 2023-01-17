@@ -282,7 +282,8 @@ export async function writeEvents(
   const lines = createLines();
 
   lines.push(
-    `import { PlatformDataView } from "@platform";
+    `import platform from "../_platform.ts";
+import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
 import { f32, i32, u32, u8 } from "../types.ts";
@@ -303,7 +304,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
       lines.push("");
     }
 
-    lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView<Event>) {");
+    lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {");
 
     for (const [memberName, member] of subStructMembers) {
       const memberTypeName = stripPrefixes(member.type);
@@ -357,7 +358,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
 
   lines.push(`export class Event {
   public readonly _data = new Uint8Array(64);
-  private readonly _view = new PlatformDataView<Event>(this._data);
+  private readonly _view = new platform.DataView(this._data);
   
   public get type(): EventType {
     return this._view.getUint32(0);
@@ -388,7 +389,8 @@ export async function writeStructs(
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  lines.push(`import { fromPlatformString, PlatformPointer, PlatformDataView } from "@platform";`);
+  lines.push(`import platform from "../_platform.ts";`);
+  lines.push(`import { PlatformDataView } from "../_types.ts";`);
   lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
   lines.push(`import { Pointer } from "../pointers.ts";`);
   lines.push(
@@ -431,7 +433,7 @@ export async function writeStructs(
 
     lines.push(`
   public readonly _data!: Uint8Array | PointerValue<${className}>;
-  private readonly _view!: PlatformDataView<${className}>;
+  private readonly _view!: PlatformDataView;
 `);
 
     if (struct.allocatable) {
@@ -442,7 +444,7 @@ export async function writeStructs(
   }
 
   this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-  this._view = new PlatformDataView(this._data as Uint8Array | PointerValue<${className}>);
+  this._view = new platform.DataView(this._data as Uint8Array | PointerValue<${className}>);
 }
 `);
       } else {
@@ -472,7 +474,7 @@ export async function writeStructs(
     }
     
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new PlatformDataView(this._data);
+    this._view = new platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -495,7 +497,7 @@ export async function writeStructs(
 
       const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
       struct._data = data;
-      struct._view = new PlatformDataView(data);
+      struct._view = new platform.DataView(data);
       return struct as unknown as ${className};
     }
 `);
@@ -511,7 +513,7 @@ export async function writeStructs(
       let memberStructName = "";
 
       if (memberType === "string") {
-        readOp += `fromPlatformString(`;
+        readOp += `platform.fromNativeString(`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
         const subStructName = stripPrefixes(removePointerPostfix(member.type));
         memberType = `PointerValue<${subStructName}>`;
@@ -777,9 +779,7 @@ function getReturnTypePostfix(
   opaqueStructs: CodeGenOpaqueStructs,
   result: CodeGenFunctionResult,
 ): string {
-  return isFunctionParamOpaqueStruct(opaqueStructs, result) || isFunctionParamStruct(structs, result)
-    ? "| null"
-    : "";
+  return isFunctionParamOpaqueStruct(opaqueStructs, result) || isFunctionParamStruct(structs, result) ? "| null" : "";
 }
 
 export async function writeFunctions(
@@ -805,7 +805,7 @@ export async function writeFunctions(
     .join(", ");
 
   lines.push(
-    `import { fromPlatformString, loadLibrary, PlatformPointer, toPlatformString } from "@platform";
+    `import platform from "../_platform.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerTo } from "../pointers.ts";
@@ -870,7 +870,7 @@ import { symbols } from "./_symbols.ts";
       let returnStatement = "\treturn ";
 
       if (isFunctionParamString(func.result)) {
-        returnStatement += "\t\tfromPlatformString(";
+        returnStatement += "\t\tplatform.fromNativeString(";
       } else if (
         isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
         isFunctionParamStruct(structs, func.result)
@@ -887,11 +887,11 @@ import { symbols } from "./_symbols.ts";
     for (const [paramName, param] of Object.entries(func.parameters)) {
       // const paramType = mapFunctionParamType(param);
       if (isFunctionParamString(param)) {
-        lines.push(`\t\ttoPlatformString(${paramName}),`);
+        lines.push(`\t\tplatform.toNativeString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tPlatformPointer.of(${paramName}),`);
+        lines.push(`\t\tplatform.Pointer.of(${paramName}),`);
       } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\tPlatformPointer.of(${paramName}._data),`);
+        lines.push(`\t\tplatform.Pointer.of(${paramName}._data),`);
       } else if (
         isFunctionParamPointer(param) ||
         isFunctionParamOpaqueStruct(opaqueStructs, param) ||

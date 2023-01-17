@@ -12,4 +12,4 @@ if (!platform) {
   throw new SDLError("Unsupported platform.");
 }
 
-export default platform;
+export default platform as Platform;

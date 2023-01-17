@@ -67,7 +67,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   return libraryPaths;
 }
 
-export function loadLibrary<T>(
+export function denoLoadLibrary<T>(
   libraryName: string,
   symbols: DynamicLibraryInterface,
   libraryPath?: string,
