@@ -1,9 +1,6 @@
 export type CodeGenEnums = Record<string, CodeGenEnum>;
 
 export interface CodeGenEnum {
-  // If true the enum values should not be grouped together into an enum.
-  doNotGroup?: boolean;
-
   // Use to specify a name to use as the prefix to strip if it's not the same
   // as the enum name to uppercase.
   prefixToStrip?: string;

@@ -1,4 +1,5 @@
 import {
+  CodeGenEnum,
   CodeGenEnums,
   CodeGenEvents,
   CodeGenFunction,
@@ -79,7 +80,7 @@ async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
 }
 
-function mapEnumValue(value: string, enumName?: string): string {
+function mapEnumValue(value: string, enumData: CodeGenEnum): string {
   if (value.startsWith("'")) {
     value = value
       .substring(1, value.length - 1) // Trim single quotes
@@ -87,7 +88,23 @@ function mapEnumValue(value: string, enumName?: string): string {
       .toString();
   }
 
-  return enumName !== undefined ? stripPrefixes(value, enumName) : stripPrefixes(value);
+  value = value.trim();
+  if (value.indexOf("|") !== -1) {
+    if (value.startsWith("(") && value.endsWith(")")) {
+      value = value.substring(1, value.length - 1); // Trim ( and )
+    }
+
+    const parts = value
+      .split("|")
+      .map((part) => part.trim())
+      .map((part) => enumData.values[part] ?? part);
+
+    value = parts.join(" | ");
+  } else {
+    value = enumData.values[value] ?? value;
+  }
+
+  return eval(value);
 }
 
 export async function writeEnums(
@@ -101,28 +118,23 @@ export async function writeEnums(
   lines.push("");
 
   for (const [enumName, enumData] of Object.entries(enums)) {
-    if (!enumData.doNotGroup) {
-      const prefixToStrip = enumData.prefixToStrip ?? enumName.toUpperCase();
+    const prefixToStrip = enumData.prefixToStrip ?? enumName.toUpperCase();
+    const strippedEnumName = stripPrefixes(enumName);
 
-      lines.push(`export enum ${stripPrefixes(enumName)} {`);
-      for (const key of Object.keys(enumData.values)) {
-        let enumValueName = stripPrefixes(key, prefixToStrip);
+    lines.push(`export const ${strippedEnumName} = {`);
+    for (const key of Object.keys(enumData.values)) {
+      let enumValueName = stripPrefixes(key, prefixToStrip);
 
-        if (isDigit(enumValueName[0])) {
-          enumValueName = "_" + enumValueName;
-        }
-
-        lines.push(`\t${enumValueName} = ${mapEnumValue(enumData.values[key], prefixToStrip)},`);
+      if (isDigit(enumValueName[0])) {
+        enumValueName = "_" + enumValueName;
       }
-      lines.push("}");
-    } else {
-      const shortEnumName = stripPrefixes(enumName);
-      lines.push(`// ${shortEnumName}`);
-      for (const key of Object.keys(enumData.values)) {
-        lines.push(`export const ${stripPrefixes(key)} = ${mapEnumValue(enumData.values[key])}`);
-      }
+
+      lines.push(`\t${enumValueName} = ${mapEnumValue(enumData.values[key], enumData)},`);
     }
+    lines.push("} as const;");
+    lines.push("");
 
+    lines.push(`export type ${strippedEnumName} = typeof ${strippedEnumName}[keyof typeof ${strippedEnumName}];`);
     lines.push("");
   }
 

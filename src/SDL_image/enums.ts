@@ -1,10 +1,12 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-export enum InitFlags {
-  JPG = 0x00000001,
-  PNG = 0x00000002,
-  TIF = 0x00000004,
-  WEBP = 0x00000008,
-  JXL = 0x00000010,
-  AVIF = 0x00000020,
-}
+export const InitFlags = {
+  JPG: 1,
+  PNG: 2,
+  TIF: 4,
+  WEBP: 8,
+  JXL: 16,
+  AVIF: 32,
+} as const;
+
+export type InitFlags = typeof InitFlags[keyof typeof InitFlags];
