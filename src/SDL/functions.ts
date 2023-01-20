@@ -172,7 +172,7 @@ export function CreateWindow(
   y: WindowPos,
   w: i32,
   h: i32,
-  flags: WindowFlags,
+  flags: WindowFlags | number,
 ): Window | null;
 export function CreateWindow(
   title: string,
@@ -180,7 +180,7 @@ export function CreateWindow(
   y: i32,
   w: i32,
   h: i32,
-  flags: WindowFlags,
+  flags: WindowFlags | number,
 ): Window | null;
 export function CreateWindow(
   title: string,
@@ -188,7 +188,7 @@ export function CreateWindow(
   y: WindowPos | i32,
   w: i32,
   h: i32,
-  flags: WindowFlags,
+  flags: WindowFlags | number,
 ): Window | null {
   return Window.of(_library.symbols.SDL_CreateWindow(
     platform.toNativeString(title),
@@ -203,7 +203,7 @@ export function CreateWindow(
 export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
-  window_flags: WindowFlags,
+  window_flags: WindowFlags | number,
   window: BoxedPointer<Window>,
   renderer: BoxedPointer<Renderer>,
 ): i32 {

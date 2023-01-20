@@ -336,28 +336,33 @@ import { f32, i32, u32, u8 } from "../types.ts";
         continue;
       }
 
-      lines.push(`\tpublic get ${memberName}(): ${mapStructMemberType(enums, structs, opaqueStructs, member)} {`);
+      const type = mapStructMemberType(enums, structs, opaqueStructs, member);
+      lines.push(`\tpublic get ${memberName}(): ${type} {`);
 
       if (isStruct(structs, opaqueStructs, member.type)) {
         lines.push(`return this._${memberName};`);
       } else {
-        const PlatformDataViewMethod =
-          PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
+        const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, member.type);
+
+        const PlatformDataViewMethod = PlatformDataViewGetMethods[ffiType];
 
         if (PlatformDataViewMethod === undefined) {
           console.error(
-            `PlatformDataViewMethods is missing ${mapTypeToFFIType(enums, structs, opaqueStructs, member.type)}.`,
+            `PlatformDataViewMethods is missing ${ffiType}.`,
           );
         }
+
+        // FIXME: isEnum expects the type to be prefixed with SDL_ but mapStructMemberType chops it off already.
+        const asEnum = isEnum(enums, "SDL_" + type) ? ` as ${type}` : "";
 
         const length = 0;
         lines.push(
           `\t\treturn this._view.${
-            PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)](
+            PlatformDataViewGetMethods[ffiType](
               member.offset,
               length,
             )
-          };`,
+          }${asEnum};`,
         );
       }
       lines.push("\t}");
@@ -373,7 +378,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
   private readonly _view = new platform.DataView(this._data);
   
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
 `);
@@ -550,7 +555,10 @@ export async function writeStructs(
 
       readOp += `this._view.${getMethod(member.offset, length)}`;
 
-      if (memberType === "string") {
+      // FIXME: isEnum expects the type to be prefixed with SDL_ but mapStructMemberType chops it off already.
+      if (isEnum(enums, "SDL_" + memberType)) {
+        readOp += `as ${memberType}`;
+      } else if (memberType === "string") {
         readOp += ")";
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
         readOp += `) as ${memberStructName}`;

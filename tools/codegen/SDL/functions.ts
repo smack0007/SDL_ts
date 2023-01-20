@@ -199,7 +199,7 @@ export const functions: CodeGenFunctions = {
       },
       flags: {
         type: "Uint32",
-        overrideType: "WindowFlags",
+        overrideType: "WindowFlags | number",
       },
     },
     result: {
@@ -231,7 +231,7 @@ export const functions: CodeGenFunctions = {
       },
       window_flags: {
         type: "Uint32",
-        overrideType: "WindowFlags",
+        overrideType: "WindowFlags | number",
       },
       window: {
         type: "SDL_Window**",

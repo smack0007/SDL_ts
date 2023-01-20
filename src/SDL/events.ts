@@ -11,7 +11,7 @@ export class CommonEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -24,7 +24,7 @@ export class DisplayEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -58,7 +58,7 @@ export class KeyboardEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -91,7 +91,7 @@ export class MouseButtonEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -134,7 +134,7 @@ export class MouseMotionEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -175,7 +175,7 @@ export class MouseWheelEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -216,7 +216,7 @@ export class WindowEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public get timestamp(): u32 {
@@ -228,7 +228,7 @@ export class WindowEvent {
   }
 
   public get event(): WindowEventID {
-    return this._view.getUint8(12);
+    return this._view.getUint8(12) as WindowEventID;
   }
 
   // padding1
@@ -251,7 +251,7 @@ export class Event {
   private readonly _view = new platform.DataView(this._data);
 
   public get type(): EventType {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as EventType;
   }
 
   public readonly common = new CommonEvent(this._data, this._view);

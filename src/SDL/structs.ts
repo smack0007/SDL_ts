@@ -136,11 +136,11 @@ export class Keysym implements Struct {
   }
 
   public get scancode(): Scancode {
-    return this._view.getUint32(0);
+    return this._view.getUint32(0) as Scancode;
   }
 
   public get sym(): Keycode {
-    return this._view.getUint32(4);
+    return this._view.getUint32(4) as Keycode;
   }
 
   public get mod(): u16 {
