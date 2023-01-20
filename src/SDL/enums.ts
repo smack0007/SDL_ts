@@ -1,5 +1,9 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
+// deno-lint-ignore-file no-unused-vars
+
+import { Enum, Flags } from "../types.ts";
+
 export const ArrayOrder = {
   NONE: 0,
   RGB: 1,
@@ -10,7 +14,7 @@ export const ArrayOrder = {
   ABGR: 6,
 } as const;
 
-export type ArrayOrder = typeof ArrayOrder[keyof typeof ArrayOrder];
+export type ArrayOrder = Enum<typeof ArrayOrder>;
 
 export const BitmapOrder = {
   NONE: 0,
@@ -18,7 +22,7 @@ export const BitmapOrder = {
   _1234: 2,
 } as const;
 
-export type BitmapOrder = typeof BitmapOrder[keyof typeof BitmapOrder];
+export type BitmapOrder = Enum<typeof BitmapOrder>;
 
 export const EventType = {
   FIRSTEVENT: 0,
@@ -80,7 +84,7 @@ export const EventType = {
   LASTEVENT: 65535,
 } as const;
 
-export type EventType = typeof EventType[keyof typeof EventType];
+export type EventType = Enum<typeof EventType>;
 
 export const InitFlags = {
   TIMER: 1,
@@ -95,7 +99,7 @@ export const InitFlags = {
   EVERYTHING: 62001,
 } as const;
 
-export type InitFlags = typeof InitFlags[keyof typeof InitFlags];
+export type InitFlags = Flags<typeof InitFlags>;
 
 export const Keycode = {
   SDLK_UNKNOWN: 0,
@@ -344,7 +348,7 @@ export const Keycode = {
   SDLK_ENDCALL: 1073742114,
 } as const;
 
-export type Keycode = typeof Keycode[keyof typeof Keycode];
+export type Keycode = Enum<typeof Keycode>;
 
 export const PackedLayout = {
   NONE: 0,
@@ -358,7 +362,7 @@ export const PackedLayout = {
   _1010102: 8,
 } as const;
 
-export type PackedLayout = typeof PackedLayout[keyof typeof PackedLayout];
+export type PackedLayout = Enum<typeof PackedLayout>;
 
 export const PackedOrder = {
   NONE: 0,
@@ -372,7 +376,7 @@ export const PackedOrder = {
   BGRA: 8,
 } as const;
 
-export type PackedOrder = typeof PackedOrder[keyof typeof PackedOrder];
+export type PackedOrder = Enum<typeof PackedOrder>;
 
 export const PixelType = {
   UNKNOWN: 0,
@@ -389,7 +393,7 @@ export const PixelType = {
   ARRAYF32: 11,
 } as const;
 
-export type PixelType = typeof PixelType[keyof typeof PixelType];
+export type PixelType = Enum<typeof PixelType>;
 
 export const RendererFlags = {
   SOFTWARE: 1,
@@ -398,7 +402,7 @@ export const RendererFlags = {
   TARGETTEXTURE: 8,
 } as const;
 
-export type RendererFlags = typeof RendererFlags[keyof typeof RendererFlags];
+export type RendererFlags = Flags<typeof RendererFlags>;
 
 export const RendererFlip = {
   NONE: 0,
@@ -406,7 +410,7 @@ export const RendererFlip = {
   VERTICAL: 2,
 } as const;
 
-export type RendererFlip = typeof RendererFlip[keyof typeof RendererFlip];
+export type RendererFlip = Enum<typeof RendererFlip>;
 
 export const ScaleMode = {
   Nearest: 0,
@@ -414,7 +418,7 @@ export const ScaleMode = {
   Best: 2,
 } as const;
 
-export type ScaleMode = typeof ScaleMode[keyof typeof ScaleMode];
+export type ScaleMode = Enum<typeof ScaleMode>;
 
 export const Scancode = {
   UNKNOWN: 0,
@@ -663,7 +667,7 @@ export const Scancode = {
   NUM_SCANCODES: 512,
 } as const;
 
-export type Scancode = typeof Scancode[keyof typeof Scancode];
+export type Scancode = Enum<typeof Scancode>;
 
 export const TextureAccess = {
   STATIC: 0,
@@ -671,7 +675,7 @@ export const TextureAccess = {
   TARGET: 2,
 } as const;
 
-export type TextureAccess = typeof TextureAccess[keyof typeof TextureAccess];
+export type TextureAccess = Enum<typeof TextureAccess>;
 
 export const TextureModulate = {
   NONE: 0,
@@ -679,7 +683,7 @@ export const TextureModulate = {
   ALPHA: 2,
 } as const;
 
-export type TextureModulate = typeof TextureModulate[keyof typeof TextureModulate];
+export type TextureModulate = Enum<typeof TextureModulate>;
 
 export const WindowEventID = {
   NONE: 0,
@@ -703,7 +707,7 @@ export const WindowEventID = {
   DISPLAY_CHANGED: 18,
 } as const;
 
-export type WindowEventID = typeof WindowEventID[keyof typeof WindowEventID];
+export type WindowEventID = Enum<typeof WindowEventID>;
 
 export const WindowFlags = {
   FULLSCREEN: 1,
@@ -732,11 +736,11 @@ export const WindowFlags = {
   INPUT_GRABBED: 256,
 } as const;
 
-export type WindowFlags = typeof WindowFlags[keyof typeof WindowFlags];
+export type WindowFlags = Flags<typeof WindowFlags>;
 
 export const WindowPos = {
   UNDEFINED: 536805376,
   CENTERED: 805240832,
 } as const;
 
-export type WindowPos = typeof WindowPos[keyof typeof WindowPos];
+export type WindowPos = Enum<typeof WindowPos>;

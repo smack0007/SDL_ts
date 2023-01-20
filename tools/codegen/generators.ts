@@ -114,6 +114,9 @@ export async function writeEnums(
 ): Promise<void> {
   const lines = createLines();
 
+  lines.push(`// deno-lint-ignore-file no-unused-vars`);
+  lines.push("");
+  lines.push(`import { Enum, Flags } from "../types.ts";`);
   lines.push(...imports);
   lines.push("");
 
@@ -134,7 +137,12 @@ export async function writeEnums(
     lines.push("} as const;");
     lines.push("");
 
-    lines.push(`export type ${strippedEnumName} = typeof ${strippedEnumName}[keyof typeof ${strippedEnumName}];`);
+    if (enumName.endsWith("Flags")) {
+      lines.push(`export type ${strippedEnumName} = Flags<typeof ${strippedEnumName}>;`);
+    } else {
+      lines.push(`export type ${strippedEnumName} = Enum<typeof ${strippedEnumName}>;`);
+    }
+
     lines.push("");
   }
 

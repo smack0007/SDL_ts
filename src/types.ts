@@ -5,6 +5,10 @@
 
 export type Constructor<T> = (...args: unknown[]) => T;
 
+export type Enum<T> = T[keyof T];
+
+export type Flags<T extends Record<string, number>> = number | T;
+
 export enum i8 {}
 export const I8 = Symbol("i8");
 export enum u8 {}
