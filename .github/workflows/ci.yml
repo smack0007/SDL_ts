@@ -15,7 +15,7 @@ jobs:
       - name: Deno Setup
         uses: denoland/setup-deno@v1
         with:
-          deno-version: "1.29.0"
+          deno-version: "1.29.4"
 
       - name: Build
         run: |
