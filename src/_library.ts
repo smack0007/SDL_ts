@@ -18,6 +18,7 @@ export type DynamicLibraryFunctionInterface = {
 
 export type DynamicLibraryInterface = Record<string, DynamicLibraryFunctionInterface>;
 
+// TODO: Can we improve the type inference here for symbols?
 export type DynamicLibrary<T> = {
   symbols: Record<keyof T, (...args: unknown[]) => unknown>;
 

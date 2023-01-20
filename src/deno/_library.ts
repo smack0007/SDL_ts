@@ -67,9 +67,9 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   return libraryPaths;
 }
 
-export function denoLoadLibrary<T>(
+export function denoLoadLibrary<T extends DynamicLibraryInterface>(
   libraryName: string,
-  symbols: DynamicLibraryInterface,
+  symbols: T,
   libraryPath?: string,
 ): DynamicLibrary<T> {
   const libraryPaths = getLibraryPaths(libraryName, libraryPath);
@@ -77,7 +77,9 @@ export function denoLoadLibrary<T>(
 
   for (const libraryPath of libraryPaths) {
     try {
-      return Deno.dlopen(libraryPath, symbols as Deno.ForeignLibraryInterface) as unknown as DynamicLibrary<T>;
+      // Cast the symbols as any in order to prevent a type checking bug.
+      // deno-lint-ignore no-explicit-any
+      return Deno.dlopen(libraryPath, symbols as any) as unknown as DynamicLibrary<T>;
     } catch (error) {
       errors.push(error);
     }

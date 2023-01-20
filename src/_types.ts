@@ -39,9 +39,9 @@ export interface Platform {
 
   fromNativeString(value: Uint8Array | PointerValue<unknown>): string;
 
-  loadLibrary<T>(
+  loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
-    symbols: DynamicLibraryInterface,
+    symbols: T,
     libraryPath?: string,
   ): DynamicLibrary<T>;
 
