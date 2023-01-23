@@ -99,7 +99,7 @@ export const InitFlags = {
   EVERYTHING: 62001,
 } as const;
 
-export type InitFlags = Flags<typeof InitFlags>;
+export type InitFlags = Flags<typeof InitFlags, "InitFlags">;
 
 export const Keycode = {
   SDLK_UNKNOWN: 0,
@@ -402,7 +402,7 @@ export const RendererFlags = {
   TARGETTEXTURE: 8,
 } as const;
 
-export type RendererFlags = Flags<typeof RendererFlags>;
+export type RendererFlags = Flags<typeof RendererFlags, "RendererFlags">;
 
 export const RendererFlip = {
   NONE: 0,
@@ -736,7 +736,7 @@ export const WindowFlags = {
   INPUT_GRABBED: 256,
 } as const;
 
-export type WindowFlags = Flags<typeof WindowFlags>;
+export type WindowFlags = Flags<typeof WindowFlags, "WindowFlags">;
 
 export const WindowPos = {
   UNDEFINED: 536805376,

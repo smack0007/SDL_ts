@@ -7,7 +7,12 @@ export type Constructor<T> = (...args: unknown[]) => T;
 
 export type Enum<T> = T[keyof T];
 
-export type Flags<T extends Record<string, number>> = number | T;
+declare const _: unique symbol;
+export type Flags<T, Name> =
+  | {
+    [K in keyof T]: { [_]: Name } & T[K];
+  }[keyof T]
+  | number;
 
 export enum i8 {}
 export const I8 = Symbol("i8");

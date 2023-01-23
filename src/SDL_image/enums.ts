@@ -13,4 +13,4 @@ export const InitFlags = {
   AVIF: 32,
 } as const;
 
-export type InitFlags = Flags<typeof InitFlags>;
+export type InitFlags = Flags<typeof InitFlags, "InitFlags">;

@@ -138,7 +138,7 @@ export async function writeEnums(
     lines.push("");
 
     if (enumName.endsWith("Flags")) {
-      lines.push(`export type ${strippedEnumName} = Flags<typeof ${strippedEnumName}>;`);
+      lines.push(`export type ${strippedEnumName} = Flags<typeof ${strippedEnumName}, "${strippedEnumName}">;`);
     } else {
       lines.push(`export type ${strippedEnumName} = Enum<typeof ${strippedEnumName}>;`);
     }
