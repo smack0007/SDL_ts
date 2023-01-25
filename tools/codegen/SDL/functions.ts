@@ -330,14 +330,11 @@ export const functions: CodeGenFunctions = {
     parameters: {
       numkeys: {
         type: "int*",
-
         nullable: true,
       },
     },
     result: {
       type: "Uint8*",
-
-      overrideType: "PointerValue<u8[]>",
     },
   },
 

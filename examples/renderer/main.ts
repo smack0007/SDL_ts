@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedNumber, BoxedPointer, Memory, Pointer, SDL } from "SDL_ts";
+import { BoxedArray, BoxedNumber, BoxedPointer, Memory, SDL } from "SDL_ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { path } from "../../deps.ts";
 
@@ -94,7 +94,7 @@ function main(): number {
       break;
     }
 
-    const state = SDL.GetKeyboardState(Pointer.of(numkeys));
+    const state = SDL.GetKeyboardState(numkeys);
     console.info(numkeys.value, Memory.readUint8(state, SDL.Scancode.ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);

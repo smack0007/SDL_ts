@@ -415,9 +415,10 @@ export async function writeStructs(
   lines.push("");
 
   lines.push(`import platform from "../_platform.ts";`);
+  lines.push(`import { Pointer } from "../_pointers.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
   lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
-  lines.push(`import { Pointer } from "../pointers.ts";`);
+  lines.push(`import { PointerLike } from "../pointers.ts";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
@@ -736,7 +737,7 @@ function mapFunctionParamType(
       if (isReturnType) {
         structName = `${structName}`;
       } else {
-        structName = `PointerTo<${structName}>`;
+        structName = `PointerLike<${structName}>`;
       }
     }
 
@@ -761,7 +762,7 @@ function mapFunctionParamType(
 
     case "int*":
     case "Uint8*":
-      result = "PointerValue<number>";
+      result = isReturnType ? "PointerValue<number>" : "PointerLike<number>";
       break;
 
     case "void*":
@@ -834,9 +835,10 @@ export async function writeFunctions(
 
   lines.push(
     `import platform from "../_platform.ts";
+import { Pointer } from "../_pointers.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
-import { Pointer, PointerTo } from "../pointers.ts";
+import { PointerLike } from "../pointers.ts";
 import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 `,

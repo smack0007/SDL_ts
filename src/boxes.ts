@@ -5,7 +5,7 @@ import {
   BoxableValueConstructor,
   PointerValue,
 } from "./types.ts";
-import { Pointer } from "./pointers.ts";
+import { Pointer } from "./_pointers.ts";
 import { NumberStruct, PointerStruct } from "./_structs.ts";
 import { sizeof } from "./_utils.ts";
 

@@ -35,8 +35,6 @@ export const F64 = Symbol("f64");
 export enum int {}
 export const Int = Symbol("int");
 
-export type PointerValue<T> = number | bigint;
-
 export type PrimitiveType =
   | i8
   | u8
@@ -78,6 +76,8 @@ export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Stru
 
 // deno-lint-ignore no-explicit-any
 export type BoxableValueConstructor<T extends BoxableValue> = new (...args: any[]) => T;
+
+export type PointerValue<T> = number | bigint;
 
 export interface StructConstructor<T extends Struct> {
   SIZE_IN_BYTES: number;

@@ -84,6 +84,20 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": ["$deno"]
+    },
+    {
+      "label": "Run Same Game",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run:same-game"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
     }
   ]
 }
