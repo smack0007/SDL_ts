@@ -3,12 +3,10 @@
 
 // Simple types
 
-export type Constructor<T> = (...args: unknown[]) => T;
-
-export type Enum<T> = T[keyof T];
+export type Enum<T extends Record<string, number>> = T[keyof T];
 
 declare const _: unique symbol;
-export type Flags<T, Name> =
+export type Flags<T extends Record<string, number>, Name extends string> =
   | {
     [K in keyof T]: { [_]: Name } & T[K];
   }[keyof T]
