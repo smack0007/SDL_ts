@@ -762,6 +762,7 @@ function mapFunctionParamType(
 
     case "int*":
     case "Uint8*":
+    case "Uint32*":
       result = isReturnType ? "PointerValue<number>" : "PointerLike<number>";
       break;
 

@@ -18,8 +18,16 @@ export async function codegenSDL_image(): Promise<void> {
     functionImplementations,
     enums,
     {
+      SDL_Renderer: {
+        ...SDL_structs["SDL_Renderer"],
+        doNotImport: true,
+      },
       SDL_Surface: {
         ...SDL_structs["SDL_Surface"],
+        doNotImport: true,
+      },
+      SDL_Texture: {
+        ...SDL_structs["SDL_Texture"],
         doNotImport: true,
       },
       SDL_version: {
@@ -30,7 +38,7 @@ export async function codegenSDL_image(): Promise<void> {
     },
     opaqueStructs,
     [
-      `import { Surface, version } from "../SDL/structs.ts";`,
+      `import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";`,
     ],
   );
 }

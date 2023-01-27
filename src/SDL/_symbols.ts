@@ -250,6 +250,16 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: "i32", /* int */
   },
+  SDL_QueryTexture: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* Uint32* format */
+      "pointer", /* int* access */
+      "pointer", /* int* w */
+      "pointer", /* int* h */
+    ],
+    result: "i32", /* int */
+  },
   SDL_Quit: {
     parameters: [],
     result: "void", /* void */

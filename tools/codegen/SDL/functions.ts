@@ -536,6 +536,31 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_QueryTexture: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      format: {
+        type: "Uint32*",
+        nullable: true,
+      },
+      access: {
+        type: "int*",
+        nullable: true,
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
   SDL_Quit: {
     parameters: {},
     result: {

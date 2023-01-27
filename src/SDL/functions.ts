@@ -418,6 +418,22 @@ export function PollEvent(
   ) as i32;
 }
 
+export function QueryTexture(
+  texture: PointerLike<Texture>,
+  format: PointerLike<number> | null,
+  access: PointerLike<number> | null,
+  w: PointerLike<number>,
+  h: PointerLike<number>,
+): i32 {
+  return _library.symbols.SDL_QueryTexture(
+    Pointer.of(texture),
+    Pointer.of(format),
+    Pointer.of(access),
+    Pointer.of(w),
+    Pointer.of(h),
+  ) as i32;
+}
+
 export function Quit(): void {
   _library.symbols.SDL_Quit();
   _library.close();

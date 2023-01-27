@@ -19,6 +19,13 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: "pointer", /* SDL_Surface* */
   },
+  IMG_LoadTexture: {
+    parameters: [
+      "pointer", /* SDL_Renderer* renderer */
+      "pointer", /* char* file */
+    ],
+    result: "pointer", /* SDL_Texture* */
+  },
   IMG_Quit: {
     parameters: [],
     result: "void", /* void */

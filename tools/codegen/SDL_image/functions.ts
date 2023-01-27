@@ -31,6 +31,20 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  IMG_LoadTexture: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      file: {
+        type: "char*",
+      },
+    },
+    result: {
+      type: "SDL_Texture*",
+    },
+  },
+
   IMG_Quit: {
     parameters: {},
     result: {

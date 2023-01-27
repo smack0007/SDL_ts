@@ -13,7 +13,7 @@ import { symbols } from "./_symbols.ts";
 import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
 
-import { Surface, version } from "../SDL/structs.ts";
+import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
@@ -34,6 +34,16 @@ export function Load(
   return Surface.of(_library.symbols.IMG_Load(
     platform.toNativeString(file),
   ) as PointerValue<Surface>);
+}
+
+export function LoadTexture(
+  renderer: PointerLike<Renderer>,
+  file: string,
+): Texture | null {
+  return Texture.of(_library.symbols.IMG_LoadTexture(
+    Pointer.of(renderer),
+    platform.toNativeString(file),
+  ) as PointerValue<Texture>);
 }
 
 export function Quit(): void {

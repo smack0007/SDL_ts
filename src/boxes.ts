@@ -89,7 +89,17 @@ export class BoxedArray<T extends BoxableValue> {
   }
 
   public at(index: number): T {
-    return this.array[index];
+    const result = this.array[index];
+
+    if (result instanceof NumberStruct || result instanceof PointerStruct) {
+      return result.value as T;
+    }
+
+    return result;
+  }
+
+  public atPointer(index: number): PointerValue<T> {
+    return Pointer.ofTypedArray(this._data, index * this.sizeOfElementInBytes);
   }
 
   public unbox(
@@ -110,6 +120,16 @@ export class BoxedNumber extends BoxedValue<number> {
   }
 }
 
+export class BoxedNumberArray extends BoxedArray<number> {
+  public constructor(length: number) {
+    super(Number as unknown as BoxableValueConstructor<number>, length);
+  }
+
+  public static isBoxedNumberArray(value: unknown): value is BoxedNumberArray {
+    return value instanceof BoxedNumberArray;
+  }
+}
+
 export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
   public constructor() {
     super(Pointer as unknown as BoxableValueConstructor<PointerValue<T>>);
@@ -123,5 +143,15 @@ export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
     errorMessage: OrFactory<string>,
   ): PointerValue<T> {
     return this.unbox((value) => value != 0, errorMessage);
+  }
+}
+
+export class BoxedPointerArray<T> extends BoxedArray<PointerValue<T>> {
+  public constructor(length: number) {
+    super(Pointer as unknown as BoxableValueConstructor<PointerValue<T>>, length);
+  }
+
+  public static isBoxedPointerArray<T>(value: unknown): value is BoxedPointerArray<T> {
+    return value instanceof BoxedPointerArray;
   }
 }
