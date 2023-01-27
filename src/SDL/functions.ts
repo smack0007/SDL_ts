@@ -275,10 +275,10 @@ export function GetError(): string {
 
 export function GetKeyboardState(
   numkeys: PointerLike<number> | null,
-): PointerValue<number> {
+): PointerValue<u8> {
   return _library.symbols.SDL_GetKeyboardState(
     Pointer.of(numkeys),
-  ) as PointerValue<number>;
+  ) as PointerValue<u8>;
 }
 
 export function GetRendererInfo(
@@ -420,7 +420,7 @@ export function PollEvent(
 
 export function QueryTexture(
   texture: PointerLike<Texture>,
-  format: PointerLike<number> | null,
+  format: PointerLike<u32> | null,
   access: PointerLike<number> | null,
   w: PointerLike<number>,
   h: PointerLike<number>,

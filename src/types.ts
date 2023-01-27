@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-empty-enum no-empty-interface
+// deno-lint-ignore-file no-empty-interface
 // This file is for types exposed as part of the API.
 
 declare const _: unique symbol;
@@ -7,27 +7,27 @@ declare const _: unique symbol;
 // Simple types
 //
 
-export enum i8 {}
+export type i8 = number;
 export const I8 = Symbol("i8");
-export enum u8 {}
+export type u8 = number;
 export const U8 = Symbol("u8");
-export enum i16 {}
+export type i16 = number;
 export const I16 = Symbol("i16");
-export enum u16 {}
+export type u16 = number;
 export const U16 = Symbol("u16");
-export enum i32 {}
+export type i32 = number;
 export const I32 = Symbol("i32");
-export enum u32 {}
+export type u32 = number;
 export const U32 = Symbol("u32");
-export enum i64 {}
+export type i64 = number;
 export const I64 = Symbol("i64");
-export enum u64 {}
+export type u64 = number;
 export const U64 = Symbol("u64");
-export enum f32 {}
+export type f32 = number;
 export const F32 = Symbol("f32");
-export enum f64 {}
+export type f64 = number;
 export const F64 = Symbol("f64");
-export enum int {}
+export type int = number;
 export const Int = Symbol("int");
 
 export type PrimitiveType =
