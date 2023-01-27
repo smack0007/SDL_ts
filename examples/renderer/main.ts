@@ -19,19 +19,8 @@ function main(): number {
     rendererBox,
   );
 
-  if (windowBox.value == 0) {
-    console.error(`Failed to create window: ${SDL.GetError()}`);
-    return 1;
-  }
-
-  if (rendererBox.value == 0) {
-    console.error(`Failed to create renderer: ${SDL.GetError()}`);
-    return 1;
-  }
-
-  const window = windowBox.value;
-  const renderer = rendererBox.value;
-  console.info(window, renderer);
+  const window = windowBox.unboxNotNull(() => `Failed to create window: ${SDL.GetError()}`);
+  const renderer = rendererBox.unboxNotNull(() => `Failed to create renderer: ${SDL.GetError()}`);
 
   const rendererInfo = new SDL.RendererInfo();
   if (SDL.GetRendererInfo(renderer, rendererInfo) != 0) {
@@ -134,4 +123,8 @@ function main(): number {
   return 0;
 }
 
-Deno.exit(main());
+try {
+  Deno.exit(main());
+} catch {
+  Deno.exit(1);
+}

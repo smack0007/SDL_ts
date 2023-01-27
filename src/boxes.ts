@@ -3,11 +3,13 @@ import {
   AllocatableStructConstructor,
   BoxableValue,
   BoxableValueConstructor,
+  OrFactory,
   PointerValue,
+  Predicate,
 } from "./types.ts";
 import { Pointer } from "./_pointers.ts";
 import { NumberStruct, PointerStruct } from "./_structs.ts";
-import { sizeof } from "./_utils.ts";
+import { sizeof, throwError } from "./_utils.ts";
 
 export function getBoxableValueFactory<T extends BoxableValue>(
   _constructor: BoxableValueConstructor<T>,
@@ -47,6 +49,13 @@ export class BoxedValue<T extends BoxableValue> {
 
     return this._value;
   }
+
+  public unbox(
+    predicate: Predicate<T>,
+    errorMessage: OrFactory<string>,
+  ): T {
+    return predicate(this.value) ? this.value : throwError(errorMessage);
+  }
 }
 
 export class BoxedArray<T extends BoxableValue> {
@@ -82,6 +91,13 @@ export class BoxedArray<T extends BoxableValue> {
   public at(index: number): T {
     return this.array[index];
   }
+
+  public unbox(
+    predicate: Predicate<T[]>,
+    errorMessage: string,
+  ): T[] {
+    return predicate(this.array) ? this.array : throwError(errorMessage);
+  }
 }
 
 export class BoxedNumber extends BoxedValue<number> {
@@ -101,5 +117,11 @@ export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
 
   public static isBoxedPointer<T>(value: unknown): value is BoxedPointer<T> {
     return value instanceof BoxedPointer;
+  }
+
+  public unboxNotNull(
+    errorMessage: OrFactory<string>,
+  ): PointerValue<T> {
+    return this.unbox((value) => value != 0, errorMessage);
   }
 }

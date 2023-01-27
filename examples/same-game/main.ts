@@ -17,18 +17,8 @@ function main(): number {
     rendererBox,
   );
 
-  if (windowBox.value == 0) {
-    console.error(`Failed to create window: ${SDL.GetError()}`);
-    return 1;
-  }
-
-  if (rendererBox.value == 0) {
-    console.error(`Failed to create renderer: ${SDL.GetError()}`);
-    return 1;
-  }
-
-  const window = windowBox.value;
-  const renderer = rendererBox.value;
+  const window = windowBox.unboxNotNull(() => `Failed to create window: ${SDL.GetError()}`);
+  const renderer = rendererBox.unboxNotNull(() => `Failed to create renderer: ${SDL.GetError()}`);
 
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
@@ -53,4 +43,8 @@ function main(): number {
   return 0;
 }
 
-Deno.exit(main());
+try {
+  Deno.exit(main());
+} catch {
+  Deno.exit(1);
+}

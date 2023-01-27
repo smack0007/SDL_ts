@@ -1,16 +1,11 @@
 // deno-lint-ignore-file no-empty-enum no-empty-interface
 // This file is for types exposed as part of the API.
 
-// Simple types
-
-export type Enum<T extends Record<string, number>> = T[keyof T];
-
 declare const _: unique symbol;
-export type Flags<T extends Record<string, number>, Name extends string> =
-  | {
-    [K in keyof T]: { [_]: Name } & T[K];
-  }[keyof T]
-  | number;
+
+//
+// Simple types
+//
 
 export enum i8 {}
 export const I8 = Symbol("i8");
@@ -61,9 +56,9 @@ export type TypedArray =
   | BigInt64Array
   | BigUint64Array;
 
-export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
-
+//
 // Complex types
+//
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
   SIZE_IN_BYTES: number;
@@ -85,3 +80,21 @@ export interface StructConstructor<T extends Struct> {
 }
 
 export interface Struct {}
+
+//
+// Type Helpers
+//
+
+export type Enum<T extends Record<string, number>> = T[keyof T];
+
+export type Flags<T extends Record<string, number>, Name extends string> =
+  | {
+    [K in keyof T]: { [_]: Name } & T[K];
+  }[keyof T]
+  | number;
+
+export type OrFactory<T> = T | (() => T);
+
+export type Predicate<T> = (value: T) => boolean;
+
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] };

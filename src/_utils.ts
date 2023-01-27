@@ -1,11 +1,13 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
+import { SDLError } from "./error.ts";
 import {
   AllocatableStruct,
   AllocatableStructConstructor,
   BoxableValue,
   BoxableValueConstructor,
+  OrFactory,
   TypedArray,
 } from "./types.ts";
 
@@ -52,4 +54,8 @@ export function sizeof<T extends BoxableValue>(_constructor: BoxableValueConstru
   throw new Error(
     `sizeof not implemented for ${(_constructor)?.name}`,
   );
+}
+
+export function throwError(message: OrFactory<string>, cause?: Error): never {
+  throw new SDLError(typeof message === "function" ? message() : message, cause);
 }
