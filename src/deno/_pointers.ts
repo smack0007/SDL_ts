@@ -1,4 +1,4 @@
-import { PointerValue, TypedArray } from "../types.ts";
+import { f32, f64, i16, i32, i64, i8, PointerValue, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 
 export const DENO_NULL_POINTER = 0n;
@@ -43,32 +43,32 @@ export class DenoPlatformDataView {
     }
   }
 
-  public getBigInt64(byteOffset: number): bigint {
-    return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as bigint;
+  public getBigInt64(byteOffset: number): i64 {
+    return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i64;
   }
 
-  public getBigUint64(byteOffset: number): bigint {
-    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as bigint;
+  public getBigUint64(byteOffset: number): u64 {
+    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u64;
   }
 
-  public getInt8(byteOffset: number): number {
-    return this._view.getInt8(byteOffset);
+  public getInt8(byteOffset: number): i8 {
+    return this._view.getInt8(byteOffset) as i8;
   }
 
-  public getInt16(byteOffset: number): number {
-    return this._view.getInt16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getInt16(byteOffset: number): i16 {
+    return this._view.getInt16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i16;
   }
 
-  public getInt32(byteOffset: number): number {
-    return this._view.getInt32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getInt32(byteOffset: number): i32 {
+    return this._view.getInt32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i32;
   }
 
-  public getFloat32(byteOffset: number): number {
-    return this._view.getFloat32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getFloat32(byteOffset: number): f32 {
+    return this._view.getFloat32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as f32;
   }
 
-  public getFloat64(byteOffset: number): number {
-    return this._view.getFloat64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getFloat64(byteOffset: number): f64 {
+    return this._view.getFloat64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as f64;
   }
 
   public getPointer<T>(byteOffset: number): PointerValue<T> {
@@ -76,33 +76,33 @@ export class DenoPlatformDataView {
     return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
-  public getUint8(byteOffset: number): number {
-    return this._view.getUint8(byteOffset);
+  public getUint8(byteOffset: number): u8 {
+    return this._view.getUint8(byteOffset) as u8;
   }
 
-  public getUint16(byteOffset: number): number {
-    return this._view.getUint16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getUint16(byteOffset: number): u16 {
+    return this._view.getUint16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u16;
   }
 
-  public getUint32(byteOffset: number): number {
-    return this._view.getUint32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+  public getUint32(byteOffset: number): u32 {
+    return this._view.getUint32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u32;
   }
 
-  public setInt32(byteOffset: number, value: number): void {
+  public setInt32(byteOffset: number, value: i32): void {
     if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
     this._view.setInt32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
-  public setUint8(byteOffset: number, value: number): void {
+  public setUint8(byteOffset: number, value: u8): void {
     if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
     this._view.setUint8(byteOffset, value);
   }
 
-  public setUint32(byteOffset: number, value: number): void {
+  public setUint32(byteOffset: number, value: u32): void {
     if (!(this._view instanceof globalThis.DataView)) {
       throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }

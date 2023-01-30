@@ -1,4 +1,4 @@
-import { PointerValue, TypedArray } from "./types.ts";
+import { f32, f64, i16, i32, i64, i8, PointerValue, TypedArray, u16, u32, u64, u8 } from "./types.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 export interface PlatformPointerConstructor {
@@ -14,20 +14,20 @@ export interface PlatformDataViewConstructor {
 
 export interface PlatformDataView {
   getArray(byteLength: number, byteOffset: number): Uint8Array;
-  getBigInt64(byteOffset: number): bigint;
-  getBigUint64(byteOffset: number): bigint;
-  getInt8(byteOffset: number): number;
-  getInt16(byteOffset: number): number;
-  getInt32(byteOffset: number): number;
-  getFloat32(byteOffset: number): number;
-  getFloat64(byteOffset: number): number;
+  getBigInt64(byteOffset: number): i64;
+  getBigUint64(byteOffset: number): u64;
+  getInt8(byteOffset: number): i8;
+  getInt16(byteOffset: number): i16;
+  getInt32(byteOffset: number): i32;
+  getFloat32(byteOffset: number): f32;
+  getFloat64(byteOffset: number): f64;
   getPointer<T>(byteOffset: number): PointerValue<T>;
-  getUint8(byteOffset: number): number;
-  getUint16(byteOffset: number): number;
-  getUint32(byteOffset: number): number;
-  setInt32(byteOffset: number, value: number): void;
-  setUint8(byteOffset: number, value: number): void;
-  setUint32(byteOffset: number, value: number): void;
+  getUint8(byteOffset: number): u8;
+  getUint16(byteOffset: number): u16;
+  getUint32(byteOffset: number): u32;
+  setInt32(byteOffset: number, value: i32): void;
+  setUint8(byteOffset: number, value: u8): void;
+  setUint32(byteOffset: number, value: u32): void;
 }
 
 export interface Platform {
