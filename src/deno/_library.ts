@@ -1,7 +1,7 @@
-import { path } from "../../deps.ts";
+import { dotenv, path } from "../../deps.ts";
 import { SDLError } from "../error.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
-import { ENV_LIBRARY_PATH } from "../_constants.ts";
+import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
 
@@ -30,13 +30,43 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
 
   const libraryPaths: string[] = [];
 
+  const os = Deno.build.os;
+  const arch = "x64"; // TODO: Detect this somehow.
+
   if (libraryPath) {
     libraryPaths.push(path.join(
       libraryPath,
-      Deno.build.os,
-      "x64",
+      os,
+      arch,
       fullLibraryName,
     ));
+  }
+
+  try {
+    const envDir = Deno.env.get(ENV_ENV_DIR) ?? ".";
+
+    const env = dotenv.loadSync({
+      envPath: path.join(envDir, `.env.${Deno.build.os}`),
+    });
+
+    libraryPath = env[ENV_LIBRARY_PATH];
+
+    if (libraryPath) {
+      // If the path in the .env file starts with a . then replace it with
+      // the directory of the .env file.
+      if (libraryPath.startsWith(".")) {
+        libraryPath = path.join(envDir, libraryPath.substring(1));
+      }
+
+      libraryPaths.push(path.join(
+        libraryPath,
+        os,
+        arch,
+        fullLibraryName,
+      ));
+    }
+  } catch {
+    // If we can't load the .env than just ignore it.
   }
 
   libraryPath = Deno.env.get(ENV_LIBRARY_PATH);
@@ -44,8 +74,8 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   if (libraryPath) {
     libraryPaths.push(path.join(
       libraryPath,
-      Deno.build.os,
-      "x64",
+      os,
+      arch,
       fullLibraryName,
     ));
   }
