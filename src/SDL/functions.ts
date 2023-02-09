@@ -339,6 +339,14 @@ export function GetWindowSurface(
   ) as PointerValue<Surface>);
 }
 
+export function GetWindowTitle(
+  window: PointerLike<Window>,
+): string {
+  return platform.fromNativeString(_library.symbols.SDL_GetWindowTitle(
+    Pointer.of(window),
+  ) as PointerValue<unknown>);
+}
+
 export function Init(flags: InitFlags, libraryPath?: string): number;
 export function Init(flags: number, libraryPath?: string): number;
 export function Init(flags: InitFlags | number, libraryPath?: string): number {
@@ -625,6 +633,16 @@ export function SetRenderDrawColor(
     b,
     a,
   ) as i32;
+}
+
+export function SetWindowTitle(
+  window: PointerLike<Window>,
+  title: string,
+): void {
+  _library.symbols.SDL_SetWindowTitle(
+    Pointer.of(window),
+    platform.toNativeString(title),
+  );
 }
 
 export function UnlockSurface(

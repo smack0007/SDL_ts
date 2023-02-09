@@ -424,6 +424,17 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_GetWindowTitle: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "char*",
+    },
+  },
+
   SDL_Init: {
     parameters: {
       flags: {
@@ -837,6 +848,20 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "int",
+    },
+  },
+
+  SDL_SetWindowTitle: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      title: {
+        type: "char*",
+      },
+    },
+    result: {
+      type: "void",
     },
   },
 

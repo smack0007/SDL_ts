@@ -194,6 +194,12 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: "pointer", /* SDL_Surface* */
   },
+  SDL_GetWindowTitle: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+    ],
+    result: "pointer", /* char* */
+  },
   SDL_Init: {
     parameters: [
       "u32", /* Uint32 flags */
@@ -389,6 +395,13 @@ export const symbols: DynamicLibraryInterface = {
       "u8", /* Uint8 a */
     ],
     result: "i32", /* int */
+  },
+  SDL_SetWindowTitle: {
+    parameters: [
+      "pointer", /* SDL_Window* window */
+      "pointer", /* char* title */
+    ],
+    result: "void", /* void */
   },
   SDL_UnlockSurface: {
     parameters: [

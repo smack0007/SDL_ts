@@ -23,6 +23,8 @@ function main(): number {
   const window = windowBox.unboxNotNull(() => `Failed to create window: ${SDL.GetError()}`);
   const renderer = rendererBox.unboxNotNull(() => `Failed to create renderer: ${SDL.GetError()}`);
 
+  SDL.SetWindowTitle(window, "Same Game");
+
   const blockTexture = IMG.LoadTexture(renderer, path.join(ASSETS_PATH, "blocks.png"));
 
   if (blockTexture == null) {
