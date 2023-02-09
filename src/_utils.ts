@@ -6,7 +6,8 @@ import {
   AllocatableStruct,
   AllocatableStructConstructor,
   BoxableValue,
-  BoxableValueConstructor,
+  BoxableValueFactory,
+  Int,
   OrFactory,
   TypedArray,
 } from "./types.ts";
@@ -38,21 +39,6 @@ export function isTypedArray(value: unknown): value is TypedArray {
     value instanceof BigInt64Array ||
     value instanceof Float32Array ||
     value instanceof Float64Array
-  );
-}
-
-export function sizeof<T extends BoxableValue>(_constructor: BoxableValueConstructor<T>): number {
-  if ("SIZE_IN_BYTES" in (_constructor as unknown as AllocatableStructConstructor<AllocatableStruct>)) {
-    return (_constructor as unknown as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
-  }
-
-  switch (_constructor) {
-    case Number as unknown as BoxableValueConstructor<T>:
-      return 4;
-  }
-
-  throw new Error(
-    `sizeof not implemented for ${(_constructor)?.name}`,
   );
 }
 

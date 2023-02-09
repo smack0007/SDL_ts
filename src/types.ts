@@ -8,27 +8,27 @@ declare const _: unique symbol;
 //
 
 export type i8 = number;
-export const I8 = Symbol("i8");
+export const I8 = (value = 0): i8 => value;
 export type u8 = number;
-export const U8 = Symbol("u8");
+export const U8 = (value = 0): u8 => value;
 export type i16 = number;
-export const I16 = Symbol("i16");
+export const I16 = (value = 0): i16 => value;
 export type u16 = number;
-export const U16 = Symbol("u16");
+export const U16 = (value = 0): u16 => value;
 export type i32 = number;
-export const I32 = Symbol("i32");
+export const I32 = (value = 0): i32 => value;
 export type u32 = number;
-export const U32 = Symbol("u32");
+export const U32 = (value = 0): u32 => value;
 export type i64 = bigint;
-export const I64 = Symbol("i64");
+export const I64 = (value = 0n): i64 => value;
 export type u64 = bigint;
-export const U64 = Symbol("u64");
+export const U64 = (value = 0n): u64 => value;
 export type f32 = number;
-export const F32 = Symbol("f32");
+export const F32 = (value = 0): f32 => value;
 export type f64 = number;
-export const F64 = Symbol("f64");
+export const F64 = (value = 0): f64 => value;
 export type int = number;
-export const Int = Symbol("int");
+export const Int = (value = 0): int => value;
 
 export type PrimitiveType =
   | i8
@@ -67,10 +67,11 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 
 export interface AllocatableStruct extends Struct {}
 
-export type BoxableValue = number | PointerValue<unknown> | PrimitiveType | Struct;
+export type BoxableValue = int | number | PointerValue<unknown> | PrimitiveType | Struct;
 
-// deno-lint-ignore no-explicit-any
-export type BoxableValueConstructor<T extends BoxableValue> = new (...args: any[]) => T;
+export type BoxableValueConstructor<T extends BoxableValue> = Constructor<T>;
+
+export type BoxableValueFactory<T extends BoxableValue> = Factory<T>;
 
 export type PointerValue<T> = number | bigint;
 
@@ -85,7 +86,13 @@ export interface Struct {}
 // Type Helpers
 //
 
+// deno-lint-ignore no-explicit-any
+export type Constructor<T> = new (...args: any[]) => T;
+
 export type Enum<T extends Record<string, number>> = T[keyof T];
+
+// deno-lint-ignore no-explicit-any
+export type Factory<T> = (...args: any[]) => T;
 
 export type Flags<T extends Record<string, number>, Name extends string> =
   | {
@@ -93,7 +100,7 @@ export type Flags<T extends Record<string, number>, Name extends string> =
   }[keyof T]
   | number;
 
-export type OrFactory<T> = T | (() => T);
+export type OrFactory<T> = T | Factory<T>;
 
 export type Predicate<T> = (value: T) => boolean;
 

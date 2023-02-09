@@ -1,5 +1,5 @@
 import platform from "./_platform.ts";
-import { AllocatableStruct, PointerValue, Struct } from "./types.ts";
+import { AllocatableStruct, F32, Factory, I16, I32, I8, Int, PointerValue, Struct, U16, U32, U8 } from "./types.ts";
 import type { PlatformDataView } from "./_types.ts";
 
 export const STRUCT_NO_ALLOCATE = Symbol("STRUCT_NO_ALLOCATE");
@@ -19,10 +19,25 @@ export function isStruct<T extends Struct>(value: unknown): value is T & StructI
 export class NumberStruct implements AllocatableStruct {
   public static SIZE_IN_BYTES = 4;
 
+  private static NUMBER_STRUCT_FACTORIES = [
+    I8,
+    U8,
+    I16,
+    U16,
+    I32,
+    U32,
+    F32,
+    Int,
+  ];
+
   private _data!: Uint8Array;
   private _view!: PlatformDataView;
 
   private constructor() {
+  }
+
+  public static isFactory(factory: unknown): factory is Factory<number> {
+    return this.NUMBER_STRUCT_FACTORIES.includes(factory as Factory<number>);
   }
 
   public static of(data: Uint8Array): NumberStruct {

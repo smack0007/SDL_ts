@@ -7,7 +7,7 @@ import { Pointer } from "../_pointers.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PointerLike } from "../pointers.ts";
-import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 
 import {
@@ -274,7 +274,7 @@ export function GetError(): string {
 }
 
 export function GetKeyboardState(
-  numkeys: PointerLike<number> | null,
+  numkeys: PointerLike<int> | null,
 ): PointerValue<u8> {
   return _library.symbols.SDL_GetKeyboardState(
     Pointer.of(numkeys),
@@ -429,9 +429,9 @@ export function PollEvent(
 export function QueryTexture(
   texture: PointerLike<Texture>,
   format: PointerLike<u32> | null,
-  access: PointerLike<number> | null,
-  w: PointerLike<number>,
-  h: PointerLike<number>,
+  access: PointerLike<int> | null,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
 ): i32 {
   return _library.symbols.SDL_QueryTexture(
     Pointer.of(texture),

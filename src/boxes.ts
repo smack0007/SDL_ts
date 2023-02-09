@@ -3,39 +3,90 @@ import {
   AllocatableStructConstructor,
   BoxableValue,
   BoxableValueConstructor,
+  BoxableValueFactory,
+  F32,
+  F64,
+  Factory,
+  I16,
+  I32,
+  I64,
+  I8,
+  Int,
   OrFactory,
   PointerValue,
   Predicate,
+  U16,
+  U32,
+  U64,
+  U8,
 } from "./types.ts";
 import { Pointer } from "./_pointers.ts";
 import { NumberStruct, PointerStruct } from "./_structs.ts";
-import { sizeof, throwError } from "./_utils.ts";
+import { throwError } from "./_utils.ts";
 
-export function getBoxableValueFactory<T extends BoxableValue>(
-  _constructor: BoxableValueConstructor<T>,
-): (data: Uint8Array) => T {
-  let result = _constructor as unknown as AllocatableStructConstructor<AllocatableStruct>;
+type BoxableValueConverter<T extends BoxableValue> = (data: Uint8Array) => T;
 
-  if (_constructor === Number as unknown as BoxableValueConstructor<T>) {
-    result = NumberStruct;
-  } else if (_constructor === Pointer as unknown as BoxableValueConstructor<T>) {
-    result = PointerStruct;
+function sizeof<T extends BoxableValue>(
+  factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
+): number {
+  if ("SIZE_IN_BYTES" in (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)) {
+    return (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
   }
 
-  return result.of as (data: Uint8Array) => T;
+  switch (factoryOrConstructor) {
+    case I8:
+    case U8:
+      return 1;
+
+    case I16:
+    case U16:
+      return 2;
+
+    case I32:
+    case U32:
+    case F32:
+    case Int: // TODO: Does this need to be platform dependent?
+      return 4;
+
+    case I64:
+    case U64:
+    case F64:
+      return 8;
+  }
+
+  throwError(`${(factoryOrConstructor)?.name} is not boxable. sizeof not implemented.`);
+}
+
+export function getConverter<T extends BoxableValue>(
+  factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
+): BoxableValueConverter<T> {
+  if (
+    NumberStruct.isFactory(factoryOrConstructor as unknown as Factory<T>)
+  ) {
+    return NumberStruct.of as unknown as BoxableValueConverter<T>;
+  } else if (factoryOrConstructor === Pointer as unknown as BoxableValueFactory<T>) {
+    return PointerStruct.of as unknown as BoxableValueConverter<T>;
+  } else if ("of" in factoryOrConstructor as unknown as AllocatableStructConstructor<T>) {
+    return (factoryOrConstructor as unknown as AllocatableStructConstructor<T>).of as unknown as BoxableValueConverter<
+      T
+    >;
+  }
+
+  throw new Error(
+    `${(factoryOrConstructor)?.name} is not boxable. getConverter not implemented.`,
+  );
 }
 
 export class BoxedValue<T extends BoxableValue> {
   public readonly _data: Uint8Array;
   private readonly _value: T;
 
-  public constructor(_constructor: BoxableValueConstructor<T>) {
-    const factory = getBoxableValueFactory(_constructor);
-
-    const dataLength = sizeof(_constructor);
+  public constructor(factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>) {
+    const dataLength = sizeof(factoryOrConstructor);
+    const converter = getConverter(factoryOrConstructor);
 
     this._data = new Uint8Array(dataLength);
-    this._value = factory(this._data);
+    this._value = converter(this._data);
   }
 
   public static isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
@@ -64,23 +115,22 @@ export class BoxedArray<T extends BoxableValue> {
   public readonly _data: Uint8Array;
 
   public constructor(
-    _constructor: BoxableValueConstructor<T>,
+    factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
     length: number,
   ) {
     if (length <= 0) {
       throw new Error("length must be > 0.");
     }
 
-    const factory = getBoxableValueFactory(_constructor);
-
-    this.sizeOfElementInBytes = sizeof(_constructor);
+    this.sizeOfElementInBytes = sizeof(factoryOrConstructor);
+    const converter = getConverter(factoryOrConstructor);
 
     this.array = new Array<T>(length);
     this._data = new Uint8Array(this.sizeOfElementInBytes * length);
 
     for (let i = 0; i < length; i++) {
       const dataSlice = new Uint8Array(this._data.buffer, this.sizeOfElementInBytes * i, this.sizeOfElementInBytes);
-      this.array[i] = factory(dataSlice);
+      this.array[i] = converter(dataSlice);
     }
   }
 
@@ -114,7 +164,7 @@ export class BoxedArray<T extends BoxableValue> {
 
 export class BoxedNumber extends BoxedValue<number> {
   public constructor() {
-    super(Number as unknown as BoxableValueConstructor<number>);
+    super(Number as unknown as BoxableValueFactory<number>);
   }
 
   public static isBoxedNumber(value: unknown): value is BoxedNumber {
@@ -124,7 +174,7 @@ export class BoxedNumber extends BoxedValue<number> {
 
 export class BoxedNumberArray extends BoxedArray<number> {
   public constructor(length: number) {
-    super(Number as unknown as BoxableValueConstructor<number>, length);
+    super(Number as unknown as BoxableValueFactory<number>, length);
   }
 
   public static isBoxedNumberArray(value: unknown): value is BoxedNumberArray {
@@ -134,7 +184,7 @@ export class BoxedNumberArray extends BoxedArray<number> {
 
 export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
   public constructor() {
-    super(Pointer as unknown as BoxableValueConstructor<PointerValue<T>>);
+    super(Pointer as unknown as BoxableValueFactory<PointerValue<T>>);
   }
 
   public static isBoxedPointer<T>(value: unknown): value is BoxedPointer<T> {
@@ -150,7 +200,7 @@ export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
 
 export class BoxedPointerArray<T> extends BoxedArray<PointerValue<T>> {
   public constructor(length: number) {
-    super(Pointer as unknown as BoxableValueConstructor<PointerValue<T>>, length);
+    super(Pointer as unknown as BoxableValueFactory<PointerValue<T>>, length);
   }
 
   public static isBoxedPointerArray<T>(value: unknown): value is BoxedPointerArray<T> {

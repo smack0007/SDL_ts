@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedNumber, BoxedPointer, Memory, SDL } from "SDL_ts";
+import { BoxedArray, BoxedPointer, BoxedValue, Int, int, Memory, SDL } from "SDL_ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { path } from "../../deps.ts";
 
@@ -67,7 +67,7 @@ function main(): number {
   points.at(3).x = 0;
   points.at(3).y = 1;
 
-  const numkeys = new BoxedNumber();
+  const numkeys = new BoxedValue<int>(Int);
 
   const event = new SDL.Event();
   let done = false;
@@ -125,6 +125,7 @@ function main(): number {
 
 try {
   Deno.exit(main());
-} catch {
+} catch (error) {
+  console.error(error);
   Deno.exit(1);
 }

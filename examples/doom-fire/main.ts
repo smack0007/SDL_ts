@@ -187,4 +187,9 @@ function spreadFire(firePixels: Uint32Array, from: number): void {
   firePixels[to] = FIRE_COLORS[toValue];
 }
 
-Deno.exit(main());
+try {
+  Deno.exit(main());
+} catch (error) {
+  console.error(error);
+  Deno.exit(1);
+}

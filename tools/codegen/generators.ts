@@ -761,7 +761,7 @@ function mapFunctionParamType(
       break;
 
     case "int*":
-      result = isReturnType ? "PointerValue<number>" : "PointerLike<number>";
+      result = isReturnType ? "PointerValue<int>" : "PointerLike<int>";
       break;
 
     case "Uint8*":
@@ -785,13 +785,14 @@ function mapFunctionParamType(
     return result;
   }
 
-  switch (mapTypeToFFIType(enums, structs, opaqueStructs, param.type)) {
+  const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, param.type);
+  switch (ffiType) {
     case "pointer":
       throw new Error(`Unable to map param ${JSON.stringify(param)}`);
   }
 
   if (result === "") {
-    result = mapTypeToFFIType(enums, structs, opaqueStructs, param.type);
+    result = ffiType;
   }
 
   if (param.nullable) {
@@ -846,7 +847,7 @@ import { Pointer } from "../_pointers.ts";
 import { BoxedPointer } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PointerLike } from "../pointers.ts";
-import { f64, i32, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 `,
   );
