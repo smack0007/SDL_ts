@@ -31,9 +31,8 @@ function main(): number {
     throw new SDLError("Failed to create texture for block.png");
   }
 
-  // TODO: It would be better if we didn't have to cast Number to any here.
   const textureSizeBox = new BoxedNumberArray(2);
-  SDL.QueryTexture(blockTexture, null, null, textureSizeBox.atPointer(0), textureSizeBox.atPointer(1));
+  SDL.QueryTexture(blockTexture, null, null, textureSizeBox.pointers.at(0), textureSizeBox.pointers.at(1));
 
   const blockTextureWidth = textureSizeBox.at(0);
   const blockTextureHeight = textureSizeBox.at(1);

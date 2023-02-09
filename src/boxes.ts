@@ -98,16 +98,18 @@ export class BoxedArray<T extends BoxableValue> {
     return result;
   }
 
-  public atPointer(index: number): PointerValue<T> {
-    return Pointer.ofTypedArray(this._data, index * this.sizeOfElementInBytes);
-  }
-
   public unbox(
     predicate: Predicate<T[]>,
     errorMessage: string,
   ): T[] {
     return predicate(this.array) ? this.array : throwError(errorMessage);
   }
+
+  public readonly pointers = {
+    at: (index: number) => {
+      return Pointer.ofTypedArray(this._data, index * this.sizeOfElementInBytes);
+    },
+  };
 }
 
 export class BoxedNumber extends BoxedValue<number> {
