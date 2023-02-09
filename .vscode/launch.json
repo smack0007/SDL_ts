@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Hello World",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:hello-world"],
+      "attachSimplePort": 9229
+    },
+    {
+      "name": "Debug Same Game",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:same-game"],
+      "attachSimplePort": 9229
+    }
+  ]
+}
