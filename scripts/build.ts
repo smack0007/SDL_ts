@@ -24,6 +24,10 @@ async function main(): Promise<number> {
     }
   }
 
+  if (!await runTests()) {
+    failure = true;
+  }
+
   return failure ? 1 : 0;
 }
 
@@ -31,6 +35,13 @@ async function typeCheck(filePath: string): Promise<boolean> {
   console.info(`${colors.green("Type checking:")} ${filePath}`);
   return (await Deno.run({
     cmd: ["deno", "task", "-q", "check", filePath],
+  }).status()).code === 0;
+}
+
+async function runTests(): Promise<boolean> {
+  console.info(`${colors.green("Running tests...")}`);
+  return (await Deno.run({
+    cmd: ["deno", "task", "-q", "test"],
   }).status()).code === 0;
 }
 

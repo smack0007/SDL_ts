@@ -24,14 +24,22 @@ export class DenoPlatformDataView {
   private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    private _data: Uint8Array | PointerValue<unknown>,
+    public readonly data: Uint8Array | PointerValue<unknown>,
   ) {
-    if (this._data instanceof Uint8Array) {
-      this._view = new globalThis.DataView(this._data.buffer, this._data.byteOffset, this._data.byteLength);
+    if (this.data instanceof Uint8Array) {
+      this._view = new globalThis.DataView(this.data.buffer, this.data.byteOffset, this.data.byteLength);
     } else {
       // TODO: bigint cast is currently necessary but will hopefully be removed in future versions
       // of Deno.
-      this._view = new Deno.UnsafePointerView(this._data as bigint);
+      this._view = new Deno.UnsafePointerView(this.data as bigint);
+    }
+  }
+
+  private static ensureViewIsDataView(
+    view: globalThis.DataView | Deno.UnsafePointerView,
+  ): asserts view is globalThis.DataView {
+    if (!(view instanceof globalThis.DataView)) {
+      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
     }
   }
 
@@ -88,24 +96,53 @@ export class DenoPlatformDataView {
     return this._view.getUint32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u32;
   }
 
+  public setInt8(byteOffset: number, value: i8): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setInt8(byteOffset, value);
+  }
+
+  public setInt16(byteOffset: number, value: i16): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setInt16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
   public setInt32(byteOffset: number, value: i32): void {
-    if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
-    }
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
     this._view.setInt32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
+  public setBigInt64(byteOffset: number, value: i64): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setBigInt64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
   public setUint8(byteOffset: number, value: u8): void {
-    if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
-    }
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
     this._view.setUint8(byteOffset, value);
   }
 
+  public setUint16(byteOffset: number, value: u16): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setUint16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
   public setUint32(byteOffset: number, value: u32): void {
-    if (!(this._view instanceof globalThis.DataView)) {
-      throw new Error(DenoPlatformDataView.DATA_MUST_BE_ARRAY_BUFFER_ERROR);
-    }
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
     this._view.setUint32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setBigUint64(byteOffset: number, value: u64): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setBigUint64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setFloat32(byteOffset: number, value: f32): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setFloat32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setFloat64(byteOffset: number, value: f64): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setFloat64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 }

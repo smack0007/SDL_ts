@@ -9,11 +9,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["build"],
+      "args": [
+        "build"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "CodeGen",
@@ -23,11 +27,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["codegen"],
+      "args": [
+        "codegen"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "CodeGen Scraper",
@@ -37,11 +45,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["codegen-scraper"],
+      "args": [
+        "codegen-scraper"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "Run Doom Fire",
@@ -51,11 +63,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run:doom-fire"],
+      "args": [
+        "run:doom-fire"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "Run Hello World",
@@ -65,11 +81,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run:hello-world"],
+      "args": [
+        "run:hello-world"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "Run Renderer",
@@ -79,11 +99,15 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run:renderer"],
+      "args": [
+        "run:renderer"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
     },
     {
       "label": "Run Same Game",
@@ -93,11 +117,24 @@
       },
       "type": "deno",
       "command": "task",
-      "args": ["run:same-game"],
+      "args": [
+        "run:same-game"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$deno"]
+      "problemMatcher": [
+        "$deno"
+      ]
+    },
+    {
+      "type": "deno",
+      "command": "test",
+      "problemMatcher": [
+        "$deno-test"
+      ],
+      "group": "test",
+      "label": "Run Tests"
     }
   ]
 }

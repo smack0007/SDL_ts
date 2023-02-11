@@ -13,6 +13,8 @@ export interface PlatformDataViewConstructor {
 }
 
 export interface PlatformDataView {
+  readonly data: Uint8Array | PointerValue<unknown>;
+
   getArray(byteLength: number, byteOffset: number): Uint8Array;
   getBigInt64(byteOffset: number): i64;
   getBigUint64(byteOffset: number): u64;
@@ -25,9 +27,16 @@ export interface PlatformDataView {
   getUint8(byteOffset: number): u8;
   getUint16(byteOffset: number): u16;
   getUint32(byteOffset: number): u32;
+  setInt8(byteOffset: number, value: i8): void;
+  setInt16(byteOffset: number, value: i16): void;
   setInt32(byteOffset: number, value: i32): void;
+  setBigInt64(byteOffset: number, value: i64): void;
   setUint8(byteOffset: number, value: u8): void;
+  setUint16(byteOffset: number, value: u16): void;
   setUint32(byteOffset: number, value: u32): void;
+  setBigUint64(byteOffset: number, value: u64): void;
+  setFloat32(byteOffset: number, value: f32): void;
+  setFloat64(byteOffset: number, value: f64): void;
 }
 
 export interface Platform {

@@ -12,6 +12,16 @@
       "attachSimplePort": 9229
     },
     {
+      "name": "Debug Renderer",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:renderer"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Debug Same Game",
       "type": "node",
       "request": "launch",
