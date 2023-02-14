@@ -2,15 +2,7 @@
 // exposed as part of the API.
 
 import { SDLError } from "./error.ts";
-import {
-  AllocatableStruct,
-  AllocatableStructConstructor,
-  BoxableValue,
-  BoxableValueFactory,
-  Int,
-  OrFactory,
-  TypedArray,
-} from "./types.ts";
+import { OrFactory, TypedArray } from "./types.ts";
 
 //
 // Constants

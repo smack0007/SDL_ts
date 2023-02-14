@@ -2,27 +2,33 @@ import platform from "./_platform.ts";
 import {
   AllocatableStruct,
   AllocatableStructConstructor,
-  BoxableValue,
-  BoxableValueConstructor,
-  BoxableValueFactory,
+  Constructor,
   F32,
   F64,
+  Factory,
   I16,
   I32,
   I64,
   I8,
   Int,
   OrFactory,
-  PointerValue,
   Predicate,
+  Struct,
+  TypedNumber,
   U16,
   U32,
   U64,
   U8,
 } from "./types.ts";
-import { Pointer } from "./_pointers.ts";
 import { throwError } from "./_utils.ts";
 import { PlatformDataView } from "./_types.ts";
+import { Pointer } from "./pointers.ts";
+
+export type BoxableValue = Pointer<unknown> | TypedNumber | Struct;
+
+export type BoxableValueConstructor<T extends BoxableValue> = Constructor<T>;
+
+export type BoxableValueFactory<T extends BoxableValue> = Factory<T>;
 
 type BoxableValueTransformer<T extends BoxableValue> = (data: Uint8Array, view: PlatformDataView, offset: number) => T;
 
@@ -140,6 +146,12 @@ export class BoxedValue<T extends BoxableValue> {
     const value = this.value;
     return predicate(value) ? value : throwError(errorMessage);
   }
+
+  public unboxNotNull(
+    errorMessage: OrFactory<string>,
+  ): T {
+    return this.unbox((value) => value != 0, errorMessage);
+  }
 }
 
 export class BoxedArray<T extends BoxableValue> {
@@ -185,30 +197,4 @@ export class BoxedArray<T extends BoxableValue> {
       return Pointer.ofTypedArray(this._data, this.sizeOfElementInBytes * index);
     },
   };
-}
-
-export class BoxedPointer<T> extends BoxedValue<PointerValue<T>> {
-  public constructor() {
-    super(Pointer as unknown as BoxableValueFactory<PointerValue<T>>);
-  }
-
-  public static isBoxedPointer<T>(value: unknown): value is BoxedPointer<T> {
-    return value instanceof BoxedPointer;
-  }
-
-  public unboxNotNull(
-    errorMessage: OrFactory<string>,
-  ): PointerValue<T> {
-    return this.unbox((value) => value != 0, errorMessage);
-  }
-}
-
-export class BoxedPointerArray<T> extends BoxedArray<PointerValue<T>> {
-  public constructor(length: number) {
-    super(Pointer as unknown as BoxableValueFactory<PointerValue<T>>, length);
-  }
-
-  public static isBoxedPointerArray<T>(value: unknown): value is BoxedPointerArray<T> {
-    return value instanceof BoxedPointerArray;
-  }
 }

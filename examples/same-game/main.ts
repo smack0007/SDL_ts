@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedPointer, IMG, Int, int, SDL, SDLError } from "SDL_ts";
+import { BoxedArray, BoxedValue, IMG, Int, int, Pointer, SDL, SDLError } from "SDL_ts";
 import { path } from "../../deps.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 
@@ -9,8 +9,8 @@ function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
   IMG.Init(IMG.InitFlags.PNG);
 
-  const windowBox = new BoxedPointer<SDL.Window>();
-  const rendererBox = new BoxedPointer<SDL.Renderer>();
+  const windowBox = new BoxedValue<Pointer<SDL.Window>>(Pointer);
+  const rendererBox = new BoxedValue<Pointer<SDL.Renderer>>(Pointer);
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,

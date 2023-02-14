@@ -3,10 +3,9 @@
 // deno-lint-ignore-file no-unused-vars
 
 import platform from "../_platform.ts";
-import { Pointer } from "../_pointers.ts";
-import { BoxedPointer } from "../boxes.ts";
+import { BoxedValue } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
-import { PointerLike } from "../pointers.ts";
+import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 
@@ -205,8 +204,8 @@ export function CreateWindowAndRenderer(
   width: i32,
   height: i32,
   window_flags: WindowFlags,
-  window: BoxedPointer<Window>,
-  renderer: BoxedPointer<Renderer>,
+  window: BoxedValue<Pointer<Window>>,
+  renderer: BoxedValue<Pointer<Renderer>>,
 ): i32 {
   return _library.symbols.SDL_CreateWindowAndRenderer(
     width,

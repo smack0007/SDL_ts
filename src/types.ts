@@ -30,7 +30,7 @@ export const F64 = (value = 0): f64 => value;
 export type int = number;
 export const Int = (value = 0): int => value;
 
-export type PrimitiveType =
+export type TypedNumber =
   | i8
   | u8
   | i16
@@ -39,9 +39,9 @@ export type PrimitiveType =
   | u32
   | i64
   | u64
+  | int
   | f32
-  | f64
-  | int;
+  | f64;
 
 export type TypedArray =
   | Int8Array
@@ -66,12 +66,6 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 };
 
 export interface AllocatableStruct extends Struct {}
-
-export type BoxableValue = int | number | PointerValue<unknown> | PrimitiveType | Struct;
-
-export type BoxableValueConstructor<T extends BoxableValue> = Constructor<T>;
-
-export type BoxableValueFactory<T extends BoxableValue> = Factory<T>;
 
 export type PointerValue<T> = number | bigint;
 

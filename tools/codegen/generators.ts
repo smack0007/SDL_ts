@@ -415,10 +415,9 @@ export async function writeStructs(
   lines.push("");
 
   lines.push(`import platform from "../_platform.ts";`);
-  lines.push(`import { Pointer } from "../_pointers.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
   lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
-  lines.push(`import { PointerLike } from "../pointers.ts";`);
+  lines.push(`import { Pointer, PointerLike } from "../pointers.ts";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
@@ -731,7 +730,7 @@ function mapFunctionParamType(
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `BoxedPointer<${structName}>`;
+      structName = `BoxedValue<Pointer<${structName}>>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       if (isReturnType) {
@@ -843,10 +842,9 @@ export async function writeFunctions(
 
   lines.push(
     `import platform from "../_platform.ts";
-import { Pointer } from "../_pointers.ts";
-import { BoxedPointer } from "../boxes.ts";
+import { BoxedValue } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
-import { PointerLike } from "../pointers.ts";
+import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 `,

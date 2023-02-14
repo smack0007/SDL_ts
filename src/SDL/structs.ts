@@ -3,10 +3,9 @@
 // deno-lint-ignore-file no-unused-vars
 
 import platform from "../_platform.ts";
-import { Pointer } from "../_pointers.ts";
 import { PlatformDataView } from "../_types.ts";
 import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
-import { PointerLike } from "../pointers.ts";
+import { Pointer, PointerLike } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 import {
