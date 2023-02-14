@@ -3,7 +3,7 @@
 // deno-lint-ignore-file no-unused-vars
 
 import platform from "../_platform.ts";
-import { BoxedValue } from "../boxes.ts";
+import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";

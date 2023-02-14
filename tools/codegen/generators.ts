@@ -730,7 +730,7 @@ function mapFunctionParamType(
 
     if (structName.endsWith("**")) {
       structName = structName.slice(0, -2);
-      structName = `BoxedValue<Pointer<${structName}>>`;
+      structName = `Box<Pointer<${structName}>>`;
     } else if (structName.endsWith("*")) {
       structName = structName.slice(0, -1);
       if (isReturnType) {
@@ -842,7 +842,7 @@ export async function writeFunctions(
 
   lines.push(
     `import platform from "../_platform.ts";
-import { BoxedValue } from "../boxes.ts";
+import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";

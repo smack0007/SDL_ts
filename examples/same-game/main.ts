@@ -1,4 +1,4 @@
-import { BoxedArray, BoxedValue, IMG, Int, int, Pointer, SDL, SDLError } from "SDL_ts";
+import { Box, BoxArray, IMG, Int, int, Pointer, SDL, SDLError } from "SDL_ts";
 import { path } from "../../deps.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 
@@ -9,8 +9,8 @@ function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
   IMG.Init(IMG.InitFlags.PNG);
 
-  const windowBox = new BoxedValue<Pointer<SDL.Window>>(Pointer);
-  const rendererBox = new BoxedValue<Pointer<SDL.Renderer>>(Pointer);
+  const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
+  const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);
 
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
@@ -31,7 +31,7 @@ function main(): number {
     throw new SDLError("Failed to create texture for block.png");
   }
 
-  const textureSizeBox = new BoxedArray<int>(Int, 2);
+  const textureSizeBox = new BoxArray<int>(Int, 2);
   SDL.QueryTexture(blockTexture, null, null, textureSizeBox.pointers.at(0), textureSizeBox.pointers.at(1));
 
   const blockTextureWidth = textureSizeBox.at(0);

@@ -1,10 +1,10 @@
 import platform from "./_platform.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
-import { BoxableValue, BoxedArray, BoxedValue } from "./boxes.ts";
+import { Box, BoxArray, BoxValue } from "./boxes.ts";
 import { PointerValue, Struct, TypedArray } from "./types.ts";
 
-type PointerBoxableValue<T> = T extends BoxableValue ? (BoxedArray<T> | BoxedValue<T>) : never;
+type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
 
 export type PointerLike<T> = PointerValue<T> | Struct | TypedArray | PointerBoxableValue<T>;
 
@@ -33,9 +33,9 @@ export class Pointer<T> {
 
     if (isTypedArray(value)) {
       return Pointer.ofTypedArray(value, offset);
-    } else if (BoxedArray.isBoxedArray(value)) {
+    } else if (BoxArray.isBoxArray(value)) {
       return platform.Pointer.of(value._data, offset * value.sizeOfElementInBytes);
-    } else if (BoxedValue.isBoxedValue(value)) {
+    } else if (Box.isBox(value)) {
       return platform.Pointer.of(value._data);
     } else if (isStruct(value)) {
       if (Pointer.isPointer(value._data)) {

@@ -24,16 +24,16 @@ import { throwError } from "./_utils.ts";
 import { PlatformDataView } from "./_types.ts";
 import { Pointer } from "./pointers.ts";
 
-export type BoxableValue = Pointer<unknown> | TypedNumber | Struct;
+export type BoxValue = Pointer<unknown> | TypedNumber | Struct;
 
-export type BoxableValueConstructor<T extends BoxableValue> = Constructor<T>;
+export type BoxValueConstructor<T extends BoxValue> = Constructor<T>;
 
-export type BoxableValueFactory<T extends BoxableValue> = Factory<T>;
+export type BoxValueFactory<T extends BoxValue> = Factory<T>;
 
-type BoxableValueTransformer<T extends BoxableValue> = (data: Uint8Array, view: PlatformDataView, offset: number) => T;
+type BoxValueTransformer<T extends BoxValue> = (data: Uint8Array, view: PlatformDataView, offset: number) => T;
 
-function sizeof<T extends BoxableValue>(
-  factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
+function sizeof<T extends BoxValue>(
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
 ): number {
   if ("SIZE_IN_BYTES" in (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)) {
     return (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
@@ -65,50 +65,50 @@ function sizeof<T extends BoxableValue>(
   throwError(`${(factoryOrConstructor)?.name} is not boxable. sizeof not implemented.`);
 }
 
-export function getTransformer<T extends BoxableValue>(
-  factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
-): BoxableValueTransformer<T> {
+export function getTransformer<T extends BoxValue>(
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
+): BoxValueTransformer<T> {
   switch (factoryOrConstructor) {
     case I8:
-      return ((_, view, offset) => view.getInt8(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getInt8(offset)) as BoxValueTransformer<T>;
 
     case U8:
-      return ((_, view, offset) => view.getUint8(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getUint8(offset)) as BoxValueTransformer<T>;
 
     case I16:
-      return ((_, view, offset) => view.getInt16(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getInt16(offset)) as BoxValueTransformer<T>;
 
     case U16:
-      return ((_, view, offset) => view.getUint16(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getUint16(offset)) as BoxValueTransformer<T>;
 
     case I32:
-      return ((_, view, offset) => view.getInt32(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getInt32(offset)) as BoxValueTransformer<T>;
 
     case U32:
-      return ((_, view, offset) => view.getUint32(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getUint32(offset)) as BoxValueTransformer<T>;
 
     case F32:
-      return ((_, view, offset) => view.getFloat32(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getFloat32(offset)) as BoxValueTransformer<T>;
 
     case I64:
-      return ((_, view, offset) => view.getBigInt64(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getBigInt64(offset)) as BoxValueTransformer<T>;
 
     case U64:
-      return ((_, view, offset) => view.getBigUint64(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getBigUint64(offset)) as BoxValueTransformer<T>;
 
     case F64:
-      return ((_, view, offset) => view.getFloat64(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getFloat64(offset)) as BoxValueTransformer<T>;
 
     case Int: // TODO: Does this need to be platform dependent?
-      return ((_, view, offset) => view.getInt32(offset)) as BoxableValueTransformer<T>;
+      return ((_, view, offset) => view.getInt32(offset)) as BoxValueTransformer<T>;
 
-    case Pointer as unknown as BoxableValueFactory<T>:
-      return ((_, view, offset) => view.getPointer(offset)) as BoxableValueTransformer<T>;
+    case Pointer as unknown as BoxValueFactory<T>:
+      return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;
   }
 
   if ("of" in factoryOrConstructor as unknown as AllocatableStructConstructor<T>) {
     return (factoryOrConstructor as unknown as AllocatableStructConstructor<T>)
-      .of as unknown as BoxableValueTransformer<
+      .of as unknown as BoxValueTransformer<
         T
       >;
   }
@@ -118,12 +118,12 @@ export function getTransformer<T extends BoxableValue>(
   );
 }
 
-export class BoxedValue<T extends BoxableValue> {
-  private readonly _transformer: BoxableValueTransformer<T>;
+export class Box<T extends BoxValue> {
+  private readonly _transformer: BoxValueTransformer<T>;
   public readonly _data: Uint8Array;
   public readonly _view: PlatformDataView;
 
-  public constructor(factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>) {
+  public constructor(factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>) {
     const dataLength = sizeof(factoryOrConstructor);
     this._transformer = getTransformer(factoryOrConstructor);
 
@@ -131,8 +131,8 @@ export class BoxedValue<T extends BoxableValue> {
     this._view = new platform.DataView(this._data);
   }
 
-  public static isBoxedValue(value: unknown): value is BoxedValue<BoxableValue> {
-    return (value instanceof BoxedValue);
+  public static isBox(value: unknown): value is Box<BoxValue> {
+    return (value instanceof Box);
   }
 
   public get value(): T {
@@ -154,14 +154,14 @@ export class BoxedValue<T extends BoxableValue> {
   }
 }
 
-export class BoxedArray<T extends BoxableValue> {
+export class BoxArray<T extends BoxValue> {
   public readonly sizeOfElementInBytes: number;
-  private readonly _transformer: BoxableValueTransformer<T>;
+  private readonly _transformer: BoxValueTransformer<T>;
   public readonly _data: Uint8Array;
   public readonly _view: PlatformDataView;
 
   public constructor(
-    factoryOrConstructor: BoxableValueFactory<T> | BoxableValueConstructor<T>,
+    factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
     length: number,
   ) {
     if (length <= 0) {
@@ -175,8 +175,8 @@ export class BoxedArray<T extends BoxableValue> {
     this._view = new platform.DataView(this._data);
   }
 
-  public static isBoxedArray(value: unknown): value is BoxedArray<BoxableValue> {
-    return value instanceof BoxedArray;
+  public static isBoxArray(value: unknown): value is BoxArray<BoxValue> {
+    return value instanceof BoxArray;
   }
 
   public at(index: number): T {
