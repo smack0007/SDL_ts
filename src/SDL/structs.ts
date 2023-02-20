@@ -136,19 +136,19 @@ export class Keysym implements Struct {
   }
 
   public get scancode(): Scancode {
-    return this._view.getUint32(0) as Scancode;
+    return this._view.getU32(0) as Scancode;
   }
 
   public get sym(): Keycode {
-    return this._view.getUint32(4) as Keycode;
+    return this._view.getU32(4) as Keycode;
   }
 
   public get mod(): u16 {
-    return this._view.getUint16(8);
+    return this._view.getU16(8);
   }
 
   public get unused(): u32 {
-    return this._view.getUint32(12);
+    return this._view.getU32(12);
   }
 }
 
@@ -191,19 +191,19 @@ export class Point implements AllocatableStruct {
   }
 
   public get x(): i32 {
-    return this._view.getInt32(0);
+    return this._view.getI32(0);
   }
 
   public set x(value: i32) {
-    this._view.setInt32(0, value);
+    this._view.setI32(0, value);
   }
 
   public get y(): i32 {
-    return this._view.getInt32(4);
+    return this._view.getI32(4);
   }
 
   public set y(value: i32) {
-    this._view.setInt32(4, value);
+    this._view.setI32(4, value);
   }
 }
 
@@ -248,35 +248,35 @@ export class Rect implements AllocatableStruct {
   }
 
   public get x(): i32 {
-    return this._view.getInt32(0);
+    return this._view.getI32(0);
   }
 
   public set x(value: i32) {
-    this._view.setInt32(0, value);
+    this._view.setI32(0, value);
   }
 
   public get y(): i32 {
-    return this._view.getInt32(4);
+    return this._view.getI32(4);
   }
 
   public set y(value: i32) {
-    this._view.setInt32(4, value);
+    this._view.setI32(4, value);
   }
 
   public get w(): i32 {
-    return this._view.getInt32(8);
+    return this._view.getI32(8);
   }
 
   public set w(value: i32) {
-    this._view.setInt32(8, value);
+    this._view.setI32(8, value);
   }
 
   public get h(): i32 {
-    return this._view.getInt32(12);
+    return this._view.getI32(12);
   }
 
   public set h(value: i32) {
-    this._view.setInt32(12, value);
+    this._view.setI32(12, value);
   }
 }
 
@@ -311,19 +311,19 @@ export class RendererInfo implements AllocatableStruct {
   }
 
   public get flags(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get num_texture_formats(): u32 {
-    return this._view.getUint32(12);
+    return this._view.getU32(12);
   }
 
   public get max_texture_width(): i32 {
-    return this._view.getInt32(80);
+    return this._view.getI32(80);
   }
 
   public get max_texture_height(): i32 {
-    return this._view.getInt32(84);
+    return this._view.getI32(84);
   }
 }
 
@@ -345,7 +345,7 @@ export class Surface implements Struct {
   }
 
   public get flags(): u32 {
-    return this._view.getUint32(0);
+    return this._view.getU32(0);
   }
 
   public get format(): PointerValue<PixelFormat> {
@@ -353,15 +353,15 @@ export class Surface implements Struct {
   }
 
   public get w(): i32 {
-    return this._view.getInt32(16);
+    return this._view.getI32(16);
   }
 
   public get h(): i32 {
-    return this._view.getInt32(20);
+    return this._view.getI32(20);
   }
 
   public get pitch(): i32 {
-    return this._view.getInt32(24);
+    return this._view.getI32(24);
   }
 
   public get pixels(): PointerValue<void> {
@@ -373,7 +373,7 @@ export class Surface implements Struct {
   }
 
   public get locked(): i32 {
-    return this._view.getInt32(48);
+    return this._view.getI32(48);
   }
 
   public get list_blitmap(): PointerValue<void> {
@@ -389,7 +389,7 @@ export class Surface implements Struct {
   }
 
   public get refcount(): i32 {
-    return this._view.getInt32(88);
+    return this._view.getI32(88);
   }
 }
 
@@ -420,14 +420,14 @@ export class version implements AllocatableStruct {
   }
 
   public get major(): u8 {
-    return this._view.getUint8(0);
+    return this._view.getU8(0);
   }
 
   public get minor(): u8 {
-    return this._view.getUint8(1);
+    return this._view.getU8(1);
   }
 
   public get patch(): u8 {
-    return this._view.getUint8(2);
+    return this._view.getU8(2);
   }
 }

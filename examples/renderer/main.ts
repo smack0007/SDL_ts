@@ -84,7 +84,7 @@ function main(): number {
     }
 
     const state = SDL.GetKeyboardState(numkeys);
-    console.info(numkeys.value, Memory.readUint8(state, SDL.Scancode.ESCAPE));
+    console.info(numkeys.value, Memory.readU8(state, SDL.Scancode.ESCAPE));
 
     SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL.RenderClear(renderer);

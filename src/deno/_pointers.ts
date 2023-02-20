@@ -51,98 +51,104 @@ export class DenoPlatformDataView {
     }
   }
 
-  public getBigInt64(byteOffset: number): i64 {
-    return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i64;
-  }
-
-  public getBigUint64(byteOffset: number): u64 {
-    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u64;
-  }
-
-  public getInt8(byteOffset: number): i8 {
-    return this._view.getInt8(byteOffset) as i8;
-  }
-
-  public getInt16(byteOffset: number): i16 {
-    return this._view.getInt16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i16;
-  }
-
-  public getInt32(byteOffset: number): i32 {
-    return this._view.getInt32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i32;
-  }
-
-  public getFloat32(byteOffset: number): f32 {
+  public getF32(byteOffset: number): f32 {
     return this._view.getFloat32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as f32;
   }
 
-  public getFloat64(byteOffset: number): f64 {
+  public getF64(byteOffset: number): f64 {
     return this._view.getFloat64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as f64;
+  }
+
+  public getI8(byteOffset: number): i8 {
+    return this._view.getInt8(byteOffset) as i8;
+  }
+
+  public getI16(byteOffset: number): i16 {
+    return this._view.getInt16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i16;
+  }
+
+  public getI32(byteOffset: number): i32 {
+    return this._view.getInt32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i32;
+  }
+
+  public getI64(byteOffset: number): i64 {
+    return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i64;
   }
 
   public getPointer<T>(byteOffset: number): PointerValue<T> {
     // TODO: We should test here if we're on 32 or 64 bit.
-    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN);
+    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as PointerValue<T>;
   }
 
-  public getUint8(byteOffset: number): u8 {
+  public getU8(byteOffset: number): u8 {
     return this._view.getUint8(byteOffset) as u8;
   }
 
-  public getUint16(byteOffset: number): u16 {
+  public getU16(byteOffset: number): u16 {
     return this._view.getUint16(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u16;
   }
 
-  public getUint32(byteOffset: number): u32 {
+  public getU32(byteOffset: number): u32 {
     return this._view.getUint32(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u32;
   }
 
-  public setInt8(byteOffset: number, value: i8): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setInt8(byteOffset, value);
+  public getU64(byteOffset: number): u64 {
+    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as u64;
   }
 
-  public setInt16(byteOffset: number, value: i16): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setInt16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setInt32(byteOffset: number, value: i32): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setInt32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setBigInt64(byteOffset: number, value: i64): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setBigInt64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setUint8(byteOffset: number, value: u8): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setUint8(byteOffset, value);
-  }
-
-  public setUint16(byteOffset: number, value: u16): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setUint16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setUint32(byteOffset: number, value: u32): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setUint32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setBigUint64(byteOffset: number, value: u64): void {
-    DenoPlatformDataView.ensureViewIsDataView(this._view);
-    this._view.setBigUint64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
-  }
-
-  public setFloat32(byteOffset: number, value: f32): void {
+  public setF32(byteOffset: number, value: f32): void {
     DenoPlatformDataView.ensureViewIsDataView(this._view);
     this._view.setFloat32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
-  public setFloat64(byteOffset: number, value: f64): void {
+  public setF64(byteOffset: number, value: f64): void {
     DenoPlatformDataView.ensureViewIsDataView(this._view);
     this._view.setFloat64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setI8(byteOffset: number, value: i8): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setInt8(byteOffset, value);
+  }
+
+  public setI16(byteOffset: number, value: i16): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setInt16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setI32(byteOffset: number, value: i32): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setInt32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setI64(byteOffset: number, value: i64): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setBigInt64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setPointer<T>(byteOffset: number, value: PointerValue<T>): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    // TODO: We should test here if we're on 32 or 64 bit.
+    return this._view.setBigUint64(byteOffset, value as u64, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setU8(byteOffset: number, value: u8): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setUint8(byteOffset, value);
+  }
+
+  public setU16(byteOffset: number, value: u16): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setUint16(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setU32(byteOffset: number, value: u32): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setUint32(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
+  }
+
+  public setU64(byteOffset: number, value: u64): void {
+    DenoPlatformDataView.ensureViewIsDataView(this._view);
+    this._view.setBigUint64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 }

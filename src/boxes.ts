@@ -70,37 +70,37 @@ export function getTransformer<T extends BoxValue>(
 ): BoxValueTransformer<T> {
   switch (factoryOrConstructor) {
     case I8:
-      return ((_, view, offset) => view.getInt8(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getI8(offset)) as BoxValueTransformer<T>;
 
     case U8:
-      return ((_, view, offset) => view.getUint8(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getU8(offset)) as BoxValueTransformer<T>;
 
     case I16:
-      return ((_, view, offset) => view.getInt16(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getI16(offset)) as BoxValueTransformer<T>;
 
     case U16:
-      return ((_, view, offset) => view.getUint16(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getU16(offset)) as BoxValueTransformer<T>;
 
     case I32:
-      return ((_, view, offset) => view.getInt32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getI32(offset)) as BoxValueTransformer<T>;
 
     case U32:
-      return ((_, view, offset) => view.getUint32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getU32(offset)) as BoxValueTransformer<T>;
 
     case F32:
-      return ((_, view, offset) => view.getFloat32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getF32(offset)) as BoxValueTransformer<T>;
 
     case I64:
-      return ((_, view, offset) => view.getBigInt64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getI64(offset)) as BoxValueTransformer<T>;
 
     case U64:
-      return ((_, view, offset) => view.getBigUint64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getU64(offset)) as BoxValueTransformer<T>;
 
     case F64:
-      return ((_, view, offset) => view.getFloat64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getF64(offset)) as BoxValueTransformer<T>;
 
     case Int: // TODO: Does this need to be platform dependent?
-      return ((_, view, offset) => view.getInt32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getI32(offset)) as BoxValueTransformer<T>;
 
     case Pointer as unknown as BoxValueFactory<T>:
       return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;

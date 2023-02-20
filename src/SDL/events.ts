@@ -11,11 +11,11 @@ export class CommonEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 }
 
@@ -24,19 +24,19 @@ export class DisplayEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get display(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get event(): u8 {
-    return this._view.getUint8(12);
+    return this._view.getU8(12);
   }
 
   // padding1
@@ -46,7 +46,7 @@ export class DisplayEvent {
   // padding3
 
   public get data1(): i32 {
-    return this._view.getInt32(16);
+    return this._view.getI32(16);
   }
 }
 
@@ -58,23 +58,23 @@ export class KeyboardEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get windowID(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get state(): u8 {
-    return this._view.getUint8(12);
+    return this._view.getU8(12);
   }
 
   public get repeat(): u8 {
-    return this._view.getUint8(13);
+    return this._view.getU8(13);
   }
 
   // padding2
@@ -91,41 +91,41 @@ export class MouseButtonEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get windowID(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get which(): u32 {
-    return this._view.getUint32(12);
+    return this._view.getU32(12);
   }
 
   public get button(): u8 {
-    return this._view.getUint8(16);
+    return this._view.getU8(16);
   }
 
   public get state(): u8 {
-    return this._view.getUint8(17);
+    return this._view.getU8(17);
   }
 
   public get clicks(): u8 {
-    return this._view.getUint8(18);
+    return this._view.getU8(18);
   }
 
   // padding1
 
   public get x(): i32 {
-    return this._view.getInt32(20);
+    return this._view.getI32(20);
   }
 
   public get y(): i32 {
-    return this._view.getInt32(24);
+    return this._view.getI32(24);
   }
 }
 
@@ -134,39 +134,39 @@ export class MouseMotionEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get windowID(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get which(): u32 {
-    return this._view.getUint32(12);
+    return this._view.getU32(12);
   }
 
   public get state(): u32 {
-    return this._view.getUint32(16);
+    return this._view.getU32(16);
   }
 
   public get x(): i32 {
-    return this._view.getInt32(20);
+    return this._view.getI32(20);
   }
 
   public get y(): i32 {
-    return this._view.getInt32(24);
+    return this._view.getI32(24);
   }
 
   public get xrel(): i32 {
-    return this._view.getInt32(28);
+    return this._view.getI32(28);
   }
 
   public get yrel(): i32 {
-    return this._view.getInt32(32);
+    return this._view.getI32(32);
   }
 }
 
@@ -175,39 +175,39 @@ export class MouseWheelEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get windowID(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get which(): u32 {
-    return this._view.getUint32(12);
+    return this._view.getU32(12);
   }
 
   public get x(): i32 {
-    return this._view.getInt32(16);
+    return this._view.getI32(16);
   }
 
   public get y(): i32 {
-    return this._view.getInt32(20);
+    return this._view.getI32(20);
   }
 
   public get direction(): u32 {
-    return this._view.getUint32(24);
+    return this._view.getU32(24);
   }
 
   public get preciseX(): f32 {
-    return this._view.getFloat32(28);
+    return this._view.getF32(28);
   }
 
   public get preciseY(): f32 {
-    return this._view.getFloat32(32);
+    return this._view.getF32(32);
   }
 }
 
@@ -216,19 +216,19 @@ export class WindowEvent {
   }
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public get timestamp(): u32 {
-    return this._view.getUint32(4);
+    return this._view.getU32(4);
   }
 
   public get windowID(): u32 {
-    return this._view.getUint32(8);
+    return this._view.getU32(8);
   }
 
   public get event(): WindowEventID {
-    return this._view.getUint8(12) as WindowEventID;
+    return this._view.getU8(12) as WindowEventID;
   }
 
   // padding1
@@ -238,11 +238,11 @@ export class WindowEvent {
   // padding3
 
   public get data1(): i32 {
-    return this._view.getInt32(16);
+    return this._view.getI32(16);
   }
 
   public get data2(): i32 {
-    return this._view.getInt32(20);
+    return this._view.getI32(20);
   }
 }
 
@@ -251,7 +251,7 @@ export class Event {
   private readonly _view = new platform.DataView(this._data);
 
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
   public readonly common = new CommonEvent(this._data, this._view);

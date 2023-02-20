@@ -16,27 +16,28 @@ export interface PlatformDataView {
   readonly data: Uint8Array | PointerValue<unknown>;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
-  getBigInt64(byteOffset: number): i64;
-  getBigUint64(byteOffset: number): u64;
-  getInt8(byteOffset: number): i8;
-  getInt16(byteOffset: number): i16;
-  getInt32(byteOffset: number): i32;
-  getFloat32(byteOffset: number): f32;
-  getFloat64(byteOffset: number): f64;
+  getF32(byteOffset: number): f32;
+  getF64(byteOffset: number): f64;
+  getI8(byteOffset: number): i8;
+  getI16(byteOffset: number): i16;
+  getI32(byteOffset: number): i32;
+  getI64(byteOffset: number): i64;
   getPointer<T>(byteOffset: number): PointerValue<T>;
-  getUint8(byteOffset: number): u8;
-  getUint16(byteOffset: number): u16;
-  getUint32(byteOffset: number): u32;
-  setInt8(byteOffset: number, value: i8): void;
-  setInt16(byteOffset: number, value: i16): void;
-  setInt32(byteOffset: number, value: i32): void;
-  setBigInt64(byteOffset: number, value: i64): void;
-  setUint8(byteOffset: number, value: u8): void;
-  setUint16(byteOffset: number, value: u16): void;
-  setUint32(byteOffset: number, value: u32): void;
-  setBigUint64(byteOffset: number, value: u64): void;
-  setFloat32(byteOffset: number, value: f32): void;
-  setFloat64(byteOffset: number, value: f64): void;
+  getU8(byteOffset: number): u8;
+  getU16(byteOffset: number): u16;
+  getU32(byteOffset: number): u32;
+  getU64(byteOffset: number): u64;
+  setF32(byteOffset: number, value: f32): void;
+  setF64(byteOffset: number, value: f64): void;
+  setI8(byteOffset: number, value: i8): void;
+  setI16(byteOffset: number, value: i16): void;
+  setI32(byteOffset: number, value: i32): void;
+  setI64(byteOffset: number, value: i64): void;
+  setPointer<T>(byteOffset: number, value: PointerValue<T>): void;
+  setU8(byteOffset: number, value: u8): void;
+  setU16(byteOffset: number, value: u16): void;
+  setU32(byteOffset: number, value: u32): void;
+  setU64(byteOffset: number, value: u64): void;
 }
 
 export interface Platform {

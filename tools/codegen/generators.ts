@@ -13,11 +13,16 @@ import {
 } from "./types.ts";
 
 const PlatformDataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
-  "f32": (offset, _) => `getFloat32(${offset})`,
-  "i32": (offset, _) => `getInt32(${offset})`,
-  "u8": (offset, _) => `getUint8(${offset})`,
-  "u16": (offset, _) => `getUint16(${offset})`,
-  "u32": (offset, _) => `getUint32(${offset})`,
+  "f32": (offset, _) => `getF32(${offset})`,
+  "f64": (offset, _) => `getF64(${offset})`,
+  "i8": (offset, _) => `getI8(${offset})`,
+  "i16": (offset, _) => `getI16(${offset})`,
+  "i32": (offset, _) => `getI32(${offset})`,
+  "i64": (offset, _) => `getI64(${offset})`,
+  "u8": (offset, _) => `getU8(${offset})`,
+  "u16": (offset, _) => `getU16(${offset})`,
+  "u32": (offset, _) => `getU32(${offset})`,
+  "u64": (offset, _) => `getU64(${offset})`,
 
   "pointer": (offset, _) => `getPointer(${offset})`,
 
@@ -25,9 +30,16 @@ const PlatformDataViewGetMethods: Record<string, (offset: number, length: number
 } as const;
 
 const PlatformDataViewSetMethods: Record<string, (offset: number, length: number) => string> = {
-  "i32": (offset, _) => `setInt32(${offset}, value)`,
-  "u8": (offset, _) => `setUint8(${offset}, value)`,
-  "u32": (offset, _) => `setUint32(${offset}, value)`,
+  "f32": (offset, _) => `setF32(${offset}, value)`,
+  "f64": (offset, _) => `setF64(${offset}, value)`,
+  "i8": (offset, _) => `setI8(${offset}, value)`,
+  "i16": (offset, _) => `setI16(${offset}, value)`,
+  "i32": (offset, _) => `setI32(${offset}, value)`,
+  "i64": (offset, _) => `setI64(${offset}, value)`,
+  "u8": (offset, _) => `setU8(${offset}, value)`,
+  "u16": (offset, _) => `setU16(${offset}, value)`,
+  "u32": (offset, _) => `setU32(${offset}, value)`,
+  "u64": (offset, _) => `setU64(${offset}, value)`,
 } as const;
 
 function createLines(): string[] {
@@ -386,7 +398,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
   private readonly _view = new platform.DataView(this._data);
   
   public get type(): EventType {
-    return this._view.getUint32(0) as EventType;
+    return this._view.getU32(0) as EventType;
   }
 
 `);

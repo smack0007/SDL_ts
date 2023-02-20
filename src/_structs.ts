@@ -48,11 +48,11 @@ export class NumberStruct implements AllocatableStruct {
   }
 
   public get value(): number {
-    return this._view.getInt32(0);
+    return this._view.getI32(0);
   }
 
   public set value(value: number) {
-    this._view.setInt32(0, value);
+    this._view.setI32(0, value);
   }
 }
 
