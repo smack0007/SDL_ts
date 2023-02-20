@@ -13,6 +13,9 @@ import { symbols } from "./_symbols.ts";
 import {
   ArrayOrder,
   BitmapOrder,
+  BlendFactor,
+  BlendMode,
+  BlendOperation,
   EventType,
   InitFlags,
   Keycode,
@@ -313,6 +316,40 @@ export function GetScancodeName(
 
 export function GetSystemRAM(): i32 {
   return _library.symbols.SDL_GetSystemRAM() as i32;
+}
+
+export function GetTextureAlphaMod(
+  texture: PointerLike<Texture>,
+  alpha: PointerLike<u8>,
+): i32 {
+  return _library.symbols.SDL_GetTextureAlphaMod(
+    Pointer.of(texture),
+    Pointer.of(alpha),
+  ) as i32;
+}
+
+export function GetTextureBlendMode(
+  texture: PointerLike<Texture>,
+  blendMode: PointerLike<BlendMode>,
+): i32 {
+  return _library.symbols.SDL_GetTextureBlendMode(
+    Pointer.of(texture),
+    Pointer.of(blendMode),
+  ) as i32;
+}
+
+export function GetTextureColorMod(
+  texture: PointerLike<Texture>,
+  r: PointerLike<u8>,
+  g: PointerLike<u8>,
+  b: PointerLike<u8>,
+): i32 {
+  return _library.symbols.SDL_GetTextureColorMod(
+    Pointer.of(texture),
+    Pointer.of(r),
+    Pointer.of(g),
+    Pointer.of(b),
+  ) as i32;
 }
 
 export function GetTicks(): u32 {
@@ -632,6 +669,40 @@ export function SetRenderDrawColor(
     g,
     b,
     a,
+  ) as i32;
+}
+
+export function SetTextureAlphaMod(
+  texture: PointerLike<Texture>,
+  alpha: u8,
+): i32 {
+  return _library.symbols.SDL_SetTextureAlphaMod(
+    Pointer.of(texture),
+    alpha,
+  ) as i32;
+}
+
+export function SetTextureBlendMode(
+  texture: PointerLike<Texture>,
+  blendMode: BlendMode,
+): i32 {
+  return _library.symbols.SDL_SetTextureBlendMode(
+    Pointer.of(texture),
+    blendMode,
+  ) as i32;
+}
+
+export function SetTextureColorMod(
+  texture: PointerLike<Texture>,
+  r: u8,
+  g: u8,
+  b: u8,
+): i32 {
+  return _library.symbols.SDL_SetTextureColorMod(
+    Pointer.of(texture),
+    r,
+    g,
+    b,
   ) as i32;
 }
 

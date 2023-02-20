@@ -174,6 +174,29 @@ export const symbols: DynamicLibraryInterface = {
     parameters: [],
     result: "i32", /* int */
   },
+  SDL_GetTextureAlphaMod: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* Uint8* alpha */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_GetTextureBlendMode: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* SDL_BlendMode* blendMode */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_GetTextureColorMod: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "pointer", /* Uint8* r */
+      "pointer", /* Uint8* g */
+      "pointer", /* Uint8* b */
+    ],
+    result: "i32", /* int */
+  },
   SDL_GetTicks: {
     parameters: [],
     result: "u32", /* Uint32 */
@@ -393,6 +416,29 @@ export const symbols: DynamicLibraryInterface = {
       "u8", /* Uint8 g */
       "u8", /* Uint8 b */
       "u8", /* Uint8 a */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_SetTextureAlphaMod: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "u8", /* Uint8 alpha */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_SetTextureBlendMode: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "u32", /* SDL_BlendMode blendMode */
+    ],
+    result: "i32", /* int */
+  },
+  SDL_SetTextureColorMod: {
+    parameters: [
+      "pointer", /* SDL_Texture* texture */
+      "u8", /* Uint8 r */
+      "u8", /* Uint8 g */
+      "u8", /* Uint8 b */
     ],
     result: "i32", /* int */
   },

@@ -24,6 +24,42 @@ export const BitmapOrder = {
 
 export type BitmapOrder = Enum<typeof BitmapOrder>;
 
+export const BlendFactor = {
+  ZERO: 1,
+  ONE: 2,
+  SRC_COLOR: 3,
+  ONE_MINUS_SRC_COLOR: 4,
+  SRC_ALPHA: 5,
+  ONE_MINUS_SRC_ALPHA: 6,
+  DST_COLOR: 7,
+  ONE_MINUS_DST_COLOR: 8,
+  DST_ALPHA: 9,
+  ONE_MINUS_DST_ALPHA: 10,
+} as const;
+
+export type BlendFactor = Enum<typeof BlendFactor>;
+
+export const BlendMode = {
+  NONE: 0,
+  BLEND: 1,
+  ADD: 2,
+  MOD: 4,
+  MUL: 8,
+  INVALID: 2147483647,
+} as const;
+
+export type BlendMode = Enum<typeof BlendMode>;
+
+export const BlendOperation = {
+  ADD: 1,
+  SUBTRACT: 2,
+  REV_SUBTRACT: 3,
+  MINIMUM: 4,
+  MAXIMUM: 5,
+} as const;
+
+export type BlendOperation = Enum<typeof BlendOperation>;
+
 export const EventType = {
   FIRSTEVENT: 0,
   QUIT: 256,

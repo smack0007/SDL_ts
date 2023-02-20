@@ -764,6 +764,13 @@ function mapFunctionParamType(
     return enumData?.prefixToStrip ? stripPrefixes(param.type, enumData.prefixToStrip) : stripPrefixes(param.type);
   }
 
+  if (param.type.endsWith("*") && isEnum(enums, param.type.substring(0, param.type.length - 1))) {
+    const enumName = param.type.substring(0, param.type.length - 1);
+    const enumData = enums[enumName];
+    const result = enumData?.prefixToStrip ? stripPrefixes(enumName, enumData.prefixToStrip) : stripPrefixes(enumName);
+    return isReturnType ? `PointerValue<${result}>` : `PointerLike<${result}>`;
+  }
+
   let result = "";
 
   switch (param.type) {

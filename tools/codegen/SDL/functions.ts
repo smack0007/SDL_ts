@@ -387,6 +387,54 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
+  
+  SDL_GetTextureAlphaMod: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      alpha: {
+        type: "Uint8*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_GetTextureBlendMode: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      blendMode: {
+        type: "SDL_BlendMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_GetTextureColorMod: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      r: {
+        type: "Uint8*",
+      },
+      g: {
+        type: "Uint8*",
+      },
+      b: {
+        type: "Uint8*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
 
   SDL_GetTicks: {
     parameters: {},
@@ -843,6 +891,54 @@ export const functions: CodeGenFunctions = {
         type: "Uint8",
       },
       a: {
+        type: "Uint8",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_SetTextureAlphaMod: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      alpha: {
+        type: "Uint8",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_SetTextureBlendMode: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      blendMode: {
+        type: "SDL_BlendMode",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_SetTextureColorMod: {
+    parameters: {
+      texture: {
+        type: "SDL_Texture*",
+      },
+      r: {
+        type: "Uint8",
+      },
+      g: {
+        type: "Uint8",
+      },
+      b: {
         type: "Uint8",
       },
     },

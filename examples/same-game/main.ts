@@ -1,6 +1,11 @@
 import { Box, BoxArray, IMG, Int, int, Pointer, SDL, SDLError } from "SDL_ts";
 import { path } from "../../deps.ts";
-import { ASSETS_PATH } from "../../shared/constants.ts";
+import { Board } from "./logic/board.ts";
+import { Random } from "./logic/random.ts";
+import { drawBoard } from "./rendering/board.ts";
+
+const ROOT_PATH = path.dirname(path.fromFileUrl(import.meta.url));
+const ASSETS_PATH = path.join(ROOT_PATH, "assets");
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -36,11 +41,18 @@ function main(): number {
 
   const blockTextureWidth = textureSizeBox.at(0);
   const blockTextureHeight = textureSizeBox.at(1);
-  console.info("Block Texture Size", blockTextureWidth, blockTextureHeight);
+
+  const board = new Board(new Random(12345));
+  board.at(0, 0).select();
+  board.at(0, 1).select();
+  board.at(1, 1).select();
+  board.at(1, 0).select();
 
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
-  SDL.RenderCopy(renderer, blockTexture, null, new SDL.Rect(0, 0, blockTextureWidth, blockTextureHeight));
+
+  drawBoard(renderer, board, blockTexture);
+
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
