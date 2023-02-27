@@ -61,8 +61,16 @@ function main(): number {
   let done = false;
   while (!done) {
     while (SDL.PollEvent(event) != 0) {
-      if (event.type === SDL.EventType.QUIT) {
-        done = true;
+      switch (event.type) {
+        case SDL.EventType.QUIT:
+          done = true;
+          break;
+
+        case SDL.EventType.MOUSEBUTTONDOWN: {
+          const mouseButtonEvent = event.mousebutton;
+          board.onClick(mouseButtonEvent.x, mouseButtonEvent.y);
+          break;
+        }
       }
     }
   }

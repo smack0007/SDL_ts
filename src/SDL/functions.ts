@@ -323,8 +323,8 @@ export function GetTextureAlphaMod(
   alpha: PointerLike<u8>,
 ): i32 {
   return _library.symbols.SDL_GetTextureAlphaMod(
-    Pointer.of(texture),
-    Pointer.of(alpha),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(alpha)),
   ) as i32;
 }
 
@@ -333,8 +333,8 @@ export function GetTextureBlendMode(
   blendMode: PointerLike<BlendMode>,
 ): i32 {
   return _library.symbols.SDL_GetTextureBlendMode(
-    Pointer.of(texture),
-    Pointer.of(blendMode),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(blendMode)),
   ) as i32;
 }
 
@@ -345,10 +345,10 @@ export function GetTextureColorMod(
   b: PointerLike<u8>,
 ): i32 {
   return _library.symbols.SDL_GetTextureColorMod(
-    Pointer.of(texture),
-    Pointer.of(r),
-    Pointer.of(g),
-    Pointer.of(b),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(r)),
+    Platform.toPlatformPointer(Pointer.of(g)),
+    Platform.toPlatformPointer(Pointer.of(b)),
   ) as i32;
 }
 
@@ -677,7 +677,7 @@ export function SetTextureAlphaMod(
   alpha: u8,
 ): i32 {
   return _library.symbols.SDL_SetTextureAlphaMod(
-    Pointer.of(texture),
+    Platform.toPlatformPointer(Pointer.of(texture)),
     alpha,
   ) as i32;
 }
@@ -687,7 +687,7 @@ export function SetTextureBlendMode(
   blendMode: BlendMode,
 ): i32 {
   return _library.symbols.SDL_SetTextureBlendMode(
-    Pointer.of(texture),
+    Platform.toPlatformPointer(Pointer.of(texture)),
     blendMode,
   ) as i32;
 }
@@ -699,7 +699,7 @@ export function SetTextureColorMod(
   b: u8,
 ): i32 {
   return _library.symbols.SDL_SetTextureColorMod(
-    Pointer.of(texture),
+    Platform.toPlatformPointer(Pointer.of(texture)),
     r,
     g,
     b,
