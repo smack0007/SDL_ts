@@ -1,8 +1,8 @@
 import { asserts } from "../deps.ts";
 import { Box, BoxValueFactory } from "./boxes.ts";
 import { Pointer } from "./pointers.ts";
-import { F32, F64, I16, I32, I8, Int, PointerValue, U16, U32, U8 } from "./types.ts";
-import { PlatformDataView } from "./_types.ts";
+import { F32, F64, I16, I32, I8, Int, U16, U32, U8 } from "./types.ts";
+import { PlatformDataView, PlatformPointer } from "./_types.ts";
 
 const { assertEquals } = asserts;
 
@@ -42,12 +42,12 @@ const { assertEquals } = asserts;
 });
 
 Deno.test(`Pointer can be boxed`, () => {
-  const pointerValue = 123456n as PointerValue<number>;
+  const pointerValue = new Pointer(Deno.UnsafePointer.create(12345n) as unknown as PlatformPointer<unknown>);
 
   const box = new Box<Pointer<number>>(Pointer);
   box._view.setPointer(0, pointerValue);
 
   const value = box.value;
   assertEquals(value, pointerValue);
-  assertEquals(typeof value, "bigint");
+  assertEquals(Pointer.isPointer(value), true);
 });

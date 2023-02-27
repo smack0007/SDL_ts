@@ -1,17 +1,19 @@
 import { Platform } from "../_types.ts";
 import { denoLoadLibrary } from "./_library.ts";
-import { DENO_NULL_POINTER, DenoPlatformDataView, DenoPlatformPointer } from "./_pointers.ts";
-import { denoFromNativeString, denoToNativeString } from "./_strings.ts";
+import { denoFromPlatformPointer, DenoPlatformDataView, denoToPlatformPointer } from "./_pointers.ts";
+import { denoFromPlatformString, denoToPlatformString } from "./_strings.ts";
 
 const denoPlatform: Platform = {
-  NULL_POINTER: DENO_NULL_POINTER,
+  // TODO: Is there any way to detect this correctly?
+  POINTER_SIZE_IN_BYTES: 8,
 
-  Pointer: DenoPlatformPointer,
   DataView: DenoPlatformDataView,
 
-  fromNativeString: denoFromNativeString,
+  fromPlatformPointer: denoFromPlatformPointer,
+  fromPlatformString: denoFromPlatformString,
   loadLibrary: denoLoadLibrary,
-  toNativeString: denoToNativeString,
+  toPlatformPointer: denoToPlatformPointer,
+  toPlatformString: denoToPlatformString,
 };
 
 export default denoPlatform;

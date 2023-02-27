@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-empty-interface
 // This file is for types exposed as part of the API.
 
+import { Pointer } from "./pointers.ts";
+
 declare const _: unique symbol;
 
 //
@@ -67,11 +69,9 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 
 export interface AllocatableStruct extends Struct {}
 
-export type PointerValue<T> = number | bigint;
-
 export interface StructConstructor<T extends Struct> {
   SIZE_IN_BYTES: number;
-  of(data: PointerValue<T>): T;
+  of(data: Pointer<T>): T;
 }
 
 export interface Struct {}

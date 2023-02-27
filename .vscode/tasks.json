@@ -129,7 +129,10 @@
     },
     {
       "type": "deno",
-      "command": "test",
+      "command": "task",
+      "args": [
+        "test"
+      ],
       "problemMatcher": [
         "$deno-test"
       ],

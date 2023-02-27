@@ -1,19 +1,18 @@
-import { f32, f64, i16, i32, i64, i8, PointerValue, TypedArray, u16, u32, u64, u8 } from "./types.ts";
+import { Pointer } from "./pointers.ts";
+import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
-export interface PlatformPointerConstructor {
-  readonly SIZE_IN_BYTES: number;
+declare const _: unique symbol;
 
-  of<T>(memory: TypedArray): PointerValue<T>;
-  of<T>(memory: TypedArray, offsetInBytes: PointerValue<T>): PointerValue<T>;
-}
+export type PlatformPointer<T> = { [_]: "PlatformPointer" };
+export type PlatformString = { [_]: "PlatformString" };
 
 export interface PlatformDataViewConstructor {
-  new (data: Uint8Array | PointerValue<unknown>): PlatformDataView;
+  new (data: Uint8Array | PlatformPointer<unknown>): PlatformDataView;
 }
 
 export interface PlatformDataView {
-  readonly data: Uint8Array | PointerValue<unknown>;
+  readonly data: Uint8Array | PlatformPointer<unknown>;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
   getF32(byteOffset: number): f32;
@@ -22,7 +21,7 @@ export interface PlatformDataView {
   getI16(byteOffset: number): i16;
   getI32(byteOffset: number): i32;
   getI64(byteOffset: number): i64;
-  getPointer<T>(byteOffset: number): PointerValue<T>;
+  getPointer<T>(byteOffset: number): Pointer<T>;
   getU8(byteOffset: number): u8;
   getU16(byteOffset: number): u16;
   getU32(byteOffset: number): u32;
@@ -33,7 +32,7 @@ export interface PlatformDataView {
   setI16(byteOffset: number, value: i16): void;
   setI32(byteOffset: number, value: i32): void;
   setI64(byteOffset: number, value: i64): void;
-  setPointer<T>(byteOffset: number, value: PointerValue<T>): void;
+  setPointer<T>(byteOffset: number, value: Pointer<T>): void;
   setU8(byteOffset: number, value: u8): void;
   setU16(byteOffset: number, value: u16): void;
   setU32(byteOffset: number, value: u32): void;
@@ -41,13 +40,13 @@ export interface PlatformDataView {
 }
 
 export interface Platform {
-  NULL_POINTER: PointerValue<unknown>;
-
-  Pointer: PlatformPointerConstructor;
+  POINTER_SIZE_IN_BYTES: number;
 
   DataView: PlatformDataViewConstructor;
 
-  fromNativeString(value: Uint8Array | PointerValue<unknown>): string;
+  fromPlatformPointer<T>(value: PlatformPointer<T> | null): Pointer<T> | null;
+
+  fromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string;
 
   loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
@@ -55,5 +54,7 @@ export interface Platform {
     libraryPath?: string,
   ): DynamicLibrary<T>;
 
-  toNativeString(value: string): unknown;
+  toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
+
+  toPlatformString(value: string): PlatformString;
 }

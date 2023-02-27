@@ -2,11 +2,12 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import platform from "../_platform.ts";
+import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
+import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 
 import {
@@ -55,10 +56,10 @@ export function BlitScaled(
   dstrect: PointerLike<Rect> | null,
 ): i32 {
   return _library.symbols.SDL_UpperBlitScaled(
-    Pointer.of(src),
-    Pointer.of(srcrect),
-    Pointer.of(dst),
-    Pointer.of(dstrect),
+    Platform.toPlatformPointer(Pointer.of(src)),
+    Platform.toPlatformPointer(Pointer.of(srcrect)),
+    Platform.toPlatformPointer(Pointer.of(dst)),
+    Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
 
@@ -69,10 +70,10 @@ export function BlitSurface(
   dstrect: PointerLike<Rect> | null,
 ): i32 {
   return _library.symbols.SDL_UpperBlit(
-    Pointer.of(src),
-    Pointer.of(srcrect),
-    Pointer.of(dst),
-    Pointer.of(dstrect),
+    Platform.toPlatformPointer(Pointer.of(src)),
+    Platform.toPlatformPointer(Pointer.of(srcrect)),
+    Platform.toPlatformPointer(Pointer.of(dst)),
+    Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
 
@@ -81,11 +82,11 @@ export function ConvertSurface(
   fmt: PointerLike<PixelFormat>,
   flags: u32,
 ): Surface | null {
-  return Surface.of(_library.symbols.SDL_ConvertSurface(
-    Pointer.of(src),
-    Pointer.of(fmt),
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_ConvertSurface(
+    Platform.toPlatformPointer(Pointer.of(src)),
+    Platform.toPlatformPointer(Pointer.of(fmt)),
     flags,
-  ) as PointerValue<Surface>);
+  ) as PlatformPointer<Surface>));
 }
 
 export function CreateRenderer(
@@ -93,11 +94,11 @@ export function CreateRenderer(
   index: i32,
   flags: u32,
 ): Renderer | null {
-  return Renderer.of(_library.symbols.SDL_CreateRenderer(
-    Pointer.of(window),
+  return Renderer.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRenderer(
+    Platform.toPlatformPointer(Pointer.of(window)),
     index,
     flags,
-  ) as PointerValue<Renderer>);
+  ) as PlatformPointer<Renderer>));
 }
 
 export function CreateRGBSurfaceFrom(
@@ -111,8 +112,8 @@ export function CreateRGBSurfaceFrom(
   Bmask: u32,
   Amask: u32,
 ): Surface | null {
-  return Surface.of(_library.symbols.SDL_CreateRGBSurfaceFrom(
-    Pointer.ofTypedArray(pixels),
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRGBSurfaceFrom(
+    Platform.toPlatformPointer(Pointer.ofTypedArray(pixels)),
     width,
     height,
     depth,
@@ -121,7 +122,7 @@ export function CreateRGBSurfaceFrom(
     Gmask,
     Bmask,
     Amask,
-  ) as PointerValue<Surface>);
+  ) as PlatformPointer<Surface>));
 }
 
 export function CreateRGBSurfaceWithFormat(
@@ -131,13 +132,13 @@ export function CreateRGBSurfaceWithFormat(
   depth: i32,
   format: u32,
 ): Surface | null {
-  return Surface.of(_library.symbols.SDL_CreateRGBSurfaceWithFormat(
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRGBSurfaceWithFormat(
     flags,
     width,
     height,
     depth,
     format,
-  ) as PointerValue<Surface>);
+  ) as PlatformPointer<Surface>));
 }
 
 export function CreateTexture(
@@ -147,23 +148,23 @@ export function CreateTexture(
   w: i32,
   h: i32,
 ): Texture | null {
-  return Texture.of(_library.symbols.SDL_CreateTexture(
-    Pointer.of(renderer),
+  return Texture.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateTexture(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
     format,
     access,
     w,
     h,
-  ) as PointerValue<Texture>);
+  ) as PlatformPointer<Texture>));
 }
 
 export function CreateTextureFromSurface(
   renderer: PointerLike<Renderer>,
   surface: PointerLike<Surface>,
 ): Texture | null {
-  return Texture.of(_library.symbols.SDL_CreateTextureFromSurface(
-    Pointer.of(renderer),
-    Pointer.of(surface),
-  ) as PointerValue<Texture>);
+  return Texture.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateTextureFromSurface(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(surface)),
+  ) as PlatformPointer<Texture>));
 }
 
 export function CreateWindow(
@@ -190,14 +191,14 @@ export function CreateWindow(
   h: i32,
   flags: WindowFlags,
 ): Window | null {
-  return Window.of(_library.symbols.SDL_CreateWindow(
-    platform.toNativeString(title),
+  return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateWindow(
+    Platform.toPlatformString(title),
     x,
     y,
     w,
     h,
     flags,
-  ) as PointerValue<Window>);
+  ) as PlatformPointer<Window>));
 }
 
 export function CreateWindowAndRenderer(
@@ -211,8 +212,8 @@ export function CreateWindowAndRenderer(
     width,
     height,
     window_flags,
-    Pointer.ofTypedArray(window._data),
-    Pointer.ofTypedArray(renderer._data),
+    Platform.toPlatformPointer(Pointer.ofTypedArray(window._data)),
+    Platform.toPlatformPointer(Pointer.ofTypedArray(renderer._data)),
   ) as i32;
 }
 
@@ -228,7 +229,7 @@ export function DestroyRenderer(
   renderer: PointerLike<Renderer>,
 ): void {
   _library.symbols.SDL_DestroyRenderer(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
   );
 }
 
@@ -236,7 +237,7 @@ export function DestroyTexture(
   texture: PointerLike<Texture>,
 ): void {
   _library.symbols.SDL_DestroyTexture(
-    Pointer.of(texture),
+    Platform.toPlatformPointer(Pointer.of(texture)),
   );
 }
 
@@ -244,7 +245,7 @@ export function DestroyWindow(
   window: PointerLike<Window>,
 ): void {
   _library.symbols.SDL_DestroyWindow(
-    Pointer.of(window),
+    Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
 
@@ -254,8 +255,8 @@ export function FillRect(
   color: u32,
 ): i32 {
   return _library.symbols.SDL_FillRect(
-    Pointer.of(dst),
-    Pointer.of(rect),
+    Platform.toPlatformPointer(Pointer.of(dst)),
+    Platform.toPlatformPointer(Pointer.of(rect)),
     color,
   ) as i32;
 }
@@ -264,20 +265,20 @@ export function FreeSurface(
   surface: PointerLike<Surface>,
 ): void {
   _library.symbols.SDL_FreeSurface(
-    Pointer.of(surface),
+    Platform.toPlatformPointer(Pointer.of(surface)),
   );
 }
 
 export function GetError(): string {
-  return platform.fromNativeString(_library.symbols.SDL_GetError() as PointerValue<unknown>);
+  return Platform.fromPlatformString(_library.symbols.SDL_GetError() as PlatformPointer<unknown>);
 }
 
 export function GetKeyboardState(
   numkeys: PointerLike<int> | null,
-): PointerValue<u8> {
-  return _library.symbols.SDL_GetKeyboardState(
-    Pointer.of(numkeys),
-  ) as PointerValue<u8>;
+): Pointer<u8> {
+  return Platform.fromPlatformPointer(_library.symbols.SDL_GetKeyboardState(
+    Platform.toPlatformPointer(Pointer.of(numkeys)),
+  ) as PlatformPointer<u8>)!;
 }
 
 export function GetRendererInfo(
@@ -285,13 +286,13 @@ export function GetRendererInfo(
   info: PointerLike<RendererInfo>,
 ): i32 {
   return _library.symbols.SDL_GetRendererInfo(
-    Pointer.of(renderer),
-    Pointer.of(info),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(info)),
   ) as i32;
 }
 
 export function GetRevision(): string {
-  return platform.fromNativeString(_library.symbols.SDL_GetRevision() as PointerValue<unknown>);
+  return Platform.fromPlatformString(_library.symbols.SDL_GetRevision() as PlatformPointer<unknown>);
 }
 
 export function GetScancodeFromKey(
@@ -305,9 +306,9 @@ export function GetScancodeFromKey(
 export function GetScancodeName(
   scancode: Scancode,
 ): string {
-  return platform.fromNativeString(_library.symbols.SDL_GetScancodeName(
+  return Platform.fromPlatformString(_library.symbols.SDL_GetScancodeName(
     scancode,
-  ) as PointerValue<unknown>);
+  ) as PlatformPointer<unknown>);
 }
 
 export function GetSystemRAM(): i32 {
@@ -326,30 +327,30 @@ export function GetVersion(
   ver: PointerLike<version>,
 ): void {
   _library.symbols.SDL_GetVersion(
-    Pointer.of(ver),
+    Platform.toPlatformPointer(Pointer.of(ver)),
   );
 }
 
 export function GetWindowSurface(
   window: PointerLike<Window>,
 ): Surface | null {
-  return Surface.of(_library.symbols.SDL_GetWindowSurface(
-    Pointer.of(window),
-  ) as PointerValue<Surface>);
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_GetWindowSurface(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as PlatformPointer<Surface>));
 }
 
 export function GetWindowTitle(
   window: PointerLike<Window>,
 ): string {
-  return platform.fromNativeString(_library.symbols.SDL_GetWindowTitle(
-    Pointer.of(window),
-  ) as PointerValue<unknown>);
+  return Platform.fromPlatformString(_library.symbols.SDL_GetWindowTitle(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as PlatformPointer<unknown>);
 }
 
 export function Init(flags: InitFlags, libraryPath?: string): number;
 export function Init(flags: number, libraryPath?: string): number;
 export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = platform.loadLibrary("SDL2", symbols, libraryPath);
+  _library = Platform.loadLibrary("SDL2", symbols, libraryPath);
   return _library.symbols.SDL_Init(flags) as number;
 }
 
@@ -357,17 +358,17 @@ export function LoadBMP_RW(
   src: PointerLike<RWops>,
   freesrc: i32,
 ): Surface | null {
-  return Surface.of(_library.symbols.SDL_LoadBMP_RW(
-    Pointer.of(src),
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_LoadBMP_RW(
+    Platform.toPlatformPointer(Pointer.of(src)),
     freesrc,
-  ) as PointerValue<Surface>);
+  ) as PlatformPointer<Surface>));
 }
 
 export function LockSurface(
   surface: PointerLike<Surface>,
 ): i32 {
   return _library.symbols.SDL_LockSurface(
-    Pointer.of(surface),
+    Platform.toPlatformPointer(Pointer.of(surface)),
   ) as i32;
 }
 
@@ -378,7 +379,7 @@ export function MapRGB(
   b: u8,
 ): u32 {
   return _library.symbols.SDL_MapRGB(
-    Pointer.of(format),
+    Platform.toPlatformPointer(Pointer.of(format)),
     r,
     g,
     b,
@@ -393,7 +394,7 @@ export function MapRGBA(
   a: u8,
 ): u32 {
   return _library.symbols.SDL_MapRGBA(
-    Pointer.of(format),
+    Platform.toPlatformPointer(Pointer.of(format)),
     r,
     g,
     b,
@@ -405,7 +406,7 @@ export function MaximizeWindow(
   window: PointerLike<Window>,
 ): void {
   _library.symbols.SDL_MaximizeWindow(
-    Pointer.of(window),
+    Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
 
@@ -413,7 +414,7 @@ export function MinimizeWindow(
   window: PointerLike<Window>,
 ): void {
   _library.symbols.SDL_MinimizeWindow(
-    Pointer.of(window),
+    Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
 
@@ -421,7 +422,7 @@ export function PollEvent(
   event: PointerLike<Event>,
 ): i32 {
   return _library.symbols.SDL_PollEvent(
-    Pointer.of(event),
+    Platform.toPlatformPointer(Pointer.of(event)),
   ) as i32;
 }
 
@@ -433,11 +434,11 @@ export function QueryTexture(
   h: PointerLike<int>,
 ): i32 {
   return _library.symbols.SDL_QueryTexture(
-    Pointer.of(texture),
-    Pointer.of(format),
-    Pointer.of(access),
-    Pointer.of(w),
-    Pointer.of(h),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(format)),
+    Platform.toPlatformPointer(Pointer.of(access)),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
 }
 
@@ -450,7 +451,7 @@ export function RenderClear(
   renderer: PointerLike<Renderer>,
 ): i32 {
   return _library.symbols.SDL_RenderClear(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
   ) as i32;
 }
 
@@ -461,10 +462,10 @@ export function RenderCopy(
   dstrect: PointerLike<Rect> | null,
 ): i32 {
   return _library.symbols.SDL_RenderCopy(
-    Pointer.of(renderer),
-    Pointer.of(texture),
-    Pointer.of(srcrect),
-    Pointer.of(dstrect),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(srcrect)),
+    Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
 
@@ -478,12 +479,12 @@ export function RenderCopyEx(
   flip: RendererFlip,
 ): i32 {
   return _library.symbols.SDL_RenderCopyEx(
-    Pointer.of(renderer),
-    Pointer.of(texture),
-    Pointer.of(srcrect),
-    Pointer.of(dstrect),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(texture)),
+    Platform.toPlatformPointer(Pointer.of(srcrect)),
+    Platform.toPlatformPointer(Pointer.of(dstrect)),
     angle,
-    Pointer.of(center),
+    Platform.toPlatformPointer(Pointer.of(center)),
     flip,
   ) as i32;
 }
@@ -496,7 +497,7 @@ export function RenderDrawLine(
   y2: i32,
 ): i32 {
   return _library.symbols.SDL_RenderDrawLine(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
     x1,
     y1,
     x2,
@@ -510,8 +511,8 @@ export function RenderDrawLines(
   count: i32,
 ): i32 {
   return _library.symbols.SDL_RenderDrawLines(
-    Pointer.of(renderer),
-    Pointer.of(points),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(points)),
     count,
   ) as i32;
 }
@@ -522,7 +523,7 @@ export function RenderDrawPoint(
   y: i32,
 ): i32 {
   return _library.symbols.SDL_RenderDrawPoint(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
     x,
     y,
   ) as i32;
@@ -534,8 +535,8 @@ export function RenderDrawPoints(
   count: i32,
 ): i32 {
   return _library.symbols.SDL_RenderDrawPoints(
-    Pointer.of(renderer),
-    Pointer.of(points),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(points)),
     count,
   ) as i32;
 }
@@ -545,8 +546,8 @@ export function RenderDrawRect(
   rect: PointerLike<Rect>,
 ): i32 {
   return _library.symbols.SDL_RenderDrawRect(
-    Pointer.of(renderer),
-    Pointer.of(rect),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(rect)),
   ) as i32;
 }
 
@@ -556,8 +557,8 @@ export function RenderDrawRects(
   count: i32,
 ): i32 {
   return _library.symbols.SDL_RenderDrawRects(
-    Pointer.of(renderer),
-    Pointer.of(rects),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(rects)),
     count,
   ) as i32;
 }
@@ -567,8 +568,8 @@ export function RenderFillRect(
   rect: PointerLike<Rect>,
 ): i32 {
   return _library.symbols.SDL_RenderFillRect(
-    Pointer.of(renderer),
-    Pointer.of(rect),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(rect)),
   ) as i32;
 }
 
@@ -578,8 +579,8 @@ export function RenderFillRects(
   count: i32,
 ): i32 {
   return _library.symbols.SDL_RenderFillRects(
-    Pointer.of(renderer),
-    Pointer.of(rects),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(Pointer.of(rects)),
     count,
   ) as i32;
 }
@@ -588,7 +589,7 @@ export function RenderFlush(
   renderer: PointerLike<Renderer>,
 ): i32 {
   return _library.symbols.SDL_RenderFlush(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
   ) as i32;
 }
 
@@ -596,7 +597,7 @@ export function RenderPresent(
   renderer: PointerLike<Renderer>,
 ): void {
   _library.symbols.SDL_RenderPresent(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
   );
 }
 
@@ -604,7 +605,7 @@ export function RestoreWindow(
   window: PointerLike<Window>,
 ): void {
   _library.symbols.SDL_RestoreWindow(
-    Pointer.of(window),
+    Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
 
@@ -612,10 +613,10 @@ export function RWFromFile(
   file: string,
   mode: RWMode,
 ): RWops | null {
-  return RWops.of(_library.symbols.SDL_RWFromFile(
-    platform.toNativeString(file),
-    platform.toNativeString(mode),
-  ) as PointerValue<RWops>);
+  return RWops.of(Platform.fromPlatformPointer(_library.symbols.SDL_RWFromFile(
+    Platform.toPlatformString(file),
+    Platform.toPlatformString(mode),
+  ) as PlatformPointer<RWops>));
 }
 
 export function SetRenderDrawColor(
@@ -626,7 +627,7 @@ export function SetRenderDrawColor(
   a: u8,
 ): i32 {
   return _library.symbols.SDL_SetRenderDrawColor(
-    Pointer.of(renderer),
+    Platform.toPlatformPointer(Pointer.of(renderer)),
     r,
     g,
     b,
@@ -639,8 +640,8 @@ export function SetWindowTitle(
   title: string,
 ): void {
   _library.symbols.SDL_SetWindowTitle(
-    Pointer.of(window),
-    platform.toNativeString(title),
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformString(title),
   );
 }
 
@@ -648,7 +649,7 @@ export function UnlockSurface(
   surface: PointerLike<Surface>,
 ): void {
   _library.symbols.SDL_UnlockSurface(
-    Pointer.of(surface),
+    Platform.toPlatformPointer(Pointer.of(surface)),
   );
 }
 
@@ -656,6 +657,6 @@ export function UpdateWindowSurface(
   window: PointerLike<Window>,
 ): i32 {
   return _library.symbols.SDL_UpdateWindowSurface(
-    Pointer.of(window),
+    Platform.toPlatformPointer(Pointer.of(window)),
   ) as i32;
 }

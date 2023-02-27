@@ -1,6 +1,6 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
-import platform from "../_platform.ts";
+import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
@@ -248,7 +248,7 @@ export class WindowEvent {
 
 export class Event {
   public readonly _data = new Uint8Array(64);
-  private readonly _view = new platform.DataView(this._data);
+  private readonly _view = new Platform.DataView(this._data);
 
   public get type(): EventType {
     return this._view.getU32(0) as EventType;

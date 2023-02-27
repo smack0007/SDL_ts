@@ -314,7 +314,7 @@ export async function writeEvents(
   const lines = createLines();
 
   lines.push(
-    `import platform from "../_platform.ts";
+    `import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
@@ -395,7 +395,7 @@ import { f32, i32, u32, u8 } from "../types.ts";
 
   lines.push(`export class Event {
   public readonly _data = new Uint8Array(64);
-  private readonly _view = new platform.DataView(this._data);
+  private readonly _view = new Platform.DataView(this._data);
   
   public get type(): EventType {
     return this._view.getU32(0) as EventType;
@@ -426,12 +426,12 @@ export async function writeStructs(
   lines.push("// deno-lint-ignore-file no-unused-vars");
   lines.push("");
 
-  lines.push(`import platform from "../_platform.ts";`);
+  lines.push(`import Platform from "../_platform.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
   lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
   lines.push(`import { Pointer, PointerLike } from "../pointers.ts";`);
   lines.push(
-    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";`,
+    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
   lines.push("");
 
@@ -443,10 +443,10 @@ export async function writeStructs(
     const className = stripPrefixes(structName);
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<${className}>;
+  public readonly _data!: Pointer<${className}>;
 
-  public static of(data: PointerValue<${className}>): ${className} | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<${className}> | null): ${className} | null {
+    if (data === null) {
       return null;
     }
 
@@ -469,7 +469,7 @@ export async function writeStructs(
   public static SIZE_IN_BYTES = ${struct.size};`);
 
     lines.push(`
-  public readonly _data!: Uint8Array | PointerValue<${className}>;
+  public readonly _data!: Uint8Array | Pointer<${className}>;
   private readonly _view!: PlatformDataView;
 `);
 
@@ -481,7 +481,7 @@ export async function writeStructs(
   }
 
   this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-  this._view = new platform.DataView(this._data as Uint8Array | PointerValue<${className}>);
+  this._view = new Platform.DataView(this._data);
 }
 `);
       } else {
@@ -511,7 +511,7 @@ export async function writeStructs(
     }
     
     this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -527,14 +527,14 @@ export async function writeStructs(
 
     const shouldNotAllocate = struct.allocatable ? "STRUCT_NO_ALLOCATE" : "";
 
-    lines.push(`public static of(data: Uint8Array | PointerValue<${className}>): ${className} | null {
-      if (Pointer.isNullPointer(data)) {
+    lines.push(`public static of(data: Uint8Array | Pointer<${className}> | null): ${className} | null {
+      if (data === null) {
         return null;
       }
 
       const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
       struct._data = data;
-      struct._view = new platform.DataView(data);
+      struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
       return struct as unknown as ${className};
     }
 `);
@@ -550,10 +550,10 @@ export async function writeStructs(
       let memberStructName = "";
 
       if (memberType === "string") {
-        readOp += `platform.fromNativeString(`;
+        readOp += `Platform.fromPlatformString(Platform.toPlatformPointer(`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
         const subStructName = stripPrefixes(removePointerPostfix(member.type));
-        memberType = `PointerValue<${subStructName}>`;
+        memberType = `Pointer<${subStructName}>`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
         memberStructName = stripPrefixes(member.type);
         memberType = memberStructName;
@@ -579,7 +579,7 @@ export async function writeStructs(
       if (isEnum(enums, "SDL_" + memberType)) {
         readOp += `as ${memberType}`;
       } else if (memberType === "string") {
-        readOp += ")";
+        readOp += ")!)";
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
         readOp += `) as ${memberStructName}`;
       }
@@ -772,15 +772,15 @@ function mapFunctionParamType(
       break;
 
     case "int*":
-      result = isReturnType ? "PointerValue<int>" : "PointerLike<int>";
+      result = isReturnType ? "Pointer<int>" : "PointerLike<int>";
       break;
 
     case "Uint8*":
-      result = isReturnType ? "PointerValue<u8>" : "PointerLike<u8>";
+      result = isReturnType ? "Pointer<u8>" : "PointerLike<u8>";
       break;
 
     case "Uint32*":
-      result = isReturnType ? "PointerValue<u32>" : "PointerLike<u32>";
+      result = isReturnType ? "Pointer<u32>" : "PointerLike<u32>";
       break;
 
     case "void*":
@@ -853,11 +853,12 @@ export async function writeFunctions(
     .join(", ");
 
   lines.push(
-    `import platform from "../_platform.ts";
+    `import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
+import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, int, PointerValue, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 `,
   );
@@ -918,12 +919,14 @@ import { symbols } from "./_symbols.ts";
       let returnStatement = "\treturn ";
 
       if (isFunctionParamString(func.result)) {
-        returnStatement += "\t\tplatform.fromNativeString(";
+        returnStatement += "\t\tPlatform.fromPlatformString(";
       } else if (
         isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
         isFunctionParamStruct(structs, func.result)
       ) {
-        returnStatement += `\t\t${returnType}.of(`;
+        returnStatement += `\t\t${returnType}.of(Platform.fromPlatformPointer(`;
+      } else if (isFunctionParamPointer(func.result)) {
+        returnStatement += `\t\tPlatform.fromPlatformPointer(`;
       }
 
       returnStatement += `_library.symbols.${symbolName}(`;
@@ -935,17 +938,17 @@ import { symbols } from "./_symbols.ts";
     for (const [paramName, param] of Object.entries(func.parameters)) {
       // const paramType = mapFunctionParamType(param);
       if (isFunctionParamString(param)) {
-        lines.push(`\t\tplatform.toNativeString(${paramName}),`);
+        lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
       } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tPointer.ofTypedArray(${paramName}),`);
+        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName})),`);
       } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\tPointer.ofTypedArray(${paramName}._data),`);
+        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
       } else if (
         isFunctionParamPointer(param) ||
         isFunctionParamOpaqueStruct(opaqueStructs, param) ||
         isFunctionParamStruct(structs, param)
       ) {
-        lines.push(`\t\tPointer.of(${paramName}),`);
+        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`);
       } else {
         lines.push(`\t\t${paramName},`);
       }
@@ -953,14 +956,15 @@ import { symbols } from "./_symbols.ts";
 
     if (returnType !== "void") {
       if (returnType === "string") {
-        lines.push(`\t) as PointerValue<unknown>);`);
+        lines.push(`\t) as PlatformPointer<unknown>);`);
       } else if (
         isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
         isFunctionParamStruct(structs, func.result)
       ) {
-        lines.push(`\t) as PointerValue<${returnType}>);`);
+        lines.push(`\t) as PlatformPointer<${returnType}>));`);
       } else if (isFunctionParamPointer(func.result)) {
-        lines.push(`\t) as PointerValue<${getGenericParam(returnType)}>;`);
+        const nonNullAssertion = !func.result.nullable ? "!" : "";
+        lines.push(`\t) as PlatformPointer<${getGenericParam(returnType)}>)${nonNullAssertion};`);
       } else if (returnType === "bigint") {
         lines.push(`\t) as unknown as ${returnType};`);
       } else {

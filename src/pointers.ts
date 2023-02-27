@@ -1,30 +1,34 @@
-import platform from "./_platform.ts";
+import Platform from "./_platform.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
 import { Box, BoxArray, BoxValue } from "./boxes.ts";
-import { PointerValue, Struct, TypedArray } from "./types.ts";
+import { Struct, TypedArray } from "./types.ts";
+import { PlatformPointer } from "./_types.ts";
 
 type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
 
-export type PointerLike<T> = PointerValue<T> | Struct | TypedArray | PointerBoxableValue<T>;
+export type PointerLike<T> = TypedArray | Struct | PointerBoxableValue<T>;
 
 export class Pointer<T> {
-  public static SIZE_IN_BYTES = platform.Pointer.SIZE_IN_BYTES;
+  // TODO: Read this from Platform.
+  public static SIZE_IN_BYTES = 8;
 
-  public static isPointer(value: unknown): value is PointerValue<unknown> {
-    return typeof value === "bigint" || typeof value === "number";
+  constructor(
+    public readonly _data: TypedArray | PlatformPointer<T>,
+    public readonly _offset = 0,
+  ) {
   }
 
-  public static isNullPointer(value: unknown): boolean {
-    return Pointer.isPointer(value) && value == 0;
+  public static isPointer(value: unknown): value is Pointer<unknown> {
+    return value instanceof Pointer;
   }
 
   public static of<T>(
     value: PointerLike<T> | null | undefined,
     offset = 0,
-  ): PointerValue<T> {
+  ): Pointer<T> | null {
     if (value === null || value === undefined) {
-      return platform.NULL_POINTER;
+      return null;
     }
 
     if (Pointer.isPointer(value)) {
@@ -33,25 +37,20 @@ export class Pointer<T> {
 
     if (isTypedArray(value)) {
       return Pointer.ofTypedArray(value, offset);
-    } else if (BoxArray.isBoxArray(value)) {
-      return platform.Pointer.of(value._data, offset * value.sizeOfElementInBytes);
-    } else if (Box.isBox(value)) {
-      return platform.Pointer.of(value._data);
+    } else if (Box.isBox(value) || BoxArray.isBoxArray(value)) {
+      return new Pointer(value._data, offset);
     } else if (isStruct(value)) {
       if (Pointer.isPointer(value._data)) {
         return value._data;
       } else {
-        return platform.Pointer.of(value._data);
+        return new Pointer(value._data, offset);
       }
     }
 
     throw new Error(`Unable to get pointer of ${value}.`);
   }
 
-  public static ofTypedArray<T>(
-    value: TypedArray,
-    offset = 0,
-  ): PointerValue<T> {
-    return platform.Pointer.of(value, offset);
+  public static ofTypedArray<T>(value: TypedArray, offset = 0): Pointer<T> {
+    return new Pointer(value, offset);
   }
 }

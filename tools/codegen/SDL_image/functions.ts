@@ -57,7 +57,7 @@ export const functionImplementations: CodeGenFunctionImplementations = {
   IMG_Init: `export function Init(flags: InitFlags, libraryPath?: string): number;
   export function Init(flags: number, libraryPath?: string): number;
   export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = platform.loadLibrary("SDL2_image", symbols, libraryPath);  
+  _library = Platform.loadLibrary("SDL2_image", symbols, libraryPath);  
   return _library.symbols.IMG_Init(flags) as number;
 }`,
 

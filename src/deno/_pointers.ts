@@ -1,19 +1,35 @@
-import { f32, f64, i16, i32, i64, i8, PointerValue, TypedArray, u16, u32, u64, u8 } from "../types.ts";
-import { ENDIANNESS } from "../_utils.ts";
+import { Pointer } from "../pointers.ts";
+import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "../types.ts";
+import { PlatformPointer } from "../_types.ts";
+import { ENDIANNESS, isTypedArray } from "../_utils.ts";
 
-export const DENO_NULL_POINTER = 0n;
+export function denoToPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null {
+  let result: ReturnType<typeof denoToPlatformPointer> = null;
 
-export class DenoPlatformPointer {
-  // TODO: Is there any way to detect this correctly?
-  public static readonly SIZE_IN_BYTES = 8;
+  if (value) {
+    if (isTypedArray(value._data)) {
+      result = Deno.UnsafePointer.of(value._data) as unknown as PlatformPointer<T>;
+    } else {
+      result = value._data;
+    }
 
-  private constructor() {
+    if (value._offset != 0) {
+      result = Deno.UnsafePointer.offset(
+        result as unknown as NonNullable<Deno.PointerValue>,
+        value._offset,
+      ) as unknown as PlatformPointer<T>;
+    }
   }
 
-  public static of<T>(memory: TypedArray, offsetInBytes: Deno.PointerValue = 0): PointerValue<T> {
-    // Note: as bigint is just to make TypeScript happy.
-    return (Deno.UnsafePointer.of(memory) as bigint) + (offsetInBytes as bigint);
+  return result;
+}
+
+export function denoFromPlatformPointer<T>(value: PlatformPointer<T>): Pointer<T> | null {
+  if (value === null) {
+    return null;
   }
+
+  return new Pointer(value as unknown as PlatformPointer<T>);
 }
 
 export class DenoPlatformDataView {
@@ -24,14 +40,12 @@ export class DenoPlatformDataView {
   private _view: globalThis.DataView | Deno.UnsafePointerView;
 
   constructor(
-    public readonly data: Uint8Array | PointerValue<unknown>,
+    public readonly data: Uint8Array | PlatformPointer<unknown>,
   ) {
     if (this.data instanceof Uint8Array) {
       this._view = new globalThis.DataView(this.data.buffer, this.data.byteOffset, this.data.byteLength);
     } else {
-      // TODO: bigint cast is currently necessary but will hopefully be removed in future versions
-      // of Deno.
-      this._view = new Deno.UnsafePointerView(this.data as bigint);
+      this._view = new Deno.UnsafePointerView(this.data as unknown as NonNullable<Deno.PointerValue>);
     }
   }
 
@@ -75,9 +89,13 @@ export class DenoPlatformDataView {
     return this._view.getBigInt64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as i64;
   }
 
-  public getPointer<T>(byteOffset: number): PointerValue<T> {
+  public getPointer<T>(byteOffset: number): Pointer<T> {
     // TODO: We should test here if we're on 32 or 64 bit.
-    return this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN) as PointerValue<T>;
+    return denoFromPlatformPointer(
+      Deno.UnsafePointer.create(
+        this._view.getBigUint64(byteOffset, DenoPlatformDataView.LITTLE_ENDIAN),
+      ) as unknown as PlatformPointer<T>,
+    ) as Pointer<T>;
   }
 
   public getU8(byteOffset: number): u8 {
@@ -126,10 +144,14 @@ export class DenoPlatformDataView {
     this._view.setBigInt64(byteOffset, value, DenoPlatformDataView.LITTLE_ENDIAN);
   }
 
-  public setPointer<T>(byteOffset: number, value: PointerValue<T>): void {
+  public setPointer<T>(byteOffset: number, value: Pointer<T>): void {
     DenoPlatformDataView.ensureViewIsDataView(this._view);
     // TODO: We should test here if we're on 32 or 64 bit.
-    return this._view.setBigUint64(byteOffset, value as u64, DenoPlatformDataView.LITTLE_ENDIAN);
+    return this._view.setBigUint64(
+      byteOffset,
+      BigInt(Deno.UnsafePointer.value(denoToPlatformPointer(value) as unknown as NonNullable<Deno.PointerValue>)),
+      DenoPlatformDataView.LITTLE_ENDIAN,
+    );
   }
 
   public setU8(byteOffset: number, value: u8): void {

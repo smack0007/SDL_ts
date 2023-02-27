@@ -1,13 +1,13 @@
-import { PointerValue } from "../types.ts";
+import { PlatformPointer, PlatformString } from "../_types.ts";
 
-export function denoFromNativeString(value: Uint8Array | PointerValue<unknown>): string {
+export function denoFromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string {
   if (value instanceof Uint8Array) {
     return new TextDecoder().decode(value);
   }
 
-  return new Deno.UnsafePointerView(value as bigint).getCString();
+  return new Deno.UnsafePointerView(value as unknown as NonNullable<Deno.PointerValue>).getCString();
 }
 
-export function denoToNativeString(value: string): Deno.PointerValue {
-  return Deno.UnsafePointer.of(new TextEncoder().encode(value + "\0"));
+export function denoToPlatformString(value: string): PlatformString {
+  return Deno.UnsafePointer.of(new TextEncoder().encode(value + "\0")) as unknown as PlatformString;
 }

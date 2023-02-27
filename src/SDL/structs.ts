@@ -2,11 +2,11 @@
 
 // deno-lint-ignore-file no-unused-vars
 
-import platform from "../_platform.ts";
+import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { AllocatableStruct, f32, f64, i16, i32, i64, i8, PointerValue, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 import {
   ArrayOrder,
@@ -30,10 +30,10 @@ import {
 
 export class BlitMap implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<BlitMap>;
+  public readonly _data!: Pointer<BlitMap>;
 
-  public static of(data: PointerValue<BlitMap>): BlitMap | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<BlitMap> | null): BlitMap | null {
+    if (data === null) {
       return null;
     }
 
@@ -45,10 +45,10 @@ export class BlitMap implements Struct {
 
 export class PixelFormat implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<PixelFormat>;
+  public readonly _data!: Pointer<PixelFormat>;
 
-  public static of(data: PointerValue<PixelFormat>): PixelFormat | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<PixelFormat> | null): PixelFormat | null {
+    if (data === null) {
       return null;
     }
 
@@ -60,10 +60,10 @@ export class PixelFormat implements Struct {
 
 export class Renderer implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<Renderer>;
+  public readonly _data!: Pointer<Renderer>;
 
-  public static of(data: PointerValue<Renderer>): Renderer | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<Renderer> | null): Renderer | null {
+    if (data === null) {
       return null;
     }
 
@@ -75,10 +75,10 @@ export class Renderer implements Struct {
 
 export class RWops implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<RWops>;
+  public readonly _data!: Pointer<RWops>;
 
-  public static of(data: PointerValue<RWops>): RWops | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<RWops> | null): RWops | null {
+    if (data === null) {
       return null;
     }
 
@@ -90,10 +90,10 @@ export class RWops implements Struct {
 
 export class Texture implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<Texture>;
+  public readonly _data!: Pointer<Texture>;
 
-  public static of(data: PointerValue<Texture>): Texture | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<Texture> | null): Texture | null {
+    if (data === null) {
       return null;
     }
 
@@ -105,10 +105,10 @@ export class Texture implements Struct {
 
 export class Window implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: PointerValue<Window>;
+  public readonly _data!: Pointer<Window>;
 
-  public static of(data: PointerValue<Window>): Window | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Pointer<Window> | null): Window | null {
+    if (data === null) {
       return null;
     }
 
@@ -121,17 +121,17 @@ export class Window implements Struct {
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  public readonly _data!: Uint8Array | PointerValue<Keysym>;
+  public readonly _data!: Uint8Array | Pointer<Keysym>;
   private readonly _view!: PlatformDataView;
 
-  public static of(data: Uint8Array | PointerValue<Keysym>): Keysym | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<Keysym> | null): Keysym | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new Keysym() as unknown as StructInternal<Keysym>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as Keysym;
   }
 
@@ -155,7 +155,7 @@ export class Keysym implements Struct {
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
-  public readonly _data!: Uint8Array | PointerValue<Point>;
+  public readonly _data!: Uint8Array | Pointer<Point>;
   private readonly _view!: PlatformDataView;
 
   constructor(command: StructCommand);
@@ -167,7 +167,7 @@ export class Point implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(Point.SIZE_IN_BYTES);
-    this._view = new platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -179,14 +179,14 @@ export class Point implements AllocatableStruct {
     }
   }
 
-  public static of(data: Uint8Array | PointerValue<Point>): Point | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<Point> | null): Point | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as Point;
   }
 
@@ -210,7 +210,7 @@ export class Point implements AllocatableStruct {
 export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
-  public readonly _data!: Uint8Array | PointerValue<Rect>;
+  public readonly _data!: Uint8Array | Pointer<Rect>;
   private readonly _view!: PlatformDataView;
 
   constructor(command: StructCommand);
@@ -222,7 +222,7 @@ export class Rect implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
-    this._view = new platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _2 === "object") {
@@ -236,14 +236,14 @@ export class Rect implements AllocatableStruct {
     }
   }
 
-  public static of(data: Uint8Array | PointerValue<Rect>): Rect | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<Rect> | null): Rect | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as Rect;
   }
 
@@ -283,7 +283,7 @@ export class Rect implements AllocatableStruct {
 export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
-  public readonly _data!: Uint8Array | PointerValue<RendererInfo>;
+  public readonly _data!: Uint8Array | Pointer<RendererInfo>;
   private readonly _view!: PlatformDataView;
 
   constructor(command?: StructCommand) {
@@ -292,22 +292,22 @@ export class RendererInfo implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-    this._view = new platform.DataView(this._data as Uint8Array | PointerValue<RendererInfo>);
+    this._view = new Platform.DataView(this._data);
   }
 
-  public static of(data: Uint8Array | PointerValue<RendererInfo>): RendererInfo | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<RendererInfo> | null): RendererInfo | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as RendererInfo;
   }
 
   public get name(): string {
-    return platform.fromNativeString(this._view.getPointer(0));
+    return Platform.fromPlatformString(Platform.toPlatformPointer(this._view.getPointer(0))!);
   }
 
   public get flags(): u32 {
@@ -330,17 +330,17 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  public readonly _data!: Uint8Array | PointerValue<Surface>;
+  public readonly _data!: Uint8Array | Pointer<Surface>;
   private readonly _view!: PlatformDataView;
 
-  public static of(data: Uint8Array | PointerValue<Surface>): Surface | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<Surface> | null): Surface | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new Surface() as unknown as StructInternal<Surface>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as Surface;
   }
 
@@ -348,7 +348,7 @@ export class Surface implements Struct {
     return this._view.getU32(0);
   }
 
-  public get format(): PointerValue<PixelFormat> {
+  public get format(): Pointer<PixelFormat> {
     return this._view.getPointer(8);
   }
 
@@ -364,11 +364,11 @@ export class Surface implements Struct {
     return this._view.getI32(24);
   }
 
-  public get pixels(): PointerValue<void> {
+  public get pixels(): Pointer<void> {
     return this._view.getPointer(32);
   }
 
-  public get userdata(): PointerValue<void> {
+  public get userdata(): Pointer<void> {
     return this._view.getPointer(40);
   }
 
@@ -376,7 +376,7 @@ export class Surface implements Struct {
     return this._view.getI32(48);
   }
 
-  public get list_blitmap(): PointerValue<void> {
+  public get list_blitmap(): Pointer<void> {
     return this._view.getPointer(56);
   }
 
@@ -384,7 +384,7 @@ export class Surface implements Struct {
     return Rect.of(this._view.getArray(16, 64)) as Rect;
   }
 
-  public get map(): PointerValue<BlitMap> {
+  public get map(): Pointer<BlitMap> {
     return this._view.getPointer(80);
   }
 
@@ -396,7 +396,7 @@ export class Surface implements Struct {
 export class version implements AllocatableStruct {
   public static SIZE_IN_BYTES = 3;
 
-  public readonly _data!: Uint8Array | PointerValue<version>;
+  public readonly _data!: Uint8Array | Pointer<version>;
   private readonly _view!: PlatformDataView;
 
   constructor(command?: StructCommand) {
@@ -405,17 +405,17 @@ export class version implements AllocatableStruct {
     }
 
     this._data = new Uint8Array(version.SIZE_IN_BYTES);
-    this._view = new platform.DataView(this._data as Uint8Array | PointerValue<version>);
+    this._view = new Platform.DataView(this._data);
   }
 
-  public static of(data: Uint8Array | PointerValue<version>): version | null {
-    if (Pointer.isNullPointer(data)) {
+  public static of(data: Uint8Array | Pointer<version> | null): version | null {
+    if (data === null) {
       return null;
     }
 
     const struct = new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>;
     struct._data = data;
-    struct._view = new platform.DataView(data);
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
     return struct as unknown as version;
   }
 

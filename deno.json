@@ -34,6 +34,6 @@
     "run:hello-world": "export SDL_TS_ENV_DIR=$INIT_CWD && cd ./examples/hello-world && deno run --unstable --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:renderer": "export SDL_TS_ENV_DIR=$INIT_CWD && cd ./examples/renderer && deno run --unstable --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:same-game": "export SDL_TS_ENV_DIR=$INIT_CWD && cd ./examples/same-game && deno run --unstable --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "test": "deno test"
+    "test": "deno test --unstable --allow-ffi"
   }
 }

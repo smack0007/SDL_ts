@@ -24,6 +24,9 @@ export interface CodeGenFunctionResult {
   // SDL type
   type: string;
 
+  // Can the result be null.
+  nullable?: boolean;
+
   // If set this type will be used as the script type.
   overrideType?: string;
 }
