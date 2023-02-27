@@ -1,4 +1,4 @@
-import platform from "./_platform.ts";
+import Platform from "./_platform.ts";
 import {
   AllocatableStruct,
   AllocatableStructConstructor,
@@ -60,6 +60,9 @@ function sizeof<T extends BoxValue>(
 
     case Int: // TODO: Does this need to be platform dependent?
       return 4;
+
+    case Pointer as unknown as BoxValueFactory<T>:
+      return Platform.POINTER_SIZE_IN_BYTES;
   }
 
   throwError(`${(factoryOrConstructor)?.name} is not boxable. sizeof not implemented.`);
@@ -128,7 +131,7 @@ export class Box<T extends BoxValue> {
     this._transformer = getTransformer(factoryOrConstructor);
 
     this._data = new Uint8Array(dataLength);
-    this._view = new platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data);
   }
 
   public static isBox(value: unknown): value is Box<BoxValue> {
@@ -172,7 +175,7 @@ export class BoxArray<T extends BoxValue> {
     this._transformer = getTransformer(factoryOrConstructor);
 
     this._data = new Uint8Array(this.sizeOfElementInBytes * length);
-    this._view = new platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data);
   }
 
   public static isBoxArray(value: unknown): value is BoxArray<BoxValue> {

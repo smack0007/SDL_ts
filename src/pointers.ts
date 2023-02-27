@@ -1,4 +1,3 @@
-import Platform from "./_platform.ts";
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
 import { Box, BoxArray, BoxValue } from "./boxes.ts";
@@ -10,9 +9,6 @@ type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : neve
 export type PointerLike<T> = TypedArray | Struct | PointerBoxableValue<T>;
 
 export class Pointer<T> {
-  // TODO: Read this from Platform.
-  public static SIZE_IN_BYTES = 8;
-
   constructor(
     public readonly _data: TypedArray | PlatformPointer<T>,
     public readonly _offset = 0,
