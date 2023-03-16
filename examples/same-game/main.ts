@@ -9,6 +9,7 @@ const ASSETS_PATH = path.join(ROOT_PATH, "assets");
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
+const UPDATE_INTERVAL = 16n; // 1000ms / 60fps
 
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
@@ -48,17 +49,11 @@ function main(): number {
   board.at(1, 1).select();
   board.at(1, 0).select();
 
-  SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  SDL.RenderClear(renderer);
-
-  drawBoard(renderer, board, blockTexture);
-
-  SDL.RenderPresent(renderer);
-  SDL.RenderFlush(renderer);
-
   const event = new SDL.Event();
 
   let done = false;
+  let lastTime = 0n;
+
   while (!done) {
     while (SDL.PollEvent(event) != 0) {
       switch (event.type) {
@@ -73,12 +68,34 @@ function main(): number {
         }
       }
     }
+
+    const currentTime = SDL.GetTicks64();
+    const elapsedTime = currentTime - lastTime;
+
+    if (elapsedTime >= UPDATE_INTERVAL) {
+      draw(renderer, board, blockTexture);
+      lastTime = currentTime;
+    }
   }
 
   SDL.DestroyWindow(window);
   SDL.Quit();
 
   return 0;
+}
+
+function draw(
+  renderer: Pointer<SDL.Renderer>,
+  board: Board,
+  blockTexture: SDL.Texture,
+): void {
+  SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL.RenderClear(renderer);
+
+  drawBoard(renderer, board, blockTexture);
+
+  SDL.RenderPresent(renderer);
+  SDL.RenderFlush(renderer);
 }
 
 try {

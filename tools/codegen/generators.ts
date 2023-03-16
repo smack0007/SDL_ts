@@ -713,6 +713,12 @@ function isFunctionParamString(param: CodeGenFunctionParam): boolean {
   return param.type === "char*";
 }
 
+function isFunctionParamBigInt(param: CodeGenFunctionParam): boolean {
+  return [
+    "Uint64"
+  ].includes(param.type);
+}
+
 function mapFunctionReturnType(
   enums: CodeGenEnums,
   structs: CodeGenStructs,
@@ -925,7 +931,9 @@ import { symbols } from "./_symbols.ts";
     if (returnType !== "void") {
       let returnStatement = "\treturn ";
 
-      if (isFunctionParamString(func.result)) {
+      if (isFunctionParamBigInt(func.result)) {
+        returnStatement +="\t\tBigInt("
+      } else if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tPlatform.fromPlatformString(";
       } else if (
         isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
@@ -962,7 +970,9 @@ import { symbols } from "./_symbols.ts";
     }
 
     if (returnType !== "void") {
-      if (returnType === "string") {
+      if (isFunctionParamBigInt(func.result)) {
+        lines.push("\t) as bigint | number);")
+      } else if (returnType === "string") {
         lines.push(`\t) as PlatformPointer<unknown>);`);
       } else if (
         isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||

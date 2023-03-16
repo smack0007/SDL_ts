@@ -357,7 +357,7 @@ export function GetTicks(): u32 {
 }
 
 export function GetTicks64(): u64 {
-  return _library.symbols.SDL_GetTicks64() as u64;
+  return BigInt(_library.symbols.SDL_GetTicks64() as bigint | number);
 }
 
 export function GetVersion(
