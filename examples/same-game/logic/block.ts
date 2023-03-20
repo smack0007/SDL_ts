@@ -1,10 +1,11 @@
+import { U64, u64 } from "SDL_ts";
 import { BlockColors } from "./blockColors.ts";
 
 export class Block {
   public static readonly WidthInPixels: number = 32;
   public static readonly HeightInPixels: number = 32;
 
-  public static readonly FallRate: number = Block.HeightInPixels * 20;
+  public static readonly FallRate = Number(Block.HeightInPixels * 0.02);
 
   private _isActive = true;
   private _offsetY = 0;
@@ -53,9 +54,9 @@ export class Block {
     this._offsetY = 0;
   }
 
-  public update(elapsed: number): void {
+  public update(elapsed: u64): void {
     if (this._offsetY < 0) {
-      this._offsetY += Block.FallRate * elapsed;
+      this._offsetY += Block.FallRate * Number(elapsed);
     }
 
     if (this._offsetY > 0) {

@@ -1,4 +1,4 @@
-import { Box, BoxArray, IMG, Int, int, Pointer, SDL, SDLError } from "SDL_ts";
+import { Box, BoxArray, IMG, Int, int, Pointer, SDL, SDLError, u64 } from "SDL_ts";
 import { path } from "../../deps.ts";
 import { Board } from "./logic/board.ts";
 import { Random } from "./logic/random.ts";
@@ -63,7 +63,11 @@ function main(): number {
 
         case SDL.EventType.MOUSEBUTTONDOWN: {
           const mouseButtonEvent = event.mousebutton;
-          board.onClick(mouseButtonEvent.x, mouseButtonEvent.y);
+          if (event.mousebutton.clicks >= 2) {
+            board.onDoubleClick();
+          } else {
+            board.onClick(mouseButtonEvent.x, mouseButtonEvent.y);
+          }
           break;
         }
       }
@@ -73,6 +77,7 @@ function main(): number {
     const elapsedTime = currentTime - lastTime;
 
     if (elapsedTime >= UPDATE_INTERVAL) {
+      update(elapsedTime, board);
       draw(renderer, board, blockTexture);
       lastTime = currentTime;
     }
@@ -82,6 +87,13 @@ function main(): number {
   SDL.Quit();
 
   return 0;
+}
+
+function update(
+  elapsed: u64,
+  board: Board
+): void {
+  board.update(elapsed);
 }
 
 function draw(
