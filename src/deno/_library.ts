@@ -4,6 +4,7 @@ import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
+const IS_MAC = Deno.build.os === "darwin";
 
 // An array of paths to search for SDL2 libraries on non Windows platforms
 const UNIX_LIBRARY_PATHS = [
@@ -40,6 +41,13 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
       arch,
       fullLibraryName,
     ));
+  }
+
+  libraryPaths.push(fullLibraryName);
+
+  if (!IS_WINDOWS && !IS_MAC) {
+    // On Debain libSDL2_image and ligSDL2_ttf only have symbolic links with this format.
+    libraryPaths.push(libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0");
   }
 
   try {

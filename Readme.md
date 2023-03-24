@@ -17,6 +17,15 @@ Currently working via [deno](https://deno.land/) on Windows and Linux using
 
 ## Getting Started
 
+### SDL2 Installation
+
+#### Debain
+
+```shell
+sudo apt install libsdl2-2.0-0
+sudo apt install libsdl2-image-2.0-0
+```
+
 ### Creating a Project
 
 To aid in creating a new project which uses `SDL_ts` there is an `init.ts` script to aid in getting your project set up:
