@@ -82,6 +82,8 @@ function stripPrefixes(value: string, ...prefixes: string[]): string {
 
   if (value.startsWith("IMG_")) {
     value = value.substring("IMG_".length);
+  } else if (value.startsWith("TTF_")) {
+    value = value.substring("TTF_".length);
   }
 
   return value;
@@ -193,27 +195,12 @@ function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, 
   return false;
 }
 
-type FFIType =
-  | "f32"
-  | "f64"
-  | "i8"
-  | "i16"
-  | "i32"
-  | "i64"
-  | "pointer"
-  | "struct"
-  | "u8"
-  | "u16"
-  | "u32"
-  | "u64"
-  | "void";
-
 function mapTypeToFFIType(
   enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   type: string,
-): FFIType {
+): string {
   if (type.endsWith("*")) {
     return "pointer";
   }
@@ -223,7 +210,17 @@ function mapTypeToFFIType(
   }
 
   if (isStruct(structs, opaqueStructs, type)) {
-    return "struct";
+    const struct = structs[type];
+
+    if (!struct) {
+      throw new Error(`Failed to map "${type}" in ${mapTypeToFFIType.name}. Type seems to be an opaque struct.`);
+    }
+
+    const members = Object.values(struct.members)
+      .map((member) => `"${mapTypeToFFIType(enums, structs, opaqueStructs, member.type)}"`)
+      .join(", ");
+
+    return `{ "struct": [ ${members} ] }`;
   }
 
   switch (type) {
@@ -253,9 +250,12 @@ function mapTypeToFFIType(
 
     case "Uint64":
       return "u64";
+
+    case "void":
+      return "void";
   }
 
-  return type as FFIType;
+  throw new Error(`Failed to map "${type}" in ${mapTypeToFFIType.name}.`);
 }
 
 function mapStructMemberType(
@@ -273,6 +273,10 @@ function mapStructMemberType(
     return enumData?.prefixToStrip ? stripPrefixes(member.type, enumData.prefixToStrip) : stripPrefixes(member.type);
   }
 
+  if (isStruct(structs, opaqueStructs, member.type)) {
+    return stripPrefixes(member.type);
+  }
+
   switch (member.type) {
     case "char*":
       return "string";
@@ -283,9 +287,6 @@ function mapStructMemberType(
   switch (ffiType) {
     case "pointer":
       return "Deno.PointerValue";
-
-    case "struct":
-      return stripPrefixes(member.type);
   }
 
   return ffiType;
@@ -554,7 +555,7 @@ export async function writeStructs(
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
         const subStructName = stripPrefixes(removePointerPostfix(member.type));
         memberType = `Pointer<${subStructName}>`;
-      } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
+      } else if (isStruct(structs, opaqueStructs, member.type)) {
         memberStructName = stripPrefixes(member.type);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
@@ -563,7 +564,9 @@ export async function writeStructs(
 
       lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
-      const getMethod = PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
+      const getMethod = isStruct(structs, opaqueStructs, member.type)
+        ? PlatformDataViewGetMethods["struct"]
+        : PlatformDataViewGetMethods[mapTypeToFFIType(enums, structs, opaqueStructs, member.type)];
 
       if (getMethod === undefined) {
         console.error(
@@ -580,7 +583,7 @@ export async function writeStructs(
         readOp += `as ${memberType}`;
       } else if (memberType === "string") {
         readOp += ")!)";
-      } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "struct") {
+      } else if (isStruct(structs, opaqueStructs, member.type)) {
         readOp += `) as ${memberStructName}`;
       }
 
@@ -652,15 +655,30 @@ export async function writeSymbols(
 
     for (const paramName of Object.keys(func.parameters)) {
       const param = func.parameters[paramName];
-      lines.push(
-        `\t\t\t"${mapTypeToFFIType(enums, structs, opaqueStructs, param.type)}", /* ${param.type} ${paramName} */`,
-      );
+      const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, param.type);
+      let line = `\t\t\t/* ${param.type} ${paramName} */ `;
+
+      if (ffiType.startsWith("{")) {
+        line += `${ffiType},`;
+      } else {
+        line += `"${ffiType}",`;
+      }
+
+      lines.push(line);
     }
 
     lines.push("\t\t],");
-    lines.push(
-      `\t\tresult: "${mapTypeToFFIType(enums, structs, opaqueStructs, func.result.type)}" /* ${func.result.type} */`,
-    );
+
+    const resultFFIType = mapTypeToFFIType(enums, structs, opaqueStructs, func.result.type);
+    let resultLine = `\t\tresult: /* ${func.result.type} */ `;
+
+    if (resultFFIType.startsWith("{")) {
+      resultLine += resultFFIType;
+    } else {
+      resultLine += `"${resultFFIType}"`;
+    }
+
+    lines.push(resultLine);
     lines.push("\t},");
   }
   lines.push("} as const;");
@@ -693,6 +711,14 @@ function isFunctionParamStruct(structs: CodeGenStructs, param: CodeGenFunctionPa
   return Object.keys(structs).includes(structName);
 }
 
+function isFunctionParamStructByValue(structs: CodeGenStructs, param: CodeGenFunctionParam): boolean {
+  if (!isFunctionParamStruct(structs, param)) {
+    return false;
+  }
+
+  return !param.type.endsWith("*");
+}
+
 function isFunctionParamPointer(param: CodeGenFunctionParam): boolean {
   return param.type.endsWith("*");
 }
@@ -715,7 +741,7 @@ function isFunctionParamString(param: CodeGenFunctionParam): boolean {
 
 function isFunctionParamBigInt(param: CodeGenFunctionParam): boolean {
   return [
-    "Uint64"
+    "Uint64",
   ].includes(param.type);
 }
 
@@ -932,7 +958,7 @@ import { symbols } from "./_symbols.ts";
       let returnStatement = "\treturn ";
 
       if (isFunctionParamBigInt(func.result)) {
-        returnStatement +="\t\tBigInt("
+        returnStatement += "\t\tBigInt(";
       } else if (isFunctionParamString(func.result)) {
         returnStatement += "\t\tPlatform.fromPlatformString(";
       } else if (
@@ -958,6 +984,8 @@ import { symbols } from "./_symbols.ts";
         lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName})),`);
       } else if (isFunctionParamDoublePointer(param)) {
         lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
+      } else if (isFunctionParamStructByValue(structs, param)) {
+        lines.push(`\t\t${paramName}._data,`);
       } else if (
         isFunctionParamPointer(param) ||
         isFunctionParamOpaqueStruct(opaqueStructs, param) ||
@@ -971,7 +999,7 @@ import { symbols } from "./_symbols.ts";
 
     if (returnType !== "void") {
       if (isFunctionParamBigInt(func.result)) {
-        lines.push("\t) as bigint | number);")
+        lines.push("\t) as bigint | number);");
       } else if (returnType === "string") {
         lines.push(`\t) as PlatformPointer<unknown>);`);
       } else if (

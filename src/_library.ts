@@ -9,7 +9,8 @@ export type DynamicLibraryType =
   | "u64"
   | "f32"
   | "f64"
-  | "pointer";
+  | "pointer"
+  | { struct: Readonly<Array<DynamicLibraryType>> };
 
 export type DynamicLibraryFunctionInterface = {
   readonly parameters: readonly DynamicLibraryType[];

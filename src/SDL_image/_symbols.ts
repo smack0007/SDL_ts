@@ -5,29 +5,29 @@ import { DynamicLibraryInterface } from "../_library.ts";
 export const symbols: DynamicLibraryInterface = {
   IMG_Init: {
     parameters: [
-      "i32", /* int flags */
+      /* int flags */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   IMG_Linked_Version: {
     parameters: [],
-    result: "pointer", /* SDL_version* */
+    result: /* SDL_version* */ "pointer",
   },
   IMG_Load: {
     parameters: [
-      "pointer", /* char* file */
+      /* char* file */ "pointer",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   IMG_LoadTexture: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* char* file */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* char* file */ "pointer",
     ],
-    result: "pointer", /* SDL_Texture* */
+    result: /* SDL_Texture* */ "pointer",
   },
   IMG_Quit: {
     parameters: [],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
 } as const;

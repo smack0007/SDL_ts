@@ -2,6 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug CodeGen",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "codegen"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Debug Hello World",
       "type": "node",
       "request": "launch",

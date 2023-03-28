@@ -121,6 +121,79 @@ export class Window implements Struct {
   }
 }
 
+export class Color implements AllocatableStruct {
+  public static SIZE_IN_BYTES = 4;
+
+  public readonly _data!: Uint8Array | Pointer<Color>;
+  private readonly _view!: PlatformDataView;
+
+  constructor(command: StructCommand);
+  constructor(props: Partial<Color>);
+  constructor(r: u8, g: u8, b: u8, a: u8);
+  constructor(_1?: StructCommand | Partial<Color> | u8, _2?: u8, _3?: u8, _4?: u8) {
+    if (_1 === STRUCT_NO_ALLOCATE) {
+      return;
+    }
+
+    this._data = new Uint8Array(Color.SIZE_IN_BYTES);
+    this._view = new Platform.DataView(this._data);
+
+    if (_1 !== undefined) {
+      if (typeof _2 === "object") {
+        Object.assign(this, _1);
+      } else {
+        this.r = _1 as u8;
+        this.g = _2 as u8;
+        this.b = _3 as u8;
+        this.a = _4 as u8;
+      }
+    }
+  }
+
+  public static of(data: Uint8Array | Pointer<Color> | null): Color | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new Color(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Color>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as Color;
+  }
+
+  public get r(): u8 {
+    return this._view.getU8(0);
+  }
+
+  public set r(value: u8) {
+    this._view.setU8(0, value);
+  }
+
+  public get g(): u8 {
+    return this._view.getU8(1);
+  }
+
+  public set g(value: u8) {
+    this._view.setU8(1, value);
+  }
+
+  public get b(): u8 {
+    return this._view.getU8(2);
+  }
+
+  public set b(value: u8) {
+    this._view.setU8(2, value);
+  }
+
+  public get a(): u8 {
+    return this._view.getU8(3);
+  }
+
+  public set a(value: u8) {
+    this._view.setU8(3, value);
+  }
+}
+
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 

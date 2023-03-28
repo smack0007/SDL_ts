@@ -34,6 +34,7 @@ import {
 } from "./enums.ts";
 import {
   BlitMap,
+  Color,
   Keysym,
   PixelFormat,
   Point,

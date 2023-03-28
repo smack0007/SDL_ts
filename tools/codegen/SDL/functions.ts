@@ -387,7 +387,7 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-  
+
   SDL_GetTextureAlphaMod: {
     parameters: {
       texture: {

@@ -111,7 +111,7 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
   libraryPath?: string,
 ): DynamicLibrary<T> {
   const libraryPaths = getLibraryPaths(libraryName, libraryPath);
-  const errors: Error[] = [];
+  const errors: Record<string, Error> = {};
 
   for (const libraryPath of libraryPaths) {
     try {
@@ -119,12 +119,13 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
       // deno-lint-ignore no-explicit-any
       return Deno.dlopen(libraryPath, symbols as any) as unknown as DynamicLibrary<T>;
     } catch (error) {
-      errors.push(error);
+      errors[libraryPath] = error;
     }
   }
 
   throw new SDLError(
-    `Failed to load library "${libraryName}" from "${libraryPaths.join(", ")}"`,
-    new AggregateError(errors),
+    `Failed to load library "${libraryName}" from "${libraryPaths.join(", ")}"\n` +
+      Object.entries(errors).map(([libraryPath, error]) => `\t=> ${libraryPath}: ${error.message}`).join("\n"),
+    new AggregateError(Object.values(errors)),
   );
 }

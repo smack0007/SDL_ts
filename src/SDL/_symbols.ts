@@ -5,460 +5,460 @@ import { DynamicLibraryInterface } from "../_library.ts";
 export const symbols: DynamicLibraryInterface = {
   SDL_UpperBlitScaled: {
     parameters: [
-      "pointer", /* SDL_Surface* src */
-      "pointer", /* SDL_Rect* srcrect */
-      "pointer", /* SDL_Surface* dst */
-      "pointer", /* SDL_Rect* dstrect */
+      /* SDL_Surface* src */ "pointer",
+      /* SDL_Rect* srcrect */ "pointer",
+      /* SDL_Surface* dst */ "pointer",
+      /* SDL_Rect* dstrect */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_UpperBlit: {
     parameters: [
-      "pointer", /* SDL_Surface* src */
-      "pointer", /* SDL_Rect* srcrect */
-      "pointer", /* SDL_Surface* dst */
-      "pointer", /* SDL_Rect* dstrect */
+      /* SDL_Surface* src */ "pointer",
+      /* SDL_Rect* srcrect */ "pointer",
+      /* SDL_Surface* dst */ "pointer",
+      /* SDL_Rect* dstrect */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_ConvertSurface: {
     parameters: [
-      "pointer", /* SDL_Surface* src */
-      "pointer", /* SDL_PixelFormat* fmt */
-      "u32", /* Uint32 flags */
+      /* SDL_Surface* src */ "pointer",
+      /* SDL_PixelFormat* fmt */ "pointer",
+      /* Uint32 flags */ "u32",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   SDL_CreateRenderer: {
     parameters: [
-      "pointer", /* SDL_Window* window */
-      "i32", /* int index */
-      "u32", /* Uint32 flags */
+      /* SDL_Window* window */ "pointer",
+      /* int index */ "i32",
+      /* Uint32 flags */ "u32",
     ],
-    result: "pointer", /* SDL_Renderer* */
+    result: /* SDL_Renderer* */ "pointer",
   },
   SDL_CreateRGBSurfaceFrom: {
     parameters: [
-      "pointer", /* void* pixels */
-      "i32", /* int width */
-      "i32", /* int height */
-      "i32", /* int depth */
-      "i32", /* int pitch */
-      "u32", /* Uint32 Rmask */
-      "u32", /* Uint32 Gmask */
-      "u32", /* Uint32 Bmask */
-      "u32", /* Uint32 Amask */
+      /* void* pixels */ "pointer",
+      /* int width */ "i32",
+      /* int height */ "i32",
+      /* int depth */ "i32",
+      /* int pitch */ "i32",
+      /* Uint32 Rmask */ "u32",
+      /* Uint32 Gmask */ "u32",
+      /* Uint32 Bmask */ "u32",
+      /* Uint32 Amask */ "u32",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: [
-      "u32", /* Uint32 flags */
-      "i32", /* int width */
-      "i32", /* int height */
-      "i32", /* int depth */
-      "u32", /* Uint32 format */
+      /* Uint32 flags */ "u32",
+      /* int width */ "i32",
+      /* int height */ "i32",
+      /* int depth */ "i32",
+      /* Uint32 format */ "u32",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   SDL_CreateTexture: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "u32", /* Uint32 format */
-      "i32", /* int access */
-      "i32", /* int w */
-      "i32", /* int h */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* Uint32 format */ "u32",
+      /* int access */ "i32",
+      /* int w */ "i32",
+      /* int h */ "i32",
     ],
-    result: "pointer", /* SDL_Texture* */
+    result: /* SDL_Texture* */ "pointer",
   },
   SDL_CreateTextureFromSurface: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Surface* surface */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Surface* surface */ "pointer",
     ],
-    result: "pointer", /* SDL_Texture* */
+    result: /* SDL_Texture* */ "pointer",
   },
   SDL_CreateWindow: {
     parameters: [
-      "pointer", /* char* title */
-      "i32", /* int x */
-      "i32", /* int y */
-      "i32", /* int w */
-      "i32", /* int h */
-      "u32", /* Uint32 flags */
+      /* char* title */ "pointer",
+      /* int x */ "i32",
+      /* int y */ "i32",
+      /* int w */ "i32",
+      /* int h */ "i32",
+      /* Uint32 flags */ "u32",
     ],
-    result: "pointer", /* SDL_Window* */
+    result: /* SDL_Window* */ "pointer",
   },
   SDL_CreateWindowAndRenderer: {
     parameters: [
-      "i32", /* int width */
-      "i32", /* int height */
-      "u32", /* Uint32 window_flags */
-      "pointer", /* SDL_Window** window */
-      "pointer", /* SDL_Renderer** renderer */
+      /* int width */ "i32",
+      /* int height */ "i32",
+      /* Uint32 window_flags */ "u32",
+      /* SDL_Window** window */ "pointer",
+      /* SDL_Renderer** renderer */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_Delay: {
     parameters: [
-      "u32", /* Uint32 ms */
+      /* Uint32 ms */ "u32",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_DestroyRenderer: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
+      /* SDL_Renderer* renderer */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_DestroyTexture: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
+      /* SDL_Texture* texture */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_DestroyWindow: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_FillRect: {
     parameters: [
-      "pointer", /* SDL_Surface* dst */
-      "pointer", /* SDL_Rect* rect */
-      "u32", /* Uint32 color */
+      /* SDL_Surface* dst */ "pointer",
+      /* SDL_Rect* rect */ "pointer",
+      /* Uint32 color */ "u32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_FreeSurface: {
     parameters: [
-      "pointer", /* SDL_Surface* surface */
+      /* SDL_Surface* surface */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_GetError: {
     parameters: [],
-    result: "pointer", /* char* */
+    result: /* char* */ "pointer",
   },
   SDL_GetKeyboardState: {
     parameters: [
-      "pointer", /* int* numkeys */
+      /* int* numkeys */ "pointer",
     ],
-    result: "pointer", /* Uint8* */
+    result: /* Uint8* */ "pointer",
   },
   SDL_GetRendererInfo: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_RendererInfo* info */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_RendererInfo* info */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_GetRevision: {
     parameters: [],
-    result: "pointer", /* char* */
+    result: /* char* */ "pointer",
   },
   SDL_GetScancodeFromKey: {
     parameters: [
-      "u32", /* SDL_Keycode key */
+      /* SDL_Keycode key */ "u32",
     ],
-    result: "u32", /* SDL_Scancode */
+    result: /* SDL_Scancode */ "u32",
   },
   SDL_GetScancodeName: {
     parameters: [
-      "u32", /* SDL_Scancode scancode */
+      /* SDL_Scancode scancode */ "u32",
     ],
-    result: "pointer", /* char* */
+    result: /* char* */ "pointer",
   },
   SDL_GetSystemRAM: {
     parameters: [],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_GetTextureAlphaMod: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* Uint8* alpha */
+      /* SDL_Texture* texture */ "pointer",
+      /* Uint8* alpha */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_GetTextureBlendMode: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* SDL_BlendMode* blendMode */
+      /* SDL_Texture* texture */ "pointer",
+      /* SDL_BlendMode* blendMode */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_GetTextureColorMod: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* Uint8* r */
-      "pointer", /* Uint8* g */
-      "pointer", /* Uint8* b */
+      /* SDL_Texture* texture */ "pointer",
+      /* Uint8* r */ "pointer",
+      /* Uint8* g */ "pointer",
+      /* Uint8* b */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_GetTicks: {
     parameters: [],
-    result: "u32", /* Uint32 */
+    result: /* Uint32 */ "u32",
   },
   SDL_GetTicks64: {
     parameters: [],
-    result: "u64", /* Uint64 */
+    result: /* Uint64 */ "u64",
   },
   SDL_GetVersion: {
     parameters: [
-      "pointer", /* SDL_version* ver */
+      /* SDL_version* ver */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_GetWindowSurface: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   SDL_GetWindowTitle: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "pointer", /* char* */
+    result: /* char* */ "pointer",
   },
   SDL_Init: {
     parameters: [
-      "u32", /* Uint32 flags */
+      /* Uint32 flags */ "u32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_LoadBMP_RW: {
     parameters: [
-      "pointer", /* SDL_RWops* src */
-      "i32", /* int freesrc */
+      /* SDL_RWops* src */ "pointer",
+      /* int freesrc */ "i32",
     ],
-    result: "pointer", /* SDL_Surface* */
+    result: /* SDL_Surface* */ "pointer",
   },
   SDL_LockSurface: {
     parameters: [
-      "pointer", /* SDL_Surface* surface */
+      /* SDL_Surface* surface */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_MapRGB: {
     parameters: [
-      "pointer", /* SDL_PixelFormat* format */
-      "u8", /* Uint8 r */
-      "u8", /* Uint8 g */
-      "u8", /* Uint8 b */
+      /* SDL_PixelFormat* format */ "pointer",
+      /* Uint8 r */ "u8",
+      /* Uint8 g */ "u8",
+      /* Uint8 b */ "u8",
     ],
-    result: "u32", /* Uint32 */
+    result: /* Uint32 */ "u32",
   },
   SDL_MapRGBA: {
     parameters: [
-      "pointer", /* SDL_PixelFormat* format */
-      "u8", /* Uint8 r */
-      "u8", /* Uint8 g */
-      "u8", /* Uint8 b */
-      "u8", /* Uint8 a */
+      /* SDL_PixelFormat* format */ "pointer",
+      /* Uint8 r */ "u8",
+      /* Uint8 g */ "u8",
+      /* Uint8 b */ "u8",
+      /* Uint8 a */ "u8",
     ],
-    result: "u32", /* Uint32 */
+    result: /* Uint32 */ "u32",
   },
   SDL_MaximizeWindow: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_MinimizeWindow: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_PollEvent: {
     parameters: [
-      "pointer", /* SDL_Event* event */
+      /* SDL_Event* event */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_QueryTexture: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* Uint32* format */
-      "pointer", /* int* access */
-      "pointer", /* int* w */
-      "pointer", /* int* h */
+      /* SDL_Texture* texture */ "pointer",
+      /* Uint32* format */ "pointer",
+      /* int* access */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_Quit: {
     parameters: [],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_RenderClear: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
+      /* SDL_Renderer* renderer */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderCopy: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* SDL_Rect* srcrect */
-      "pointer", /* SDL_Rect* dstrect */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Texture* texture */ "pointer",
+      /* SDL_Rect* srcrect */ "pointer",
+      /* SDL_Rect* dstrect */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderCopyEx: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Texture* texture */
-      "pointer", /* SDL_Rect* srcrect */
-      "pointer", /* SDL_Rect* dstrect */
-      "f64", /* double angle */
-      "pointer", /* SDL_Point* center */
-      "u32", /* SDL_RendererFlip flip */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Texture* texture */ "pointer",
+      /* SDL_Rect* srcrect */ "pointer",
+      /* SDL_Rect* dstrect */ "pointer",
+      /* double angle */ "f64",
+      /* SDL_Point* center */ "pointer",
+      /* SDL_RendererFlip flip */ "u32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawLine: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "i32", /* int x1 */
-      "i32", /* int y1 */
-      "i32", /* int x2 */
-      "i32", /* int y2 */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* int x1 */ "i32",
+      /* int y1 */ "i32",
+      /* int x2 */ "i32",
+      /* int y2 */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawLines: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Point* points */
-      "i32", /* int count */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Point* points */ "pointer",
+      /* int count */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawPoint: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "i32", /* int x */
-      "i32", /* int y */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* int x */ "i32",
+      /* int y */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawPoints: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Point* points */
-      "i32", /* int count */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Point* points */ "pointer",
+      /* int count */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawRect: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Rect* rect */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Rect* rect */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderDrawRects: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Rect* rects */
-      "i32", /* int count */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Rect* rects */ "pointer",
+      /* int count */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderFillRect: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Rect* rect */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Rect* rect */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderFillRects: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "pointer", /* SDL_Rect* rects */
-      "i32", /* int count */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Rect* rects */ "pointer",
+      /* int count */ "i32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderFlush: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
+      /* SDL_Renderer* renderer */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_RenderPresent: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
+      /* SDL_Renderer* renderer */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_RestoreWindow: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_RWFromFile: {
     parameters: [
-      "pointer", /* char* file */
-      "pointer", /* char* mode */
+      /* char* file */ "pointer",
+      /* char* mode */ "pointer",
     ],
-    result: "pointer", /* SDL_RWops* */
+    result: /* SDL_RWops* */ "pointer",
   },
   SDL_SetRenderDrawColor: {
     parameters: [
-      "pointer", /* SDL_Renderer* renderer */
-      "u8", /* Uint8 r */
-      "u8", /* Uint8 g */
-      "u8", /* Uint8 b */
-      "u8", /* Uint8 a */
+      /* SDL_Renderer* renderer */ "pointer",
+      /* Uint8 r */ "u8",
+      /* Uint8 g */ "u8",
+      /* Uint8 b */ "u8",
+      /* Uint8 a */ "u8",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_SetTextureAlphaMod: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "u8", /* Uint8 alpha */
+      /* SDL_Texture* texture */ "pointer",
+      /* Uint8 alpha */ "u8",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_SetTextureBlendMode: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "u32", /* SDL_BlendMode blendMode */
+      /* SDL_Texture* texture */ "pointer",
+      /* SDL_BlendMode blendMode */ "u32",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_SetTextureColorMod: {
     parameters: [
-      "pointer", /* SDL_Texture* texture */
-      "u8", /* Uint8 r */
-      "u8", /* Uint8 g */
-      "u8", /* Uint8 b */
+      /* SDL_Texture* texture */ "pointer",
+      /* Uint8 r */ "u8",
+      /* Uint8 g */ "u8",
+      /* Uint8 b */ "u8",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
   SDL_SetWindowTitle: {
     parameters: [
-      "pointer", /* SDL_Window* window */
-      "pointer", /* char* title */
+      /* SDL_Window* window */ "pointer",
+      /* char* title */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_UnlockSurface: {
     parameters: [
-      "pointer", /* SDL_Surface* surface */
+      /* SDL_Surface* surface */ "pointer",
     ],
-    result: "void", /* void */
+    result: /* void */ "void",
   },
   SDL_UpdateWindowSurface: {
     parameters: [
-      "pointer", /* SDL_Window* window */
+      /* SDL_Window* window */ "pointer",
     ],
-    result: "i32", /* int */
+    result: /* int */ "i32",
   },
 } as const;

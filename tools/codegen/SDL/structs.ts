@@ -11,6 +11,30 @@ export const opaqueStructs: CodeGenOpaqueStructs = [
 ];
 
 export const structs: CodeGenStructs = {
+  SDL_Color: {
+    allocatable: true,
+    writable: true,
+    size: 4,
+    members: {
+      r: {
+        type: "Uint8",
+        offset: 0,
+      },
+      g: {
+        type: "Uint8",
+        offset: 1,
+      },
+      b: {
+        type: "Uint8",
+        offset: 2,
+      },
+      a: {
+        type: "Uint8",
+        offset: 3,
+      },
+    },
+  },
+
   SDL_Keysym: {
     size: 16,
     members: {
