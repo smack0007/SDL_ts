@@ -28,6 +28,23 @@ export const symbols: DynamicLibraryInterface = {
     parameters: [],
     result: /* void */ "void",
   },
+  TTF_RenderText_Blended: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_RenderText_LCD: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+      /* SDL_Color bg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
   TTF_RenderText_Solid: {
     parameters: [
       /* TTF_Font* font */ "pointer",
@@ -35,5 +52,57 @@ export const symbols: DynamicLibraryInterface = {
       /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
     ],
     result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_RenderUTF8_Blended: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_RenderUTF8_LCD: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+      /* SDL_Color bg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_RenderUTF8_Solid: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_SizeText: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  TTF_SizeUTF8: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  TTF_SizeUNICODE: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* int */ "i32",
   },
 } as const;

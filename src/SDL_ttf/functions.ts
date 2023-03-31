@@ -49,6 +49,32 @@ export function Quit(): void {
   _library.close();
 }
 
+export function RenderText_Blended(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Blended(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+  ) as PlatformPointer<Surface>));
+}
+
+export function RenderText_LCD(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+  bg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_LCD(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+    bg._data,
+  ) as PlatformPointer<Surface>));
+}
+
 export function RenderText_Solid(
   font: PointerLike<Font>,
   text: string,
@@ -59,4 +85,84 @@ export function RenderText_Solid(
     Platform.toPlatformString(text),
     fg._data,
   ) as PlatformPointer<Surface>));
+}
+
+export function RenderUTF8_Blended(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Blended(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+  ) as PlatformPointer<Surface>));
+}
+
+export function RenderUTF8_LCD(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+  bg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_LCD(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+    bg._data,
+  ) as PlatformPointer<Surface>));
+}
+
+export function RenderUTF8_Solid(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Solid(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+  ) as PlatformPointer<Surface>));
+}
+
+export function SizeText(
+  font: PointerLike<Font>,
+  text: string,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): i32 {
+  return _library.symbols.TTF_SizeText(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  ) as i32;
+}
+
+export function SizeUTF8(
+  font: PointerLike<Font>,
+  text: string,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): i32 {
+  return _library.symbols.TTF_SizeUTF8(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  ) as i32;
+}
+
+export function SizeUNICODE(
+  font: PointerLike<Font>,
+  text: string,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): i32 {
+  return _library.symbols.TTF_SizeUNICODE(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  ) as i32;
 }

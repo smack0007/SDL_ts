@@ -224,6 +224,9 @@ function mapTypeToFFIType(
   }
 
   switch (type) {
+    case "SDL_bool":
+      return "bool";
+
     case "double":
       return "f64";
 
@@ -515,7 +518,7 @@ export async function writeStructs(
     this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
-      if (typeof _2 === "object") {
+      if (typeof _1 === "object") {
         Object.assign(this, _1);
       } else {
         ${assignMemmbers}
@@ -806,6 +809,10 @@ function mapFunctionParamType(
   let result = "";
 
   switch (param.type) {
+    case "SDL_bool":
+      result = "boolean";
+      break;
+
     case "char*":
       result = "string";
       break;
@@ -838,7 +845,7 @@ function mapFunctionParamType(
   const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, param.type);
   switch (ffiType) {
     case "pointer":
-      throw new Error(`Unable to map param ${JSON.stringify(param)}`);
+      throw new Error(`Unable to map param in ${mapFunctionParamType.name}: ${JSON.stringify(param)}`);
   }
 
   if (result === "") {

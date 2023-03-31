@@ -1,4 +1,5 @@
 export type DynamicLibraryType =
+  | "bool"
   | "i8"
   | "u8"
   | "i16"

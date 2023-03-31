@@ -139,7 +139,7 @@ export class Color implements AllocatableStruct {
     this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
-      if (typeof _2 === "object") {
+      if (typeof _1 === "object") {
         Object.assign(this, _1);
       } else {
         this.r = _1 as u8;
@@ -246,7 +246,7 @@ export class Point implements AllocatableStruct {
     this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
-      if (typeof _2 === "object") {
+      if (typeof _1 === "object") {
         Object.assign(this, _1);
       } else {
         this.x = _1 as i32;
@@ -301,7 +301,7 @@ export class Rect implements AllocatableStruct {
     this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
-      if (typeof _2 === "object") {
+      if (typeof _1 === "object") {
         Object.assign(this, _1);
       } else {
         this.x = _1 as i32;

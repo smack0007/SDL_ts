@@ -83,6 +83,38 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_CreateRGBSurface: {
+    parameters: {
+      flags: {
+        type: "Uint32",
+      },
+      width: {
+        type: "int",
+      },
+      height: {
+        type: "int",
+      },
+      depth: {
+        type: "int",
+      },
+      Rmask: {
+        type: "Uint32",
+      },
+      Gmask: {
+        type: "Uint32",
+      },
+      Bmask: {
+        type: "Uint32",
+      },
+      Amask: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
   SDL_CreateRGBSurfaceFrom: {
     parameters: {
       pixels: {
@@ -319,6 +351,20 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_GetColorKey: {
+    parameters: {
+      surface: {
+        type: "SDL_Surface*",
+      },
+      key: {
+        type: "Uint32*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
   SDL_GetError: {
     parameters: {},
     result: {
@@ -480,6 +526,17 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "char*",
+    },
+  },
+
+  SDL_HasColorKey: {
+    parameters: {
+      surface: {
+        type: "SDL_Surface*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
     },
   },
 
@@ -873,6 +930,23 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "SDL_RWops*",
+    },
+  },
+
+  SDL_SetColorKey: {
+    parameters: {
+      surface: {
+        type: "SDL_Surface*",
+      },
+      flag: {
+        type: "int",
+      },
+      key: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "int",
     },
   },
 

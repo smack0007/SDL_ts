@@ -13,6 +13,14 @@ export const enums: CodeGenEnums = {
     },
   },
 
+  // SDL.TRUE and SDL.FALSE are just defined in constants.ts
+  // SDL_Bool: {
+  //   values: {
+  //     SDL_FALSE: "0",
+  //     SDL_TRUE: "1",
+  //   },
+  // },
+
   SDL_BitmapOrder: {
     values: {
       SDL_BITMAPORDER_NONE: "0",

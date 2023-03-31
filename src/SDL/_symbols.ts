@@ -37,6 +37,19 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* SDL_Renderer* */ "pointer",
   },
+  SDL_CreateRGBSurface: {
+    parameters: [
+      /* Uint32 flags */ "u32",
+      /* int width */ "i32",
+      /* int height */ "i32",
+      /* int depth */ "i32",
+      /* Uint32 Rmask */ "u32",
+      /* Uint32 Gmask */ "u32",
+      /* Uint32 Bmask */ "u32",
+      /* Uint32 Amask */ "u32",
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
   SDL_CreateRGBSurfaceFrom: {
     parameters: [
       /* void* pixels */ "pointer",
@@ -137,6 +150,13 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* void */ "void",
   },
+  SDL_GetColorKey: {
+    parameters: [
+      /* SDL_Surface* surface */ "pointer",
+      /* Uint32* key */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_GetError: {
     parameters: [],
     result: /* char* */ "pointer",
@@ -222,6 +242,12 @@ export const symbols: DynamicLibraryInterface = {
       /* SDL_Window* window */ "pointer",
     ],
     result: /* char* */ "pointer",
+  },
+  SDL_HasColorKey: {
+    parameters: [
+      /* SDL_Surface* surface */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
   },
   SDL_Init: {
     parameters: [
@@ -408,6 +434,14 @@ export const symbols: DynamicLibraryInterface = {
       /* char* mode */ "pointer",
     ],
     result: /* SDL_RWops* */ "pointer",
+  },
+  SDL_SetColorKey: {
+    parameters: [
+      /* SDL_Surface* surface */ "pointer",
+      /* int flag */ "i32",
+      /* Uint32 key */ "u32",
+    ],
+    result: /* int */ "i32",
   },
   SDL_SetRenderDrawColor: {
     parameters: [

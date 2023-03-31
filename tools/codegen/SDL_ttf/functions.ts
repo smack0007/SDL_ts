@@ -47,6 +47,43 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  TTF_RenderText_Blended: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
+  TTF_RenderText_LCD: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+      bg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
   TTF_RenderText_Solid: {
     parameters: {
       font: {
@@ -61,6 +98,120 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "SDL_Surface*",
+    },
+  },
+
+  TTF_RenderUTF8_Blended: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
+  TTF_RenderUTF8_LCD: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+      bg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
+  TTF_RenderUTF8_Solid: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
+  TTF_SizeText: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  TTF_SizeUTF8: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  TTF_SizeUNICODE: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "int",
     },
   },
 } as const;

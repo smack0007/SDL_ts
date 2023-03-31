@@ -105,6 +105,28 @@ export function CreateRenderer(
   ) as PlatformPointer<Renderer>));
 }
 
+export function CreateRGBSurface(
+  flags: u32,
+  width: i32,
+  height: i32,
+  depth: i32,
+  Rmask: u32,
+  Gmask: u32,
+  Bmask: u32,
+  Amask: u32,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRGBSurface(
+    flags,
+    width,
+    height,
+    depth,
+    Rmask,
+    Gmask,
+    Bmask,
+    Amask,
+  ) as PlatformPointer<Surface>));
+}
+
 export function CreateRGBSurfaceFrom(
   pixels: TypedArray,
   width: i32,
@@ -273,6 +295,16 @@ export function FreeSurface(
   );
 }
 
+export function GetColorKey(
+  surface: PointerLike<Surface>,
+  key: PointerLike<u32>,
+): i32 {
+  return _library.symbols.SDL_GetColorKey(
+    Platform.toPlatformPointer(Pointer.of(surface)),
+    Platform.toPlatformPointer(Pointer.of(key)),
+  ) as i32;
+}
+
 export function GetError(): string {
   return Platform.fromPlatformString(_library.symbols.SDL_GetError() as PlatformPointer<unknown>);
 }
@@ -383,6 +415,14 @@ export function GetWindowTitle(
   return Platform.fromPlatformString(_library.symbols.SDL_GetWindowTitle(
     Platform.toPlatformPointer(Pointer.of(window)),
   ) as PlatformPointer<unknown>);
+}
+
+export function HasColorKey(
+  surface: PointerLike<Surface>,
+): boolean {
+  return _library.symbols.SDL_HasColorKey(
+    Platform.toPlatformPointer(Pointer.of(surface)),
+  ) as boolean;
 }
 
 export function Init(flags: InitFlags, libraryPath?: string): number;
@@ -655,6 +695,18 @@ export function RWFromFile(
     Platform.toPlatformString(file),
     Platform.toPlatformString(mode),
   ) as PlatformPointer<RWops>));
+}
+
+export function SetColorKey(
+  surface: PointerLike<Surface>,
+  flag: i32,
+  key: u32,
+): i32 {
+  return _library.symbols.SDL_SetColorKey(
+    Platform.toPlatformPointer(Pointer.of(surface)),
+    flag,
+    key,
+  ) as i32;
 }
 
 export function SetRenderDrawColor(
