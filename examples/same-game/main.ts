@@ -4,7 +4,7 @@ import { Board } from "./logic/board.ts";
 import { Random } from "./logic/random.ts";
 import { drawBoard } from "./rendering/board.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
-import { createFontAtlas, FontAtlas } from "./fonts.ts";
+import { createFontAtlas, drawString, FontAtlas } from "./fonts.ts";
 import { join } from "https://deno.land/std@0.173.0/path/win32.ts";
 
 const WINDOW_WIDTH = 1024;
@@ -100,7 +100,7 @@ function draw(
 
   drawBoard(renderer, board, blockTexture);
 
-  SDL.RenderCopy(renderer, font.texture, font.glyphs["@"], new SDL.Rect(0, 0, font.glyphs["@"].w, font.glyphs["@"].h));
+  drawString(renderer, font, new SDL.Point(10, 10), "Hello World!");
 
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);

@@ -107,3 +107,25 @@ export function createFontAtlas(
     glyphs: glyphDestinations,
   };
 }
+
+export function drawString(
+  renderer: Pointer<SDL.Renderer>,
+  font: FontAtlas,
+  destination: SDL.Point,
+  text: string,
+): void {
+  const destRect = new SDL.Rect(destination.x, destination.y, 0, 0);
+
+  for (let i = 0; i < text.length; i += 1) {
+    const glyphRect = font.glyphs[text[i]];
+
+    destRect.x = destination.x;
+    destRect.y = destination.y;
+    destRect.w = glyphRect.w;
+    destRect.h = glyphRect.h;
+
+    SDL.RenderCopy(renderer, font.texture, font.glyphs[text[i]], destRect);
+
+    destination.x += glyphRect.w;
+  }
+}

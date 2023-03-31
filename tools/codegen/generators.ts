@@ -506,11 +506,11 @@ export async function writeStructs(
         );
 
         const assignMemmbersFromObject = Object.keys(struct.members).map((memberName) =>
-          `if (_1.${memberName} !== undefined) { this.${memberName} = _1.${memberName}; }`
+          `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`
         ).join("\n");
 
         const assignMemmbersFromParameters = Object.keys(struct.members).map((memberName, index) =>
-          `if (_${index + 1} !== undefined) { this.${memberName} = _${index + 1}; }`
+          `if (_${index + 1} !== undefined) this.${memberName} = _${index + 1};`
         ).join("\n");
 
         lines.push(`
