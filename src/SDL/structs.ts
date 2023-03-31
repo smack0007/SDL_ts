@@ -140,12 +140,15 @@ export class Color implements AllocatableStruct {
 
     if (_1 !== undefined) {
       if (typeof _1 === "object") {
-        Object.assign(this, _1);
+        if (_1.r !== undefined) this.r = _1.r;
+        if (_1.g !== undefined) this.g = _1.g;
+        if (_1.b !== undefined) this.b = _1.b;
+        if (_1.a !== undefined) this.a = _1.a;
       } else {
-        this.r = _1 as u8;
-        this.g = _2 as u8;
-        this.b = _3 as u8;
-        this.a = _4 as u8;
+        if (_1 !== undefined) this.r = _1;
+        if (_2 !== undefined) this.g = _2;
+        if (_3 !== undefined) this.b = _3;
+        if (_4 !== undefined) this.a = _4;
       }
     }
   }
@@ -247,10 +250,11 @@ export class Point implements AllocatableStruct {
 
     if (_1 !== undefined) {
       if (typeof _1 === "object") {
-        Object.assign(this, _1);
+        if (_1.x !== undefined) this.x = _1.x;
+        if (_1.y !== undefined) this.y = _1.y;
       } else {
-        this.x = _1 as i32;
-        this.y = _2 as i32;
+        if (_1 !== undefined) this.x = _1;
+        if (_2 !== undefined) this.y = _2;
       }
     }
   }
@@ -302,12 +306,15 @@ export class Rect implements AllocatableStruct {
 
     if (_1 !== undefined) {
       if (typeof _1 === "object") {
-        Object.assign(this, _1);
+        if (_1.x !== undefined) this.x = _1.x;
+        if (_1.y !== undefined) this.y = _1.y;
+        if (_1.w !== undefined) this.w = _1.w;
+        if (_1.h !== undefined) this.h = _1.h;
       } else {
-        this.x = _1 as i32;
-        this.y = _2 as i32;
-        this.w = _3 as i32;
-        this.h = _4 as i32;
+        if (_1 !== undefined) this.x = _1;
+        if (_2 !== undefined) this.y = _2;
+        if (_3 !== undefined) this.w = _3;
+        if (_4 !== undefined) this.h = _4;
       }
     }
   }

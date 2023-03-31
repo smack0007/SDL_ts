@@ -88,12 +88,7 @@ export function createFontAtlas(
     SDL.FreeSurface(glyph.surface);
 
     // TODO(idea): dest.clone()
-    glyphDestinations[glyph.character] = new SDL.Rect(
-      destination.x,
-      destination.y,
-      destination.w,
-      destination.h,
-    );
+    glyphDestinations[glyph.character] = new SDL.Rect(destination);
 
     destination.x += destination.w;
   }

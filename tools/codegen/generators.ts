@@ -505,8 +505,12 @@ export async function writeStructs(
           `constructor(_1?: StructCommand | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
         );
 
-        const assignMemmbers = Object.entries(struct.members).map(([memberName, member], index) =>
-          `this.${memberName} = _${index + 1} as ${mapStructMemberType(enums, structs, opaqueStructs, member)};`
+        const assignMemmbersFromObject = Object.keys(struct.members).map((memberName) =>
+          `if (_1.${memberName} !== undefined) { this.${memberName} = _1.${memberName}; }`
+        ).join("\n");
+
+        const assignMemmbersFromParameters = Object.keys(struct.members).map((memberName, index) =>
+          `if (_${index + 1} !== undefined) { this.${memberName} = _${index + 1}; }`
         ).join("\n");
 
         lines.push(`
@@ -519,9 +523,9 @@ export async function writeStructs(
 
     if (_1 !== undefined) {
       if (typeof _1 === "object") {
-        Object.assign(this, _1);
+        ${assignMemmbersFromObject}
       } else {
-        ${assignMemmbers}
+        ${assignMemmbersFromParameters}
       }
     }
   }
