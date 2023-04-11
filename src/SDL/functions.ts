@@ -709,6 +709,16 @@ export function SetColorKey(
   ) as i32;
 }
 
+export function SetRenderDrawBlendMode(
+  renderer: PointerLike<Renderer>,
+  blendMode: BlendMode,
+): i32 {
+  return _library.symbols.SDL_SetRenderDrawBlendMode(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    blendMode,
+  ) as i32;
+}
+
 export function SetRenderDrawColor(
   renderer: PointerLike<Renderer>,
   r: u8,

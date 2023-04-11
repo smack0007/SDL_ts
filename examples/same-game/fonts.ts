@@ -19,7 +19,8 @@ export function createFontAtlas(
   fontPath: string,
   fontSize: number,
 ): FontAtlas {
-  const white = new SDL.Color(255, 255, 255, 255);
+  const fg = new SDL.Color(255, 255, 255, 255);
+  const bg = new SDL.Color(0, 0, 0, 0);
 
   const font = TTF.OpenFont(fontPath, fontSize);
 
@@ -33,7 +34,7 @@ export function createFontAtlas(
     throw new Error(`Failed to create font surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
   }
 
-  SDL.SetColorKey(surface, SDL.TRUE, SDL.MapRGBA(surface.format, 0, 0, 0, 0));
+  SDL.FillRect(surface, null, SDL.MapRGBA(surface.format, bg.r, bg.g, bg.b, bg.a));
 
   const glyphs: GlyphData[] = [];
   let maxGlyphHeight = 0;
@@ -41,7 +42,7 @@ export function createFontAtlas(
   for (let i = " ".charCodeAt(0); i <= "z".charCodeAt(0); i += 1) {
     const character = String.fromCharCode(i);
 
-    const glyphSurface = TTF.RenderUTF8_Blended(font, character, white);
+    const glyphSurface = TTF.RenderUTF8_Shaded(font, character, fg, bg);
 
     if (glyphSurface === null) {
       throw new Error(`Failed to create glyph surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
@@ -115,6 +116,9 @@ export function drawString(
   text: string,
 ): void {
   const destRect = new SDL.Rect(destination.x, destination.y, 0, 0);
+
+  SDL.SetRenderDrawBlendMode(renderer, SDL.BlendMode.BLEND);
+  SDL.SetTextureBlendMode(font.texture, SDL.BlendMode.BLEND);
 
   for (let i = 0; i < text.length; i += 1) {
     const glyphRect = font.glyphs[text[i]];

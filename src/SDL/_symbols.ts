@@ -443,6 +443,13 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* int */ "i32",
   },
+  SDL_SetRenderDrawBlendMode: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_BlendMode blendMode */ "u32",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_SetRenderDrawColor: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

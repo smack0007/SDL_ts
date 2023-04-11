@@ -101,6 +101,26 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  TTF_RenderText_Shaded: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+      bg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
   TTF_RenderUTF8_Blended: {
     parameters: {
       font: {
@@ -147,6 +167,26 @@ export const functions: CodeGenFunctions = {
         type: "char*",
       },
       fg: {
+        type: "SDL_Color",
+      },
+    },
+    result: {
+      type: "SDL_Surface*",
+    },
+  },
+
+  TTF_RenderUTF8_Shaded: {
+    parameters: {
+      font: {
+        type: "TTF_Font*",
+      },
+      text: {
+        type: "char*",
+      },
+      fg: {
+        type: "SDL_Color",
+      },
+      bg: {
         type: "SDL_Color",
       },
     },

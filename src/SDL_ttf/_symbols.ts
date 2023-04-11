@@ -53,6 +53,15 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* SDL_Surface* */ "pointer",
   },
+  TTF_RenderText_Shaded: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+      /* SDL_Color bg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
   TTF_RenderUTF8_Blended: {
     parameters: [
       /* TTF_Font* font */ "pointer",
@@ -75,6 +84,15 @@ export const symbols: DynamicLibraryInterface = {
       /* TTF_Font* font */ "pointer",
       /* char* text */ "pointer",
       /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+    ],
+    result: /* SDL_Surface* */ "pointer",
+  },
+  TTF_RenderUTF8_Shaded: {
+    parameters: [
+      /* TTF_Font* font */ "pointer",
+      /* char* text */ "pointer",
+      /* SDL_Color fg */ { "struct": ["u8", "u8", "u8", "u8"] },
+      /* SDL_Color bg */ { "struct": ["u8", "u8", "u8", "u8"] },
     ],
     result: /* SDL_Surface* */ "pointer",
   },

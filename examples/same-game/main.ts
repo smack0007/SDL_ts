@@ -1,11 +1,10 @@
-import { Box, BoxArray, IMG, Int, int, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
+import { Box, IMG, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
 import { path } from "../../deps.ts";
 import { Board } from "./logic/board.ts";
 import { Random } from "./logic/random.ts";
 import { drawBoard } from "./rendering/board.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { createFontAtlas, drawString, FontAtlas } from "./fonts.ts";
-import { join } from "https://deno.land/std@0.173.0/path/win32.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -38,7 +37,7 @@ function main(): number {
     throw new SDLError("Failed to create texture for block.png");
   }
 
-  const font = createFontAtlas(renderer, join(ASSETS_PATH, "Hack.ttf"), 24);
+  const font = createFontAtlas(renderer, path.join(ASSETS_PATH, "Hack.ttf"), 24);
 
   const board = new Board(new Random(12345));
 

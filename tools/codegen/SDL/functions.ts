@@ -950,6 +950,20 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_SetRenderDrawBlendMode: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      blendMode: {
+        type: "SDL_BlendMode",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
   SDL_SetRenderDrawColor: {
     parameters: {
       renderer: {

@@ -87,6 +87,20 @@ export function RenderText_Solid(
   ) as PlatformPointer<Surface>));
 }
 
+export function RenderText_Shaded(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+  bg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Shaded(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+    bg._data,
+  ) as PlatformPointer<Surface>));
+}
+
 export function RenderUTF8_Blended(
   font: PointerLike<Font>,
   text: string,
@@ -122,6 +136,20 @@ export function RenderUTF8_Solid(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     fg._data,
+  ) as PlatformPointer<Surface>));
+}
+
+export function RenderUTF8_Shaded(
+  font: PointerLike<Font>,
+  text: string,
+  fg: Color,
+  bg: Color,
+): Surface | null {
+  return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Shaded(
+    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformString(text),
+    fg._data,
+    bg._data,
   ) as PlatformPointer<Surface>));
 }
 
