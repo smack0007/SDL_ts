@@ -4,12 +4,15 @@ import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
+const IS_MAC = Deno.build.os === "darwin";
 
 // An array of paths to search for SDL2 libraries on non Windows platforms
 const UNIX_LIBRARY_PATHS = [
   "/usr/local/lib",
   "/usr/lib64",
 ];
+
+const MACOS_LIBRARY_PATHS = ["/System/Volumes/Data/opt/homebrew/lib"];
 
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
@@ -91,7 +94,13 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
       );
     }
 
-    libraryPaths.push(...UNIX_LIBRARY_PATHS.map((libraryPath) => path.join(libraryPath, fullLibraryName)));
+    const searchPaths = IS_MAC ? MACOS_LIBRARY_PATHS : UNIX_LIBRARY_PATHS;
+
+    libraryPaths.push(
+      ...searchPaths.map((libraryPath) =>
+        path.join(libraryPath, fullLibraryName)
+      )
+    );
   }
 
   return libraryPaths;
