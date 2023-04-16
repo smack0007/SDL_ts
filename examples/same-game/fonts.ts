@@ -136,3 +136,49 @@ export function drawString(
     destination.x += glyphRect.w;
   }
 }
+
+export function measureString(
+  font: FontAtlas,
+  text: string,
+): { width: number; height: number } {
+  let width = 0;
+  let height = 0;
+
+  let lineWidth = 0;
+  let lineHeight = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === "\r") {
+      continue;
+    }
+
+    if (text[i] !== "\n") {
+      const glyphRect = font.glyphs[text[i]];
+
+      lineWidth += glyphRect.w;
+      if (glyphRect.h > lineHeight) {
+        lineHeight = glyphRect.h;
+      }
+    } else {
+      if (lineWidth > width) {
+        width = lineWidth;
+      }
+
+      if (lineHeight > height) {
+        height = lineHeight;
+      }
+
+      lineWidth = 0;
+      lineHeight = 0;
+    }
+  }
+
+  if (lineWidth > width) {
+    width = lineWidth;
+  }
+
+  if (lineHeight > height) {
+    height = lineHeight;
+  }
+
+  return { width, height };
+}

@@ -9,6 +9,7 @@ import { createFontAtlas, drawString, FontAtlas } from "./fonts.ts";
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
 const UPDATE_INTERVAL = 16n; // 1000ms / 60fps
+const FONT_SIZE = 24;
 
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
@@ -37,7 +38,7 @@ function main(): number {
     throw new SDLError("Failed to create texture for block.png");
   }
 
-  const font = createFontAtlas(renderer, path.join(ASSETS_PATH, "Hack.ttf"), 24);
+  const font = createFontAtlas(renderer, path.join(ASSETS_PATH, "Hack.ttf"), FONT_SIZE);
 
   const board = new Board(new Random(12345));
 
@@ -56,7 +57,11 @@ function main(): number {
         case SDL.EventType.MOUSEBUTTONDOWN: {
           const mouseButtonEvent = event.mousebutton;
           if (event.mousebutton.clicks >= 2) {
-            board.onDoubleClick();
+            if (board.selectedBlockCount) {
+              board.onDoubleClick();
+            } else {
+              board.onClick(mouseButtonEvent.x, mouseButtonEvent.y);
+            }
           } else {
             board.onClick(mouseButtonEvent.x, mouseButtonEvent.y);
           }
@@ -99,7 +104,13 @@ function draw(
 
   drawBoard(renderer, board, blockTexture);
 
-  drawString(renderer, font, new SDL.Point(10, 10), "Hello World!");
+  drawString(renderer, font, new SDL.Point(0, Board.HeightInPixels + 2), `Score: ${board.score}`);
+  drawString(
+    renderer,
+    font,
+    new SDL.Point(0, Board.HeightInPixels + FONT_SIZE + 2),
+    `Selected: ${board.selectedBlockCount}`,
+  );
 
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
