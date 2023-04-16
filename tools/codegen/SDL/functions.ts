@@ -987,6 +987,20 @@ export const functions: CodeGenFunctions = {
     },
   },
 
+  SDL_SetSurfaceBlendMode: {
+    parameters: {
+      surface: {
+        type: "SDL_Surface*",
+      },
+      blendMode: {
+        type: "SDL_BlendMode",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
   SDL_SetTextureAlphaMod: {
     parameters: {
       texture: {

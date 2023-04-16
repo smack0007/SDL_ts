@@ -460,6 +460,13 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* int */ "i32",
   },
+  SDL_SetSurfaceBlendMode: {
+    parameters: [
+      /* SDL_Surface* surface */ "pointer",
+      /* SDL_BlendMode blendMode */ "u32",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_SetTextureAlphaMod: {
     parameters: [
       /* SDL_Texture* texture */ "pointer",

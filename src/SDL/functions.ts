@@ -735,6 +735,16 @@ export function SetRenderDrawColor(
   ) as i32;
 }
 
+export function SetSurfaceBlendMode(
+  surface: PointerLike<Surface>,
+  blendMode: BlendMode,
+): i32 {
+  return _library.symbols.SDL_SetSurfaceBlendMode(
+    Platform.toPlatformPointer(Pointer.of(surface)),
+    blendMode,
+  ) as i32;
+}
+
 export function SetTextureAlphaMod(
   texture: PointerLike<Texture>,
   alpha: u8,

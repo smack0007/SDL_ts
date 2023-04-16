@@ -28,7 +28,7 @@ export function createFontAtlas(
     throw new Error(`Failed to open font in ${createFontAtlas.name}: ${SDL.GetError()}`);
   }
 
-  const surface = SDL.CreateRGBSurface(0, FONT_TEXTURE_SIZE, FONT_TEXTURE_SIZE, 32, 0, 0, 0, 0xff);
+  const surface = SDL.CreateRGBSurfaceWithFormat(0, FONT_TEXTURE_SIZE, FONT_TEXTURE_SIZE, 32, SDL.PIXELFORMAT_RGBA8888);
 
   if (surface === null) {
     throw new Error(`Failed to create font surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
@@ -42,7 +42,7 @@ export function createFontAtlas(
   for (let i = " ".charCodeAt(0); i <= "z".charCodeAt(0); i += 1) {
     const character = String.fromCharCode(i);
 
-    const glyphSurface = TTF.RenderUTF8_Shaded(font, character, fg, bg);
+    const glyphSurface = TTF.RenderUTF8_Blended(font, character, fg);
 
     if (glyphSurface === null) {
       throw new Error(`Failed to create glyph surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
@@ -84,6 +84,7 @@ export function createFontAtlas(
       }
     }
 
+    SDL.SetSurfaceBlendMode(glyph.surface, SDL.BlendMode.NONE);
     SDL.BlitSurface(glyph.surface, null, surface, destination);
 
     SDL.FreeSurface(glyph.surface);
@@ -99,6 +100,9 @@ export function createFontAtlas(
   if (texture === null) {
     throw new Error(`Failed to create font texture in ${createFontAtlas.name}: ${SDL.GetError()}`);
   }
+
+  SDL.SetTextureBlendMode(texture, SDL.BlendMode.BLEND);
+  SDL.SetTextureAlphaMod(texture, 255);
 
   SDL.FreeSurface(surface);
   TTF.CloseFont(font);
@@ -118,7 +122,6 @@ export function drawString(
   const destRect = new SDL.Rect(destination.x, destination.y, 0, 0);
 
   SDL.SetRenderDrawBlendMode(renderer, SDL.BlendMode.BLEND);
-  SDL.SetTextureBlendMode(font.texture, SDL.BlendMode.BLEND);
 
   for (let i = 0; i < text.length; i += 1) {
     const glyphRect = font.glyphs[text[i]];
