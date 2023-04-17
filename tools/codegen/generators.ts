@@ -49,7 +49,7 @@ function createLines(): string[] {
   ];
 }
 
-function removePointerPostfix(name: string): string {
+function stripPointerPostfix(name: string): string {
   while (name.endsWith("*")) {
     name = name.substring(0, name.length - 1);
   }
@@ -195,6 +195,14 @@ function isStruct(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, 
   return false;
 }
 
+function isStructPointer(structs: CodeGenStructs, opaqueStructs: CodeGenOpaqueStructs, type: string): boolean {
+  if (!type.endsWith("*")) {
+    return false;
+  }
+
+  return isStruct(structs, opaqueStructs, stripPointerPostfix(type));
+}
+
 function mapTypeToFFIType(
   enums: CodeGenEnums,
   structs: CodeGenStructs,
@@ -280,9 +288,16 @@ function mapStructMemberType(
     return stripPrefixes(member.type);
   }
 
+  if (isStructPointer(structs, opaqueStructs, member.type)) {
+    return `${stripPrefixes(stripPointerPostfix(member.type))}`;
+  }
+
   switch (member.type) {
     case "char*":
       return "string";
+
+    case "void*":
+      return "Pointer<void>";
   }
 
   const ffiType = mapTypeToFFIType(enums, structs, opaqueStructs, member.type);
@@ -470,7 +485,7 @@ export async function writeStructs(
     const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
     lines.push(`export class ${className}${implementsExpression} {
-  public static SIZE_IN_BYTES = ${struct.size};`);
+public static SIZE_IN_BYTES = ${struct.size};`);
 
     lines.push(`
   public readonly _data!: Uint8Array | Pointer<${className}>;
@@ -559,8 +574,12 @@ export async function writeStructs(
 
       if (memberType === "string") {
         readOp += `Platform.fromPlatformString(Platform.toPlatformPointer(`;
+      } else if (isStructPointer(structs, opaqueStructs, member.type)) {
+        memberStructName = stripPrefixes(stripPointerPostfix(member.type));
+        memberType = memberStructName;
+        readOp += `${memberStructName}.of(`;
       } else if (mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer") {
-        const subStructName = stripPrefixes(removePointerPostfix(member.type));
+        const subStructName = stripPrefixes(stripPointerPostfix(member.type));
         memberType = `Pointer<${subStructName}>`;
       } else if (isStruct(structs, opaqueStructs, member.type)) {
         memberStructName = stripPrefixes(member.type);
@@ -591,6 +610,8 @@ export async function writeStructs(
       } else if (memberType === "string") {
         readOp += ")!)";
       } else if (isStruct(structs, opaqueStructs, member.type)) {
+        readOp += `) as ${memberStructName}`;
+      } else if (isStructPointer(structs, opaqueStructs, member.type)) {
         readOp += `) as ${memberStructName}`;
       }
 

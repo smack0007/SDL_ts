@@ -31,36 +31,6 @@ import {
   WindowPos,
 } from "./enums.ts";
 
-export class BlitMap implements Struct {
-  public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<BlitMap>;
-
-  public static of(data: Pointer<BlitMap> | null): BlitMap | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new BlitMap() as unknown as StructInternal<BlitMap>;
-    struct._data = data;
-    return struct as unknown as BlitMap;
-  }
-}
-
-export class PixelFormat implements Struct {
-  public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<PixelFormat>;
-
-  public static of(data: Pointer<PixelFormat> | null): PixelFormat | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
-    struct._data = data;
-    return struct as unknown as PixelFormat;
-  }
-}
-
 export class Renderer implements Struct {
   public static IS_OPAQUE = true;
   public readonly _data!: Pointer<Renderer>;
@@ -228,6 +198,82 @@ export class Keysym implements Struct {
 
   public get unused(): u32 {
     return this._view.getU32(12);
+  }
+}
+
+export class Palette implements Struct {
+  public static SIZE_IN_BYTES = 24;
+
+  public readonly _data!: Uint8Array | Pointer<Palette>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<Palette> | null): Palette | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new Palette() as unknown as StructInternal<Palette>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as Palette;
+  }
+
+  public get ncolors(): i32 {
+    return this._view.getI32(0);
+  }
+
+  public get colors(): Color {
+    return Color.of(this._view.getPointer(8)) as Color;
+  }
+}
+
+export class PixelFormat implements Struct {
+  public static SIZE_IN_BYTES = 56;
+
+  public readonly _data!: Uint8Array | Pointer<PixelFormat>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<PixelFormat> | null): PixelFormat | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as PixelFormat;
+  }
+
+  public get format(): u32 {
+    return this._view.getU32(0);
+  }
+
+  public get palette(): Palette {
+    return Palette.of(this._view.getPointer(8)) as Palette;
+  }
+
+  public get BitsPerPixel(): u8 {
+    return this._view.getU8(16);
+  }
+
+  public get BytesPerPixel(): u8 {
+    return this._view.getU8(17);
+  }
+
+  public get Rmask(): u32 {
+    return this._view.getU32(20);
+  }
+
+  public get Gmask(): u32 {
+    return this._view.getU32(24);
+  }
+
+  public get Bmask(): u32 {
+    return this._view.getU32(28);
+  }
+
+  public get Amask(): u32 {
+    return this._view.getU32(32);
   }
 }
 
@@ -431,8 +477,8 @@ export class Surface implements Struct {
     return this._view.getU32(0);
   }
 
-  public get format(): Pointer<PixelFormat> {
-    return this._view.getPointer(8);
+  public get format(): PixelFormat {
+    return PixelFormat.of(this._view.getPointer(8)) as PixelFormat;
   }
 
   public get w(): i32 {
@@ -455,20 +501,8 @@ export class Surface implements Struct {
     return this._view.getPointer(40);
   }
 
-  public get locked(): i32 {
-    return this._view.getI32(48);
-  }
-
-  public get list_blitmap(): Pointer<void> {
-    return this._view.getPointer(56);
-  }
-
   public get clip_rect(): Rect {
     return Rect.of(this._view.getArray(16, 64)) as Rect;
-  }
-
-  public get map(): Pointer<BlitMap> {
-    return this._view.getPointer(80);
   }
 
   public get refcount(): i32 {

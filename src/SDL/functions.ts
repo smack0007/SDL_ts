@@ -33,9 +33,9 @@ import {
   WindowPos,
 } from "./enums.ts";
 import {
-  BlitMap,
   Color,
   Keysym,
+  Palette,
   PixelFormat,
   Point,
   Rect,

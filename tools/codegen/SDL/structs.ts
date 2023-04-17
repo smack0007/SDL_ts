@@ -2,8 +2,7 @@ import { CodeGenOpaqueStructs, CodeGenStructs } from "../types.ts";
 
 export const opaqueStructs: CodeGenOpaqueStructs = [
   // TODO: Figure out how to implement SDL_RWops in deno.
-  "SDL_BlitMap",
-  "SDL_PixelFormat", // TODO: Implement PixelFormat struct.
+  // "SDL_BlitMap",
   "SDL_Renderer",
   "SDL_RWops",
   "SDL_Texture",
@@ -54,6 +53,108 @@ export const structs: CodeGenStructs = {
         type: "Uint32",
         offset: 12,
       },
+    },
+  },
+
+  SDL_Palette: {
+    size: 24,
+    members: {
+      ncolors: {
+        type: "int",
+        offset: 0,
+      },
+      colors: {
+        type: "SDL_Color*",
+        offset: 8,
+      },
+      // Internal
+      // version: {
+      //   type: "Uint32",
+      //   offset: 16,
+      // },
+      // refcount: {
+      //   type: "int",
+      //   offset: 20,
+      // },
+    },
+  },
+
+  SDL_PixelFormat: {
+    size: 56,
+    members: {
+      format: {
+        type: "Uint32",
+        offset: 0,
+      },
+      palette: {
+        type: "SDL_Palette*",
+        offset: 8,
+      },
+      BitsPerPixel: {
+        type: "Uint8",
+        offset: 16,
+      },
+      BytesPerPixel: {
+        type: "Uint8",
+        offset: 17,
+      },
+      Rmask: {
+        type: "Uint32",
+        offset: 20,
+      },
+      Gmask: {
+        type: "Uint32",
+        offset: 24,
+      },
+      Bmask: {
+        type: "Uint32",
+        offset: 28,
+      },
+      Amask: {
+        type: "Uint32",
+        offset: 32,
+      },
+      // Internal
+      // Rloss: {
+      //   type: "Uint8",
+      //   offset: 36,
+      // },
+      // Gloss: {
+      //   type: "Uint8",
+      //   offset: 37,
+      // },
+      // Bloss: {
+      //   type: "Uint8",
+      //   offset: 38,
+      // },
+      // Aloss: {
+      //   type: "Uint8",
+      //   offset: 39,
+      // },
+      // Rshift: {
+      //   type: "Uint8",
+      //   offset: 40,
+      // },
+      // Gshift: {
+      //   type: "Uint8",
+      //   offset: 41,
+      // },
+      // Bshift: {
+      //   type: "Uint8",
+      //   offset: 42,
+      // },
+      // Ashift: {
+      //   type: "Uint8",
+      //   offset: 43,
+      // },
+      // refcount: {
+      //   type: "int",
+      //   offset: 44,
+      // },
+      // next: {
+      //   type: "SDL_PixelFormat*",
+      //   offset: 48,
+      // },
     },
   },
 
@@ -162,22 +263,25 @@ export const structs: CodeGenStructs = {
         type: "void*",
         offset: 40,
       },
-      locked: {
-        type: "int",
-        offset: 48,
-      },
-      list_blitmap: {
-        type: "void*",
-        offset: 56,
-      },
+      // Interanl
+      // locked: {
+      //   type: "int",
+      //   offset: 48,
+      // },
+      // Internal
+      // list_data: {
+      //   type: "void*",
+      //   offset: 56,
+      // },
       clip_rect: {
         type: "SDL_Rect",
         offset: 64,
       },
-      map: {
-        type: "SDL_BlitMap*",
-        offset: 80,
-      },
+      // Internal
+      // map: {
+      //   type: "SDL_BlitMap*",
+      //   offset: 80,
+      // },
       refcount: {
         type: "int",
         offset: 88,
