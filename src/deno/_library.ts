@@ -12,6 +12,8 @@ const UNIX_LIBRARY_PATHS = [
   "/usr/lib64",
 ];
 
+const MACOS_LIBRARY_PATHS = ["/System/Volumes/Data/opt/homebrew/lib"];
+
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
     case "windows":
@@ -99,7 +101,13 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
       );
     }
 
-    libraryPaths.push(...UNIX_LIBRARY_PATHS.map((libraryPath) => path.join(libraryPath, fullLibraryName)));
+    const searchPaths = IS_MAC ? MACOS_LIBRARY_PATHS : UNIX_LIBRARY_PATHS;
+
+    libraryPaths.push(
+      ...searchPaths.map((libraryPath) =>
+        path.join(libraryPath, fullLibraryName)
+      )
+    );
   }
 
   return libraryPaths;
