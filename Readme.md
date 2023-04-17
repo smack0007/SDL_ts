@@ -2,7 +2,7 @@
 
 [SDL](https://www.libsdl.org/) bindings for [TypeScript](https://www.typescriptlang.org/).
 
-Currently working via [deno](https://deno.land/) on Windows and Linux using
+Currently working via [deno](https://deno.land/) on Windows, Linux, and mac OS using
 [FFI](https://deno.land/manual/runtime/ffi_api) (Foreign Function Interface).
 
 ## Goals
@@ -40,3 +40,4 @@ Deno images taken from https://deno.land/artwork.
 Thanks to:
 
 - [Samip Poudel](https://github.com/SamipPoudel58) for the Jurassic deno image.
+- [Andy Baird](https://githublcom/ajbdev) for initial MacOS Support.
