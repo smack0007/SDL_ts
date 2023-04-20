@@ -6,7 +6,10 @@ import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 const IS_WINDOWS = Deno.build.os === "windows";
 const IS_MAC = Deno.build.os === "darwin";
 
-// An array of paths to search for SDL2 libraries on non Windows platforms
+const WINDOWS_LIBRARY_PATHS = [
+  "C:\\msys64\\ucrt64\\bin",
+];
+
 const UNIX_LIBRARY_PATHS = [
   "/usr/local/lib",
   "/usr/lib64",
@@ -45,7 +48,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
     ));
   }
 
-  libraryPaths.push(fullLibraryName);
+  libraryPaths.push(path.join(".", fullLibraryName));
 
   if (!IS_WINDOWS && !IS_MAC) {
     // On Debain libSDL2_image and ligSDL2_ttf only have symbolic links with this format.
@@ -100,15 +103,27 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
           .map((libraryPath) => path.join(libraryPath, fullLibraryName)),
       );
     }
-
-    const searchPaths = IS_MAC ? MACOS_LIBRARY_PATHS : UNIX_LIBRARY_PATHS;
-
-    libraryPaths.push(
-      ...searchPaths.map((libraryPath) =>
-        path.join(libraryPath, fullLibraryName)
-      )
-    );
   }
+
+  let searchPaths: string[] = [];
+
+  switch (Deno.build.os) {
+    case "windows":
+      searchPaths = WINDOWS_LIBRARY_PATHS;
+      break;
+
+    case "darwin":
+      searchPaths = MACOS_LIBRARY_PATHS;
+      break;
+
+    case "linux":
+      searchPaths = UNIX_LIBRARY_PATHS;
+      break;
+  }
+
+  libraryPaths.push(
+    ...searchPaths.map((libraryPath) => path.join(libraryPath, fullLibraryName)),
+  );
 
   return libraryPaths;
 }
