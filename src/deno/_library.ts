@@ -6,16 +6,14 @@ import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 const IS_WINDOWS = Deno.build.os === "windows";
 const IS_MAC = Deno.build.os === "darwin";
 
-const WINDOWS_LIBRARY_PATHS = [
-  "C:\\msys64\\ucrt64\\bin",
-];
+const WINDOWS_LIBRARY_PATHS: string[] = [];
 
-const UNIX_LIBRARY_PATHS = [
+const UNIX_LIBRARY_PATHS: string[] = [
   "/usr/local/lib",
   "/usr/lib64",
 ];
 
-const MACOS_LIBRARY_PATHS = ["/System/Volumes/Data/opt/homebrew/lib"];
+const MACOS_LIBRARY_PATHS: string[] = ["/System/Volumes/Data/opt/homebrew/lib"];
 
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
@@ -51,7 +49,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   libraryPaths.push(path.join(".", fullLibraryName));
 
   if (!IS_WINDOWS && !IS_MAC) {
-    // On Debain libSDL2_image and ligSDL2_ttf only have symbolic links with this format.
+    // On Debain libSDL2_image and libSDL2_ttf only have symbolic links with this format.
     libraryPaths.push(libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0");
   }
 
