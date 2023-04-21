@@ -1,7 +1,7 @@
 import { IMG, SDL } from "SDL_ts";
+import { SDL_FUNCTIONS, SDL_IMAGE_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { path } from "../../deps.ts";
-import { SDL_FUNCTIONS, SDL_IMAGE_FUNCTIONS } from "./sdlConfig.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;

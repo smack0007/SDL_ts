@@ -1,4 +1,5 @@
 import { Box, BoxArray, Int, int, Memory, Pointer, SDL } from "SDL_ts";
+import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { path } from "../../deps.ts";
 
@@ -6,7 +7,7 @@ const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
 
 function main(): number {
-  SDL.Init(SDL.InitFlags.VIDEO);
+  SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
 
   const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
   const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);
@@ -104,7 +105,7 @@ function main(): number {
     SDL.RenderDrawPoints(renderer, points, 4);
 
     const rect = new SDL.Rect(100, 100, 200, 400);
-    //SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     SDL.RenderFillRect(renderer, rect);
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL.RenderDrawRect(renderer, rect);
