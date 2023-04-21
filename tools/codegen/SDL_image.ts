@@ -2,7 +2,7 @@ import { path } from "../../deps.ts";
 import { SRC_PATH } from "../../shared/constants.ts";
 import { writeEnums, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL_image/enums.ts";
-import { functionImplementations, functions } from "./SDL_image/functions.ts";
+import { functions } from "./SDL_image/functions.ts";
 import { opaqueStructs, structs } from "./SDL_image/structs.ts";
 import { structs as SDL_structs } from "./SDL/structs.ts";
 
@@ -34,8 +34,8 @@ export async function codegenSDL_image(): Promise<void> {
   await writeSymbols(`${SDL_IMAGE_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
   await writeFunctions(
     `${SDL_IMAGE_SRC_PATH}/functions.ts`,
+    "SDL2_image",
     functions,
-    functionImplementations,
     enums,
     allStructs,
     opaqueStructs,

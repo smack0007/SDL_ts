@@ -2,7 +2,7 @@ import { path } from "../../deps.ts";
 import { SRC_PATH } from "../../shared/constants.ts";
 import { writeEnums, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL_ttf/enums.ts";
-import { functionImplementations, functions } from "./SDL_ttf/functions.ts";
+import { functions } from "./SDL_ttf/functions.ts";
 import { opaqueStructs, structs } from "./SDL_ttf/structs.ts";
 import { structs as SDL_structs } from "./SDL/structs.ts";
 
@@ -30,8 +30,8 @@ export async function codegenSDL_ttf(): Promise<void> {
   await writeSymbols(`${SDL_TTF_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
   await writeFunctions(
     `${SDL_TTF_SRC_PATH}/functions.ts`,
+    "SDL2_ttf",
     functions,
-    functionImplementations,
     enums,
     allStructs,
     opaqueStructs,

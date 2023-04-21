@@ -42,6 +42,24 @@ deno task start
 
 You should be presented with a window titled "SDL_ts".
 
+### Loading only required functions
+
+Per default `SDL.Init` (or `IMG.Init` or `TTF.Init`) will load all known functions from the SDL assemblies. This can be
+problematic when attempting to run your script on an older version of the SDL assemblies than the version against which
+this library is developed. The Init functions accept an options parameter in which the functions to load can be
+specified:
+
+```ts
+SDL.Init(SDL.InitFlags.VIDEO, {
+  functions: [
+    SDL.Init,
+    SDL.PollEvent,
+    SDL.Quit,
+    // And so on
+  ],
+});
+```
+
 ## Credits
 
 Deno images taken from https://deno.land/artwork.

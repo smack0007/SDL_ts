@@ -3,7 +3,6 @@ import {
   CodeGenEnums,
   CodeGenEvents,
   CodeGenFunction,
-  CodeGenFunctionImplementations,
   CodeGenFunctionParam,
   CodeGenFunctionResult,
   CodeGenFunctions,
@@ -903,8 +902,8 @@ function getReturnTypePostfix(
 
 export async function writeFunctions(
   filePath: string,
+  libraryName: string,
   functions: CodeGenFunctions,
-  functionImplementations: CodeGenFunctionImplementations,
   enums: CodeGenEnums,
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
@@ -929,7 +928,8 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 `,
   );
@@ -945,113 +945,137 @@ import { symbols } from "./_symbols.ts";
   lines.push("");
 
   for (const [funcName, func] of Object.entries(functions)) {
-    if (functionImplementations[funcName] !== undefined) {
-      lines.push(functionImplementations[funcName].trim());
-      lines.push("");
-      continue;
-    }
+    if (funcName.endsWith("_Init")) {
+      if (Object.values(func.parameters).length >= 1) {
+        lines.push(`export function Init(flags: InitFlags, options?: InitOptions): number;
+export function Init(flags: number, options?: InitOptions): number;
+export function Init(flags: InitFlags | number, options?: InitOptions): number {`);
+      } else {
+        lines.push(`export function Init(options?: InitOptions): number {`);
+      }
 
-    for (const overload of func.overloads ?? []) {
-      const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, { ...func.result, ...overload.result });
+      lines.push(
+        `const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
+      _library = Platform.loadLibrary("${libraryName}", symbolsToLoad, options?.libraryPath);`,
+      );
+
+      if (Object.values(func.parameters).length >= 1) {
+        lines.push(`\treturn _library.symbols.${funcName}(flags) as number;`);
+      } else {
+        lines.push(`\treturn _library.symbols.${funcName}() as number;`);
+      }
+
+      lines.push("}");
+    } else if (funcName.endsWith("_Quit")) {
+      lines.push(`export function Quit(): void {
+        _library.symbols.SDL_Quit();
+        _library.close();
+      }`);
+    } else {
+      for (const overload of func.overloads ?? []) {
+        const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, { ...func.result, ...overload.result });
+
+        lines.push(`export function ${stripPrefixes(funcName)}(`);
+
+        for (const [paramName, param] of Object.entries(func.parameters)) {
+          lines.push(
+            `${paramName}: ${
+              mapFunctionParamType(enums, structs, opaqueStructs, { ...param, ...overload?.parameters?.[paramName] })
+            },`,
+          );
+        }
+
+        const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, { ...func.result, ...overload.result });
+
+        lines.push(`): ${returnType}${returnTypePostfix};`);
+      }
+
+      const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, func.result);
 
       lines.push(`export function ${stripPrefixes(funcName)}(`);
 
       for (const [paramName, param] of Object.entries(func.parameters)) {
-        lines.push(
-          `${paramName}: ${
-            mapFunctionParamType(enums, structs, opaqueStructs, { ...param, ...overload?.parameters?.[paramName] })
-          },`,
-        );
+        lines.push(`${paramName}: ${mapFunctionParamType(enums, structs, opaqueStructs, param)},`);
       }
 
-      const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, { ...func.result, ...overload.result });
+      const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, func.result);
 
-      lines.push(`): ${returnType}${returnTypePostfix};`);
-    }
+      lines.push(`): ${returnType}${returnTypePostfix} {`);
 
-    const returnType = mapFunctionReturnType(enums, structs, opaqueStructs, func.result);
-
-    lines.push(`export function ${stripPrefixes(funcName)}(`);
-
-    for (const [paramName, param] of Object.entries(func.parameters)) {
-      lines.push(`${paramName}: ${mapFunctionParamType(enums, structs, opaqueStructs, param)},`);
-    }
-
-    const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, func.result);
-
-    lines.push(`): ${returnType}${returnTypePostfix} {`);
-
-    let symbolName = funcName;
-    if (func.symbolName !== undefined) {
-      symbolName = func.symbolName;
-    }
-
-    if (returnType !== "void") {
-      let returnStatement = "\treturn ";
-
-      if (isFunctionParamBigInt(func.result)) {
-        returnStatement += "\t\tBigInt(";
-      } else if (isFunctionParamString(func.result)) {
-        returnStatement += "\t\tPlatform.fromPlatformString(";
-      } else if (
-        isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-        isFunctionParamStruct(structs, func.result)
-      ) {
-        returnStatement += `\t\t${returnType}.of(Platform.fromPlatformPointer(`;
-      } else if (isFunctionParamPointer(func.result)) {
-        returnStatement += `\t\tPlatform.fromPlatformPointer(`;
+      let symbolName = funcName;
+      if (func.symbolName !== undefined) {
+        symbolName = func.symbolName;
       }
 
-      returnStatement += `_library.symbols.${symbolName}(`;
-      lines.push(returnStatement);
-    } else {
-      lines.push(`\t_library.symbols.${symbolName}(`);
-    }
+      if (returnType !== "void") {
+        let returnStatement = "\treturn ";
 
-    for (const [paramName, param] of Object.entries(func.parameters)) {
-      // const paramType = mapFunctionParamType(param);
-      if (isFunctionParamString(param)) {
-        lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
-      } else if (isFunctionParamVoidPointer(param)) {
-        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName})),`);
-      } else if (isFunctionParamDoublePointer(param)) {
-        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
-      } else if (isFunctionParamStructByValue(structs, param)) {
-        lines.push(`\t\t${paramName}._data,`);
-      } else if (
-        isFunctionParamPointer(param) ||
-        isFunctionParamOpaqueStruct(opaqueStructs, param) ||
-        isFunctionParamStruct(structs, param)
-      ) {
-        lines.push(`\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`);
+        if (isFunctionParamBigInt(func.result)) {
+          returnStatement += "\t\tBigInt(";
+        } else if (isFunctionParamString(func.result)) {
+          returnStatement += "\t\tPlatform.fromPlatformString(";
+        } else if (
+          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
+          isFunctionParamStruct(structs, func.result)
+        ) {
+          returnStatement += `\t\t${returnType}.of(Platform.fromPlatformPointer(`;
+        } else if (isFunctionParamPointer(func.result)) {
+          returnStatement += `\t\tPlatform.fromPlatformPointer(`;
+        }
+
+        returnStatement += `_library.symbols.${symbolName}(`;
+        lines.push(returnStatement);
       } else {
-        lines.push(`\t\t${paramName},`);
+        lines.push(`\t_library.symbols.${symbolName}(`);
       }
-    }
 
-    if (returnType !== "void") {
-      if (isFunctionParamBigInt(func.result)) {
-        lines.push("\t) as bigint | number);");
-      } else if (returnType === "string") {
-        lines.push(`\t) as PlatformPointer<unknown>);`);
-      } else if (
-        isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-        isFunctionParamStruct(structs, func.result)
-      ) {
-        lines.push(`\t) as PlatformPointer<${returnType}>));`);
-      } else if (isFunctionParamPointer(func.result)) {
-        const nonNullAssertion = !func.result.nullable ? "!" : "";
-        lines.push(`\t) as PlatformPointer<${getGenericParam(returnType)}>)${nonNullAssertion};`);
-      } else if (returnType === "bigint") {
-        lines.push(`\t) as unknown as ${returnType};`);
+      for (const [paramName, param] of Object.entries(func.parameters)) {
+        // const paramType = mapFunctionParamType(param);
+        if (isFunctionParamString(param)) {
+          lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
+        } else if (isFunctionParamVoidPointer(param)) {
+          lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName})),`);
+        } else if (isFunctionParamDoublePointer(param)) {
+          lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
+        } else if (isFunctionParamStructByValue(structs, param)) {
+          lines.push(`\t\t${paramName}._data,`);
+        } else if (
+          isFunctionParamPointer(param) ||
+          isFunctionParamOpaqueStruct(opaqueStructs, param) ||
+          isFunctionParamStruct(structs, param)
+        ) {
+          lines.push(`\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`);
+        } else {
+          lines.push(`\t\t${paramName},`);
+        }
+      }
+
+      if (returnType !== "void") {
+        if (isFunctionParamBigInt(func.result)) {
+          lines.push("\t) as bigint | number);");
+        } else if (returnType === "string") {
+          lines.push(`\t) as PlatformPointer<unknown>);`);
+        } else if (
+          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
+          isFunctionParamStruct(structs, func.result)
+        ) {
+          lines.push(`\t) as PlatformPointer<${returnType}>));`);
+        } else if (isFunctionParamPointer(func.result)) {
+          const nonNullAssertion = !func.result.nullable ? "!" : "";
+          lines.push(`\t) as PlatformPointer<${getGenericParam(returnType)}>)${nonNullAssertion};`);
+        } else if (returnType === "bigint") {
+          lines.push(`\t) as unknown as ${returnType};`);
+        } else {
+          lines.push(`\t) as ${returnType};`);
+        }
       } else {
-        lines.push(`\t) as ${returnType};`);
+        lines.push(`\t);`);
       }
-    } else {
-      lines.push(`\t);`);
+
+      lines.push("}");
     }
 
-    lines.push("}");
+    lines.push(`${stripPrefixes(funcName)}.symbolName = "${func.symbolName ? func.symbolName : funcName}";`);
     lines.push("");
   }
 

@@ -12,6 +12,16 @@
       "attachSimplePort": 9229
     },
     {
+      "name": "Debug Doom Fire",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:doom-fire"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Debug Hello World",
       "type": "node",
       "request": "launch",

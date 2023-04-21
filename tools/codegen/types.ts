@@ -18,8 +18,6 @@ export interface CodeGenEventType extends CodeGenStruct {
 
 export type CodeGenFunctions = Record<string, CodeGenFunction>;
 
-export type CodeGenFunctionImplementations = Record<string, string>;
-
 export interface CodeGenFunctionResult {
   // SDL type
   type: string;

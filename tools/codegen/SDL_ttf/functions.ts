@@ -1,4 +1,4 @@
-import { CodeGenFunctionImplementations, CodeGenFunctions } from "../types.ts";
+import { CodeGenFunctions } from "../types.ts";
 
 export const functions: CodeGenFunctions = {
   TTF_Init: {
@@ -254,16 +254,4 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-} as const;
-
-export const functionImplementations: CodeGenFunctionImplementations = {
-  TTF_Init: `export function Init(libraryPath?: string): number {
-  _library = Platform.loadLibrary("SDL2_ttf", symbols, libraryPath);  
-  return _library.symbols.TTF_Init() as number;
-}`,
-
-  TTF_Quit: `export function Quit(): void {
-  _library.symbols.TTF_Quit();
-  _library.close();
-}`,
 } as const;

@@ -1,6 +1,7 @@
 import { SDL } from "SDL_ts";
+import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 
-SDL.Init(SDL.InitFlags.VIDEO);
+SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
 
 console.info("SDL Initialized.");
 
