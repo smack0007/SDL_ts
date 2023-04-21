@@ -1052,6 +1052,9 @@ import { symbols } from "./_symbols.ts";
     }
 
     lines.push("}");
+
+    lines.push(`${stripPrefixes(funcName)}.symbolName = "${funcName}";`);
+
     lines.push("");
   }
 

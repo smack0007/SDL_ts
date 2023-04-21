@@ -27,6 +27,7 @@ export function Init(flags: InitFlags | number, libraryPath?: string): number {
 export function Linked_Version(): version | null {
   return version.of(Platform.fromPlatformPointer(_library.symbols.IMG_Linked_Version() as PlatformPointer<version>));
 }
+Linked_Version.symbolName = "IMG_Linked_Version";
 
 export function Load(
   file: string,
@@ -35,6 +36,7 @@ export function Load(
     Platform.toPlatformString(file),
   ) as PlatformPointer<Surface>));
 }
+Load.symbolName = "IMG_Load";
 
 export function LoadTexture(
   renderer: PointerLike<Renderer>,
@@ -45,6 +47,7 @@ export function LoadTexture(
     Platform.toPlatformString(file),
   ) as PlatformPointer<Texture>));
 }
+LoadTexture.symbolName = "IMG_LoadTexture";
 
 export function Quit(): void {
   _library.symbols.IMG_Quit();

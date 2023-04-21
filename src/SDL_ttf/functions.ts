@@ -29,10 +29,12 @@ export function CloseFont(
     Platform.toPlatformPointer(Pointer.of(font)),
   );
 }
+CloseFont.symbolName = "TTF_CloseFont";
 
 export function Linked_Version(): version | null {
   return version.of(Platform.fromPlatformPointer(_library.symbols.TTF_Linked_Version() as PlatformPointer<version>));
 }
+Linked_Version.symbolName = "TTF_Linked_Version";
 
 export function OpenFont(
   file: string,
@@ -43,6 +45,7 @@ export function OpenFont(
     ptsize,
   ) as PlatformPointer<Font>));
 }
+OpenFont.symbolName = "TTF_OpenFont";
 
 export function Quit(): void {
   _library.symbols.TTF_Quit();
@@ -60,6 +63,7 @@ export function RenderText_Blended(
     fg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderText_Blended.symbolName = "TTF_RenderText_Blended";
 
 export function RenderText_LCD(
   font: PointerLike<Font>,
@@ -74,6 +78,7 @@ export function RenderText_LCD(
     bg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderText_LCD.symbolName = "TTF_RenderText_LCD";
 
 export function RenderText_Solid(
   font: PointerLike<Font>,
@@ -86,6 +91,7 @@ export function RenderText_Solid(
     fg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderText_Solid.symbolName = "TTF_RenderText_Solid";
 
 export function RenderText_Shaded(
   font: PointerLike<Font>,
@@ -100,6 +106,7 @@ export function RenderText_Shaded(
     bg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderText_Shaded.symbolName = "TTF_RenderText_Shaded";
 
 export function RenderUTF8_Blended(
   font: PointerLike<Font>,
@@ -112,6 +119,7 @@ export function RenderUTF8_Blended(
     fg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderUTF8_Blended.symbolName = "TTF_RenderUTF8_Blended";
 
 export function RenderUTF8_LCD(
   font: PointerLike<Font>,
@@ -126,6 +134,7 @@ export function RenderUTF8_LCD(
     bg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderUTF8_LCD.symbolName = "TTF_RenderUTF8_LCD";
 
 export function RenderUTF8_Solid(
   font: PointerLike<Font>,
@@ -138,6 +147,7 @@ export function RenderUTF8_Solid(
     fg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderUTF8_Solid.symbolName = "TTF_RenderUTF8_Solid";
 
 export function RenderUTF8_Shaded(
   font: PointerLike<Font>,
@@ -152,6 +162,7 @@ export function RenderUTF8_Shaded(
     bg._data,
   ) as PlatformPointer<Surface>));
 }
+RenderUTF8_Shaded.symbolName = "TTF_RenderUTF8_Shaded";
 
 export function SizeText(
   font: PointerLike<Font>,
@@ -166,6 +177,7 @@ export function SizeText(
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
 }
+SizeText.symbolName = "TTF_SizeText";
 
 export function SizeUTF8(
   font: PointerLike<Font>,
@@ -180,6 +192,7 @@ export function SizeUTF8(
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
 }
+SizeUTF8.symbolName = "TTF_SizeUTF8";
 
 export function SizeUNICODE(
   font: PointerLike<Font>,
@@ -194,3 +207,4 @@ export function SizeUNICODE(
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
 }
+SizeUNICODE.symbolName = "TTF_SizeUNICODE";

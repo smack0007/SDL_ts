@@ -66,6 +66,7 @@ export function BlitScaled(
     Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
+BlitScaled.symbolName = "SDL_BlitScaled";
 
 export function BlitSurface(
   src: PointerLike<Surface>,
@@ -80,6 +81,7 @@ export function BlitSurface(
     Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
+BlitSurface.symbolName = "SDL_BlitSurface";
 
 export function ConvertSurface(
   src: PointerLike<Surface>,
@@ -92,6 +94,7 @@ export function ConvertSurface(
     flags,
   ) as PlatformPointer<Surface>));
 }
+ConvertSurface.symbolName = "SDL_ConvertSurface";
 
 export function CreateRenderer(
   window: PointerLike<Window>,
@@ -104,6 +107,7 @@ export function CreateRenderer(
     flags,
   ) as PlatformPointer<Renderer>));
 }
+CreateRenderer.symbolName = "SDL_CreateRenderer";
 
 export function CreateRGBSurface(
   flags: u32,
@@ -126,6 +130,7 @@ export function CreateRGBSurface(
     Amask,
   ) as PlatformPointer<Surface>));
 }
+CreateRGBSurface.symbolName = "SDL_CreateRGBSurface";
 
 export function CreateRGBSurfaceFrom(
   pixels: TypedArray,
@@ -150,6 +155,7 @@ export function CreateRGBSurfaceFrom(
     Amask,
   ) as PlatformPointer<Surface>));
 }
+CreateRGBSurfaceFrom.symbolName = "SDL_CreateRGBSurfaceFrom";
 
 export function CreateRGBSurfaceWithFormat(
   flags: u32,
@@ -166,6 +172,7 @@ export function CreateRGBSurfaceWithFormat(
     format,
   ) as PlatformPointer<Surface>));
 }
+CreateRGBSurfaceWithFormat.symbolName = "SDL_CreateRGBSurfaceWithFormat";
 
 export function CreateTexture(
   renderer: PointerLike<Renderer>,
@@ -182,6 +189,7 @@ export function CreateTexture(
     h,
   ) as PlatformPointer<Texture>));
 }
+CreateTexture.symbolName = "SDL_CreateTexture";
 
 export function CreateTextureFromSurface(
   renderer: PointerLike<Renderer>,
@@ -192,6 +200,7 @@ export function CreateTextureFromSurface(
     Platform.toPlatformPointer(Pointer.of(surface)),
   ) as PlatformPointer<Texture>));
 }
+CreateTextureFromSurface.symbolName = "SDL_CreateTextureFromSurface";
 
 export function CreateWindow(
   title: string,
@@ -226,6 +235,7 @@ export function CreateWindow(
     flags,
   ) as PlatformPointer<Window>));
 }
+CreateWindow.symbolName = "SDL_CreateWindow";
 
 export function CreateWindowAndRenderer(
   width: i32,
@@ -242,6 +252,7 @@ export function CreateWindowAndRenderer(
     Platform.toPlatformPointer(Pointer.ofTypedArray(renderer._data)),
   ) as i32;
 }
+CreateWindowAndRenderer.symbolName = "SDL_CreateWindowAndRenderer";
 
 export function Delay(
   ms: u32,
@@ -250,6 +261,7 @@ export function Delay(
     ms,
   );
 }
+Delay.symbolName = "SDL_Delay";
 
 export function DestroyRenderer(
   renderer: PointerLike<Renderer>,
@@ -258,6 +270,7 @@ export function DestroyRenderer(
     Platform.toPlatformPointer(Pointer.of(renderer)),
   );
 }
+DestroyRenderer.symbolName = "SDL_DestroyRenderer";
 
 export function DestroyTexture(
   texture: PointerLike<Texture>,
@@ -266,6 +279,7 @@ export function DestroyTexture(
     Platform.toPlatformPointer(Pointer.of(texture)),
   );
 }
+DestroyTexture.symbolName = "SDL_DestroyTexture";
 
 export function DestroyWindow(
   window: PointerLike<Window>,
@@ -274,6 +288,7 @@ export function DestroyWindow(
     Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
+DestroyWindow.symbolName = "SDL_DestroyWindow";
 
 export function FillRect(
   dst: PointerLike<Surface>,
@@ -286,6 +301,7 @@ export function FillRect(
     color,
   ) as i32;
 }
+FillRect.symbolName = "SDL_FillRect";
 
 export function FreeSurface(
   surface: PointerLike<Surface>,
@@ -294,6 +310,7 @@ export function FreeSurface(
     Platform.toPlatformPointer(Pointer.of(surface)),
   );
 }
+FreeSurface.symbolName = "SDL_FreeSurface";
 
 export function GetColorKey(
   surface: PointerLike<Surface>,
@@ -304,10 +321,12 @@ export function GetColorKey(
     Platform.toPlatformPointer(Pointer.of(key)),
   ) as i32;
 }
+GetColorKey.symbolName = "SDL_GetColorKey";
 
 export function GetError(): string {
   return Platform.fromPlatformString(_library.symbols.SDL_GetError() as PlatformPointer<unknown>);
 }
+GetError.symbolName = "SDL_GetError";
 
 export function GetKeyboardState(
   numkeys: PointerLike<int> | null,
@@ -316,6 +335,7 @@ export function GetKeyboardState(
     Platform.toPlatformPointer(Pointer.of(numkeys)),
   ) as PlatformPointer<u8>)!;
 }
+GetKeyboardState.symbolName = "SDL_GetKeyboardState";
 
 export function GetRendererInfo(
   renderer: PointerLike<Renderer>,
@@ -326,10 +346,12 @@ export function GetRendererInfo(
     Platform.toPlatformPointer(Pointer.of(info)),
   ) as i32;
 }
+GetRendererInfo.symbolName = "SDL_GetRendererInfo";
 
 export function GetRevision(): string {
   return Platform.fromPlatformString(_library.symbols.SDL_GetRevision() as PlatformPointer<unknown>);
 }
+GetRevision.symbolName = "SDL_GetRevision";
 
 export function GetScancodeFromKey(
   key: Keycode,
@@ -338,6 +360,7 @@ export function GetScancodeFromKey(
     key,
   ) as Scancode;
 }
+GetScancodeFromKey.symbolName = "SDL_GetScancodeFromKey";
 
 export function GetScancodeName(
   scancode: Scancode,
@@ -346,10 +369,12 @@ export function GetScancodeName(
     scancode,
   ) as PlatformPointer<unknown>);
 }
+GetScancodeName.symbolName = "SDL_GetScancodeName";
 
 export function GetSystemRAM(): i32 {
   return _library.symbols.SDL_GetSystemRAM() as i32;
 }
+GetSystemRAM.symbolName = "SDL_GetSystemRAM";
 
 export function GetTextureAlphaMod(
   texture: PointerLike<Texture>,
@@ -360,6 +385,7 @@ export function GetTextureAlphaMod(
     Platform.toPlatformPointer(Pointer.of(alpha)),
   ) as i32;
 }
+GetTextureAlphaMod.symbolName = "SDL_GetTextureAlphaMod";
 
 export function GetTextureBlendMode(
   texture: PointerLike<Texture>,
@@ -370,6 +396,7 @@ export function GetTextureBlendMode(
     Platform.toPlatformPointer(Pointer.of(blendMode)),
   ) as i32;
 }
+GetTextureBlendMode.symbolName = "SDL_GetTextureBlendMode";
 
 export function GetTextureColorMod(
   texture: PointerLike<Texture>,
@@ -384,14 +411,17 @@ export function GetTextureColorMod(
     Platform.toPlatformPointer(Pointer.of(b)),
   ) as i32;
 }
+GetTextureColorMod.symbolName = "SDL_GetTextureColorMod";
 
 export function GetTicks(): u32 {
   return _library.symbols.SDL_GetTicks() as u32;
 }
+GetTicks.symbolName = "SDL_GetTicks";
 
 export function GetTicks64(): u64 {
   return BigInt(_library.symbols.SDL_GetTicks64() as bigint | number);
 }
+GetTicks64.symbolName = "SDL_GetTicks64";
 
 export function GetVersion(
   ver: PointerLike<version>,
@@ -400,6 +430,7 @@ export function GetVersion(
     Platform.toPlatformPointer(Pointer.of(ver)),
   );
 }
+GetVersion.symbolName = "SDL_GetVersion";
 
 export function GetWindowSurface(
   window: PointerLike<Window>,
@@ -408,6 +439,7 @@ export function GetWindowSurface(
     Platform.toPlatformPointer(Pointer.of(window)),
   ) as PlatformPointer<Surface>));
 }
+GetWindowSurface.symbolName = "SDL_GetWindowSurface";
 
 export function GetWindowTitle(
   window: PointerLike<Window>,
@@ -416,6 +448,7 @@ export function GetWindowTitle(
     Platform.toPlatformPointer(Pointer.of(window)),
   ) as PlatformPointer<unknown>);
 }
+GetWindowTitle.symbolName = "SDL_GetWindowTitle";
 
 export function HasColorKey(
   surface: PointerLike<Surface>,
@@ -424,6 +457,7 @@ export function HasColorKey(
     Platform.toPlatformPointer(Pointer.of(surface)),
   ) as boolean;
 }
+HasColorKey.symbolName = "SDL_HasColorKey";
 
 export function Init(flags: InitFlags, libraryPath?: string): number;
 export function Init(flags: number, libraryPath?: string): number;
@@ -441,6 +475,7 @@ export function LoadBMP_RW(
     freesrc,
   ) as PlatformPointer<Surface>));
 }
+LoadBMP_RW.symbolName = "SDL_LoadBMP_RW";
 
 export function LockSurface(
   surface: PointerLike<Surface>,
@@ -449,6 +484,7 @@ export function LockSurface(
     Platform.toPlatformPointer(Pointer.of(surface)),
   ) as i32;
 }
+LockSurface.symbolName = "SDL_LockSurface";
 
 export function MapRGB(
   format: PointerLike<PixelFormat>,
@@ -463,6 +499,7 @@ export function MapRGB(
     b,
   ) as u32;
 }
+MapRGB.symbolName = "SDL_MapRGB";
 
 export function MapRGBA(
   format: PointerLike<PixelFormat>,
@@ -479,6 +516,7 @@ export function MapRGBA(
     a,
   ) as u32;
 }
+MapRGBA.symbolName = "SDL_MapRGBA";
 
 export function MaximizeWindow(
   window: PointerLike<Window>,
@@ -487,6 +525,7 @@ export function MaximizeWindow(
     Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
+MaximizeWindow.symbolName = "SDL_MaximizeWindow";
 
 export function MinimizeWindow(
   window: PointerLike<Window>,
@@ -495,6 +534,7 @@ export function MinimizeWindow(
     Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
+MinimizeWindow.symbolName = "SDL_MinimizeWindow";
 
 export function PollEvent(
   event: PointerLike<Event>,
@@ -503,6 +543,7 @@ export function PollEvent(
     Platform.toPlatformPointer(Pointer.of(event)),
   ) as i32;
 }
+PollEvent.symbolName = "SDL_PollEvent";
 
 export function QueryTexture(
   texture: PointerLike<Texture>,
@@ -519,6 +560,7 @@ export function QueryTexture(
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
 }
+QueryTexture.symbolName = "SDL_QueryTexture";
 
 export function Quit(): void {
   _library.symbols.SDL_Quit();
@@ -532,6 +574,7 @@ export function RenderClear(
     Platform.toPlatformPointer(Pointer.of(renderer)),
   ) as i32;
 }
+RenderClear.symbolName = "SDL_RenderClear";
 
 export function RenderCopy(
   renderer: PointerLike<Renderer>,
@@ -546,6 +589,7 @@ export function RenderCopy(
     Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
+RenderCopy.symbolName = "SDL_RenderCopy";
 
 export function RenderCopyEx(
   renderer: PointerLike<Renderer>,
@@ -566,6 +610,7 @@ export function RenderCopyEx(
     flip,
   ) as i32;
 }
+RenderCopyEx.symbolName = "SDL_RenderCopyEx";
 
 export function RenderDrawLine(
   renderer: PointerLike<Renderer>,
@@ -582,6 +627,7 @@ export function RenderDrawLine(
     y2,
   ) as i32;
 }
+RenderDrawLine.symbolName = "SDL_RenderDrawLine";
 
 export function RenderDrawLines(
   renderer: PointerLike<Renderer>,
@@ -594,6 +640,7 @@ export function RenderDrawLines(
     count,
   ) as i32;
 }
+RenderDrawLines.symbolName = "SDL_RenderDrawLines";
 
 export function RenderDrawPoint(
   renderer: PointerLike<Renderer>,
@@ -606,6 +653,7 @@ export function RenderDrawPoint(
     y,
   ) as i32;
 }
+RenderDrawPoint.symbolName = "SDL_RenderDrawPoint";
 
 export function RenderDrawPoints(
   renderer: PointerLike<Renderer>,
@@ -618,6 +666,7 @@ export function RenderDrawPoints(
     count,
   ) as i32;
 }
+RenderDrawPoints.symbolName = "SDL_RenderDrawPoints";
 
 export function RenderDrawRect(
   renderer: PointerLike<Renderer>,
@@ -628,6 +677,7 @@ export function RenderDrawRect(
     Platform.toPlatformPointer(Pointer.of(rect)),
   ) as i32;
 }
+RenderDrawRect.symbolName = "SDL_RenderDrawRect";
 
 export function RenderDrawRects(
   renderer: PointerLike<Renderer>,
@@ -640,6 +690,7 @@ export function RenderDrawRects(
     count,
   ) as i32;
 }
+RenderDrawRects.symbolName = "SDL_RenderDrawRects";
 
 export function RenderFillRect(
   renderer: PointerLike<Renderer>,
@@ -650,6 +701,7 @@ export function RenderFillRect(
     Platform.toPlatformPointer(Pointer.of(rect)),
   ) as i32;
 }
+RenderFillRect.symbolName = "SDL_RenderFillRect";
 
 export function RenderFillRects(
   renderer: PointerLike<Renderer>,
@@ -662,6 +714,7 @@ export function RenderFillRects(
     count,
   ) as i32;
 }
+RenderFillRects.symbolName = "SDL_RenderFillRects";
 
 export function RenderFlush(
   renderer: PointerLike<Renderer>,
@@ -670,6 +723,7 @@ export function RenderFlush(
     Platform.toPlatformPointer(Pointer.of(renderer)),
   ) as i32;
 }
+RenderFlush.symbolName = "SDL_RenderFlush";
 
 export function RenderPresent(
   renderer: PointerLike<Renderer>,
@@ -678,6 +732,7 @@ export function RenderPresent(
     Platform.toPlatformPointer(Pointer.of(renderer)),
   );
 }
+RenderPresent.symbolName = "SDL_RenderPresent";
 
 export function RestoreWindow(
   window: PointerLike<Window>,
@@ -686,6 +741,7 @@ export function RestoreWindow(
     Platform.toPlatformPointer(Pointer.of(window)),
   );
 }
+RestoreWindow.symbolName = "SDL_RestoreWindow";
 
 export function RWFromFile(
   file: string,
@@ -696,6 +752,7 @@ export function RWFromFile(
     Platform.toPlatformString(mode),
   ) as PlatformPointer<RWops>));
 }
+RWFromFile.symbolName = "SDL_RWFromFile";
 
 export function SetColorKey(
   surface: PointerLike<Surface>,
@@ -708,6 +765,7 @@ export function SetColorKey(
     key,
   ) as i32;
 }
+SetColorKey.symbolName = "SDL_SetColorKey";
 
 export function SetRenderDrawBlendMode(
   renderer: PointerLike<Renderer>,
@@ -718,6 +776,7 @@ export function SetRenderDrawBlendMode(
     blendMode,
   ) as i32;
 }
+SetRenderDrawBlendMode.symbolName = "SDL_SetRenderDrawBlendMode";
 
 export function SetRenderDrawColor(
   renderer: PointerLike<Renderer>,
@@ -734,6 +793,7 @@ export function SetRenderDrawColor(
     a,
   ) as i32;
 }
+SetRenderDrawColor.symbolName = "SDL_SetRenderDrawColor";
 
 export function SetSurfaceBlendMode(
   surface: PointerLike<Surface>,
@@ -744,6 +804,7 @@ export function SetSurfaceBlendMode(
     blendMode,
   ) as i32;
 }
+SetSurfaceBlendMode.symbolName = "SDL_SetSurfaceBlendMode";
 
 export function SetTextureAlphaMod(
   texture: PointerLike<Texture>,
@@ -754,6 +815,7 @@ export function SetTextureAlphaMod(
     alpha,
   ) as i32;
 }
+SetTextureAlphaMod.symbolName = "SDL_SetTextureAlphaMod";
 
 export function SetTextureBlendMode(
   texture: PointerLike<Texture>,
@@ -764,6 +826,7 @@ export function SetTextureBlendMode(
     blendMode,
   ) as i32;
 }
+SetTextureBlendMode.symbolName = "SDL_SetTextureBlendMode";
 
 export function SetTextureColorMod(
   texture: PointerLike<Texture>,
@@ -778,6 +841,7 @@ export function SetTextureColorMod(
     b,
   ) as i32;
 }
+SetTextureColorMod.symbolName = "SDL_SetTextureColorMod";
 
 export function SetWindowTitle(
   window: PointerLike<Window>,
@@ -788,6 +852,7 @@ export function SetWindowTitle(
     Platform.toPlatformString(title),
   );
 }
+SetWindowTitle.symbolName = "SDL_SetWindowTitle";
 
 export function UnlockSurface(
   surface: PointerLike<Surface>,
@@ -796,6 +861,7 @@ export function UnlockSurface(
     Platform.toPlatformPointer(Pointer.of(surface)),
   );
 }
+UnlockSurface.symbolName = "SDL_UnlockSurface";
 
 export function UpdateWindowSurface(
   window: PointerLike<Window>,
@@ -804,3 +870,4 @@ export function UpdateWindowSurface(
     Platform.toPlatformPointer(Pointer.of(window)),
   ) as i32;
 }
+UpdateWindowSurface.symbolName = "SDL_UpdateWindowSurface";
