@@ -7,7 +7,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { symbols } from "./_symbols.ts";
 
 import {
@@ -50,6 +50,7 @@ import {
 
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
+import { getSymbolsFromFunctions } from "../_init.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
@@ -459,12 +460,14 @@ export function HasColorKey(
 }
 HasColorKey.symbolName = "SDL_HasColorKey";
 
-export function Init(flags: InitFlags, libraryPath?: string): number;
-export function Init(flags: number, libraryPath?: string): number;
-export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = Platform.loadLibrary("SDL2", symbols, libraryPath);
+export function Init(flags: InitFlags, options?: InitOptions): number;
+export function Init(flags: number, options?: InitOptions): number;
+export function Init(flags: InitFlags | number, options?: InitOptions): number {
+  const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
+  _library = Platform.loadLibrary("SDL2", symbolsToLoad, options?.libraryPath);
   return _library.symbols.SDL_Init(flags) as number;
 }
+Init.symbolName = "SDL_Init";
 
 export function LoadBMP_RW(
   src: PointerLike<RWops>,
@@ -566,6 +569,7 @@ export function Quit(): void {
   _library.symbols.SDL_Quit();
   _library.close();
 }
+Quit.symbolName = "SDL_Quit";
 
 export function RenderClear(
   renderer: PointerLike<Renderer>,

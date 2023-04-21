@@ -58,6 +58,9 @@ export type TypedArray =
   | BigInt64Array
   | BigUint64Array;
 
+// deno-lint-ignore ban-types
+export type FunctionWithSymbolName = Function & { symbolName: string };
+
 //
 // Complex types
 //
@@ -68,6 +71,11 @@ export type AllocatableStructConstructor<T extends AllocatableStruct> = {
 };
 
 export interface AllocatableStruct extends Struct {}
+
+export interface InitOptions {
+  libraryPath?: string;
+  functions?: Array<FunctionWithSymbolName>;
+}
 
 export interface StructConstructor<T extends Struct> {
   SIZE_IN_BYTES: number;
