@@ -1,4 +1,5 @@
 import { Box, IMG, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
+import { IMG_FUNCTIONS, SDL_FUNCTIONS, TTF_FUNCTIONS } from "./sdlConfig.ts";
 import { path } from "../../deps.ts";
 import { Board } from "./logic/board.ts";
 import { Random } from "./logic/random.ts";
@@ -12,9 +13,9 @@ const UPDATE_INTERVAL = 16n; // 1000ms / 60fps
 const FONT_SIZE = 24;
 
 function main(): number {
-  SDL.Init(SDL.InitFlags.VIDEO);
-  IMG.Init(IMG.InitFlags.PNG);
-  TTF.Init();
+  SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
+  IMG.Init(IMG.InitFlags.PNG, { functions: IMG_FUNCTIONS });
+  TTF.Init({ functions: TTF_FUNCTIONS });
 
   const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
   const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);

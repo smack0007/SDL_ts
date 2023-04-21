@@ -1,5 +1,5 @@
 import { IMG, SDL } from "SDL_ts";
-import { SDL_FUNCTIONS, SDL_IMAGE_FUNCTIONS } from "./sdlConfig.ts";
+import { IMG_FUNCTIONS, SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { path } from "../../deps.ts";
 
@@ -52,7 +52,7 @@ const FIRE_COLORS = [
 
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
-  IMG.Init(IMG.InitFlags.PNG, { functions: SDL_IMAGE_FUNCTIONS });
+  IMG.Init(IMG.InitFlags.PNG, { functions: IMG_FUNCTIONS });
 
   const version = IMG.Linked_Version();
 

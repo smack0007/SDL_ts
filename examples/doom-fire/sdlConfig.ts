@@ -26,7 +26,7 @@ export const SDL_FUNCTIONS = [
   SDL.UpdateWindowSurface,
 ] as const;
 
-export const SDL_IMAGE_FUNCTIONS = [
+export const IMG_FUNCTIONS = [
   IMG.Init,
   IMG.Linked_Version,
   IMG.Load,
