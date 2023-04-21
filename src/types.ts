@@ -74,7 +74,7 @@ export interface AllocatableStruct extends Struct {}
 
 export interface InitOptions {
   libraryPath?: string;
-  functions?: Array<FunctionWithSymbolName>;
+  functions?: ReadonlyArray<FunctionWithSymbolName>;
 }
 
 export interface StructConstructor<T extends Struct> {

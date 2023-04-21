@@ -7,7 +7,8 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
 import {} from "./enums.ts";
@@ -17,10 +18,12 @@ import { Color, Surface, version } from "../SDL/structs.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
-export function Init(libraryPath?: string): number {
-  _library = Platform.loadLibrary("SDL2_ttf", symbols, libraryPath);
+export function Init(options?: InitOptions): number {
+  const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
+  _library = Platform.loadLibrary("SDL2_ttf", symbolsToLoad, options?.libraryPath);
   return _library.symbols.TTF_Init() as number;
 }
+Init.symbolName = "TTF_Init";
 
 export function CloseFont(
   font: PointerLike<Font>,
@@ -48,9 +51,10 @@ export function OpenFont(
 OpenFont.symbolName = "TTF_OpenFont";
 
 export function Quit(): void {
-  _library.symbols.TTF_Quit();
+  _library.symbols.SDL_Quit();
   _library.close();
 }
+Quit.symbolName = "TTF_Quit";
 
 export function RenderText_Blended(
   font: PointerLike<Font>,

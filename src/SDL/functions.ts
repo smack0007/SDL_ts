@@ -8,6 +8,7 @@ import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
 import {
@@ -50,7 +51,6 @@ import {
 
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
-import { getSymbolsFromFunctions } from "../_init.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
@@ -67,7 +67,7 @@ export function BlitScaled(
     Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
-BlitScaled.symbolName = "SDL_BlitScaled";
+BlitScaled.symbolName = "SDL_UpperBlitScaled";
 
 export function BlitSurface(
   src: PointerLike<Surface>,
@@ -82,7 +82,7 @@ export function BlitSurface(
     Platform.toPlatformPointer(Pointer.of(dstrect)),
   ) as i32;
 }
-BlitSurface.symbolName = "SDL_BlitSurface";
+BlitSurface.symbolName = "SDL_UpperBlit";
 
 export function ConvertSurface(
   src: PointerLike<Surface>,

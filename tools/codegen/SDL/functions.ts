@@ -1,4 +1,4 @@
-import { CodeGenFunctionImplementations, CodeGenFunctions } from "../types.ts";
+import { CodeGenFunctions } from "../types.ts";
 
 export const functions: CodeGenFunctions = {
   SDL_BlitScaled: {
@@ -1084,18 +1084,4 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-} as const;
-
-export const functionImplementations: CodeGenFunctionImplementations = {
-  SDL_Init: `export function Init(flags: InitFlags, libraryPath?: string): number;
-  export function Init(flags: number, libraryPath?: string): number;
-  export function Init(flags: InitFlags | number, libraryPath?: string): number {
-  _library = Platform.loadLibrary("SDL2", symbols, libraryPath);
-  return _library.symbols.SDL_Init(flags) as number;
-}`,
-
-  SDL_Quit: `export function Quit(): void {
-  _library.symbols.SDL_Quit();
-  _library.close();
-}`,
 } as const;

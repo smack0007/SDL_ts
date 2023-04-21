@@ -3,7 +3,7 @@ import { FunctionWithSymbolName } from "./types.ts";
 
 export function getSymbolsFromFunctions(
   symbols: DynamicLibraryInterface,
-  functions: Array<FunctionWithSymbolName>,
+  functions: ReadonlyArray<FunctionWithSymbolName>,
 ): DynamicLibraryInterface {
   const result: DynamicLibraryInterface = {};
 

@@ -3,7 +3,7 @@ import { SRC_PATH } from "../../shared/constants.ts";
 import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
 import { enums } from "./SDL/enums.ts";
 import { events } from "./SDL/events.ts";
-import { functionImplementations, functions } from "./SDL/functions.ts";
+import { functions } from "./SDL/functions.ts";
 import { opaqueStructs, structs } from "./SDL/structs.ts";
 
 const SDL_SRC_PATH = path.join(SRC_PATH, "SDL");
@@ -15,8 +15,8 @@ export async function codegenSDL(): Promise<void> {
   await writeSymbols(`${SDL_SRC_PATH}/_symbols.ts`, functions, enums, structs, opaqueStructs);
   await writeFunctions(
     `${SDL_SRC_PATH}/functions.ts`,
+    "SDL2",
     functions,
-    functionImplementations,
     enums,
     structs,
     opaqueStructs,
