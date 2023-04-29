@@ -460,6 +460,17 @@ export function HasColorKey(
 }
 HasColorKey.symbolName = "SDL_HasColorKey";
 
+export function HasIntersection(
+  A: PointerLike<Rect>,
+  B: PointerLike<Rect>,
+): boolean {
+  return _library.symbols.SDL_HasIntersection(
+    Platform.toPlatformPointer(Pointer.of(A)),
+    Platform.toPlatformPointer(Pointer.of(B)),
+  ) as boolean;
+}
+HasIntersection.symbolName = "SDL_HasIntersection";
+
 export function Init(flags: InitFlags, options?: InitOptions): number;
 export function Init(flags: number, options?: InitOptions): number;
 export function Init(flags: InitFlags | number, options?: InitOptions): number {
@@ -468,6 +479,19 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
   return _library.symbols.SDL_Init(flags) as number;
 }
 Init.symbolName = "SDL_Init";
+
+export function IntersectRect(
+  A: PointerLike<Rect>,
+  B: PointerLike<Rect>,
+  result: PointerLike<Rect>,
+): boolean {
+  return _library.symbols.SDL_IntersectRect(
+    Platform.toPlatformPointer(Pointer.of(A)),
+    Platform.toPlatformPointer(Pointer.of(B)),
+    Platform.toPlatformPointer(Pointer.of(result)),
+  ) as boolean;
+}
+IntersectRect.symbolName = "SDL_IntersectRect";
 
 export function LoadBMP_RW(
   src: PointerLike<RWops>,
