@@ -249,11 +249,26 @@ export const symbols: DynamicLibraryInterface = {
     ],
     result: /* SDL_bool */ "bool",
   },
+  SDL_HasIntersection: {
+    parameters: [
+      /* SDL_Rect* A */ "pointer",
+      /* SDL_Rect* B */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
   SDL_Init: {
     parameters: [
       /* Uint32 flags */ "u32",
     ],
     result: /* int */ "i32",
+  },
+  SDL_IntersectRect: {
+    parameters: [
+      /* SDL_Rect* A */ "pointer",
+      /* SDL_Rect* B */ "pointer",
+      /* SDL_Rect* result */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
   },
   SDL_LoadBMP_RW: {
     parameters: [
