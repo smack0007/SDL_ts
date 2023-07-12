@@ -63,7 +63,7 @@ export function RenderText_Blended(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Blended(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
+    Platform.toPlatformStruct(fg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderText_Blended.symbolName = "TTF_RenderText_Blended";
@@ -77,8 +77,8 @@ export function RenderText_LCD(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_LCD(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
-    bg._data,
+    Platform.toPlatformStruct(fg._data, Color),
+    Platform.toPlatformStruct(bg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderText_LCD.symbolName = "TTF_RenderText_LCD";
@@ -91,7 +91,7 @@ export function RenderText_Solid(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Solid(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
+    Platform.toPlatformStruct(fg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderText_Solid.symbolName = "TTF_RenderText_Solid";
@@ -105,8 +105,8 @@ export function RenderText_Shaded(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Shaded(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
-    bg._data,
+    Platform.toPlatformStruct(fg._data, Color),
+    Platform.toPlatformStruct(bg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderText_Shaded.symbolName = "TTF_RenderText_Shaded";
@@ -119,7 +119,7 @@ export function RenderUTF8_Blended(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Blended(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
+    Platform.toPlatformStruct(fg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderUTF8_Blended.symbolName = "TTF_RenderUTF8_Blended";
@@ -133,8 +133,8 @@ export function RenderUTF8_LCD(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_LCD(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
-    bg._data,
+    Platform.toPlatformStruct(fg._data, Color),
+    Platform.toPlatformStruct(bg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderUTF8_LCD.symbolName = "TTF_RenderUTF8_LCD";
@@ -147,7 +147,7 @@ export function RenderUTF8_Solid(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Solid(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
+    Platform.toPlatformStruct(fg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderUTF8_Solid.symbolName = "TTF_RenderUTF8_Solid";
@@ -161,8 +161,8 @@ export function RenderUTF8_Shaded(
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Shaded(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
-    fg._data,
-    bg._data,
+    Platform.toPlatformStruct(fg._data, Color),
+    Platform.toPlatformStruct(bg._data, Color),
   ) as PlatformPointer<Surface>));
 }
 RenderUTF8_Shaded.symbolName = "TTF_RenderUTF8_Shaded";

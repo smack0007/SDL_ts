@@ -7,7 +7,6 @@ import { PlatformDataView } from "../_types.ts";
 import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
-import { isTypedArray } from "../_utils.ts";
 
 import {
   ArrayOrder,
@@ -95,7 +94,7 @@ export class Window implements Struct {
 export class Color implements AllocatableStruct {
   public static SIZE_IN_BYTES = 4;
 
-  private readonly data!: Uint8Array | Pointer<Color>;
+  public readonly _data!: Uint8Array | Pointer<Color>;
   private readonly _view!: PlatformDataView;
 
   constructor(command: StructCommand);
@@ -106,8 +105,8 @@ export class Color implements AllocatableStruct {
       return;
     }
 
-    this.data = new Uint8Array(Color.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this.data);
+    this._data = new Uint8Array(Color.SIZE_IN_BYTES);
+    this._view = new Platform.DataView(this._data);
 
     if (_1 !== undefined) {
       if (typeof _1 === "object") {
@@ -165,19 +164,6 @@ export class Color implements AllocatableStruct {
 
   public set a(value: u8) {
     this._view.setU8(3, value);
-  }
-
-  public get _data():Uint8Array {
-    if (this.data instanceof Uint8Array) {
-      return this.data
-    }else{
-      if (isTypedArray(this.data._data)) {
-        return new Uint8Array(this.data._data.buffer)
-      } else {
-        const view = new Platform.DataView(this.data._data)
-        return view.getArray(Color.SIZE_IN_BYTES, 0)
-      }
-    }
   }
 }
 

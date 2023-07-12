@@ -1,5 +1,5 @@
 import { Pointer } from "./pointers.ts";
-import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
+import { AllocatableStruct, AllocatableStructConstructor, TypedArray, f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
 
 export type PlatformPointer<T> = Deno.PointerValue;
 export type PlatformString = Deno.PointerValue;
@@ -54,4 +54,8 @@ export interface Platform {
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 
   toPlatformString(value: string): PlatformString;
+
+  toPlatformStruct(data: TypedArray, _:unknown): Uint8Array
+  toPlatformStruct<T extends AllocatableStruct>(data: Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
+  toPlatformStruct<T extends AllocatableStruct>(data: TypedArray | Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
 }

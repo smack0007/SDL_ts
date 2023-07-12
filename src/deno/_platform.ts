@@ -1,5 +1,5 @@
 import { denoLoadLibrary } from "./_library.ts";
-import { denoFromPlatformPointer, DenoPlatformDataView, denoToPlatformPointer } from "./_pointers.ts";
+import { denoFromPlatformPointer, DenoPlatformDataView, denoToPlatformPointer, denoToPlatformStruct } from "./_pointers.ts";
 import { denoFromPlatformString, denoToPlatformString } from "./_strings.ts";
 
 export default class {
@@ -13,4 +13,5 @@ export default class {
   public static loadLibrary = denoLoadLibrary;
   public static toPlatformPointer = denoToPlatformPointer;
   public static toPlatformString = denoToPlatformString;
+  public static toPlatformStruct = denoToPlatformStruct;
 }
