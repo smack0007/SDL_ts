@@ -11,12 +11,6 @@ import {
   CodeGenStructs,
 } from "./types.ts";
 
-const LibraryPrefix = {
-  SDL2: "SDL",
-  SDL2_image: "IMG",
-  SDL2_ttf: "TTF"
-} as const
-
 const PlatformDataViewGetMethods: Record<string, (offset: number, length: number) => string> = {
   "f32": (offset, _) => `getF32(${offset})`,
   "f64": (offset, _) => `getF64(${offset})`,
@@ -905,7 +899,7 @@ function getReturnTypePostfix(
 
 export async function writeFunctions(
   filePath: string,
-  libraryName: keyof typeof LibraryPrefix,
+  libraryName: string,
   functions: CodeGenFunctions,
   enums: CodeGenEnums,
   structs: CodeGenStructs,
@@ -971,7 +965,7 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
     } else if (funcName.endsWith("_Quit")) {
       
       lines.push(`export function Quit(): void {
-        _library.symbols.${LibraryPrefix[libraryName]}_Quit();
+        _library.symbols.${funcName}();
         _library.close();
       }`);
     } else {
