@@ -667,10 +667,7 @@ export async function writeSymbols(
 ): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { DynamicLibraryInterface } from "../_library.ts";`);
-  lines.push("");
-
-  lines.push("export const symbols: DynamicLibraryInterface = {");
+  lines.push("export const symbols = {");
   for (const [funcName, func] of Object.entries(functions)) {
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: {`);
@@ -925,14 +922,22 @@ export async function writeFunctions(
   lines.push(
     `import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
-import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
-import { symbols } from "./_symbols.ts";
 `,
   );
+  if (libraryName == "SDL2") {
+    lines.push(`import { symbols } from "./_symbols.ts";`)
+  } else {
+    lines.push(
+      `import { symbols as symbols_self } from "./_symbols.ts";
+import { symbols as symbols_sdl } from "../SDL/_symbols.ts";
+const symbols = Object.assign(symbols_sdl, symbols_self);
+`,
+    );
+  }
 
   lines.push(`import { ${enumNames} } from "./enums.ts";`);
   lines.push(`import { ${structNames} } from "./structs.ts";`);
@@ -941,7 +946,7 @@ import { symbols } from "./_symbols.ts";
   lines.push(...imports);
   lines.push("");
 
-  lines.push(`let _library: DynamicLibrary<typeof symbols> = null!;`);
+  lines.push(`let _library: Deno.DynamicLibrary<typeof symbols> = null!;`);
   lines.push("");
 
   for (const [funcName, func] of Object.entries(functions)) {

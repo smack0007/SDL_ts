@@ -4,19 +4,21 @@
 
 import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
-import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
-import { symbols } from "./_symbols.ts";
+
+import { symbols as symbols_self } from "./_symbols.ts";
+import { symbols as symbols_sdl } from "../SDL/_symbols.ts";
+const symbols = Object.assign(symbols_sdl, symbols_self);
 
 import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
 
 import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";
 
-let _library: DynamicLibrary<typeof symbols> = null!;
+let _library: Deno.DynamicLibrary<typeof symbols> = null!;
 
 export function Init(flags: InitFlags, options?: InitOptions): number;
 export function Init(flags: number, options?: InitOptions): number;

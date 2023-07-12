@@ -1,6 +1,5 @@
 import { dotenv, path } from "../../deps.ts";
 import { SDLError } from "../error.ts";
-import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
 import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
@@ -126,11 +125,11 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   return libraryPaths;
 }
 
-export function denoLoadLibrary<T extends DynamicLibraryInterface>(
+export function denoLoadLibrary<T extends Deno.ForeignLibraryInterface>(
   libraryName: string,
   symbols: T,
   libraryPath?: string,
-): DynamicLibrary<T> {
+): Deno.DynamicLibrary<T> {
   const libraryPaths = getLibraryPaths(libraryName, libraryPath);
   const errors: Record<string, Error> = {};
 
@@ -138,7 +137,7 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
     try {
       // Cast the symbols as any in order to prevent a type checking bug.
       // deno-lint-ignore no-explicit-any
-      return Deno.dlopen(libraryPath, symbols as any) as unknown as DynamicLibrary<T>;
+      return Deno.dlopen(libraryPath, symbols as any);
     } catch (error) {
       errors[libraryPath] = error;
     }
