@@ -8,8 +8,8 @@ import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
-
 import { symbols } from "./_symbols.ts";
+
 import {
   ArrayOrder,
   BitmapOrder,

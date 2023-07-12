@@ -8,10 +8,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
-
-import { symbols as symbols_self } from "./_symbols.ts";
-import { symbols as symbols_sdl } from "../SDL/_symbols.ts";
-const symbols = Object.assign(symbols_sdl, symbols_self);
+import { symbols } from "./_symbols.ts";
 
 import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
@@ -55,7 +52,7 @@ export function LoadTexture(
 LoadTexture.symbolName = "IMG_LoadTexture";
 
 export function Quit(): void {
-  _library.symbols.SDL_Quit();
+  _library.symbols.IMG_Quit();
   _library.close();
 }
 Quit.symbolName = "IMG_Quit";
