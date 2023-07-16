@@ -24,9 +24,9 @@ export async function codegenSDL_ttf(): Promise<void> {
     },
     ...structs,
   };
-  
+
   await writeEnums(`${SDL_TTF_SRC_PATH}/enums.ts`, enums, []);
-  await writeStructs(`${SDL_TTF_SRC_PATH}/structs.ts`, enums, structs, opaqueStructs);  
+  await writeStructs(`${SDL_TTF_SRC_PATH}/structs.ts`, enums, structs, opaqueStructs);
   await writeSymbols(`${SDL_TTF_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
   await writeFunctions(
     `${SDL_TTF_SRC_PATH}/functions.ts`,

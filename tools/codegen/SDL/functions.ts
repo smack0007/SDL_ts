@@ -547,11 +547,11 @@ export const functions: CodeGenFunctions = {
       },
       B: {
         type: "SDL_Rect*",
-      }
+      },
     },
     result: {
-      type: "SDL_bool"
-    }
+      type: "SDL_bool",
+    },
   },
 
   SDL_Init: {
@@ -575,11 +575,11 @@ export const functions: CodeGenFunctions = {
       },
       result: {
         type: "SDL_Rect*",
-      }
+      },
     },
     result: {
-      type: "SDL_bool"
-    }
+      type: "SDL_bool",
+    },
   },
 
   SDL_LoadBMP_RW: {

@@ -1,5 +1,19 @@
 import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, AllocatableStructConstructor, TypedArray, f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "../types.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  f32,
+  f64,
+  i16,
+  i32,
+  i64,
+  i8,
+  TypedArray,
+  u16,
+  u32,
+  u64,
+  u8,
+} from "../types.ts";
 import { PlatformPointer } from "../_types.ts";
 import { ENDIANNESS, isTypedArray, throwError } from "../_utils.ts";
 
@@ -32,24 +46,32 @@ export function denoFromPlatformPointer<T>(value: PlatformPointer<T>): Pointer<T
   return new Pointer(value as unknown as PlatformPointer<T>);
 }
 
-export function denoToPlatformStruct(data: TypedArray): Uint8Array
-export function denoToPlatformStruct<T extends AllocatableStruct>(data: Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
-export function denoToPlatformStruct<T extends AllocatableStruct>(data: TypedArray | Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
-export function denoToPlatformStruct<T extends AllocatableStruct>(data: TypedArray | Pointer<T>, dataType?: AllocatableStructConstructor<T>): Uint8Array {
-
+export function denoToPlatformStruct(data: TypedArray): Uint8Array;
+export function denoToPlatformStruct<T extends AllocatableStruct>(
+  data: Pointer<T>,
+  dataType: AllocatableStructConstructor<T>,
+): Uint8Array;
+export function denoToPlatformStruct<T extends AllocatableStruct>(
+  data: TypedArray | Pointer<T>,
+  dataType: AllocatableStructConstructor<T>,
+): Uint8Array;
+export function denoToPlatformStruct<T extends AllocatableStruct>(
+  data: TypedArray | Pointer<T>,
+  dataType?: AllocatableStructConstructor<T>,
+): Uint8Array {
   if (data instanceof Uint8Array) {
-    return data
-  }else if (isTypedArray(data)) {
-    return new Uint8Array(data.buffer)
+    return data;
+  } else if (isTypedArray(data)) {
+    return new Uint8Array(data.buffer);
   } else {
     if (isTypedArray(data._data)) {
-      return new Uint8Array(data._data.buffer)
+      return new Uint8Array(data._data.buffer);
     } else {
-      const view = new DenoPlatformDataView(data._data)
+      const view = new DenoPlatformDataView(data._data);
       if (dataType === undefined) {
-        throwError("Cannot retrieve a buffer from a pointer without type!")
-      }else {
-        return view.getArray(dataType.SIZE_IN_BYTES, 0)
+        throwError("Cannot retrieve a buffer from a pointer without type!");
+      } else {
+        return view.getArray(dataType.SIZE_IN_BYTES, 0);
       }
     }
   }

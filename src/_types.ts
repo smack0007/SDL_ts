@@ -1,5 +1,19 @@
 import { Pointer } from "./pointers.ts";
-import { AllocatableStruct, AllocatableStructConstructor, TypedArray, f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  f32,
+  f64,
+  i16,
+  i32,
+  i64,
+  i8,
+  TypedArray,
+  u16,
+  u32,
+  u64,
+  u8,
+} from "./types.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 export type PlatformPointer<T> = Deno.PointerValue;
@@ -56,7 +70,13 @@ export interface Platform {
 
   toPlatformString(value: string): PlatformString;
 
-  toPlatformStruct(data: TypedArray, _:unknown): Uint8Array
-  toPlatformStruct<T extends AllocatableStruct>(data: Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
-  toPlatformStruct<T extends AllocatableStruct>(data: TypedArray | Pointer<T>, dataType: AllocatableStructConstructor<T>): Uint8Array
+  toPlatformStruct(data: TypedArray, _: unknown): Uint8Array;
+  toPlatformStruct<T extends AllocatableStruct>(
+    data: Pointer<T>,
+    dataType: AllocatableStructConstructor<T>,
+  ): Uint8Array;
+  toPlatformStruct<T extends AllocatableStruct>(
+    data: TypedArray | Pointer<T>,
+    dataType: AllocatableStructConstructor<T>,
+  ): Uint8Array;
 }
