@@ -922,6 +922,7 @@ export async function writeFunctions(
   lines.push(
     `import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
@@ -937,7 +938,7 @@ import { symbols } from "./_symbols.ts";
   lines.push(...imports);
   lines.push("");
 
-  lines.push(`let _library: Deno.DynamicLibrary<typeof symbols> = null!;`);
+  lines.push(`let _library: DynamicLibrary<typeof symbols> = null!;`);
   lines.push("");
 
   for (const [funcName, func] of Object.entries(functions)) {
@@ -963,7 +964,6 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
 
       lines.push("}");
     } else if (funcName.endsWith("_Quit")) {
-      
       lines.push(`export function Quit(): void {
         _library.symbols.${funcName}();
         _library.close();

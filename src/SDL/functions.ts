@@ -4,6 +4,7 @@
 
 import Platform from "../_platform.ts";
 import { Box } from "../boxes.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
@@ -51,7 +52,7 @@ import {
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
 
-let _library: Deno.DynamicLibrary<typeof symbols> = null!;
+let _library: DynamicLibrary<typeof symbols> = null!;
 
 export function BlitScaled(
   src: PointerLike<Surface>,

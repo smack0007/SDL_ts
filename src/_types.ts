@@ -1,5 +1,6 @@
 import { Pointer } from "./pointers.ts";
 import { AllocatableStruct, AllocatableStructConstructor, TypedArray, f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
+import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 export type PlatformPointer<T> = Deno.PointerValue;
 export type PlatformString = Deno.PointerValue;
@@ -45,11 +46,11 @@ export interface Platform {
 
   fromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string;
 
-  loadLibrary<T extends Deno.ForeignLibraryInterface>(
+  loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
     symbols: T,
     libraryPath?: string,
-  ): Deno.DynamicLibrary<T>;
+  ): DynamicLibrary<T>;
 
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 
