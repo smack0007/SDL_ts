@@ -22,16 +22,16 @@ export function denoToPlatformPointer<T>(value: Pointer<T> | null): PlatformPoin
 
   if (value) {
     if (isTypedArray(value._data)) {
-      result = Deno.UnsafePointer.of(value._data);
+      result = Deno.UnsafePointer.of(value._data) as unknown as PlatformPointer<T>;
     } else {
       result = value._data;
     }
 
     if (value._offset != 0) {
       result = Deno.UnsafePointer.offset(
-        result as NonNullable<Deno.PointerValue>,
+        result as unknown as NonNullable<Deno.PointerValue>,
         value._offset,
-      );
+      ) as unknown as PlatformPointer<T>;
     }
   }
 

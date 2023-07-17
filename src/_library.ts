@@ -1,4 +1,4 @@
-import { PlatformPointer } from "./_types.ts";
+import { PlatformPointer, PlatformString } from "./_types.ts";
 type DynamicLibraryStructType = { readonly struct: Readonly<Array<DynamicLibraryType>> };
 type DynamicLibraryTypeMap = {
   "bool": boolean;
@@ -12,7 +12,7 @@ type DynamicLibraryTypeMap = {
   "u64": number | bigint;
   "f32": number;
   "f64": number;
-  "pointer": PlatformPointer<unknown>;
+  "pointer": PlatformPointer<unknown> | PlatformString | null;
   "void": void;
 };
 export type DynamicLibraryType = Exclude<keyof DynamicLibraryTypeMap, "void"> | DynamicLibraryStructType;

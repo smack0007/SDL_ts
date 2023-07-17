@@ -16,8 +16,10 @@ import {
 } from "./types.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
-export type PlatformPointer<T> = Deno.PointerValue;
-export type PlatformString = Deno.PointerValue;
+declare const _: unique symbol;
+
+export type PlatformPointer<T> = { [_]: "PlatformPointer" };
+export type PlatformString = { [_]: "PlatformString" };
 
 export interface PlatformDataViewConstructor {
   new (data: Uint8Array | PlatformPointer<unknown>): PlatformDataView;
