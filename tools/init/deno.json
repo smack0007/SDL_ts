@@ -6,11 +6,9 @@
     ]
   },
   "fmt": {
-    "options": {
-      "useTabs": false,
-      "lineWidth": 120,
-      "indentWidth": 2
-    }
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2
   },
   "lint": {
     "rules": {
