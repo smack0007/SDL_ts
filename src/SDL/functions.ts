@@ -899,3 +899,23 @@ export function UpdateWindowSurface(
   ) as i32;
 }
 UpdateWindowSurface.symbolName = "SDL_UpdateWindowSurface";
+
+export function WaitEvent(
+  event: PointerLike<Event>,
+): i32 {
+  return _library.symbols.SDL_WaitEvent(
+    Platform.toPlatformPointer(Pointer.of(event)),
+  ) as i32;
+}
+WaitEvent.symbolName = "SDL_WaitEvent";
+
+export function WaitEventTimeout(
+  event: PointerLike<Event>,
+  timeout: i32,
+): i32 {
+  return _library.symbols.SDL_WaitEventTimeout(
+    Platform.toPlatformPointer(Pointer.of(event)),
+    timeout,
+  ) as i32;
+}
+WaitEventTimeout.symbolName = "SDL_WaitEventTimeout";
