@@ -72,11 +72,6 @@ export interface Platform {
 
   toPlatformString(value: string): PlatformString;
 
-  toPlatformStruct(data: TypedArray, _: unknown): Uint8Array;
-  toPlatformStruct<T extends AllocatableStruct>(
-    data: Pointer<T>,
-    dataType: AllocatableStructConstructor<T>,
-  ): Uint8Array;
   toPlatformStruct<T extends AllocatableStruct>(
     data: TypedArray | Pointer<T>,
     dataType: AllocatableStructConstructor<T>,
