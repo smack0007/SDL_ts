@@ -1,5 +1,19 @@
 import { Pointer } from "./pointers.ts";
-import { f32, f64, i16, i32, i64, i8, u16, u32, u64, u8 } from "./types.ts";
+import {
+  AllocatableStruct,
+  AllocatableStructConstructor,
+  f32,
+  f64,
+  i16,
+  i32,
+  i64,
+  i8,
+  TypedArray,
+  u16,
+  u32,
+  u64,
+  u8,
+} from "./types.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 declare const _: unique symbol;
@@ -57,4 +71,9 @@ export interface Platform {
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 
   toPlatformString(value: string): PlatformString;
+
+  toPlatformStruct<T extends AllocatableStruct>(
+    data: TypedArray | Pointer<T>,
+    dataType: AllocatableStructConstructor<T>,
+  ): Uint8Array;
 }

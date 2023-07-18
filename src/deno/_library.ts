@@ -138,7 +138,7 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
     try {
       // Cast the symbols as any in order to prevent a type checking bug.
       // deno-lint-ignore no-explicit-any
-      return Deno.dlopen(libraryPath, symbols as any) as unknown as DynamicLibrary<T>;
+      return Deno.dlopen(libraryPath, symbols as any) as DynamicLibrary<T>;
     } catch (error) {
       errors[libraryPath] = error;
     }

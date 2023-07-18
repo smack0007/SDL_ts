@@ -667,10 +667,7 @@ export async function writeSymbols(
 ): Promise<void> {
   const lines = createLines();
 
-  lines.push(`import { DynamicLibraryInterface } from "../_library.ts";`);
-  lines.push("");
-
-  lines.push("export const symbols: DynamicLibraryInterface = {");
+  lines.push("export const symbols = {");
   for (const [funcName, func] of Object.entries(functions)) {
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: {`);
@@ -968,7 +965,7 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
       lines.push("}");
     } else if (funcName.endsWith("_Quit")) {
       lines.push(`export function Quit(): void {
-        _library.symbols.SDL_Quit();
+        _library.symbols.${funcName}();
         _library.close();
       }`);
     } else {
@@ -1038,7 +1035,7 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         } else if (isFunctionParamDoublePointer(param)) {
           lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
         } else if (isFunctionParamStructByValue(structs, param)) {
-          lines.push(`\t\t${paramName}._data,`);
+          lines.push(`\t\tPlatform.toPlatformStruct(${paramName}._data, ${stripPrefixes(param.type)}),`);
         } else if (
           isFunctionParamPointer(param) ||
           isFunctionParamOpaqueStruct(opaqueStructs, param) ||

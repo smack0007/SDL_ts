@@ -75,4 +75,5 @@ Deno images taken from https://deno.land/artwork.
 Thanks to:
 
 - [Samip Poudel](https://github.com/SamipPoudel58) for the Jurassic deno image.
-- [Andy Baird](https://githublcom/ajbdev) for initial MacOS Support.
+- [Andy Baird](https://github.com/ajbdev) for initial MacOS Support.
+- [Yiheng Wu](https://github.com/jingkaimori) for struct handling and other bug fixes.

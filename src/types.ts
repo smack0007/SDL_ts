@@ -67,10 +67,11 @@ export type FunctionWithSymbolName = Function & { symbolName: string };
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
   SIZE_IN_BYTES: number;
-  of(data: Uint8Array): T;
+  of(data: Uint8Array | Pointer<T> | null): T | null;
 };
 
-export interface AllocatableStruct extends Struct {}
+export interface AllocatableStruct extends Struct {
+}
 
 export interface InitOptions {
   libraryPath?: string;

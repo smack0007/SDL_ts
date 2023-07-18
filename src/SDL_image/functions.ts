@@ -53,7 +53,7 @@ export function LoadTexture(
 LoadTexture.symbolName = "IMG_LoadTexture";
 
 export function Quit(): void {
-  _library.symbols.SDL_Quit();
+  _library.symbols.IMG_Quit();
   _library.close();
 }
 Quit.symbolName = "IMG_Quit";

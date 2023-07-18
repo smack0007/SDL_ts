@@ -6,7 +6,7 @@ export type DynamicLibraryType =
   | "u16"
   | "i32"
   | "u32"
-  | "i65"
+  | "i64"
   | "u64"
   | "f32"
   | "f64"
@@ -20,7 +20,6 @@ export type DynamicLibraryFunctionInterface = {
 
 export type DynamicLibraryInterface = Record<string, DynamicLibraryFunctionInterface>;
 
-// TODO: Can we improve the type inference here for symbols?
 export type DynamicLibrary<T> = {
   symbols: Record<keyof T, (...args: unknown[]) => unknown>;
 
