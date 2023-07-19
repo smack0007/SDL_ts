@@ -92,6 +92,24 @@
       ]
     },
     {
+      "label": "Run Hello World Async",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": [
+        "run:hello-world-async"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$deno"
+      ]
+    },
+    {
       "label": "Run Renderer",
       "group": {
         "kind": "none",
