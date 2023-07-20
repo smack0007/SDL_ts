@@ -1,9 +1,9 @@
-import * as SDL from "../mod.SDL.ts";
-
+import { Event } from "./SDL/events.ts";
+import { GetError, WaitEvent } from "./SDL/functions.ts";
 export class Events {
   /**
-   * Get a lazy stream of events using SDL_WaitEvent.
-   * @returns a lazy stream of events using SDL_WaitEvent
+   * Get a lazy stream of @see SDL.Event using SDL_WaitEvent.
+   * @returns a lazy stream of @see SDL.Event using SDL_WaitEvent
    * @example
    * ```ts
    * for await (const event of Events.asyncIterator()) {
@@ -11,21 +11,18 @@ export class Events {
    * }
    * ```
    */
-  public static asyncIterator(): AsyncIterator<SDL.Event, never, SDL.Event | undefined> {
-    let _event = new SDL.Event();
+  public static asyncIterator(_event?: Event): AsyncIterator<Event, never, never> {
+    const event = _event ?? new Event();
     return {
-      next(event): Promise<IteratorResult<SDL.Event, never>> {
-        if (event) {
-          _event = event;
-        }
-        return new Promise<IteratorResult<SDL.Event, never>>((resolve, reject) => {
-          const res = SDL.WaitEvent(_event);
+      next(): Promise<IteratorResult<Event, never>> {
+        return new Promise<IteratorResult<Event, never>>((resolve, reject) => {
+          const res = WaitEvent(event);
           if (res == 0) {
-            reject(SDL.GetError());
+            reject(GetError());
           } else {
             resolve({
               done: false,
-              value: _event,
+              value: event,
             });
           }
         });
