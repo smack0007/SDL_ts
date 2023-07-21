@@ -522,4 +522,17 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_WaitEvent: {
+    parameters: [
+      /* SDL_Event* event */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_WaitEventTimeout: {
+    parameters: [
+      /* SDL_Event* event */ "pointer",
+      /* int timeout */ "i32",
+    ],
+    result: /* int */ "i32",
+  },
 } as const;

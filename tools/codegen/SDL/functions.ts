@@ -1115,4 +1115,29 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
+
+  SDL_WaitEvent: {
+    parameters: {
+      event: {
+        type: "SDL_Event*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+
+  SDL_WaitEventTimeout: {
+    parameters: {
+      event: {
+        type: "SDL_Event*",
+      },
+      timeout: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
 } as const;

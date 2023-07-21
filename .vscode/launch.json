@@ -32,6 +32,16 @@
       "attachSimplePort": 9229
     },
     {
+      "name": "Debug Hello World Async",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:hello-world-async"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Debug Renderer",
       "type": "node",
       "request": "launch",
