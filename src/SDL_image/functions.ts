@@ -7,7 +7,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 

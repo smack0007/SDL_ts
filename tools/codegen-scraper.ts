@@ -176,7 +176,7 @@ async function scrapeFile(filePath: string): Promise<void> {
       captureMode === "enum" && line.startsWith("} ") &&
       line.endsWith(";")
     ) {
-      // outputEnum(capture);
+      outputEnum(capture);
       shouldFlush = true;
     } else if (
       captureMode === "function" && line.endsWith(";")
@@ -236,6 +236,7 @@ function outputEnum(capture: string): void {
   }
 
   if (
+    enumName === "SDL_KeyCode" ||
     enumName === "SDL_PixelFormatEnum" ||
     enumName === "SDL_SYSWM_TYPE" ||
     enumName === "SDL_WindowFlags"
@@ -243,8 +244,7 @@ function outputEnum(capture: string): void {
     return;
   }
 
-  writePrintF("/* enum */");
-  writePrintF(`${enumName}: {`);
+  writePrintF(`enums["${enumName}"] = {`);
   writePrintF(`\tvalues: {`);
 
   for (let i = 0; i < parts.length - 1; i++) {
@@ -281,7 +281,7 @@ function outputEnum(capture: string): void {
   }
 
   writePrintF(`\t}`);
-  writePrintF("},");
+  writePrintF("};");
 }
 
 function outputFunction(capture: string): void {
@@ -478,9 +478,23 @@ function outputStruct(capture: string): void {
 }
 
 function stringify(obj: unknown): string {
-  const json = JSON.stringify(obj);
+  const json = JSON.stringify(obj, undefined, 2);
   const unquoted = json.replace(/"([^"]+)":/g, "$1:");
   return unquoted;
+}
+
+function sortObjectKeys<T extends Record<string, unknown>>(input: T): T {
+  return Object.keys(input).sort().reduce(
+    (obj, key) => {
+      obj[key] = input[key];
+      return obj;
+    },
+    {} as Record<string, unknown>,
+  ) as T;
+}
+
+async function formatFile(path: string): Promise<void> {
+  await (new Deno.Command(Deno.execPath(), { "args": ["fmt", path] })).output();
 }
 
 async function updateCodeGenInput(
@@ -488,7 +502,25 @@ async function updateCodeGenInput(
   scrapedFunctions: CodeGenFunctions,
   scrapedStructs: CodeGenStructs,
 ): Promise<void> {
+  await updateCodeGenEnums(scrapedEnums);
   await updateCodeGenFunctions(scrapedFunctions);
+}
+
+async function updateCodeGenEnums(scrapedEnums: CodeGenEnums): Promise<void> {
+  const { enums } = await import("./codegen/SDL/enums.ts");
+
+  for (const [enumName, _enum] of Object.entries(scrapedEnums)) {
+    if (["SDL_FlashOperation", "SDL_HitTest"].includes(enumName)) {
+      enums[enumName] = _enum;
+    }
+  }
+
+  const output = `import { CodeGenEnums } from "../types.ts";
+  
+export const enums: CodeGenEnums = ${stringify(sortObjectKeys(enums))} as const;`;
+
+  await Deno.writeTextFile("./codegen/SDL/enums.ts", output);
+  await formatFile("./codegen/SDL/enums.ts");
 }
 
 async function updateCodeGenFunctions(scrapedFunctions: CodeGenFunctions): Promise<void> {
@@ -506,7 +538,8 @@ async function updateCodeGenFunctions(scrapedFunctions: CodeGenFunctions): Promi
 
   const output = `import { CodeGenFunctions } from "../types.ts";
   
-export const functions: CodeGenFunctions = ${stringify(functions)} as const;`;
+export const functions: CodeGenFunctions = ${stringify(sortObjectKeys(functions))} as const;`;
 
   await Deno.writeTextFile("./codegen/SDL/functions.ts", output);
+  await formatFile("./codegen/SDL/functions.ts");
 }

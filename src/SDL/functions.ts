@@ -7,7 +7,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
@@ -18,6 +18,7 @@ import {
   BlendMode,
   BlendOperation,
   EventType,
+  FlashOperation,
   InitFlags,
   Keycode,
   PackedLayout,
@@ -97,19 +98,6 @@ export function ConvertSurface(
 }
 ConvertSurface.symbolName = "SDL_ConvertSurface";
 
-export function CreateRenderer(
-  window: PointerLike<Window>,
-  index: i32,
-  flags: u32,
-): Renderer | null {
-  return Renderer.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRenderer(
-    Platform.toPlatformPointer(Pointer.of(window)),
-    index,
-    flags,
-  ) as PlatformPointer<Renderer>));
-}
-CreateRenderer.symbolName = "SDL_CreateRenderer";
-
 export function CreateRGBSurface(
   flags: u32,
   width: i32,
@@ -174,6 +162,19 @@ export function CreateRGBSurfaceWithFormat(
   ) as PlatformPointer<Surface>));
 }
 CreateRGBSurfaceWithFormat.symbolName = "SDL_CreateRGBSurfaceWithFormat";
+
+export function CreateRenderer(
+  window: PointerLike<Window>,
+  index: i32,
+  flags: u32,
+): Renderer | null {
+  return Renderer.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRenderer(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    index,
+    flags,
+  ) as PlatformPointer<Renderer>));
+}
+CreateRenderer.symbolName = "SDL_CreateRenderer";
 
 export function CreateTexture(
   renderer: PointerLike<Renderer>,
@@ -255,6 +256,15 @@ export function CreateWindowAndRenderer(
 }
 CreateWindowAndRenderer.symbolName = "SDL_CreateWindowAndRenderer";
 
+export function CreateWindowFrom(
+  data: TypedArray,
+): Window | null {
+  return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateWindowFrom(
+    Platform.toPlatformPointer(Pointer.ofTypedArray(data)),
+  ) as PlatformPointer<Window>));
+}
+CreateWindowFrom.symbolName = "SDL_CreateWindowFrom";
+
 export function Delay(
   ms: u32,
 ): void {
@@ -291,6 +301,15 @@ export function DestroyWindow(
 }
 DestroyWindow.symbolName = "SDL_DestroyWindow";
 
+export function DestroyWindowSurface(
+  window: PointerLike<Window>,
+): i32 {
+  return _library.symbols.SDL_DestroyWindowSurface(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as i32;
+}
+DestroyWindowSurface.symbolName = "SDL_DestroyWindowSurface";
+
 export function FillRect(
   dst: PointerLike<Surface>,
   rect: PointerLike<Rect> | null,
@@ -303,6 +322,17 @@ export function FillRect(
   ) as i32;
 }
 FillRect.symbolName = "SDL_FillRect";
+
+export function FlashWindow(
+  window: PointerLike<Window>,
+  operation: FlashOperation,
+): i32 {
+  return _library.symbols.SDL_FlashWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    operation,
+  ) as i32;
+}
+FlashWindow.symbolName = "SDL_FlashWindow";
 
 export function FreeSurface(
   surface: PointerLike<Surface>,
@@ -328,6 +358,11 @@ export function GetError(): string {
   return Platform.fromPlatformString(_library.symbols.SDL_GetError() as PlatformPointer<unknown>);
 }
 GetError.symbolName = "SDL_GetError";
+
+export function GetGrabbedWindow(): Window | null {
+  return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_GetGrabbedWindow() as PlatformPointer<Window>));
+}
+GetGrabbedWindow.symbolName = "SDL_GetGrabbedWindow";
 
 export function GetKeyboardState(
   numkeys: PointerLike<int> | null,
@@ -433,6 +468,178 @@ export function GetVersion(
 }
 GetVersion.symbolName = "SDL_GetVersion";
 
+export function GetWindowBordersSize(
+  window: PointerLike<Window>,
+  top: PointerLike<int>,
+  left: PointerLike<int>,
+  bottom: PointerLike<int>,
+  right: PointerLike<int>,
+): i32 {
+  return _library.symbols.SDL_GetWindowBordersSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(top)),
+    Platform.toPlatformPointer(Pointer.of(left)),
+    Platform.toPlatformPointer(Pointer.of(bottom)),
+    Platform.toPlatformPointer(Pointer.of(right)),
+  ) as i32;
+}
+GetWindowBordersSize.symbolName = "SDL_GetWindowBordersSize";
+
+export function GetWindowBrightness(
+  window: PointerLike<Window>,
+): f32 {
+  return _library.symbols.SDL_GetWindowBrightness(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as f32;
+}
+GetWindowBrightness.symbolName = "SDL_GetWindowBrightness";
+
+export function GetWindowDisplayIndex(
+  window: PointerLike<Window>,
+): i32 {
+  return _library.symbols.SDL_GetWindowDisplayIndex(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as i32;
+}
+GetWindowDisplayIndex.symbolName = "SDL_GetWindowDisplayIndex";
+
+export function GetWindowFlags(
+  window: PointerLike<Window>,
+): u32 {
+  return _library.symbols.SDL_GetWindowFlags(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as u32;
+}
+GetWindowFlags.symbolName = "SDL_GetWindowFlags";
+
+export function GetWindowFromID(
+  id: u32,
+): Window | null {
+  return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_GetWindowFromID(
+    id,
+  ) as PlatformPointer<Window>));
+}
+GetWindowFromID.symbolName = "SDL_GetWindowFromID";
+
+export function GetWindowGrab(
+  window: PointerLike<Window>,
+): boolean {
+  return _library.symbols.SDL_GetWindowGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as boolean;
+}
+GetWindowGrab.symbolName = "SDL_GetWindowGrab";
+
+export function GetWindowID(
+  window: PointerLike<Window>,
+): u32 {
+  return _library.symbols.SDL_GetWindowID(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as u32;
+}
+GetWindowID.symbolName = "SDL_GetWindowID";
+
+export function GetWindowKeyboardGrab(
+  window: PointerLike<Window>,
+): boolean {
+  return _library.symbols.SDL_GetWindowKeyboardGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as boolean;
+}
+GetWindowKeyboardGrab.symbolName = "SDL_GetWindowKeyboardGrab";
+
+export function GetWindowMaximumSize(
+  window: PointerLike<Window>,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): void {
+  _library.symbols.SDL_GetWindowMaximumSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  );
+}
+GetWindowMaximumSize.symbolName = "SDL_GetWindowMaximumSize";
+
+export function GetWindowMinimumSize(
+  window: PointerLike<Window>,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): void {
+  _library.symbols.SDL_GetWindowMinimumSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  );
+}
+GetWindowMinimumSize.symbolName = "SDL_GetWindowMinimumSize";
+
+export function GetWindowMouseGrab(
+  window: PointerLike<Window>,
+): boolean {
+  return _library.symbols.SDL_GetWindowMouseGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as boolean;
+}
+GetWindowMouseGrab.symbolName = "SDL_GetWindowMouseGrab";
+
+export function GetWindowMouseRect(
+  window: PointerLike<Window>,
+): Rect | null {
+  return Rect.of(Platform.fromPlatformPointer(_library.symbols.SDL_GetWindowMouseRect(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as PlatformPointer<Rect>));
+}
+GetWindowMouseRect.symbolName = "SDL_GetWindowMouseRect";
+
+export function GetWindowPixelFormat(
+  window: PointerLike<Window>,
+): u32 {
+  return _library.symbols.SDL_GetWindowPixelFormat(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as u32;
+}
+GetWindowPixelFormat.symbolName = "SDL_GetWindowPixelFormat";
+
+export function GetWindowPosition(
+  window: PointerLike<Window>,
+  x: PointerLike<int>,
+  y: PointerLike<int>,
+): void {
+  _library.symbols.SDL_GetWindowPosition(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(x)),
+    Platform.toPlatformPointer(Pointer.of(y)),
+  );
+}
+GetWindowPosition.symbolName = "SDL_GetWindowPosition";
+
+export function GetWindowSize(
+  window: PointerLike<Window>,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): void {
+  _library.symbols.SDL_GetWindowSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  );
+}
+GetWindowSize.symbolName = "SDL_GetWindowSize";
+
+export function GetWindowSizeInPixels(
+  window: PointerLike<Window>,
+  w: PointerLike<int>,
+  h: PointerLike<int>,
+): void {
+  _library.symbols.SDL_GetWindowSizeInPixels(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(w)),
+    Platform.toPlatformPointer(Pointer.of(h)),
+  );
+}
+GetWindowSizeInPixels.symbolName = "SDL_GetWindowSizeInPixels";
+
 export function GetWindowSurface(
   window: PointerLike<Window>,
 ): Surface | null {
@@ -471,6 +678,24 @@ export function HasIntersection(
 }
 HasIntersection.symbolName = "SDL_HasIntersection";
 
+export function HasWindowSurface(
+  window: PointerLike<Window>,
+): boolean {
+  return _library.symbols.SDL_HasWindowSurface(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as boolean;
+}
+HasWindowSurface.symbolName = "SDL_HasWindowSurface";
+
+export function HideWindow(
+  window: PointerLike<Window>,
+): void {
+  _library.symbols.SDL_HideWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  );
+}
+HideWindow.symbolName = "SDL_HideWindow";
+
 export function Init(flags: InitFlags, options?: InitOptions): number;
 export function Init(flags: number, options?: InitOptions): number;
 export function Init(flags: InitFlags | number, options?: InitOptions): number {
@@ -492,6 +717,15 @@ export function IntersectRect(
   ) as boolean;
 }
 IntersectRect.symbolName = "SDL_IntersectRect";
+
+export function IsShapedWindow(
+  window: PointerLike<Window>,
+): boolean {
+  return _library.symbols.SDL_IsShapedWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as boolean;
+}
+IsShapedWindow.symbolName = "SDL_IsShapedWindow";
 
 export function LoadBMP_RW(
   src: PointerLike<RWops>,
@@ -594,6 +828,26 @@ export function Quit(): void {
   _library.close();
 }
 Quit.symbolName = "SDL_Quit";
+
+export function RWFromFile(
+  file: string,
+  mode: RWMode,
+): RWops | null {
+  return RWops.of(Platform.fromPlatformPointer(_library.symbols.SDL_RWFromFile(
+    Platform.toPlatformString(file),
+    Platform.toPlatformString(mode),
+  ) as PlatformPointer<RWops>));
+}
+RWFromFile.symbolName = "SDL_RWFromFile";
+
+export function RaiseWindow(
+  window: PointerLike<Window>,
+): void {
+  _library.symbols.SDL_RaiseWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  );
+}
+RaiseWindow.symbolName = "SDL_RaiseWindow";
 
 export function RenderClear(
   renderer: PointerLike<Renderer>,
@@ -753,6 +1007,32 @@ export function RenderFlush(
 }
 RenderFlush.symbolName = "SDL_RenderFlush";
 
+export function RenderGetWindow(
+  renderer: PointerLike<Renderer>,
+): Window | null {
+  return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_RenderGetWindow(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+  ) as PlatformPointer<Window>));
+}
+RenderGetWindow.symbolName = "SDL_RenderGetWindow";
+
+export function RenderLogicalToWindow(
+  renderer: PointerLike<Renderer>,
+  logicalX: f32,
+  logicalY: f32,
+  windowX: PointerLike<int>,
+  windowY: PointerLike<int>,
+): void {
+  _library.symbols.SDL_RenderLogicalToWindow(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    logicalX,
+    logicalY,
+    Platform.toPlatformPointer(Pointer.of(windowX)),
+    Platform.toPlatformPointer(Pointer.of(windowY)),
+  );
+}
+RenderLogicalToWindow.symbolName = "SDL_RenderLogicalToWindow";
+
 export function RenderPresent(
   renderer: PointerLike<Renderer>,
 ): void {
@@ -770,17 +1050,6 @@ export function RestoreWindow(
   );
 }
 RestoreWindow.symbolName = "SDL_RestoreWindow";
-
-export function RWFromFile(
-  file: string,
-  mode: RWMode,
-): RWops | null {
-  return RWops.of(Platform.fromPlatformPointer(_library.symbols.SDL_RWFromFile(
-    Platform.toPlatformString(file),
-    Platform.toPlatformString(mode),
-  ) as PlatformPointer<RWops>));
-}
-RWFromFile.symbolName = "SDL_RWFromFile";
 
 export function SetColorKey(
   surface: PointerLike<Surface>,
@@ -871,6 +1140,199 @@ export function SetTextureColorMod(
 }
 SetTextureColorMod.symbolName = "SDL_SetTextureColorMod";
 
+export function SetWindowAlwaysOnTop(
+  window: PointerLike<Window>,
+  on_top: boolean,
+): void {
+  _library.symbols.SDL_SetWindowAlwaysOnTop(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    on_top,
+  );
+}
+SetWindowAlwaysOnTop.symbolName = "SDL_SetWindowAlwaysOnTop";
+
+export function SetWindowBordered(
+  window: PointerLike<Window>,
+  bordered: boolean,
+): void {
+  _library.symbols.SDL_SetWindowBordered(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    bordered,
+  );
+}
+SetWindowBordered.symbolName = "SDL_SetWindowBordered";
+
+export function SetWindowBrightness(
+  window: PointerLike<Window>,
+  brightness: f32,
+): i32 {
+  return _library.symbols.SDL_SetWindowBrightness(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    brightness,
+  ) as i32;
+}
+SetWindowBrightness.symbolName = "SDL_SetWindowBrightness";
+
+export function SetWindowFullscreen(
+  window: PointerLike<Window>,
+  flags: u32,
+): i32 {
+  return _library.symbols.SDL_SetWindowFullscreen(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    flags,
+  ) as i32;
+}
+SetWindowFullscreen.symbolName = "SDL_SetWindowFullscreen";
+
+export function SetWindowGrab(
+  window: PointerLike<Window>,
+  grabbed: boolean,
+): void {
+  _library.symbols.SDL_SetWindowGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    grabbed,
+  );
+}
+SetWindowGrab.symbolName = "SDL_SetWindowGrab";
+
+export function SetWindowIcon(
+  window: PointerLike<Window>,
+  icon: PointerLike<Surface>,
+): void {
+  _library.symbols.SDL_SetWindowIcon(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(icon)),
+  );
+}
+SetWindowIcon.symbolName = "SDL_SetWindowIcon";
+
+export function SetWindowInputFocus(
+  window: PointerLike<Window>,
+): i32 {
+  return _library.symbols.SDL_SetWindowInputFocus(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  ) as i32;
+}
+SetWindowInputFocus.symbolName = "SDL_SetWindowInputFocus";
+
+export function SetWindowKeyboardGrab(
+  window: PointerLike<Window>,
+  grabbed: boolean,
+): void {
+  _library.symbols.SDL_SetWindowKeyboardGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    grabbed,
+  );
+}
+SetWindowKeyboardGrab.symbolName = "SDL_SetWindowKeyboardGrab";
+
+export function SetWindowMaximumSize(
+  window: PointerLike<Window>,
+  max_w: i32,
+  max_h: i32,
+): void {
+  _library.symbols.SDL_SetWindowMaximumSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    max_w,
+    max_h,
+  );
+}
+SetWindowMaximumSize.symbolName = "SDL_SetWindowMaximumSize";
+
+export function SetWindowMinimumSize(
+  window: PointerLike<Window>,
+  min_w: i32,
+  min_h: i32,
+): void {
+  _library.symbols.SDL_SetWindowMinimumSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    min_w,
+    min_h,
+  );
+}
+SetWindowMinimumSize.symbolName = "SDL_SetWindowMinimumSize";
+
+export function SetWindowModalFor(
+  modal_window: PointerLike<Window>,
+  parent_window: PointerLike<Window>,
+): i32 {
+  return _library.symbols.SDL_SetWindowModalFor(
+    Platform.toPlatformPointer(Pointer.of(modal_window)),
+    Platform.toPlatformPointer(Pointer.of(parent_window)),
+  ) as i32;
+}
+SetWindowModalFor.symbolName = "SDL_SetWindowModalFor";
+
+export function SetWindowMouseGrab(
+  window: PointerLike<Window>,
+  grabbed: boolean,
+): void {
+  _library.symbols.SDL_SetWindowMouseGrab(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    grabbed,
+  );
+}
+SetWindowMouseGrab.symbolName = "SDL_SetWindowMouseGrab";
+
+export function SetWindowMouseRect(
+  window: PointerLike<Window>,
+  rect: PointerLike<Rect>,
+): i32 {
+  return _library.symbols.SDL_SetWindowMouseRect(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(rect)),
+  ) as i32;
+}
+SetWindowMouseRect.symbolName = "SDL_SetWindowMouseRect";
+
+export function SetWindowOpacity(
+  window: PointerLike<Window>,
+  opacity: f32,
+): i32 {
+  return _library.symbols.SDL_SetWindowOpacity(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    opacity,
+  ) as i32;
+}
+SetWindowOpacity.symbolName = "SDL_SetWindowOpacity";
+
+export function SetWindowPosition(
+  window: PointerLike<Window>,
+  x: i32,
+  y: i32,
+): void {
+  _library.symbols.SDL_SetWindowPosition(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    x,
+    y,
+  );
+}
+SetWindowPosition.symbolName = "SDL_SetWindowPosition";
+
+export function SetWindowResizable(
+  window: PointerLike<Window>,
+  resizable: boolean,
+): void {
+  _library.symbols.SDL_SetWindowResizable(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    resizable,
+  );
+}
+SetWindowResizable.symbolName = "SDL_SetWindowResizable";
+
+export function SetWindowSize(
+  window: PointerLike<Window>,
+  w: i32,
+  h: i32,
+): void {
+  _library.symbols.SDL_SetWindowSize(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    w,
+    h,
+  );
+}
+SetWindowSize.symbolName = "SDL_SetWindowSize";
+
 export function SetWindowTitle(
   window: PointerLike<Window>,
   title: string,
@@ -881,6 +1343,15 @@ export function SetWindowTitle(
   );
 }
 SetWindowTitle.symbolName = "SDL_SetWindowTitle";
+
+export function ShowWindow(
+  window: PointerLike<Window>,
+): void {
+  _library.symbols.SDL_ShowWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+  );
+}
+ShowWindow.symbolName = "SDL_ShowWindow";
 
 export function UnlockSurface(
   surface: PointerLike<Surface>,
@@ -899,6 +1370,19 @@ export function UpdateWindowSurface(
   ) as i32;
 }
 UpdateWindowSurface.symbolName = "SDL_UpdateWindowSurface";
+
+export function UpdateWindowSurfaceRects(
+  window: PointerLike<Window>,
+  rects: PointerLike<Rect>,
+  numrects: i32,
+): i32 {
+  return _library.symbols.SDL_UpdateWindowSurfaceRects(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(rects)),
+    numrects,
+  ) as i32;
+}
+UpdateWindowSurfaceRects.symbolName = "SDL_UpdateWindowSurfaceRects";
 
 export function WaitEvent(
   event: PointerLike<Event>,
@@ -919,3 +1403,16 @@ export function WaitEventTimeout(
   ) as i32;
 }
 WaitEventTimeout.symbolName = "SDL_WaitEventTimeout";
+
+export function WarpMouseInWindow(
+  window: PointerLike<Window>,
+  x: i32,
+  y: i32,
+): void {
+  _library.symbols.SDL_WarpMouseInWindow(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    x,
+    y,
+  );
+}
+WarpMouseInWindow.symbolName = "SDL_WarpMouseInWindow";

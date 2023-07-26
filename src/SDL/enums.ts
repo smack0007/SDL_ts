@@ -122,6 +122,14 @@ export const EventType = {
 
 export type EventType = Enum<typeof EventType>;
 
+export const FlashOperation = {
+  FLASH_CANCEL: 0,
+  FLASH_BRIEFLY: 1,
+  FLASH_UNTIL_FOCUSED: 2,
+} as const;
+
+export type FlashOperation = Enum<typeof FlashOperation>;
+
 export const InitFlags = {
   TIMER: 1,
   AUDIO: 16,

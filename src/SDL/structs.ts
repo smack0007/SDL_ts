@@ -15,6 +15,7 @@ import {
   BlendMode,
   BlendOperation,
   EventType,
+  FlashOperation,
   InitFlags,
   Keycode,
   PackedLayout,

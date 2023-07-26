@@ -90,7 +90,7 @@ function stripPrefixes(value: string, ...prefixes: string[]): string {
 
 async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await Deno.writeTextFile(path, lines.join("\n"));
-  await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
+  await (new Deno.Command(Deno.execPath(), { "args": ["fmt", path] })).output();
 }
 
 function mapEnumValue(value: string, enumData: CodeGenEnum): string {
@@ -925,7 +925,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 `,

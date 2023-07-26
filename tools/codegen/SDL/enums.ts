@@ -12,15 +12,6 @@ export const enums: CodeGenEnums = {
       SDL_ARRAYORDER_ABGR: "6",
     },
   },
-
-  // SDL.TRUE and SDL.FALSE are just defined in constants.ts
-  // SDL_Bool: {
-  //   values: {
-  //     SDL_FALSE: "0",
-  //     SDL_TRUE: "1",
-  //   },
-  // },
-
   SDL_BitmapOrder: {
     values: {
       SDL_BITMAPORDER_NONE: "0",
@@ -28,7 +19,6 @@ export const enums: CodeGenEnums = {
       SDL_BITMAPORDER_1234: "2",
     },
   },
-
   SDL_BlendFactor: {
     values: {
       SDL_BLENDFACTOR_ZERO: "0x1",
@@ -43,7 +33,6 @@ export const enums: CodeGenEnums = {
       SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA: "0xA",
     },
   },
-
   SDL_BlendMode: {
     values: {
       SDL_BLENDMODE_NONE: "0x00000000",
@@ -54,7 +43,6 @@ export const enums: CodeGenEnums = {
       SDL_BLENDMODE_INVALID: "0x7FFFFFFF",
     },
   },
-
   SDL_BlendOperation: {
     values: {
       SDL_BLENDOPERATION_ADD: "0x1",
@@ -64,7 +52,6 @@ export const enums: CodeGenEnums = {
       SDL_BLENDOPERATION_MAXIMUM: "0x5",
     },
   },
-
   SDL_EventType: {
     values: {
       SDL_FIRSTEVENT: "0",
@@ -126,7 +113,13 @@ export const enums: CodeGenEnums = {
       SDL_LASTEVENT: "0xFFFF",
     },
   },
-
+  SDL_FlashOperation: {
+    values: {
+      SDL_FLASH_CANCEL: "0",
+      SDL_FLASH_BRIEFLY: "1",
+      SDL_FLASH_UNTIL_FOCUSED: "2",
+    },
+  },
   SDL_InitFlags: {
     prefixToStrip: "SDL_INIT",
     values: {
@@ -143,13 +136,12 @@ export const enums: CodeGenEnums = {
         "( SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER | SDL_INIT_SENSOR )",
     },
   },
-
   SDL_Keycode: {
     prefixToStrip: "SDLK_",
     values: {
       SDLK_UNKNOWN: "0",
       SDLK_RETURN: "'\r'",
-      SDLK_ESCAPE: "'\x1B'",
+      SDLK_ESCAPE: "'\u001b'",
       SDLK_BACKSPACE: "'\b'",
       SDLK_TAB: "'\t'",
       SDLK_SPACE: "' '",
@@ -236,7 +228,7 @@ export const enums: CodeGenEnums = {
       SDLK_INSERT: "1073741897",
       SDLK_HOME: "1073741898",
       SDLK_PAGEUP: "1073741899",
-      SDLK_DELETE: "'\x7F'",
+      SDLK_DELETE: "''",
       SDLK_END: "1073741901",
       SDLK_PAGEDOWN: "1073741902",
       SDLK_RIGHT: "1073741903",
@@ -393,7 +385,6 @@ export const enums: CodeGenEnums = {
       SDLK_ENDCALL: "1073742114",
     },
   },
-
   SDL_PackedLayout: {
     values: {
       SDL_PACKEDLAYOUT_NONE: "0",
@@ -407,7 +398,6 @@ export const enums: CodeGenEnums = {
       SDL_PACKEDLAYOUT_1010102: "8",
     },
   },
-
   SDL_PackedOrder: {
     values: {
       SDL_PACKEDORDER_NONE: "0",
@@ -421,7 +411,6 @@ export const enums: CodeGenEnums = {
       SDL_PACKEDORDER_BGRA: "8",
     },
   },
-
   SDL_PixelType: {
     values: {
       SDL_PIXELTYPE_UNKNOWN: "0",
@@ -438,7 +427,6 @@ export const enums: CodeGenEnums = {
       SDL_PIXELTYPE_ARRAYF32: "11",
     },
   },
-
   SDL_RendererFlags: {
     prefixToStrip: "SDL_RENDERER",
     values: {
@@ -448,7 +436,6 @@ export const enums: CodeGenEnums = {
       SDL_RENDERER_TARGETTEXTURE: "0x00000008",
     },
   },
-
   SDL_RendererFlip: {
     prefixToStrip: "SDL_FLIP",
     values: {
@@ -457,8 +444,6 @@ export const enums: CodeGenEnums = {
       SDL_FLIP_VERTICAL: "0x00000002",
     },
   },
-
-  // NOTE: An underscore is added to the values here to simplfy code generation.
   SDL_ScaleMode: {
     prefixToStrip: "SDL_ScaleMode",
     values: {
@@ -467,7 +452,6 @@ export const enums: CodeGenEnums = {
       SDL_ScaleMode_Best: "2",
     },
   },
-
   SDL_Scancode: {
     values: {
       SDL_SCANCODE_UNKNOWN: "0",
@@ -716,7 +700,6 @@ export const enums: CodeGenEnums = {
       SDL_NUM_SCANCODES: "512",
     },
   },
-
   SDL_TextureAccess: {
     values: {
       SDL_TEXTUREACCESS_STATIC: "0",
@@ -724,7 +707,6 @@ export const enums: CodeGenEnums = {
       SDL_TEXTUREACCESS_TARGET: "2",
     },
   },
-
   SDL_TextureModulate: {
     values: {
       SDL_TEXTUREMODULATE_NONE: "0x00000000",
@@ -732,7 +714,6 @@ export const enums: CodeGenEnums = {
       SDL_TEXTUREMODULATE_ALPHA: "0x00000002",
     },
   },
-
   SDL_WindowEventID: {
     prefixToStrip: "SDL_WINDOWEVENT",
     values: {
@@ -757,7 +738,6 @@ export const enums: CodeGenEnums = {
       SDL_WINDOWEVENT_DISPLAY_CHANGED: "18",
     },
   },
-
   SDL_WindowFlags: {
     prefixToStrip: "SDL_WINDOW",
     values: {
@@ -787,7 +767,6 @@ export const enums: CodeGenEnums = {
       SDL_WINDOW_INPUT_GRABBED: "SDL_WINDOW_MOUSE_GRABBED",
     },
   },
-
   SDL_WindowPos: {
     values: {
       SDL_WINDOWPOS_UNDEFINED: "0x1fff0000",
