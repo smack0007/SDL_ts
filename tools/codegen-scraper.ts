@@ -1,10 +1,12 @@
 // This is a blunt tool that will produce output from the SDL headers
 // that can then be fed directly into the codegen.
 
-const EXT_PATH = "../ext";
-const SDL_PATH = `${EXT_PATH}/SDL`;
-const KHRONOS_PATH = `${EXT_PATH}/khronos`;
-const OUTPUT_PATH = "../tmp";
+import { CodeGenEnums, CodeGenFunctions, CodeGenStructs } from "./codegen/types.ts";
+
+const TMP_PATH = "../tmp";
+const SDL_PATH = `${TMP_PATH}/SDL`;
+const KHRONOS_PATH = `${TMP_PATH}/khronos`;
+const OUTPUT_PATH = `${TMP_PATH}/out`;
 
 const MACROS_TO_COMPUTE = [
   "SDL_SCANCODE_TO_KEYCODE",
@@ -60,34 +62,43 @@ async function main(): Promise<number> {
   await Deno.writeTextFile(cOutputPath, buffer);
 
   const exeOutputPath = `${OUTPUT_PATH}/codegen-scraper.exe`;
-  const { code } = await Deno.run({
-    cmd: [
-      "clang",
+  const compileCommand = new Deno.Command("clang", {
+    "args": [
       cOutputPath,
       "-o",
       exeOutputPath,
       `-I${SDL_PATH}/include`,
       `-I${KHRONOS_PATH}`,
-      `-L${SDL_PATH}/windows/x64`,
+      `-L${SDL_PATH}/lib/x64`,
       "-Wl,/SUBSYSTEM:CONSOLE",
       "-lSDL2main",
       "-lSDL2",
       "-lShell32",
     ],
-    // stdout: "null",
-  }).status();
+  });
+  const { code: compileCode } = await compileCommand.output();
 
-  if (code !== 0) {
+  if (compileCode !== 0) {
     return 1;
   }
 
   await Deno.copyFile(
-    `${SDL_PATH}/windows/x64/SDL2.dll`,
+    `${SDL_PATH}/lib/x64/SDL2.dll`,
     `${OUTPUT_PATH}/SDL2.dll`,
   );
 
-  const process = Deno.run({ cmd: [exeOutputPath] });
-  await process.status();
+  const exeCommand = new Deno.Command(exeOutputPath);
+
+  const { code: exeCode, stdout: exeStdout } = await exeCommand.output();
+
+  if (exeCode !== 0) {
+    return 1;
+  }
+
+  await Deno.writeFile(`${OUTPUT_PATH}/codegen-scraper.ts`, exeStdout);
+  const { enums, functions, structs } = await import(`${OUTPUT_PATH}/codegen-scraper.ts`);
+
+  await updateCodeGenInput(enums as CodeGenEnums, functions as CodeGenFunctions, structs as CodeGenStructs);
 
   return 0;
 }
@@ -100,7 +111,11 @@ function writeStartCode(): void {
   write("");
   write("int main(int argc, char* args[]) {");
   write("SDL_Init(SDL_INIT_VIDEO);");
-  writePrintF("sizeof(int) === %llu", "sizeof(int)");
+  writePrintF('import { CodeGenEnums, CodeGenFunctions, CodeGenStructs } from "../../tools/codegen/types.ts";');
+  writePrintF("export const sizeOfInt = %llu;", "sizeof(int)");
+  writePrintF("export const enums: CodeGenEnums = {};");
+  writePrintF("export const functions: CodeGenFunctions = {};");
+  writePrintF("export const structs: CodeGenStructs = {};");
 }
 
 function writeEndCode(): void {
@@ -155,13 +170,13 @@ async function scrapeFile(filePath: string): Promise<void> {
     let shouldFlush = false;
 
     if (captureMode === "define" && !line.endsWith("\\")) {
-      outputDefine(capture);
+      // outputDefine(capture);
       shouldFlush = true;
     } else if (
       captureMode === "enum" && line.startsWith("} ") &&
       line.endsWith(";")
     ) {
-      outputEnum(capture);
+      // outputEnum(capture);
       shouldFlush = true;
     } else if (
       captureMode === "function" && line.endsWith(";")
@@ -172,7 +187,7 @@ async function scrapeFile(filePath: string): Promise<void> {
       captureMode === "struct" && line.startsWith("} ") &&
       line.endsWith(";")
     ) {
-      outputStruct(capture);
+      // outputStruct(capture);
       shouldFlush = true;
     }
 
@@ -300,8 +315,50 @@ function outputFunction(capture: string): void {
     functionName = functionName.substring(1);
   }
 
-  writePrintF("/* function */");
-  writePrintF(`${functionName}: {`);
+  // These functions are problematic
+  if (
+    [
+      "int", // SDL_HapticQuery
+      "long", // SDL_strtoul
+
+      "SDL_asprintf",
+      "SDL_bsearch",
+      "SDL_CreateShapedWindow",
+      "SDL_hid_open_path",
+      "SDL_LoadWAV_RW",
+      "SDL_LockMutex",
+      "SDL_Log",
+      "SDL_LogCritical",
+      "SDL_LogDebug",
+      "SDL_LogError",
+      "SDL_LogInfo",
+      "SDL_LogMessage",
+      "SDL_LogMessageV",
+      "SDL_LogVerbose",
+      "SDL_LogWarn",
+      "SDL_memcpy",
+      "SDL_memmove",
+      "SDL_memset",
+      "SDL_qsort",
+      "SDL_ReportAssertion",
+      "SDL_SetError",
+      "SDL_snprintf",
+      "SDL_sscanf",
+      "SDL_strlcat",
+      "SDL_strlcpy",
+      "SDL_UIKitRunApp",
+      "SDL_vsnprintf",
+      "SDL_uitoa",
+      "SDL_UnlockMutex",
+      "SDL_utf8strlcpy",
+      "SDL_wcslcat",
+      "SDL_wcslcpy",
+    ].includes(functionName)
+  ) {
+    return;
+  }
+
+  writePrintF(`functions["${functionName}"] = {`);
   writePrintF("\tparameters: {");
 
   for (let i = 2; i < parts.length; i += 2) {
@@ -329,7 +386,7 @@ function outputFunction(capture: string): void {
   writePrintF("\tresult: {");
   writePrintF(`\t\ttype: "${returnType}",`);
   writePrintF(`\t},`);
-  writePrintF("},");
+  writePrintF("};");
 }
 
 function outputStruct(capture: string): void {
@@ -418,4 +475,38 @@ function outputStruct(capture: string): void {
 
   writePrintF("\t}");
   writePrintF("},");
+}
+
+function stringify(obj: unknown): string {
+  const json = JSON.stringify(obj);
+  const unquoted = json.replace(/"([^"]+)":/g, "$1:");
+  return unquoted;
+}
+
+async function updateCodeGenInput(
+  scrapedEnums: CodeGenEnums,
+  scrapedFunctions: CodeGenFunctions,
+  scrapedStructs: CodeGenStructs,
+): Promise<void> {
+  await updateCodeGenFunctions(scrapedFunctions);
+}
+
+async function updateCodeGenFunctions(scrapedFunctions: CodeGenFunctions): Promise<void> {
+  const { functions } = await import("./codegen/SDL/functions.ts");
+
+  for (const [funcName, func] of Object.entries(scrapedFunctions)) {
+    if (funcName.startsWith("SDL_GL") || funcName.startsWith("SDL_Vulkan")) {
+      continue;
+    }
+
+    if (funcName.includes("Window") && functions[funcName] === undefined) {
+      functions[funcName] = func;
+    }
+  }
+
+  const output = `import { CodeGenFunctions } from "../types.ts";
+  
+export const functions: CodeGenFunctions = ${stringify(functions)} as const;`;
+
+  await Deno.writeTextFile("./codegen/SDL/functions.ts", output);
 }
