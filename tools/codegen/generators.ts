@@ -565,6 +565,15 @@ public static SIZE_IN_BYTES = ${struct.size};`);
     structMembers.sort(sortStructMembers);
 
     for (const [memberName, member] of structMembers) {
+      if (member.internal || member.todo) {
+        if (member.todo) {
+          lines.push(`// TODO: ${member.todo}`);
+        }
+        lines.push(`// ${memberName}`);
+        lines.push("");
+        continue;
+      }
+
       let readOp = "";
       let writeOp = "";
       let length = 0;

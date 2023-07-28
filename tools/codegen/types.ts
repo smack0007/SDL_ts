@@ -79,6 +79,12 @@ export interface CodeGenStruct {
 }
 
 export interface CodeGenStructMember {
+  // If true the member is internal to SDL and shouldn't be output.
+  internal?: boolean;
+
+  // If set the member is not yet supported and shouldn't be output.
+  todo?: string;
+
   // SDL type.
   type: string;
 

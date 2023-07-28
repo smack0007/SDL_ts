@@ -226,6 +226,10 @@ export class Palette implements Struct {
   public get colors(): Color {
     return Color.of(this._view.getPointer(8)) as Color;
   }
+
+  // version
+
+  // refcount
 }
 
 export class PixelFormat implements Struct {
@@ -276,6 +280,26 @@ export class PixelFormat implements Struct {
   public get Amask(): u32 {
     return this._view.getU32(32);
   }
+
+  // Rloss
+
+  // Gloss
+
+  // Bloss
+
+  // Aloss
+
+  // Rshift
+
+  // Gshift
+
+  // Bshift
+
+  // Ashift
+
+  // refcount
+
+  // next
 }
 
 export class Point implements AllocatableStruct {
@@ -448,6 +472,9 @@ export class RendererInfo implements AllocatableStruct {
     return this._view.getU32(12);
   }
 
+  // TODO: Add support for arrays in structs.
+  // texture_formats
+
   public get max_texture_width(): i32 {
     return this._view.getI32(80);
   }
@@ -502,9 +529,15 @@ export class Surface implements Struct {
     return this._view.getPointer(40);
   }
 
+  // locked
+
+  // list_data
+
   public get clip_rect(): Rect {
     return Rect.of(this._view.getArray(16, 64)) as Rect;
   }
+
+  // map
 
   public get refcount(): i32 {
     return this._view.getI32(88);
