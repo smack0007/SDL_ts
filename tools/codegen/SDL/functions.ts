@@ -447,6 +447,20 @@ export const functions: CodeGenFunctions = {
       type: "char*",
     },
   },
+  SDL_GetShapedWindowMode: {
+    todo: "SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      shape_mode: {
+        type: "SDL_WindowShapeMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_GetSystemRAM: {
     parameters: {},
     result: {
@@ -552,10 +566,36 @@ export const functions: CodeGenFunctions = {
       type: "float",
     },
   },
+  SDL_GetWindowData: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      name: {
+        type: "char*",
+      },
+    },
+    result: {
+      type: "void*",
+    },
+  },
   SDL_GetWindowDisplayIndex: {
     parameters: {
       window: {
         type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowDisplayMode: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      mode: {
+        type: "SDL_DisplayMode*",
       },
     },
     result: {
@@ -582,6 +622,25 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Window*",
     },
   },
+  SDL_GetWindowGammaRamp: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      red: {
+        type: "Uint16*",
+      },
+      green: {
+        type: "Uint16*",
+      },
+      blue: {
+        type: "Uint16*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_GetWindowGrab: {
     parameters: {
       window: {
@@ -590,6 +649,19 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "SDL_bool",
+    },
+  },
+  SDL_GetWindowICCProfile: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      size: {
+        type: "size_t*",
+      },
+    },
+    result: {
+      type: "void*",
     },
   },
   SDL_GetWindowID: {
@@ -662,6 +734,19 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "SDL_Rect*",
+    },
+  },
+  SDL_GetWindowOpacity: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      out_opacity: {
+        type: "float*",
+      },
+    },
+    result: {
+      type: "int",
     },
   },
   SDL_GetWindowPixelFormat: {
@@ -740,6 +825,19 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "char*",
+    },
+  },
+  SDL_GetWindowWMInfo: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      info: {
+        type: "SDL_SysWMinfo*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
     },
   },
   SDL_HasColorKey: {
@@ -1208,6 +1306,28 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_RenderWindowToLogical: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      windowX: {
+        type: "int",
+      },
+      windowY: {
+        type: "int",
+      },
+      logicalX: {
+        type: "float*",
+      },
+      logicalY: {
+        type: "float*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_RestoreWindow: {
     parameters: {
       window: {
@@ -1366,6 +1486,35 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
+  SDL_SetWindowData: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      name: {
+        type: "char*",
+      },
+      userdata: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "void*",
+    },
+  },
+  SDL_SetWindowDisplayMode: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      mode: {
+        type: "SDL_DisplayMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_SetWindowFullscreen: {
     parameters: {
       window: {
@@ -1373,6 +1522,25 @@ export const functions: CodeGenFunctions = {
       },
       flags: {
         type: "Uint32",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowGammaRamp: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      red: {
+        type: "Uint16*",
+      },
+      green: {
+        type: "Uint16*",
+      },
+      blue: {
+        type: "Uint16*",
       },
     },
     result: {
@@ -1390,6 +1558,23 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "void",
+    },
+  },
+  SDL_SetWindowHitTest: {
+    todo: "Implement callbacks",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      callback: {
+        type: "SDL_HitTest",
+      },
+      callback_data: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "int",
     },
   },
   SDL_SetWindowIcon: {
@@ -1541,6 +1726,23 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_SetWindowShape: {
+    todo: "SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      shape: {
+        type: "SDL_Surface*",
+      },
+      shape_mode: {
+        type: "SDL_WindowShapeMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_SetWindowSize: {
     parameters: {
       window: {
@@ -1564,6 +1766,20 @@ export const functions: CodeGenFunctions = {
       },
       title: {
         type: "char*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowsMessageHook: {
+    todo: "Implement callbacks",
+    parameters: {
+      callback: {
+        type: "SDL_WindowsMessageHook",
+      },
+      userdata: {
+        type: "void*",
       },
     },
     result: {

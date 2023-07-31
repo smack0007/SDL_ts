@@ -211,6 +211,8 @@ export const symbols = {
     ],
     result: /* char* */ "pointer",
   },
+  // TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+  // SDL_GetShapedWindowMode
   SDL_GetSystemRAM: {
     parameters: [],
     result: /* int */ "i32",
@@ -268,9 +270,23 @@ export const symbols = {
     ],
     result: /* float */ "f32",
   },
+  SDL_GetWindowData: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* char* name */ "pointer",
+    ],
+    result: /* void* */ "pointer",
+  },
   SDL_GetWindowDisplayIndex: {
     parameters: [
       /* SDL_Window* window */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowDisplayMode: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_DisplayMode* mode */ "pointer",
     ],
     result: /* int */ "i32",
   },
@@ -286,11 +302,27 @@ export const symbols = {
     ],
     result: /* SDL_Window* */ "pointer",
   },
+  SDL_GetWindowGammaRamp: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* Uint16* red */ "pointer",
+      /* Uint16* green */ "pointer",
+      /* Uint16* blue */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_GetWindowGrab: {
     parameters: [
       /* SDL_Window* window */ "pointer",
     ],
     result: /* SDL_bool */ "bool",
+  },
+  SDL_GetWindowICCProfile: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* size_t* size */ "pointer",
+    ],
+    result: /* void* */ "pointer",
   },
   SDL_GetWindowID: {
     parameters: [
@@ -331,6 +363,13 @@ export const symbols = {
       /* SDL_Window* window */ "pointer",
     ],
     result: /* SDL_Rect* */ "pointer",
+  },
+  SDL_GetWindowOpacity: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* float* out_opacity */ "pointer",
+    ],
+    result: /* int */ "i32",
   },
   SDL_GetWindowPixelFormat: {
     parameters: [
@@ -373,6 +412,13 @@ export const symbols = {
       /* SDL_Window* window */ "pointer",
     ],
     result: /* char* */ "pointer",
+  },
+  SDL_GetWindowWMInfo: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_SysWMinfo* info */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
   },
   SDL_HasColorKey: {
     parameters: [
@@ -615,6 +661,16 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_RenderWindowToLogical: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* int windowX */ "i32",
+      /* int windowY */ "i32",
+      /* float* logicalX */ "pointer",
+      /* float* logicalY */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
   SDL_RestoreWindow: {
     parameters: [
       /* SDL_Window* window */ "pointer",
@@ -697,10 +753,34 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_SetWindowData: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* char* name */ "pointer",
+      /* void* userdata */ "pointer",
+    ],
+    result: /* void* */ "pointer",
+  },
+  SDL_SetWindowDisplayMode: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_DisplayMode* mode */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_SetWindowFullscreen: {
     parameters: [
       /* SDL_Window* window */ "pointer",
       /* Uint32 flags */ "u32",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowGammaRamp: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* Uint16* red */ "pointer",
+      /* Uint16* green */ "pointer",
+      /* Uint16* blue */ "pointer",
     ],
     result: /* int */ "i32",
   },
@@ -711,6 +791,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: Implement callbacks
+  // SDL_SetWindowHitTest
   SDL_SetWindowIcon: {
     parameters: [
       /* SDL_Window* window */ "pointer",
@@ -790,6 +872,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+  // SDL_SetWindowShape
   SDL_SetWindowSize: {
     parameters: [
       /* SDL_Window* window */ "pointer",
@@ -805,6 +889,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: Implement callbacks
+  // SDL_SetWindowsMessageHook
   SDL_ShowWindow: {
     parameters: [
       /* SDL_Window* window */ "pointer",

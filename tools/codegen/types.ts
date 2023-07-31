@@ -30,6 +30,9 @@ export interface CodeGenFunctionResult {
 }
 
 export interface CodeGenFunction {
+  // If set the function is not yet supported and shouldn't be output.
+  todo?: string;
+
   // Some functions are (i.e. SDL_BlitSurface) are just
   // macros that proxy to another name.
   symbolName?: string;

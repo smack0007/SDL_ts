@@ -195,6 +195,7 @@ export class BoxArray<T extends BoxValue> {
     return predicate(value) ? value : throwError(errorMessage);
   }
 
+  // TODO: This is terrible. Just replace this with a funciton named pointersAt(index: number)
   public readonly pointers = {
     at: (index: number) => {
       return Pointer.ofTypedArray(this._data, this.sizeOfElementInBytes * index);

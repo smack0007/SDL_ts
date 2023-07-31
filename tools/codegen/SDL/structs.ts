@@ -33,7 +33,31 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
+  SDL_DisplayMode: {
+    size: 24,
+    members: {
+      format: {
+        type: "Uint32",
+        offset: 0,
+      },
+      w: {
+        type: "int",
+        offset: 4,
+      },
+      h: {
+        type: "int",
+        offset: 8,
+      },
+      refresh_rate: {
+        type: "int",
+        offset: 12,
+      },
+      driverdata: {
+        type: "void*",
+        offset: 16,
+      },
+    },
+  },
   SDL_Keysym: {
     size: 16,
     members: {
@@ -55,7 +79,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Palette: {
     size: 24,
     members: {
@@ -79,7 +102,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_PixelFormat: {
     size: 56,
     members: {
@@ -167,7 +189,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Point: {
     allocatable: true,
     writable: true,
@@ -183,7 +204,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Rect: {
     allocatable: true,
     writable: true,
@@ -207,7 +227,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_RendererInfo: {
     allocatable: true,
     writable: false,
@@ -240,7 +259,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Surface: {
     size: 96,
     members: {
@@ -297,7 +315,24 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
+  SDL_SysWMinfo: {
+    size: 72,
+    members: {
+      version: {
+        type: "SDL_version",
+        offset: 0,
+      },
+      subsystem: {
+        type: "SDL_SYSWM_TYPE",
+        offset: 4,
+      },
+      info: {
+        todo: "Figure out how to map unions.",
+        type: "Uint8[]",
+        offset: 8,
+      },
+    },
+  },
   SDL_version: {
     allocatable: true,
     size: 3,

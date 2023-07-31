@@ -89,9 +89,11 @@ async function main(): Promise<number> {
 
   const exeCommand = new Deno.Command(exeOutputPath);
 
-  const { code: exeCode, stdout: exeStdout } = await exeCommand.output();
+  const { code: exeCode, stdout: exeStdout, stderr: exeStderr } = await exeCommand.output();
 
   if (exeCode !== 0) {
+    console.info(exeStdout);
+    console.error(exeStderr);
     return 1;
   }
 
@@ -107,6 +109,7 @@ function writeStartCode(): void {
   write("#include <stddef.h>");
   write("#include <stdio.h>");
   write("#include <SDL.h>");
+  write("#include <SDL_syswm.h>");
   write("#include <KHR/khrplatform.h>");
   write("");
   write("int main(int argc, char* args[]) {");
@@ -116,6 +119,24 @@ function writeStartCode(): void {
   writePrintF("export const enums: CodeGenEnums = {};");
   writePrintF("export const functions: CodeGenFunctions = {};");
   writePrintF("export const structs: CodeGenStructs = {};");
+
+  write(`printf("structs[\\"SDL_SysWMinfo\\"] = {\\n");
+  printf("\\tsize: %llu,\\n", sizeof(SDL_SysWMinfo));
+  printf("\\tmembers: {\\n");
+  printf("\\t\\tversion: {\\n");
+  printf("\\t\\t\\ttype: \\"SDL_version\\",\\n");
+  printf("\\t\\t\\toffset: %llu,\\n", offsetof(SDL_SysWMinfo, version));
+  printf("\\t\\t},\\n");
+  printf("\\t\\tsubsystem: {\\n");
+  printf("\\t\\t\\ttype: \\"SDL_SYSWM_TYPE\\",\\n");
+  printf("\\t\\t\\toffset: %llu,\\n", offsetof(SDL_SysWMinfo, subsystem));
+  printf("\\t\\t},\\n");
+  printf("\\t\\tinfo: {\\n");
+  printf("\\t\\t\\ttype: \\"Uint8[]\\",\\n");
+  printf("\\t\\t\\toffset: %llu,\\n", offsetof(SDL_SysWMinfo, info));
+  printf("\\t\\t},\\n");
+  printf("\\t}\\n");
+  printf("};\\n");`);
 }
 
 function writeEndCode(): void {
@@ -187,7 +208,7 @@ async function scrapeFile(filePath: string): Promise<void> {
       captureMode === "struct" && line.startsWith("} ") &&
       line.endsWith(";")
     ) {
-      // outputStruct(capture);
+      outputStruct(capture);
       shouldFlush = true;
     }
 
@@ -236,10 +257,11 @@ function outputEnum(capture: string): void {
   }
 
   if (
-    enumName === "SDL_KeyCode" ||
-    enumName === "SDL_PixelFormatEnum" ||
-    enumName === "SDL_SYSWM_TYPE" ||
-    enumName === "SDL_WindowFlags"
+    [
+      "SDL_KeyCode",
+      "SDL_PixelFormatEnum",
+      "SDL_WindowFlags",
+    ].includes(enumName)
   ) {
     return;
   }
@@ -427,14 +449,23 @@ function outputStruct(capture: string): void {
     structName.startsWith("SDLTest_") ||
     [
       "SDL_AudioCVT",
+      "SDL_ControllerSensorEvent",
+      "SDL_GUID",
+      "SDL_HapticCondition",
+      "SDL_HapticDirection",
+      "SDL_MessageBoxColorScheme",
+      "SDL_PixelFormat",
+      "SDL_RendererInfo",
+      "SDL_SensorEvent",
+      "SDL_TextEditingEvent",
+      "SDL_TextInputEvent",
       "SDL_VirtualJoystickDesc",
     ].includes(structName)
   ) {
     return;
   }
 
-  writePrintF("/* struct */");
-  writePrintF(`${structName}: {`);
+  writePrintF(`structs["${structName}"] = {`);
   writePrintF("\tsize: %llu,", `sizeof(${structName})`);
   writePrintF("\tmembers: {");
 
@@ -474,7 +505,7 @@ function outputStruct(capture: string): void {
   }
 
   writePrintF("\t}");
-  writePrintF("},");
+  writePrintF("};");
 }
 
 function stringify(obj: unknown): string {
@@ -504,13 +535,14 @@ async function updateCodeGenInput(
 ): Promise<void> {
   await updateCodeGenEnums(scrapedEnums);
   await updateCodeGenFunctions(scrapedFunctions);
+  await updateCodeGenStructs(scrapedStructs);
 }
 
 async function updateCodeGenEnums(scrapedEnums: CodeGenEnums): Promise<void> {
   const { enums } = await import("./codegen/SDL/enums.ts");
 
   for (const [enumName, _enum] of Object.entries(scrapedEnums)) {
-    if (["SDL_FlashOperation", "SDL_HitTest"].includes(enumName)) {
+    if (["SDL_FlashOperation", "SDL_SYSWM_TYPE"].includes(enumName) && enums[enumName] === undefined) {
       enums[enumName] = _enum;
     }
   }
@@ -542,4 +574,31 @@ export const functions: CodeGenFunctions = ${stringify(sortObjectKeys(functions)
 
   await Deno.writeTextFile("./codegen/SDL/functions.ts", output);
   await formatFile("./codegen/SDL/functions.ts");
+}
+
+async function updateCodeGenStructs(scrapedStructs: CodeGenStructs): Promise<void> {
+  const { structs } = await import("./codegen/SDL/structs.ts");
+
+  for (const [structName, struct] of Object.entries(scrapedStructs)) {
+    console.info(structName);
+    if (["SDL_DisplayMode", "SDL_SysWMinfo"].includes(structName) && structs[structName] === undefined) {
+      structs[structName] = struct;
+    }
+  }
+
+  const output = `import { CodeGenOpaqueStructs, CodeGenStructs } from "../types.ts";
+  
+export const opaqueStructs: CodeGenOpaqueStructs = [
+  // TODO: Figure out how to implement SDL_RWops in deno.
+  // "SDL_BlitMap",
+  "SDL_Renderer",
+  "SDL_RWops",
+  "SDL_Texture",
+  "SDL_Window",
+];
+
+export const structs: CodeGenStructs = ${stringify(sortObjectKeys(structs))} as const;`;
+
+  await Deno.writeTextFile("./codegen/SDL/structs.ts", output);
+  await formatFile("./codegen/SDL/structs.ts");
 }

@@ -25,6 +25,7 @@ import {
   RendererFlip,
   ScaleMode,
   Scancode,
+  SYSWM_TYPE,
   TextureAccess,
   TextureModulate,
   WindowEventID,
@@ -165,6 +166,44 @@ export class Color implements AllocatableStruct {
 
   public set a(value: u8) {
     this._view.setU8(3, value);
+  }
+}
+
+export class DisplayMode implements Struct {
+  public static SIZE_IN_BYTES = 24;
+
+  public readonly _data!: Uint8Array | Pointer<DisplayMode>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<DisplayMode> | null): DisplayMode | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new DisplayMode() as unknown as StructInternal<DisplayMode>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as DisplayMode;
+  }
+
+  public get format(): u32 {
+    return this._view.getU32(0);
+  }
+
+  public get w(): i32 {
+    return this._view.getI32(4);
+  }
+
+  public get h(): i32 {
+    return this._view.getI32(8);
+  }
+
+  public get refresh_rate(): i32 {
+    return this._view.getI32(12);
+  }
+
+  public get driverdata(): Pointer<void> {
+    return this._view.getPointer(16);
   }
 }
 
@@ -542,6 +581,35 @@ export class Surface implements Struct {
   public get refcount(): i32 {
     return this._view.getI32(88);
   }
+}
+
+export class SysWMinfo implements Struct {
+  public static SIZE_IN_BYTES = 72;
+
+  public readonly _data!: Uint8Array | Pointer<SysWMinfo>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<SysWMinfo> | null): SysWMinfo | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new SysWMinfo() as unknown as StructInternal<SysWMinfo>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as SysWMinfo;
+  }
+
+  public get version(): version {
+    return version.of(this._view.getArray(3, 0)) as version;
+  }
+
+  public get subsystem(): SYSWM_TYPE {
+    return this._view.getU32(4) as SYSWM_TYPE;
+  }
+
+  // TODO: Figure out how to map unions.
+  // info
 }
 
 export class version implements AllocatableStruct {

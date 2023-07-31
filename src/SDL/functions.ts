@@ -7,7 +7,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
@@ -28,6 +28,7 @@ import {
   RendererFlip,
   ScaleMode,
   Scancode,
+  SYSWM_TYPE,
   TextureAccess,
   TextureModulate,
   WindowEventID,
@@ -36,6 +37,7 @@ import {
 } from "./enums.ts";
 import {
   Color,
+  DisplayMode,
   Keysym,
   Palette,
   PixelFormat,
@@ -45,6 +47,7 @@ import {
   RendererInfo,
   RWops,
   Surface,
+  SysWMinfo,
   Texture,
   version,
   Window,
@@ -122,7 +125,7 @@ export function CreateRGBSurface(
 CreateRGBSurface.symbolName = "SDL_CreateRGBSurface";
 
 export function CreateRGBSurfaceFrom(
-  pixels: TypedArray,
+  pixels: PointerLike<unknown>,
   width: i32,
   height: i32,
   depth: i32,
@@ -133,7 +136,7 @@ export function CreateRGBSurfaceFrom(
   Amask: u32,
 ): Surface | null {
   return Surface.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateRGBSurfaceFrom(
-    Platform.toPlatformPointer(Pointer.ofTypedArray(pixels)),
+    Platform.toPlatformPointer(Pointer.of(pixels)),
     width,
     height,
     depth,
@@ -257,10 +260,10 @@ export function CreateWindowAndRenderer(
 CreateWindowAndRenderer.symbolName = "SDL_CreateWindowAndRenderer";
 
 export function CreateWindowFrom(
-  data: TypedArray,
+  data: PointerLike<unknown>,
 ): Window | null {
   return Window.of(Platform.fromPlatformPointer(_library.symbols.SDL_CreateWindowFrom(
-    Platform.toPlatformPointer(Pointer.ofTypedArray(data)),
+    Platform.toPlatformPointer(Pointer.of(data)),
   ) as PlatformPointer<Window>));
 }
 CreateWindowFrom.symbolName = "SDL_CreateWindowFrom";
@@ -407,6 +410,9 @@ export function GetScancodeName(
 }
 GetScancodeName.symbolName = "SDL_GetScancodeName";
 
+// TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+// SDL_GetShapedWindowMode
+
 export function GetSystemRAM(): i32 {
   return _library.symbols.SDL_GetSystemRAM() as i32;
 }
@@ -494,6 +500,17 @@ export function GetWindowBrightness(
 }
 GetWindowBrightness.symbolName = "SDL_GetWindowBrightness";
 
+export function GetWindowData(
+  window: PointerLike<Window>,
+  name: string,
+): Pointer<unknown> {
+  return Platform.fromPlatformPointer(_library.symbols.SDL_GetWindowData(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformString(name),
+  ) as PlatformPointer<unknown>)!;
+}
+GetWindowData.symbolName = "SDL_GetWindowData";
+
 export function GetWindowDisplayIndex(
   window: PointerLike<Window>,
 ): i32 {
@@ -502,6 +519,17 @@ export function GetWindowDisplayIndex(
   ) as i32;
 }
 GetWindowDisplayIndex.symbolName = "SDL_GetWindowDisplayIndex";
+
+export function GetWindowDisplayMode(
+  window: PointerLike<Window>,
+  mode: PointerLike<DisplayMode>,
+): i32 {
+  return _library.symbols.SDL_GetWindowDisplayMode(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(mode)),
+  ) as i32;
+}
+GetWindowDisplayMode.symbolName = "SDL_GetWindowDisplayMode";
 
 export function GetWindowFlags(
   window: PointerLike<Window>,
@@ -521,6 +549,21 @@ export function GetWindowFromID(
 }
 GetWindowFromID.symbolName = "SDL_GetWindowFromID";
 
+export function GetWindowGammaRamp(
+  window: PointerLike<Window>,
+  red: PointerLike<u16>,
+  green: PointerLike<u16>,
+  blue: PointerLike<u16>,
+): i32 {
+  return _library.symbols.SDL_GetWindowGammaRamp(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(red)),
+    Platform.toPlatformPointer(Pointer.of(green)),
+    Platform.toPlatformPointer(Pointer.of(blue)),
+  ) as i32;
+}
+GetWindowGammaRamp.symbolName = "SDL_GetWindowGammaRamp";
+
 export function GetWindowGrab(
   window: PointerLike<Window>,
 ): boolean {
@@ -529,6 +572,17 @@ export function GetWindowGrab(
   ) as boolean;
 }
 GetWindowGrab.symbolName = "SDL_GetWindowGrab";
+
+export function GetWindowICCProfile(
+  window: PointerLike<Window>,
+  size: PointerLike<int>,
+): Pointer<unknown> {
+  return Platform.fromPlatformPointer(_library.symbols.SDL_GetWindowICCProfile(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(size)),
+  ) as PlatformPointer<unknown>)!;
+}
+GetWindowICCProfile.symbolName = "SDL_GetWindowICCProfile";
 
 export function GetWindowID(
   window: PointerLike<Window>,
@@ -591,6 +645,17 @@ export function GetWindowMouseRect(
   ) as PlatformPointer<Rect>));
 }
 GetWindowMouseRect.symbolName = "SDL_GetWindowMouseRect";
+
+export function GetWindowOpacity(
+  window: PointerLike<Window>,
+  out_opacity: PointerLike<f32>,
+): i32 {
+  return _library.symbols.SDL_GetWindowOpacity(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(out_opacity)),
+  ) as i32;
+}
+GetWindowOpacity.symbolName = "SDL_GetWindowOpacity";
 
 export function GetWindowPixelFormat(
   window: PointerLike<Window>,
@@ -657,6 +722,17 @@ export function GetWindowTitle(
   ) as PlatformPointer<unknown>);
 }
 GetWindowTitle.symbolName = "SDL_GetWindowTitle";
+
+export function GetWindowWMInfo(
+  window: PointerLike<Window>,
+  info: PointerLike<SysWMinfo>,
+): boolean {
+  return _library.symbols.SDL_GetWindowWMInfo(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(info)),
+  ) as boolean;
+}
+GetWindowWMInfo.symbolName = "SDL_GetWindowWMInfo";
 
 export function HasColorKey(
   surface: PointerLike<Surface>,
@@ -1042,6 +1118,23 @@ export function RenderPresent(
 }
 RenderPresent.symbolName = "SDL_RenderPresent";
 
+export function RenderWindowToLogical(
+  renderer: PointerLike<Renderer>,
+  windowX: i32,
+  windowY: i32,
+  logicalX: PointerLike<f32>,
+  logicalY: PointerLike<f32>,
+): void {
+  _library.symbols.SDL_RenderWindowToLogical(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    windowX,
+    windowY,
+    Platform.toPlatformPointer(Pointer.of(logicalX)),
+    Platform.toPlatformPointer(Pointer.of(logicalY)),
+  );
+}
+RenderWindowToLogical.symbolName = "SDL_RenderWindowToLogical";
+
 export function RestoreWindow(
   window: PointerLike<Window>,
 ): void {
@@ -1173,6 +1266,30 @@ export function SetWindowBrightness(
 }
 SetWindowBrightness.symbolName = "SDL_SetWindowBrightness";
 
+export function SetWindowData(
+  window: PointerLike<Window>,
+  name: string,
+  userdata: PointerLike<unknown>,
+): Pointer<unknown> {
+  return Platform.fromPlatformPointer(_library.symbols.SDL_SetWindowData(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformString(name),
+    Platform.toPlatformPointer(Pointer.of(userdata)),
+  ) as PlatformPointer<unknown>)!;
+}
+SetWindowData.symbolName = "SDL_SetWindowData";
+
+export function SetWindowDisplayMode(
+  window: PointerLike<Window>,
+  mode: PointerLike<DisplayMode>,
+): i32 {
+  return _library.symbols.SDL_SetWindowDisplayMode(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(mode)),
+  ) as i32;
+}
+SetWindowDisplayMode.symbolName = "SDL_SetWindowDisplayMode";
+
 export function SetWindowFullscreen(
   window: PointerLike<Window>,
   flags: u32,
@@ -1184,6 +1301,21 @@ export function SetWindowFullscreen(
 }
 SetWindowFullscreen.symbolName = "SDL_SetWindowFullscreen";
 
+export function SetWindowGammaRamp(
+  window: PointerLike<Window>,
+  red: PointerLike<u16>,
+  green: PointerLike<u16>,
+  blue: PointerLike<u16>,
+): i32 {
+  return _library.symbols.SDL_SetWindowGammaRamp(
+    Platform.toPlatformPointer(Pointer.of(window)),
+    Platform.toPlatformPointer(Pointer.of(red)),
+    Platform.toPlatformPointer(Pointer.of(green)),
+    Platform.toPlatformPointer(Pointer.of(blue)),
+  ) as i32;
+}
+SetWindowGammaRamp.symbolName = "SDL_SetWindowGammaRamp";
+
 export function SetWindowGrab(
   window: PointerLike<Window>,
   grabbed: boolean,
@@ -1194,6 +1326,9 @@ export function SetWindowGrab(
   );
 }
 SetWindowGrab.symbolName = "SDL_SetWindowGrab";
+
+// TODO: Implement callbacks
+// SDL_SetWindowHitTest
 
 export function SetWindowIcon(
   window: PointerLike<Window>,
@@ -1320,6 +1455,9 @@ export function SetWindowResizable(
 }
 SetWindowResizable.symbolName = "SDL_SetWindowResizable";
 
+// TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+// SDL_SetWindowShape
+
 export function SetWindowSize(
   window: PointerLike<Window>,
   w: i32,
@@ -1343,6 +1481,9 @@ export function SetWindowTitle(
   );
 }
 SetWindowTitle.symbolName = "SDL_SetWindowTitle";
+
+// TODO: Implement callbacks
+// SDL_SetWindowsMessageHook
 
 export function ShowWindow(
   window: PointerLike<Window>,
