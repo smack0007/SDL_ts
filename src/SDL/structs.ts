@@ -15,6 +15,7 @@ import {
   BlendMode,
   BlendOperation,
   EventType,
+  FlashOperation,
   InitFlags,
   Keycode,
   PackedLayout,
@@ -24,6 +25,7 @@ import {
   RendererFlip,
   ScaleMode,
   Scancode,
+  SYSWM_TYPE,
   TextureAccess,
   TextureModulate,
   WindowEventID,
@@ -167,6 +169,44 @@ export class Color implements AllocatableStruct {
   }
 }
 
+export class DisplayMode implements Struct {
+  public static SIZE_IN_BYTES = 24;
+
+  public readonly _data!: Uint8Array | Pointer<DisplayMode>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<DisplayMode> | null): DisplayMode | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new DisplayMode() as unknown as StructInternal<DisplayMode>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as DisplayMode;
+  }
+
+  public get format(): u32 {
+    return this._view.getU32(0);
+  }
+
+  public get w(): i32 {
+    return this._view.getI32(4);
+  }
+
+  public get h(): i32 {
+    return this._view.getI32(8);
+  }
+
+  public get refresh_rate(): i32 {
+    return this._view.getI32(12);
+  }
+
+  public get driverdata(): Pointer<void> {
+    return this._view.getPointer(16);
+  }
+}
+
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
@@ -225,6 +265,10 @@ export class Palette implements Struct {
   public get colors(): Color {
     return Color.of(this._view.getPointer(8)) as Color;
   }
+
+  // version
+
+  // refcount
 }
 
 export class PixelFormat implements Struct {
@@ -275,6 +319,26 @@ export class PixelFormat implements Struct {
   public get Amask(): u32 {
     return this._view.getU32(32);
   }
+
+  // Rloss
+
+  // Gloss
+
+  // Bloss
+
+  // Aloss
+
+  // Rshift
+
+  // Gshift
+
+  // Bshift
+
+  // Ashift
+
+  // refcount
+
+  // next
 }
 
 export class Point implements AllocatableStruct {
@@ -447,6 +511,9 @@ export class RendererInfo implements AllocatableStruct {
     return this._view.getU32(12);
   }
 
+  // TODO: Add support for arrays in structs.
+  // texture_formats
+
   public get max_texture_width(): i32 {
     return this._view.getI32(80);
   }
@@ -501,13 +568,48 @@ export class Surface implements Struct {
     return this._view.getPointer(40);
   }
 
+  // locked
+
+  // list_data
+
   public get clip_rect(): Rect {
     return Rect.of(this._view.getArray(16, 64)) as Rect;
   }
 
+  // map
+
   public get refcount(): i32 {
     return this._view.getI32(88);
   }
+}
+
+export class SysWMinfo implements Struct {
+  public static SIZE_IN_BYTES = 72;
+
+  public readonly _data!: Uint8Array | Pointer<SysWMinfo>;
+  private readonly _view!: PlatformDataView;
+
+  public static of(data: Uint8Array | Pointer<SysWMinfo> | null): SysWMinfo | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new SysWMinfo() as unknown as StructInternal<SysWMinfo>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    return struct as unknown as SysWMinfo;
+  }
+
+  public get version(): version {
+    return version.of(this._view.getArray(3, 0)) as version;
+  }
+
+  public get subsystem(): SYSWM_TYPE {
+    return this._view.getU32(4) as SYSWM_TYPE;
+  }
+
+  // TODO: Figure out how to map unions.
+  // info
 }
 
 export class version implements AllocatableStruct {

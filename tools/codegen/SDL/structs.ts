@@ -33,7 +33,31 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
+  SDL_DisplayMode: {
+    size: 24,
+    members: {
+      format: {
+        type: "Uint32",
+        offset: 0,
+      },
+      w: {
+        type: "int",
+        offset: 4,
+      },
+      h: {
+        type: "int",
+        offset: 8,
+      },
+      refresh_rate: {
+        type: "int",
+        offset: 12,
+      },
+      driverdata: {
+        type: "void*",
+        offset: 16,
+      },
+    },
+  },
   SDL_Keysym: {
     size: 16,
     members: {
@@ -55,7 +79,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Palette: {
     size: 24,
     members: {
@@ -67,18 +90,18 @@ export const structs: CodeGenStructs = {
         type: "SDL_Color*",
         offset: 8,
       },
-      // Internal
-      // version: {
-      //   type: "Uint32",
-      //   offset: 16,
-      // },
-      // refcount: {
-      //   type: "int",
-      //   offset: 20,
-      // },
+      version: {
+        internal: true,
+        type: "Uint32",
+        offset: 16,
+      },
+      refcount: {
+        internal: true,
+        type: "int",
+        offset: 20,
+      },
     },
   },
-
   SDL_PixelFormat: {
     size: 56,
     members: {
@@ -114,50 +137,58 @@ export const structs: CodeGenStructs = {
         type: "Uint32",
         offset: 32,
       },
-      // Internal
-      // Rloss: {
-      //   type: "Uint8",
-      //   offset: 36,
-      // },
-      // Gloss: {
-      //   type: "Uint8",
-      //   offset: 37,
-      // },
-      // Bloss: {
-      //   type: "Uint8",
-      //   offset: 38,
-      // },
-      // Aloss: {
-      //   type: "Uint8",
-      //   offset: 39,
-      // },
-      // Rshift: {
-      //   type: "Uint8",
-      //   offset: 40,
-      // },
-      // Gshift: {
-      //   type: "Uint8",
-      //   offset: 41,
-      // },
-      // Bshift: {
-      //   type: "Uint8",
-      //   offset: 42,
-      // },
-      // Ashift: {
-      //   type: "Uint8",
-      //   offset: 43,
-      // },
-      // refcount: {
-      //   type: "int",
-      //   offset: 44,
-      // },
-      // next: {
-      //   type: "SDL_PixelFormat*",
-      //   offset: 48,
-      // },
+      Rloss: {
+        internal: true,
+        type: "Uint8",
+        offset: 36,
+      },
+      Gloss: {
+        internal: true,
+        type: "Uint8",
+        offset: 37,
+      },
+      Bloss: {
+        internal: true,
+        type: "Uint8",
+        offset: 38,
+      },
+      Aloss: {
+        internal: true,
+        type: "Uint8",
+        offset: 39,
+      },
+      Rshift: {
+        internal: true,
+        type: "Uint8",
+        offset: 40,
+      },
+      Gshift: {
+        internal: true,
+        type: "Uint8",
+        offset: 41,
+      },
+      Bshift: {
+        internal: true,
+        type: "Uint8",
+        offset: 42,
+      },
+      Ashift: {
+        internal: true,
+        type: "Uint8",
+        offset: 43,
+      },
+      refcount: {
+        internal: true,
+        type: "int",
+        offset: 44,
+      },
+      next: {
+        internal: true,
+        type: "SDL_PixelFormat*",
+        offset: 48,
+      },
     },
   },
-
   SDL_Point: {
     allocatable: true,
     writable: true,
@@ -173,7 +204,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Rect: {
     allocatable: true,
     writable: true,
@@ -197,7 +227,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_RendererInfo: {
     allocatable: true,
     writable: false,
@@ -215,12 +244,11 @@ export const structs: CodeGenStructs = {
         type: "Uint32",
         offset: 12,
       },
-      // TODO: Add support for arrays in structs.
-      // texture_formats: {
-      //   type: "Uint32",
-      //   type: "u32",
-      //   offset: 16,
-      // },
+      texture_formats: {
+        todo: "Add support for arrays in structs.",
+        type: "Uint32",
+        offset: 16,
+      },
       max_texture_width: {
         type: "int",
         offset: 80,
@@ -231,7 +259,6 @@ export const structs: CodeGenStructs = {
       },
     },
   },
-
   SDL_Surface: {
     size: 96,
     members: {
@@ -263,32 +290,49 @@ export const structs: CodeGenStructs = {
         type: "void*",
         offset: 40,
       },
-      // Interanl
-      // locked: {
-      //   type: "int",
-      //   offset: 48,
-      // },
-      // Internal
-      // list_data: {
-      //   type: "void*",
-      //   offset: 56,
-      // },
+      locked: {
+        internal: true,
+        type: "int",
+        offset: 48,
+      },
+      list_data: {
+        internal: true,
+        type: "void*",
+        offset: 56,
+      },
       clip_rect: {
         type: "SDL_Rect",
         offset: 64,
       },
-      // Internal
-      // map: {
-      //   type: "SDL_BlitMap*",
-      //   offset: 80,
-      // },
+      map: {
+        internal: true,
+        type: "SDL_BlitMap*",
+        offset: 80,
+      },
       refcount: {
         type: "int",
         offset: 88,
       },
     },
   },
-
+  SDL_SysWMinfo: {
+    size: 72,
+    members: {
+      version: {
+        type: "SDL_version",
+        offset: 0,
+      },
+      subsystem: {
+        type: "SDL_SYSWM_TYPE",
+        offset: 4,
+      },
+      info: {
+        todo: "Figure out how to map unions.",
+        type: "Uint8[]",
+        offset: 8,
+      },
+    },
+  },
   SDL_version: {
     allocatable: true,
     size: 3,

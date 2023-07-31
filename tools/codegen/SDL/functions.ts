@@ -23,7 +23,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_BlitSurface: {
     symbolName: "SDL_UpperBlit",
     parameters: {
@@ -32,7 +31,6 @@ export const functions: CodeGenFunctions = {
       },
       srcrect: {
         type: "SDL_Rect*",
-
         nullable: true,
       },
       dst: {
@@ -40,7 +38,6 @@ export const functions: CodeGenFunctions = {
       },
       dstrect: {
         type: "SDL_Rect*",
-
         nullable: true,
       },
     },
@@ -48,7 +45,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_ConvertSurface: {
     parameters: {
       src: {
@@ -65,24 +61,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
-  SDL_CreateRenderer: {
-    parameters: {
-      window: {
-        type: "SDL_Window*",
-      },
-      index: {
-        type: "int",
-      },
-      flags: {
-        type: "Uint32",
-      },
-    },
-    result: {
-      type: "SDL_Renderer*",
-    },
-  },
-
   SDL_CreateRGBSurface: {
     parameters: {
       flags: {
@@ -114,7 +92,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
   SDL_CreateRGBSurfaceFrom: {
     parameters: {
       pixels: {
@@ -149,7 +126,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: {
       flags: {
@@ -172,7 +148,22 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
+  SDL_CreateRenderer: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      index: {
+        type: "int",
+      },
+      flags: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "SDL_Renderer*",
+    },
+  },
   SDL_CreateTexture: {
     parameters: {
       renderer: {
@@ -195,7 +186,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Texture*",
     },
   },
-
   SDL_CreateTextureFromSurface: {
     parameters: {
       renderer: {
@@ -209,7 +199,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Texture*",
     },
   },
-
   SDL_CreateWindow: {
     parameters: {
       title: {
@@ -240,19 +229,26 @@ export const functions: CodeGenFunctions = {
     overloads: [
       {
         parameters: {
-          x: { overrideType: "WindowPos" },
-          y: { overrideType: "WindowPos" },
+          x: {
+            overrideType: "WindowPos",
+          },
+          y: {
+            overrideType: "WindowPos",
+          },
         },
       },
       {
         parameters: {
-          x: { overrideType: "i32" },
-          y: { overrideType: "i32" },
+          x: {
+            overrideType: "i32",
+          },
+          y: {
+            overrideType: "i32",
+          },
         },
       },
     ],
   },
-
   SDL_CreateWindowAndRenderer: {
     parameters: {
       width: {
@@ -276,7 +272,16 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
+  SDL_CreateWindowFrom: {
+    parameters: {
+      data: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "SDL_Window*",
+    },
+  },
   SDL_Delay: {
     parameters: {
       ms: {
@@ -287,7 +292,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_DestroyRenderer: {
     parameters: {
       renderer: {
@@ -298,7 +302,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_DestroyTexture: {
     parameters: {
       texture: {
@@ -309,7 +312,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_DestroyWindow: {
     parameters: {
       window: {
@@ -320,7 +322,16 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
+  SDL_DestroyWindowSurface: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_FillRect: {
     parameters: {
       dst: {
@@ -328,7 +339,6 @@ export const functions: CodeGenFunctions = {
       },
       rect: {
         type: "SDL_Rect*",
-
         nullable: true,
       },
       color: {
@@ -339,7 +349,19 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
+  SDL_FlashWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      operation: {
+        type: "SDL_FlashOperation",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_FreeSurface: {
     parameters: {
       surface: {
@@ -350,7 +372,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_GetColorKey: {
     parameters: {
       surface: {
@@ -364,14 +385,18 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_GetError: {
     parameters: {},
     result: {
       type: "char*",
     },
   },
-
+  SDL_GetGrabbedWindow: {
+    parameters: {},
+    result: {
+      type: "SDL_Window*",
+    },
+  },
   SDL_GetKeyboardState: {
     parameters: {
       numkeys: {
@@ -383,7 +408,6 @@ export const functions: CodeGenFunctions = {
       type: "Uint8*",
     },
   },
-
   SDL_GetRendererInfo: {
     parameters: {
       renderer: {
@@ -397,14 +421,12 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_GetRevision: {
     parameters: {},
     result: {
       type: "char*",
     },
   },
-
   SDL_GetScancodeFromKey: {
     parameters: {
       key: {
@@ -415,7 +437,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Scancode",
     },
   },
-
   SDL_GetScancodeName: {
     parameters: {
       scancode: {
@@ -426,14 +447,26 @@ export const functions: CodeGenFunctions = {
       type: "char*",
     },
   },
-
+  SDL_GetShapedWindowMode: {
+    todo: "SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      shape_mode: {
+        type: "SDL_WindowShapeMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_GetSystemRAM: {
     parameters: {},
     result: {
       type: "int",
     },
   },
-
   SDL_GetTextureAlphaMod: {
     parameters: {
       texture: {
@@ -447,7 +480,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_GetTextureBlendMode: {
     parameters: {
       texture: {
@@ -461,7 +493,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_GetTextureColorMod: {
     parameters: {
       texture: {
@@ -481,21 +512,18 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_GetTicks: {
     parameters: {},
     result: {
       type: "Uint32",
     },
   },
-
   SDL_GetTicks64: {
     parameters: {},
     result: {
       type: "Uint64",
     },
   },
-
   SDL_GetVersion: {
     parameters: {
       ver: {
@@ -506,7 +534,279 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
+  SDL_GetWindowBordersSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      top: {
+        type: "int*",
+      },
+      left: {
+        type: "int*",
+      },
+      bottom: {
+        type: "int*",
+      },
+      right: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowBrightness: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "float",
+    },
+  },
+  SDL_GetWindowData: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      name: {
+        type: "char*",
+      },
+    },
+    result: {
+      type: "void*",
+    },
+  },
+  SDL_GetWindowDisplayIndex: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowDisplayMode: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      mode: {
+        type: "SDL_DisplayMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowFlags: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "Uint32",
+    },
+  },
+  SDL_GetWindowFromID: {
+    parameters: {
+      id: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "SDL_Window*",
+    },
+  },
+  SDL_GetWindowGammaRamp: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      red: {
+        type: "Uint16*",
+      },
+      green: {
+        type: "Uint16*",
+      },
+      blue: {
+        type: "Uint16*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
+  SDL_GetWindowICCProfile: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      size: {
+        type: "size_t*",
+      },
+    },
+    result: {
+      type: "void*",
+    },
+  },
+  SDL_GetWindowID: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "Uint32",
+    },
+  },
+  SDL_GetWindowKeyboardGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
+  SDL_GetWindowMaximumSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_GetWindowMinimumSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_GetWindowMouseGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
+  SDL_GetWindowMouseRect: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_Rect*",
+    },
+  },
+  SDL_GetWindowOpacity: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      out_opacity: {
+        type: "float*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_GetWindowPixelFormat: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "Uint32",
+    },
+  },
+  SDL_GetWindowPosition: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      x: {
+        type: "int*",
+      },
+      y: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_GetWindowSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_GetWindowSizeInPixels: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      w: {
+        type: "int*",
+      },
+      h: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_GetWindowSurface: {
     parameters: {
       window: {
@@ -517,7 +817,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
   SDL_GetWindowTitle: {
     parameters: {
       window: {
@@ -528,7 +827,19 @@ export const functions: CodeGenFunctions = {
       type: "char*",
     },
   },
-
+  SDL_GetWindowWMInfo: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      info: {
+        type: "SDL_SysWMinfo*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
   SDL_HasColorKey: {
     parameters: {
       surface: {
@@ -539,7 +850,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_bool",
     },
   },
-
   SDL_HasIntersection: {
     parameters: {
       A: {
@@ -553,7 +863,26 @@ export const functions: CodeGenFunctions = {
       type: "SDL_bool",
     },
   },
-
+  SDL_HasWindowSurface: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
+  SDL_HideWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_Init: {
     parameters: {
       flags: {
@@ -564,7 +893,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_IntersectRect: {
     parameters: {
       A: {
@@ -581,7 +909,16 @@ export const functions: CodeGenFunctions = {
       type: "SDL_bool",
     },
   },
-
+  SDL_IsShapedWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "SDL_bool",
+    },
+  },
   SDL_LoadBMP_RW: {
     parameters: {
       src: {
@@ -595,7 +932,6 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
-
   SDL_LockSurface: {
     parameters: {
       surface: {
@@ -606,7 +942,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_MapRGB: {
     parameters: {
       format: {
@@ -626,7 +961,6 @@ export const functions: CodeGenFunctions = {
       type: "Uint32",
     },
   },
-
   SDL_MapRGBA: {
     parameters: {
       format: {
@@ -649,7 +983,6 @@ export const functions: CodeGenFunctions = {
       type: "Uint32",
     },
   },
-
   SDL_MaximizeWindow: {
     parameters: {
       window: {
@@ -660,7 +993,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_MinimizeWindow: {
     parameters: {
       window: {
@@ -671,7 +1003,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_PollEvent: {
     parameters: {
       event: {
@@ -682,7 +1013,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_QueryTexture: {
     parameters: {
       texture: {
@@ -707,14 +1037,36 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_Quit: {
     parameters: {},
     result: {
       type: "void",
     },
   },
-
+  SDL_RWFromFile: {
+    parameters: {
+      file: {
+        type: "char*",
+      },
+      mode: {
+        type: "char*",
+        overrideType: "RWMode",
+      },
+    },
+    result: {
+      type: "SDL_RWops*",
+    },
+  },
+  SDL_RaiseWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_RenderClear: {
     parameters: {
       renderer: {
@@ -725,7 +1077,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderCopy: {
     parameters: {
       renderer: {
@@ -736,12 +1087,10 @@ export const functions: CodeGenFunctions = {
       },
       srcrect: {
         type: "SDL_Rect*",
-
         nullable: true,
       },
       dstrect: {
         type: "SDL_Rect*",
-
         nullable: true,
       },
     },
@@ -749,7 +1098,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderCopyEx: {
     parameters: {
       renderer: {
@@ -778,7 +1126,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawLine: {
     parameters: {
       renderer: {
@@ -801,7 +1148,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawLines: {
     parameters: {
       renderer: {
@@ -818,7 +1164,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawPoint: {
     parameters: {
       renderer: {
@@ -835,7 +1180,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawPoints: {
     parameters: {
       renderer: {
@@ -852,7 +1196,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawRect: {
     parameters: {
       renderer: {
@@ -866,7 +1209,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderDrawRects: {
     parameters: {
       renderer: {
@@ -883,7 +1225,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderFillRect: {
     parameters: {
       renderer: {
@@ -897,7 +1238,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderFillRects: {
     parameters: {
       renderer: {
@@ -914,7 +1254,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_RenderFlush: {
     parameters: {
       renderer: {
@@ -925,7 +1264,38 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
+  SDL_RenderGetWindow: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+    },
+    result: {
+      type: "SDL_Window*",
+    },
+  },
+  SDL_RenderLogicalToWindow: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      logicalX: {
+        type: "float",
+      },
+      logicalY: {
+        type: "float",
+      },
+      windowX: {
+        type: "int*",
+      },
+      windowY: {
+        type: "int*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_RenderPresent: {
     parameters: {
       renderer: {
@@ -936,7 +1306,28 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
+  SDL_RenderWindowToLogical: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      windowX: {
+        type: "int",
+      },
+      windowY: {
+        type: "int",
+      },
+      logicalX: {
+        type: "float*",
+      },
+      logicalY: {
+        type: "float*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_RestoreWindow: {
     parameters: {
       window: {
@@ -947,23 +1338,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
-  SDL_RWFromFile: {
-    parameters: {
-      file: {
-        type: "char*",
-      },
-      mode: {
-        type: "char*",
-
-        overrideType: "RWMode",
-      },
-    },
-    result: {
-      type: "SDL_RWops*",
-    },
-  },
-
   SDL_SetColorKey: {
     parameters: {
       surface: {
@@ -980,7 +1354,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetRenderDrawBlendMode: {
     parameters: {
       renderer: {
@@ -994,7 +1367,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetRenderDrawColor: {
     parameters: {
       renderer: {
@@ -1017,7 +1389,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetSurfaceBlendMode: {
     parameters: {
       surface: {
@@ -1031,7 +1402,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetTextureAlphaMod: {
     parameters: {
       texture: {
@@ -1045,7 +1415,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetTextureBlendMode: {
     parameters: {
       texture: {
@@ -1059,7 +1428,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_SetTextureColorMod: {
     parameters: {
       texture: {
@@ -1079,7 +1447,318 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
+  SDL_SetWindowAlwaysOnTop: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      on_top: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowBordered: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      bordered: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowBrightness: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      brightness: {
+        type: "float",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowData: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      name: {
+        type: "char*",
+      },
+      userdata: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "void*",
+    },
+  },
+  SDL_SetWindowDisplayMode: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      mode: {
+        type: "SDL_DisplayMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowFullscreen: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      flags: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowGammaRamp: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      red: {
+        type: "Uint16*",
+      },
+      green: {
+        type: "Uint16*",
+      },
+      blue: {
+        type: "Uint16*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      grabbed: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowHitTest: {
+    todo: "Implement callbacks",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      callback: {
+        type: "SDL_HitTest",
+      },
+      callback_data: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowIcon: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      icon: {
+        type: "SDL_Surface*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowInputFocus: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowKeyboardGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      grabbed: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowMaximumSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      max_w: {
+        type: "int",
+      },
+      max_h: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowMinimumSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      min_w: {
+        type: "int",
+      },
+      min_h: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowModalFor: {
+    parameters: {
+      modal_window: {
+        type: "SDL_Window*",
+      },
+      parent_window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowMouseGrab: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      grabbed: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowMouseRect: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      rect: {
+        type: "SDL_Rect*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowOpacity: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      opacity: {
+        type: "float",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowPosition: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      x: {
+        type: "int",
+      },
+      y: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowResizable: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      resizable: {
+        type: "SDL_bool",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_SetWindowShape: {
+    todo: "SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.",
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      shape: {
+        type: "SDL_Surface*",
+      },
+      shape_mode: {
+        type: "SDL_WindowShapeMode*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
+  SDL_SetWindowSize: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      w: {
+        type: "int",
+      },
+      h: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_SetWindowTitle: {
     parameters: {
       window: {
@@ -1093,7 +1772,30 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
+  SDL_SetWindowsMessageHook: {
+    todo: "Implement callbacks",
+    parameters: {
+      callback: {
+        type: "SDL_WindowsMessageHook",
+      },
+      userdata: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
+  SDL_ShowWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_UnlockSurface: {
     parameters: {
       surface: {
@@ -1104,7 +1806,6 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
-
   SDL_UpdateWindowSurface: {
     parameters: {
       window: {
@@ -1115,7 +1816,22 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
+  SDL_UpdateWindowSurfaceRects: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      rects: {
+        type: "SDL_Rect*",
+      },
+      numrects: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "int",
+    },
+  },
   SDL_WaitEvent: {
     parameters: {
       event: {
@@ -1126,7 +1842,6 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
-
   SDL_WaitEventTimeout: {
     parameters: {
       event: {
@@ -1138,6 +1853,22 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "int",
+    },
+  },
+  SDL_WarpMouseInWindow: {
+    parameters: {
+      window: {
+        type: "SDL_Window*",
+      },
+      x: {
+        type: "int",
+      },
+      y: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
     },
   },
 } as const;

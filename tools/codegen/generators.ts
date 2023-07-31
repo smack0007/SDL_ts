@@ -90,7 +90,7 @@ function stripPrefixes(value: string, ...prefixes: string[]): string {
 
 async function writeLinesToFile(path: string, lines: string[]): Promise<void> {
   await Deno.writeTextFile(path, lines.join("\n"));
-  await (await Deno.run({ cmd: ["deno", "fmt", path] })).status();
+  await (new Deno.Command(Deno.execPath(), { "args": ["fmt", path] })).output();
 }
 
 function mapEnumValue(value: string, enumData: CodeGenEnum): string {
@@ -565,6 +565,15 @@ public static SIZE_IN_BYTES = ${struct.size};`);
     structMembers.sort(sortStructMembers);
 
     for (const [memberName, member] of structMembers) {
+      if (member.internal || member.todo) {
+        if (member.todo) {
+          lines.push(`// TODO: ${member.todo}`);
+        }
+        lines.push(`// ${memberName}`);
+        lines.push("");
+        continue;
+      }
+
       let readOp = "";
       let writeOp = "";
       let length = 0;
@@ -669,6 +678,12 @@ export async function writeSymbols(
 
   lines.push("export const symbols = {");
   for (const [funcName, func] of Object.entries(functions)) {
+    if (func.todo) {
+      lines.push(`// TODO: ${func.todo}`);
+      lines.push(`// ${funcName}`);
+      continue;
+    }
+
     if (func.symbolName !== undefined) {
       lines.push(`\t${func.symbolName}: {`);
     } else {
@@ -838,7 +853,16 @@ function mapFunctionParamType(
       result = "string";
       break;
 
+    case "float*":
+      result = isReturnType ? "Pointer<f32>" : "PointerLike<f32>";
+      break;
+
     case "int*":
+      result = isReturnType ? "Pointer<int>" : "PointerLike<int>";
+      break;
+
+    case "size_t*":
+      // TODO: There should probably be a size and usize type.
       result = isReturnType ? "Pointer<int>" : "PointerLike<int>";
       break;
 
@@ -846,12 +870,16 @@ function mapFunctionParamType(
       result = isReturnType ? "Pointer<u8>" : "PointerLike<u8>";
       break;
 
+    case "Uint16*":
+      result = isReturnType ? "Pointer<u16>" : "PointerLike<u16>";
+      break;
+
     case "Uint32*":
       result = isReturnType ? "Pointer<u32>" : "PointerLike<u32>";
       break;
 
     case "void*":
-      result = "TypedArray";
+      result = isReturnType ? "Pointer<unknown>" : "PointerLike<unknown>";
       break;
   }
 
@@ -925,7 +953,7 @@ import { Box } from "../boxes.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f64, i32, InitOptions, int, TypedArray, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 `,
@@ -942,6 +970,13 @@ import { symbols } from "./_symbols.ts";
   lines.push("");
 
   for (const [funcName, func] of Object.entries(functions)) {
+    if (func.todo) {
+      lines.push(`// TODO: ${func.todo}`);
+      lines.push(`// ${funcName}`);
+      lines.push("");
+      continue;
+    }
+
     if (funcName.endsWith("_Init")) {
       if (Object.values(func.parameters).length >= 1) {
         lines.push(`export function Init(flags: InitFlags, options?: InitOptions): number;
@@ -1031,7 +1066,7 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         if (isFunctionParamString(param)) {
           lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
         } else if (isFunctionParamVoidPointer(param)) {
-          lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName})),`);
+          lines.push(`\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`);
         } else if (isFunctionParamDoublePointer(param)) {
           lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
         } else if (isFunctionParamStructByValue(structs, param)) {

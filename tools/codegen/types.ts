@@ -30,6 +30,9 @@ export interface CodeGenFunctionResult {
 }
 
 export interface CodeGenFunction {
+  // If set the function is not yet supported and shouldn't be output.
+  todo?: string;
+
   // Some functions are (i.e. SDL_BlitSurface) are just
   // macros that proxy to another name.
   symbolName?: string;
@@ -79,6 +82,12 @@ export interface CodeGenStruct {
 }
 
 export interface CodeGenStructMember {
+  // If true the member is internal to SDL and shouldn't be output.
+  internal?: boolean;
+
+  // If set the member is not yet supported and shouldn't be output.
+  todo?: string;
+
   // SDL type.
   type: string;
 

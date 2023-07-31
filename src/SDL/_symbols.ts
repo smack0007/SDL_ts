@@ -27,14 +27,6 @@ export const symbols = {
     ],
     result: /* SDL_Surface* */ "pointer",
   },
-  SDL_CreateRenderer: {
-    parameters: [
-      /* SDL_Window* window */ "pointer",
-      /* int index */ "i32",
-      /* Uint32 flags */ "u32",
-    ],
-    result: /* SDL_Renderer* */ "pointer",
-  },
   SDL_CreateRGBSurface: {
     parameters: [
       /* Uint32 flags */ "u32",
@@ -71,6 +63,14 @@ export const symbols = {
       /* Uint32 format */ "u32",
     ],
     result: /* SDL_Surface* */ "pointer",
+  },
+  SDL_CreateRenderer: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int index */ "i32",
+      /* Uint32 flags */ "u32",
+    ],
+    result: /* SDL_Renderer* */ "pointer",
   },
   SDL_CreateTexture: {
     parameters: [
@@ -110,6 +110,12 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_CreateWindowFrom: {
+    parameters: [
+      /* void* data */ "pointer",
+    ],
+    result: /* SDL_Window* */ "pointer",
+  },
   SDL_Delay: {
     parameters: [
       /* Uint32 ms */ "u32",
@@ -134,11 +140,24 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_DestroyWindowSurface: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_FillRect: {
     parameters: [
       /* SDL_Surface* dst */ "pointer",
       /* SDL_Rect* rect */ "pointer",
       /* Uint32 color */ "u32",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_FlashWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_FlashOperation operation */ "u32",
     ],
     result: /* int */ "i32",
   },
@@ -158,6 +177,10 @@ export const symbols = {
   SDL_GetError: {
     parameters: [],
     result: /* char* */ "pointer",
+  },
+  SDL_GetGrabbedWindow: {
+    parameters: [],
+    result: /* SDL_Window* */ "pointer",
   },
   SDL_GetKeyboardState: {
     parameters: [
@@ -188,6 +211,8 @@ export const symbols = {
     ],
     result: /* char* */ "pointer",
   },
+  // TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+  // SDL_GetShapedWindowMode
   SDL_GetSystemRAM: {
     parameters: [],
     result: /* int */ "i32",
@@ -229,6 +254,153 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_GetWindowBordersSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* top */ "pointer",
+      /* int* left */ "pointer",
+      /* int* bottom */ "pointer",
+      /* int* right */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowBrightness: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* float */ "f32",
+  },
+  SDL_GetWindowData: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* char* name */ "pointer",
+    ],
+    result: /* void* */ "pointer",
+  },
+  SDL_GetWindowDisplayIndex: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowDisplayMode: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_DisplayMode* mode */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowFlags: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* Uint32 */ "u32",
+  },
+  SDL_GetWindowFromID: {
+    parameters: [
+      /* Uint32 id */ "u32",
+    ],
+    result: /* SDL_Window* */ "pointer",
+  },
+  SDL_GetWindowGammaRamp: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* Uint16* red */ "pointer",
+      /* Uint16* green */ "pointer",
+      /* Uint16* blue */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
+  SDL_GetWindowICCProfile: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* size_t* size */ "pointer",
+    ],
+    result: /* void* */ "pointer",
+  },
+  SDL_GetWindowID: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* Uint32 */ "u32",
+  },
+  SDL_GetWindowKeyboardGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
+  SDL_GetWindowMaximumSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_GetWindowMinimumSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_GetWindowMouseGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
+  SDL_GetWindowMouseRect: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* SDL_Rect* */ "pointer",
+  },
+  SDL_GetWindowOpacity: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* float* out_opacity */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_GetWindowPixelFormat: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* Uint32 */ "u32",
+  },
+  SDL_GetWindowPosition: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* x */ "pointer",
+      /* int* y */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_GetWindowSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_GetWindowSizeInPixels: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int* w */ "pointer",
+      /* int* h */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
   SDL_GetWindowSurface: {
     parameters: [
       /* SDL_Window* window */ "pointer",
@@ -240,6 +412,13 @@ export const symbols = {
       /* SDL_Window* window */ "pointer",
     ],
     result: /* char* */ "pointer",
+  },
+  SDL_GetWindowWMInfo: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_SysWMinfo* info */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
   },
   SDL_HasColorKey: {
     parameters: [
@@ -254,6 +433,18 @@ export const symbols = {
     ],
     result: /* SDL_bool */ "bool",
   },
+  SDL_HasWindowSurface: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
+  SDL_HideWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
   SDL_Init: {
     parameters: [
       /* Uint32 flags */ "u32",
@@ -265,6 +456,12 @@ export const symbols = {
       /* SDL_Rect* A */ "pointer",
       /* SDL_Rect* B */ "pointer",
       /* SDL_Rect* result */ "pointer",
+    ],
+    result: /* SDL_bool */ "bool",
+  },
+  SDL_IsShapedWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
     ],
     result: /* SDL_bool */ "bool",
   },
@@ -330,6 +527,19 @@ export const symbols = {
   },
   SDL_Quit: {
     parameters: [],
+    result: /* void */ "void",
+  },
+  SDL_RWFromFile: {
+    parameters: [
+      /* char* file */ "pointer",
+      /* char* mode */ "pointer",
+    ],
+    result: /* SDL_RWops* */ "pointer",
+  },
+  SDL_RaiseWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
     result: /* void */ "void",
   },
   SDL_RenderClear: {
@@ -429,9 +639,35 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_RenderGetWindow: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+    ],
+    result: /* SDL_Window* */ "pointer",
+  },
+  SDL_RenderLogicalToWindow: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* float logicalX */ "f32",
+      /* float logicalY */ "f32",
+      /* int* windowX */ "pointer",
+      /* int* windowY */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
   SDL_RenderPresent: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_RenderWindowToLogical: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* int windowX */ "i32",
+      /* int windowY */ "i32",
+      /* float* logicalX */ "pointer",
+      /* float* logicalY */ "pointer",
     ],
     result: /* void */ "void",
   },
@@ -440,13 +676,6 @@ export const symbols = {
       /* SDL_Window* window */ "pointer",
     ],
     result: /* void */ "void",
-  },
-  SDL_RWFromFile: {
-    parameters: [
-      /* char* file */ "pointer",
-      /* char* mode */ "pointer",
-    ],
-    result: /* SDL_RWops* */ "pointer",
   },
   SDL_SetColorKey: {
     parameters: [
@@ -503,10 +732,168 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_SetWindowAlwaysOnTop: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool on_top */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowBordered: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool bordered */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowBrightness: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* float brightness */ "f32",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowData: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* char* name */ "pointer",
+      /* void* userdata */ "pointer",
+    ],
+    result: /* void* */ "pointer",
+  },
+  SDL_SetWindowDisplayMode: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_DisplayMode* mode */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowFullscreen: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* Uint32 flags */ "u32",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowGammaRamp: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* Uint16* red */ "pointer",
+      /* Uint16* green */ "pointer",
+      /* Uint16* blue */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool grabbed */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  // TODO: Implement callbacks
+  // SDL_SetWindowHitTest
+  SDL_SetWindowIcon: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_Surface* icon */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowInputFocus: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowKeyboardGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool grabbed */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowMaximumSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int max_w */ "i32",
+      /* int max_h */ "i32",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowMinimumSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int min_w */ "i32",
+      /* int min_h */ "i32",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowModalFor: {
+    parameters: [
+      /* SDL_Window* modal_window */ "pointer",
+      /* SDL_Window* parent_window */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowMouseGrab: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool grabbed */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowMouseRect: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_Rect* rect */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowOpacity: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* float opacity */ "f32",
+    ],
+    result: /* int */ "i32",
+  },
+  SDL_SetWindowPosition: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int x */ "i32",
+      /* int y */ "i32",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_SetWindowResizable: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_bool resizable */ "bool",
+    ],
+    result: /* void */ "void",
+  },
+  // TODO: SDL_WindowShapeMode is a struct and WindowShapeMode is an enum. Figure out how to fix the name collision.
+  // SDL_SetWindowShape
+  SDL_SetWindowSize: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int w */ "i32",
+      /* int h */ "i32",
+    ],
+    result: /* void */ "void",
+  },
   SDL_SetWindowTitle: {
     parameters: [
       /* SDL_Window* window */ "pointer",
       /* char* title */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  // TODO: Implement callbacks
+  // SDL_SetWindowsMessageHook
+  SDL_ShowWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
     ],
     result: /* void */ "void",
   },
@@ -522,6 +909,14 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_UpdateWindowSurfaceRects: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* SDL_Rect* rects */ "pointer",
+      /* int numrects */ "i32",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_WaitEvent: {
     parameters: [
       /* SDL_Event* event */ "pointer",
@@ -534,5 +929,13 @@ export const symbols = {
       /* int timeout */ "i32",
     ],
     result: /* int */ "i32",
+  },
+  SDL_WarpMouseInWindow: {
+    parameters: [
+      /* SDL_Window* window */ "pointer",
+      /* int x */ "i32",
+      /* int y */ "i32",
+    ],
+    result: /* void */ "void",
   },
 } as const;

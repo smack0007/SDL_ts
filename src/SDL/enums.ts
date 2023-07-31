@@ -122,6 +122,14 @@ export const EventType = {
 
 export type EventType = Enum<typeof EventType>;
 
+export const FlashOperation = {
+  FLASH_CANCEL: 0,
+  FLASH_BRIEFLY: 1,
+  FLASH_UNTIL_FOCUSED: 2,
+} as const;
+
+export type FlashOperation = Enum<typeof FlashOperation>;
+
 export const InitFlags = {
   TIMER: 1,
   AUDIO: 16,
@@ -447,6 +455,26 @@ export const RendererFlip = {
 } as const;
 
 export type RendererFlip = Enum<typeof RendererFlip>;
+
+export const SYSWM_TYPE = {
+  SYSWM_UNKNOWN: 0,
+  SYSWM_WINDOWS: 1,
+  SYSWM_X11: 2,
+  SYSWM_DIRECTFB: 3,
+  SYSWM_COCOA: 4,
+  SYSWM_UIKIT: 5,
+  SYSWM_WAYLAND: 6,
+  SYSWM_MIR: 7,
+  SYSWM_WINRT: 8,
+  SYSWM_ANDROID: 9,
+  SYSWM_VIVANTE: 10,
+  SYSWM_OS2: 11,
+  SYSWM_HAIKU: 12,
+  SYSWM_KMSDRM: 13,
+  SYSWM_RISCOS: 14,
+} as const;
+
+export type SYSWM_TYPE = Enum<typeof SYSWM_TYPE>;
 
 export const ScaleMode = {
   Nearest: 0,
