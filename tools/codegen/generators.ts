@@ -1,4 +1,5 @@
 import {
+  CodeGenCallbacks,
   CodeGenEnum,
   CodeGenEnums,
   CodeGenEvents,
@@ -923,6 +924,21 @@ function getReturnTypePostfix(
   result: CodeGenFunctionResult,
 ): string {
   return isFunctionParamOpaqueStruct(opaqueStructs, result) || isFunctionParamStruct(structs, result) ? "| null" : "";
+}
+
+export async function writeCallbacks(
+  filePath: string,
+  callbacks: CodeGenCallbacks,
+  enums: CodeGenEnums,
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+  imports: string[],
+): Promise<void> {
+  const lines = createLines();
+  lines.push("// deno-lint-ignore-file no-unused-vars");
+  lines.push("");
+
+  await writeLinesToFile(filePath, lines);
 }
 
 export async function writeFunctions(

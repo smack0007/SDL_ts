@@ -1,6 +1,7 @@
 import { path } from "../../deps.ts";
 import { SRC_PATH } from "../../shared/constants.ts";
-import { writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
+import { writeCallbacks, writeEnums, writeEvents, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
+import { callbacks } from "./SDL/callbacks.ts";
 import { enums } from "./SDL/enums.ts";
 import { events } from "./SDL/events.ts";
 import { functions } from "./SDL/functions.ts";
@@ -13,6 +14,7 @@ export async function codegenSDL(): Promise<void> {
   await writeEvents(`${SDL_SRC_PATH}/events.ts`, events, enums, structs, opaqueStructs);
   await writeStructs(`${SDL_SRC_PATH}/structs.ts`, enums, structs, opaqueStructs);
   await writeSymbols(`${SDL_SRC_PATH}/_symbols.ts`, functions, enums, structs, opaqueStructs);
+  await writeCallbacks(`${SDL_SRC_PATH}/callbacks.ts`, callbacks, enums, structs, opaqueStructs, []);
   await writeFunctions(
     `${SDL_SRC_PATH}/functions.ts`,
     "SDL2",

@@ -1,3 +1,11 @@
+export type CodeGenCallbacks = Record<string, CodeGenCallback>;
+
+export interface CodeGenCallback {
+  parameters: Record<string, CodeGenFunctionParam>;
+
+  result: CodeGenFunctionResult;
+}
+
 export type CodeGenEnums = Record<string, CodeGenEnum>;
 
 export interface CodeGenEnum {
