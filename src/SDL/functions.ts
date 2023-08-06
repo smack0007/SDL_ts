@@ -9,6 +9,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
+import { callbacks } from "./_callbacks.ts";
 import { symbols } from "./_symbols.ts";
 
 import {
@@ -55,8 +56,20 @@ import {
 
 import { Event } from "./events.ts";
 import { RWMode } from "./types.ts";
+import { EventFilter } from "./callbacks.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
+
+export function AddEventWatch(
+  filter: EventFilter,
+  userdata: PointerLike<unknown> | null,
+): i32 {
+  return _library.symbols.SDL_AddEventWatch(
+    Platform.toPlatformCallback(filter, callbacks["SDL_EventFilter"]),
+    Platform.toPlatformPointer(Pointer.of(userdata)),
+  ) as i32;
+}
+AddEventWatch.symbolName = "SDL_AddEventWatch";
 
 export function BlitScaled(
   src: PointerLike<Surface>,

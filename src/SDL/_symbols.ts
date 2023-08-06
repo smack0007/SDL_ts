@@ -1,6 +1,13 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 export const symbols = {
+  SDL_AddEventWatch: {
+    parameters: [
+      /* SDL_EventFilter filter */ "function",
+      /* void* userdata */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_UpperBlitScaled: {
     parameters: [
       /* SDL_Surface* src */ "pointer",

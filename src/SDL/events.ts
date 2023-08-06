@@ -4,7 +4,9 @@ import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
-import { f32, i32, u32, u8 } from "../types.ts";
+import { AllocatableStruct, f32, i32, Mutable, Struct, u32, u8 } from "../types.ts";
+import { Pointer } from "../pointers.ts";
+import { StructInternal } from "../_structs.ts";
 
 export class CommonEvent {
   constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
@@ -130,7 +132,7 @@ export class MouseButtonEvent {
 }
 
 export class MouseMotionEvent {
-  constructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {
+  constructor(public readonly _data: Uint8Array | Pointer<MouseMotionEvent>, private _view: PlatformDataView) {
   }
 
   public get type(): EventType {
@@ -246,9 +248,26 @@ export class WindowEvent {
   }
 }
 
-export class Event {
+export class Event implements AllocatableStruct {
+  public static SIZE_IN_BYTES = 64;
+
   public readonly _data = new Uint8Array(64);
   private readonly _view = new Platform.DataView(this._data);
+
+  public static of(data: Uint8Array | Pointer<Event> | null): Event | null {
+    if (data === null) {
+      return null;
+    }
+
+    const struct = new Event() as unknown as StructInternal<Event>;
+    struct._data = data;
+    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+
+    // TODO: Remove this hack.
+    (struct as unknown as Mutable<Event>).mousemotion = new MouseMotionEvent(struct._data, struct._view);
+
+    return struct as unknown as Event;
+  }
 
   public get type(): EventType {
     return this._view.getU32(0) as EventType;

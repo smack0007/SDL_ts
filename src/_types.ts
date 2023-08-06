@@ -2,22 +2,26 @@ import { Pointer } from "./pointers.ts";
 import {
   AllocatableStruct,
   AllocatableStructConstructor,
+  Callback,
   f32,
   f64,
   i16,
   i32,
   i64,
   i8,
+  Struct,
+  StructConstructor,
   TypedArray,
   u16,
   u32,
   u64,
   u8,
 } from "./types.ts";
-import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
+import { DynamicCallbackDefinition, DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 declare const _: unique symbol;
 
+export type PlatformCallback = { [_]: "PlatformCallback" };
 export type PlatformPointer<T> = { [_]: "PlatformPointer" };
 export type PlatformString = { [_]: "PlatformString" };
 
@@ -62,11 +66,18 @@ export interface Platform {
 
   fromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string;
 
+  fromPlatformStruct<T extends AllocatableStruct>(
+    data: PlatformPointer<T>,
+    dataType: AllocatableStructConstructor<T>,
+  ): T | null;
+
   loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
     symbols: T,
     libraryPath?: string,
   ): DynamicLibrary<T>;
+
+  toPlatformCallback<T extends Callback>(value: T, definition: DynamicCallbackDefinition<T>): PlatformCallback;
 
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 

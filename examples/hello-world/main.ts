@@ -47,6 +47,13 @@ const event = new SDL.Event();
 SDL.MinimizeWindow(window);
 SDL.RestoreWindow(window);
 
+SDL.AddEventWatch((_userdata, event) => {
+  if (event.type === SDL.EventType.MOUSEMOTION) {
+    console.info(`SDL.AddEventWatch[MOUSEMOTION]: (${event.mousemotion.x}, ${event.mousemotion.y})`);
+  }
+  return 0;
+}, null);
+
 let done = false;
 while (!done) {
   while (SDL.PollEvent(event) != 0) {
@@ -81,7 +88,7 @@ while (!done) {
     } else if (event.type === SDL.EventType.KEYUP) {
       console.info(`KeyUp: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
     } else if (event.type === SDL.EventType.MOUSEMOTION) {
-      console.info(`MouseMotion: (${event.mousebutton.x}, ${event.mousebutton.y})`);
+      console.info(`MouseMotion: (${event.mousemotion.x}, ${event.mousemotion.y})`);
     } else if (event.type === SDL.EventType.MOUSEBUTTONDOWN) {
       console.info(`MouseButtonDown: ${event.mousebutton.button} (${event.mousebutton.x}, ${event.mousebutton.y})`);
     } else if (event.type === SDL.EventType.MOUSEBUTTONUP) {

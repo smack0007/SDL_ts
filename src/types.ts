@@ -59,6 +59,9 @@ export type TypedArray =
   | BigUint64Array;
 
 // deno-lint-ignore ban-types
+export type Callback = Function;
+
+// deno-lint-ignore ban-types
 export type FunctionWithSymbolName = Function & { symbolName: string };
 
 //
@@ -103,8 +106,9 @@ export type Flags<T extends Record<string, number>, Name extends string> =
   }[keyof T]
   | number;
 
+export type Mutable<T> = T extends object ? { -readonly [P in keyof T]: Mutable<T[P]> }
+  : T;
+
 export type OrFactory<T> = T | Factory<T>;
 
 export type Predicate<T> = (value: T) => boolean;
-
-export type Writeable<T> = { -readonly [P in keyof T]: T[P] };

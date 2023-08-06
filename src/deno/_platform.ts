@@ -1,11 +1,9 @@
+import { denoToPlatformCallback } from "./_callbacks.ts";
+import { DenoPlatformDataView } from "./_dataView.ts";
 import { denoLoadLibrary } from "./_library.ts";
-import {
-  denoFromPlatformPointer,
-  DenoPlatformDataView,
-  denoToPlatformPointer,
-  denoToPlatformStruct,
-} from "./_pointers.ts";
+import { denoFromPlatformPointer, denoToPlatformPointer } from "./_pointers.ts";
 import { denoFromPlatformString, denoToPlatformString } from "./_strings.ts";
+import { denoFromPlatformStruct, denoToPlatformStruct } from "./_structs.ts";
 
 export default class {
   // TODO: Is there any way to detect this correctly?
@@ -15,7 +13,9 @@ export default class {
 
   public static fromPlatformPointer = denoFromPlatformPointer;
   public static fromPlatformString = denoFromPlatformString;
+  public static fromPlatformStruct = denoFromPlatformStruct;
   public static loadLibrary = denoLoadLibrary;
+  public static toPlatformCallback = denoToPlatformCallback;
   public static toPlatformPointer = denoToPlatformPointer;
   public static toPlatformString = denoToPlatformString;
   public static toPlatformStruct = denoToPlatformStruct;
