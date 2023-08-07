@@ -5,11 +5,15 @@
 Currently working via [deno](https://deno.land/) on Windows, Linux, and mac OS using
 [FFI](https://deno.land/manual/runtime/ffi_api) (Foreign Function Interface).
 
-## Goals
+## Primary Goals
 
 - Resembling the C API as much as possible. If someone reads a SDL tutorial (for example
   [LazyFoo](https://lazyfoo.net/tutorials/SDL/)) then they should be able to easily translate the tutorial to the
   equivalent in this library.
+
+## Secondary Goals
+
+- Provide utiltiy functions which wrap SDL features into idomatic JavaScript (i.e. `Events.asyncIterator`).
 
 ## Non Goals
 
