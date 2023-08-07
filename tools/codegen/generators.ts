@@ -487,16 +487,12 @@ export async function writeStructs(
     const className = stripPrefixes(structName);
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<${className}>;
+
+  constructor(public readonly _data: Pointer<${className}>) {
+  }
 
   public static of(data: Pointer<${className}> | null): ${className} | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = (new ${className}() as unknown as StructInternal<${className}>);
-    struct._data = data;
-    return struct as unknown as ${className};
+    return data !== null ? new ${className}(data) : null;
   }
 }
 `);

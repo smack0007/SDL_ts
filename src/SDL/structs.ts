@@ -35,61 +35,45 @@ import {
 
 export class Renderer implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<Renderer>;
+
+  constructor(public readonly _data: Pointer<Renderer>) {
+  }
 
   public static of(data: Pointer<Renderer> | null): Renderer | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Renderer() as unknown as StructInternal<Renderer>;
-    struct._data = data;
-    return struct as unknown as Renderer;
+    return data !== null ? new Renderer(data) : null;
   }
 }
 
 export class RWops implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<RWops>;
+
+  constructor(public readonly _data: Pointer<RWops>) {
+  }
 
   public static of(data: Pointer<RWops> | null): RWops | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new RWops() as unknown as StructInternal<RWops>;
-    struct._data = data;
-    return struct as unknown as RWops;
+    return data !== null ? new RWops(data) : null;
   }
 }
 
 export class Texture implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<Texture>;
+
+  constructor(public readonly _data: Pointer<Texture>) {
+  }
 
   public static of(data: Pointer<Texture> | null): Texture | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Texture() as unknown as StructInternal<Texture>;
-    struct._data = data;
-    return struct as unknown as Texture;
+    return data !== null ? new Texture(data) : null;
   }
 }
 
 export class Window implements Struct {
   public static IS_OPAQUE = true;
-  public readonly _data!: Pointer<Window>;
+
+  constructor(public readonly _data: Pointer<Window>) {
+  }
 
   public static of(data: Pointer<Window> | null): Window | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Window() as unknown as StructInternal<Window>;
-    struct._data = data;
-    return struct as unknown as Window;
+    return data !== null ? new Window(data) : null;
   }
 }
 
