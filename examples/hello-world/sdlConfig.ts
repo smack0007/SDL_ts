@@ -10,6 +10,7 @@ export const SDL_FUNCTIONS = [
   SDL.FillRect,
   SDL.GetError,
   SDL.GetRevision,
+  SDL.GetScancodeName,
   SDL.GetSystemRAM,
   SDL.GetVersion,
   SDL.GetWindowSurface,

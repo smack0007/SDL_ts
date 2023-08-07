@@ -9,8 +9,6 @@ import {
   i32,
   i64,
   i8,
-  Struct,
-  StructConstructor,
   TypedArray,
   u16,
   u32,

@@ -3,6 +3,7 @@ import {
   CodeGenEnum,
   CodeGenEnums,
   CodeGenEvents,
+  CodeGenEventType,
   CodeGenFunction,
   CodeGenFunctionParam,
   CodeGenFunctionResult,
@@ -332,15 +333,17 @@ export async function writeEvents(
 ): Promise<void> {
   const lines = createLines();
 
-  lines.push(
-    `import Platform from "../_platform.ts";
+  lines.push(`import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
-import { f32, i32, u32, u8 } from "../types.ts";
+import { AllocatableStruct, f32, i32, u32, u8 } from "../types.ts";
+import { Pointer } from "../pointers.ts";
 
-`,
-  );
+`);
+
+  const eventPropName = (eventName: string, event: CodeGenEventType) =>
+    event.unionName ?? stripPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
 
   for (const [eventName, event] of Object.entries(events)) {
     const className = stripPrefixes(eventName);
@@ -355,14 +358,18 @@ import { f32, i32, u32, u8 } from "../types.ts";
       lines.push("");
     }
 
-    lines.push("\tconstructor(public readonly _data: Uint8Array, private _view: PlatformDataView) {");
+    lines.push(`
+  constructor(
+      public readonly _data: Uint8Array | Pointer<Event>,
+      private _view: PlatformDataView
+  ) {`);
 
     for (const [memberName, member] of subStructMembers) {
       const memberTypeName = stripPrefixes(member.type);
 
-      lines.push(
-        `\t\tthis._${memberName} = ${memberTypeName}.of(new Uint8Array(this._data.buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`,
-      );
+      lines.push(`
+    // TODO: Struct.of needs to accept an offset in order to not to have to cast this._data here
+    this._${memberName} = ${memberTypeName}.of(new Uint8Array((this._data as Uint8Array).buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`);
     }
 
     lines.push("\t}");
@@ -412,22 +419,40 @@ import { f32, i32, u32, u8 } from "../types.ts";
     lines.push("");
   }
 
-  lines.push(`export class Event {
-  public readonly _data = new Uint8Array(64);
-  private readonly _view = new Platform.DataView(this._data);
+  lines.push(`export class Event implements AllocatableStruct {
+  public static SIZE_IN_BYTES = 64;
+
+  public readonly _data: Uint8Array | Pointer<Event>;
+  private readonly _view: PlatformDataView;
+
+`);
+
+  for (const [eventName, event] of Object.entries(events)) {
+    lines.push(`public readonly ${eventPropName(eventName, event)}: ${stripPrefixes(eventName)};`);
+  }
+
+  lines.push(`
+  constructor(data?: Uint8Array | Pointer<Event>) {
+    this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
+    this._view = new Platform.DataView(Pointer.isPointer(this._data) ? Platform.toPlatformPointer(this._data)! : this._data);
+`);
+
+  for (const [eventName, event] of Object.entries(events)) {
+    lines.push(`this.${eventPropName(eventName, event)} = new ${stripPrefixes(eventName)}(this._data, this._view);`);
+  }
+
+  lines.push(`
+  }
+
+  public static of(data: Uint8Array | Pointer<Event> | null): Event | null {
+    return data !== null ? new Event(data) : null;
+  }
   
   public get type(): EventType {
     return this._view.getU32(0) as EventType;
   }
 
 `);
-
-  for (const [eventName, event] of Object.entries(events)) {
-    const propName = event.unionName ?? stripPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
-
-    lines.push(`public readonly ${propName} = new ${stripPrefixes(eventName)}(this._data, this._view);`);
-    lines.push("");
-  }
 
   lines.push("}");
   lines.push("");
