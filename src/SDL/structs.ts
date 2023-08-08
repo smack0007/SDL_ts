@@ -4,8 +4,8 @@
 
 import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
-import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
+import { isTypedArray } from "../_utils.ts";
+import { Pointer } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
 
 import {
@@ -80,21 +80,23 @@ export class Window implements Struct {
 export class Color implements AllocatableStruct {
   public static SIZE_IN_BYTES = 4;
 
-  public readonly _data!: Uint8Array | Pointer<Color>;
-  private readonly _view!: PlatformDataView;
+  public readonly _data: Uint8Array | Pointer<Color>;
+  private readonly _view: PlatformDataView;
 
-  constructor(command: StructCommand);
+  constructor(data: Uint8Array | Pointer<Color>);
   constructor(props: Partial<Color>);
   constructor(r: u8, g: u8, b: u8, a: u8);
-  constructor(_1?: StructCommand | Partial<Color> | u8, _2?: u8, _3?: u8, _4?: u8) {
-    if (_1 === STRUCT_NO_ALLOCATE) {
-      return;
+  constructor(_1?: Uint8Array | Pointer<Color> | Partial<Color> | u8, _2?: u8, _3?: u8, _4?: u8) {
+    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
+    if (dataPassedIn) {
+      this._data = _1;
+    } else {
+      this._data = new Uint8Array(Color.SIZE_IN_BYTES);
     }
 
-    this._data = new Uint8Array(Color.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
 
-    if (_1 !== undefined) {
+    if (!dataPassedIn && _1 !== undefined) {
       if (typeof _1 === "object") {
         if (_1.r !== undefined) this.r = _1.r;
         if (_1.g !== undefined) this.g = _1.g;
@@ -110,14 +112,7 @@ export class Color implements AllocatableStruct {
   }
 
   public static of(data: Uint8Array | Pointer<Color> | null): Color | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Color(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Color>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Color;
+    return data !== null ? new Color(data) : null;
   }
 
   public get r(): u8 {
@@ -156,18 +151,14 @@ export class Color implements AllocatableStruct {
 export class DisplayMode implements Struct {
   public static SIZE_IN_BYTES = 24;
 
-  public readonly _data!: Uint8Array | Pointer<DisplayMode>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<DisplayMode>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<DisplayMode> | null): DisplayMode | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new DisplayMode() as unknown as StructInternal<DisplayMode>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as DisplayMode;
+    return data !== null ? new DisplayMode(data) : null;
   }
 
   public get format(): u32 {
@@ -194,18 +185,14 @@ export class DisplayMode implements Struct {
 export class Keysym implements Struct {
   public static SIZE_IN_BYTES = 16;
 
-  public readonly _data!: Uint8Array | Pointer<Keysym>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<Keysym>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<Keysym> | null): Keysym | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Keysym() as unknown as StructInternal<Keysym>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Keysym;
+    return data !== null ? new Keysym(data) : null;
   }
 
   public get scancode(): Scancode {
@@ -228,18 +215,14 @@ export class Keysym implements Struct {
 export class Palette implements Struct {
   public static SIZE_IN_BYTES = 24;
 
-  public readonly _data!: Uint8Array | Pointer<Palette>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<Palette>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<Palette> | null): Palette | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Palette() as unknown as StructInternal<Palette>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Palette;
+    return data !== null ? new Palette(data) : null;
   }
 
   public get ncolors(): i32 {
@@ -258,18 +241,14 @@ export class Palette implements Struct {
 export class PixelFormat implements Struct {
   public static SIZE_IN_BYTES = 56;
 
-  public readonly _data!: Uint8Array | Pointer<PixelFormat>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<PixelFormat>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<PixelFormat> | null): PixelFormat | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as PixelFormat;
+    return data !== null ? new PixelFormat(data) : null;
   }
 
   public get format(): u32 {
@@ -328,21 +307,23 @@ export class PixelFormat implements Struct {
 export class Point implements AllocatableStruct {
   public static SIZE_IN_BYTES = 8;
 
-  public readonly _data!: Uint8Array | Pointer<Point>;
-  private readonly _view!: PlatformDataView;
+  public readonly _data: Uint8Array | Pointer<Point>;
+  private readonly _view: PlatformDataView;
 
-  constructor(command: StructCommand);
+  constructor(data: Uint8Array | Pointer<Point>);
   constructor(props: Partial<Point>);
   constructor(x: i32, y: i32);
-  constructor(_1?: StructCommand | Partial<Point> | i32, _2?: i32) {
-    if (_1 === STRUCT_NO_ALLOCATE) {
-      return;
+  constructor(_1?: Uint8Array | Pointer<Point> | Partial<Point> | i32, _2?: i32) {
+    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
+    if (dataPassedIn) {
+      this._data = _1;
+    } else {
+      this._data = new Uint8Array(Point.SIZE_IN_BYTES);
     }
 
-    this._data = new Uint8Array(Point.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
 
-    if (_1 !== undefined) {
+    if (!dataPassedIn && _1 !== undefined) {
       if (typeof _1 === "object") {
         if (_1.x !== undefined) this.x = _1.x;
         if (_1.y !== undefined) this.y = _1.y;
@@ -354,14 +335,7 @@ export class Point implements AllocatableStruct {
   }
 
   public static of(data: Uint8Array | Pointer<Point> | null): Point | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Point;
+    return data !== null ? new Point(data) : null;
   }
 
   public get x(): i32 {
@@ -384,21 +358,23 @@ export class Point implements AllocatableStruct {
 export class Rect implements AllocatableStruct {
   public static SIZE_IN_BYTES = 16;
 
-  public readonly _data!: Uint8Array | Pointer<Rect>;
-  private readonly _view!: PlatformDataView;
+  public readonly _data: Uint8Array | Pointer<Rect>;
+  private readonly _view: PlatformDataView;
 
-  constructor(command: StructCommand);
+  constructor(data: Uint8Array | Pointer<Rect>);
   constructor(props: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
-  constructor(_1?: StructCommand | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
-    if (_1 === STRUCT_NO_ALLOCATE) {
-      return;
+  constructor(_1?: Uint8Array | Pointer<Rect> | Partial<Rect> | i32, _2?: i32, _3?: i32, _4?: i32) {
+    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
+    if (dataPassedIn) {
+      this._data = _1;
+    } else {
+      this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
     }
 
-    this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
 
-    if (_1 !== undefined) {
+    if (!dataPassedIn && _1 !== undefined) {
       if (typeof _1 === "object") {
         if (_1.x !== undefined) this.x = _1.x;
         if (_1.y !== undefined) this.y = _1.y;
@@ -414,14 +390,7 @@ export class Rect implements AllocatableStruct {
   }
 
   public static of(data: Uint8Array | Pointer<Rect> | null): Rect | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Rect;
+    return data !== null ? new Rect(data) : null;
   }
 
   public get x(): i32 {
@@ -460,27 +429,16 @@ export class Rect implements AllocatableStruct {
 export class RendererInfo implements AllocatableStruct {
   public static SIZE_IN_BYTES = 88;
 
-  public readonly _data!: Uint8Array | Pointer<RendererInfo>;
-  private readonly _view!: PlatformDataView;
+  public readonly _data: Uint8Array | Pointer<RendererInfo>;
+  private readonly _view: PlatformDataView;
 
-  constructor(command?: StructCommand) {
-    if (command === STRUCT_NO_ALLOCATE) {
-      return;
-    }
-
-    this._data = new Uint8Array(RendererInfo.SIZE_IN_BYTES);
+  constructor(data?: Uint8Array | Pointer<RendererInfo>) {
+    this._data = data ?? new Uint8Array(RendererInfo.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
   }
 
   public static of(data: Uint8Array | Pointer<RendererInfo> | null): RendererInfo | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as RendererInfo;
+    return data !== null ? new RendererInfo(data) : null;
   }
 
   public get name(): string {
@@ -510,18 +468,14 @@ export class RendererInfo implements AllocatableStruct {
 export class Surface implements Struct {
   public static SIZE_IN_BYTES = 96;
 
-  public readonly _data!: Uint8Array | Pointer<Surface>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<Surface>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<Surface> | null): Surface | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new Surface() as unknown as StructInternal<Surface>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as Surface;
+    return data !== null ? new Surface(data) : null;
   }
 
   public get flags(): u32 {
@@ -570,18 +524,14 @@ export class Surface implements Struct {
 export class SysWMinfo implements Struct {
   public static SIZE_IN_BYTES = 72;
 
-  public readonly _data!: Uint8Array | Pointer<SysWMinfo>;
-  private readonly _view!: PlatformDataView;
+  private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<SysWMinfo>) {
+    this._view = new Platform.DataView(this._data);
+  }
 
   public static of(data: Uint8Array | Pointer<SysWMinfo> | null): SysWMinfo | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new SysWMinfo() as unknown as StructInternal<SysWMinfo>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as SysWMinfo;
+    return data !== null ? new SysWMinfo(data) : null;
   }
 
   public get version(): version {
@@ -599,27 +549,16 @@ export class SysWMinfo implements Struct {
 export class version implements AllocatableStruct {
   public static SIZE_IN_BYTES = 3;
 
-  public readonly _data!: Uint8Array | Pointer<version>;
-  private readonly _view!: PlatformDataView;
+  public readonly _data: Uint8Array | Pointer<version>;
+  private readonly _view: PlatformDataView;
 
-  constructor(command?: StructCommand) {
-    if (command === STRUCT_NO_ALLOCATE) {
-      return;
-    }
-
-    this._data = new Uint8Array(version.SIZE_IN_BYTES);
+  constructor(data?: Uint8Array | Pointer<version>) {
+    this._data = data ?? new Uint8Array(version.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
   }
 
   public static of(data: Uint8Array | Pointer<version> | null): version | null {
-    if (data === null) {
-      return null;
-    }
-
-    const struct = new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>;
-    struct._data = data;
-    struct._view = new Platform.DataView(data);
-    return struct as unknown as version;
+    return data !== null ? new version(data) : null;
   }
 
   public get major(): u8 {

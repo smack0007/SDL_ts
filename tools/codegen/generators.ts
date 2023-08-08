@@ -472,8 +472,8 @@ export async function writeStructs(
 
   lines.push(`import Platform from "../_platform.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
-  lines.push(`import { STRUCT_NO_ALLOCATE, StructCommand, StructInternal } from "../_structs.ts";`);
-  lines.push(`import { Pointer, PointerLike } from "../pointers.ts";`);
+  lines.push(`import { isTypedArray } from "../_utils.ts";`);
+  lines.push(`import { Pointer } from "../pointers.ts";`);
   lines.push(
     `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";`,
   );
@@ -506,58 +506,49 @@ export async function writeStructs(
     const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
     lines.push(`export class ${className}${implementsExpression} {
-public static SIZE_IN_BYTES = ${struct.size};`);
-
-    lines.push(`
-  public readonly _data!: Uint8Array | Pointer<${className}>;
-  private readonly _view!: PlatformDataView;
+  public static SIZE_IN_BYTES = ${struct.size};
+    
 `);
 
-    if (struct.allocatable) {
-      if (!struct.writable) {
-        lines.push(`constructor(command?: StructCommand) {
-  if (command === STRUCT_NO_ALLOCATE) {
-    return;
-  }
+    if (struct.allocatable && struct.mutable) {
+      lines.push(`public readonly _data: Uint8Array | Pointer<${className}>;
+  private readonly _view: PlatformDataView;
+      
+  constructor(data: Uint8Array | Pointer<${className}>);
+  constructor(props: Partial<${className}>);`);
 
-  this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
-  this._view = new Platform.DataView(this._data);
-}
-`);
-      } else {
-        lines.push("constructor(command: StructCommand);");
-        lines.push(`constructor(props: Partial<${className}>);`);
+      const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
+        `${memberName}: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
+      ).join(", ");
+      lines.push(`constructor(${constructorParams});`);
 
-        const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
-          `${memberName}: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
-        ).join(", ");
-        lines.push(`constructor(${constructorParams});`);
+      const firstMemberType = mapStructMemberType(enums, structs, opaqueStructs, Object.values(struct.members)[0]);
+      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
+        `, _${index + 2}?: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
+      ).join("");
+      lines.push(
+        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+      );
 
-        const firstMemberType = mapStructMemberType(enums, structs, opaqueStructs, Object.values(struct.members)[0]);
-        const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-          `, _${index + 2}?: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
-        ).join("");
-        lines.push(
-          `constructor(_1?: StructCommand | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
-        );
+      const assignMemmbersFromObject = Object.keys(struct.members).map((memberName) =>
+        `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`
+      ).join("\n");
 
-        const assignMemmbersFromObject = Object.keys(struct.members).map((memberName) =>
-          `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`
-        ).join("\n");
+      const assignMemmbersFromParameters = Object.keys(struct.members).map((memberName, index) =>
+        `if (_${index + 1} !== undefined) this.${memberName} = _${index + 1};`
+      ).join("\n");
 
-        const assignMemmbersFromParameters = Object.keys(struct.members).map((memberName, index) =>
-          `if (_${index + 1} !== undefined) this.${memberName} = _${index + 1};`
-        ).join("\n");
-
-        lines.push(`
-    if (_1 === STRUCT_NO_ALLOCATE) {
-      return;
+      lines.push(`
+    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
+    if (dataPassedIn) {
+      this._data = _1;
+    } else {
+      this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
     }
     
-    this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
     this._view = new Platform.DataView(this._data);
 
-    if (_1 !== undefined) {
+    if (!dataPassedIn && _1 !== undefined) {
       if (typeof _1 === "object") {
         ${assignMemmbersFromObject}
       } else {
@@ -566,20 +557,26 @@ public static SIZE_IN_BYTES = ${struct.size};`);
     }
   }
 `);
-      }
+    } else if (struct.allocatable && !struct.mutable) {
+      lines.push(`public readonly _data: Uint8Array | Pointer<${className}>;
+  private readonly _view: PlatformDataView;
+
+  constructor(data?: Uint8Array | Pointer<${className}>) {
+    this._data = data ?? new Uint8Array(${className}.SIZE_IN_BYTES);
+    this._view = new Platform.DataView(this._data);
+  }
+`);
+    } else {
+      lines.push(`private readonly _view: PlatformDataView;
+
+  constructor(public readonly _data: Uint8Array | Pointer<${className}>) {
+    this._view = new Platform.DataView(this._data);
+  }
+`);
     }
 
-    const shouldNotAllocate = struct.allocatable ? "STRUCT_NO_ALLOCATE" : "";
-
     lines.push(`public static of(data: Uint8Array | Pointer<${className}> | null): ${className} | null {
-      if (data === null) {
-        return null;
-      }
-
-      const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
-      struct._data = data;
-      struct._view = new Platform.DataView(data);
-      return struct as unknown as ${className};
+      return data !== null ? new ${className}(data) : null;
     }
 `);
 
@@ -650,7 +647,7 @@ public static SIZE_IN_BYTES = ${struct.size};`);
       lines.push("\t}");
       lines.push("");
 
-      if (struct.writable) {
+      if (struct.mutable) {
         // TODO: Can we write to pointers / structs?
         if (
           mapTypeToFFIType(enums, structs, opaqueStructs, member.type) === "pointer" ||

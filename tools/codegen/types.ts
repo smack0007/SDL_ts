@@ -77,7 +77,7 @@ export interface CodeGenStruct {
 
   // Indicates whether the struct can be written to in
   // in script. If false it will only be written to by SDL.
-  writable?: boolean;
+  mutable?: boolean;
 
   // Size of the struct in bytes.
   size: number;
