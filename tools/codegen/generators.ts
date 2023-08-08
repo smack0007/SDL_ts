@@ -434,7 +434,7 @@ import { Pointer } from "../pointers.ts";
   lines.push(`
   constructor(data?: Uint8Array | Pointer<Event>) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(Pointer.isPointer(this._data) ? Platform.toPlatformPointer(this._data)! : this._data);
+    this._view = new Platform.DataView(this._data);
 `);
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -578,7 +578,7 @@ public static SIZE_IN_BYTES = ${struct.size};`);
 
       const struct = (new ${className}(${shouldNotAllocate}) as unknown as StructInternal<${className}>);
       struct._data = data;
-      struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+      struct._view = new Platform.DataView(data);
       return struct as unknown as ${className};
     }
 `);

@@ -285,9 +285,7 @@ export class Event implements AllocatableStruct {
 
   constructor(data?: Uint8Array | Pointer<Event>) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(
-      Pointer.isPointer(this._data) ? Platform.toPlatformPointer(this._data)! : this._data,
-    );
+    this._view = new Platform.DataView(this._data);
 
     this.common = new CommonEvent(this._data, this._view);
     this.display = new DisplayEvent(this._data, this._view);

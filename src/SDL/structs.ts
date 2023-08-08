@@ -116,7 +116,7 @@ export class Color implements AllocatableStruct {
 
     const struct = new Color(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Color>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Color;
   }
 
@@ -166,7 +166,7 @@ export class DisplayMode implements Struct {
 
     const struct = new DisplayMode() as unknown as StructInternal<DisplayMode>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as DisplayMode;
   }
 
@@ -204,7 +204,7 @@ export class Keysym implements Struct {
 
     const struct = new Keysym() as unknown as StructInternal<Keysym>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Keysym;
   }
 
@@ -238,7 +238,7 @@ export class Palette implements Struct {
 
     const struct = new Palette() as unknown as StructInternal<Palette>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Palette;
   }
 
@@ -268,7 +268,7 @@ export class PixelFormat implements Struct {
 
     const struct = new PixelFormat() as unknown as StructInternal<PixelFormat>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as PixelFormat;
   }
 
@@ -360,7 +360,7 @@ export class Point implements AllocatableStruct {
 
     const struct = new Point(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Point>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Point;
   }
 
@@ -420,7 +420,7 @@ export class Rect implements AllocatableStruct {
 
     const struct = new Rect(STRUCT_NO_ALLOCATE) as unknown as StructInternal<Rect>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Rect;
   }
 
@@ -479,7 +479,7 @@ export class RendererInfo implements AllocatableStruct {
 
     const struct = new RendererInfo(STRUCT_NO_ALLOCATE) as unknown as StructInternal<RendererInfo>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as RendererInfo;
   }
 
@@ -520,7 +520,7 @@ export class Surface implements Struct {
 
     const struct = new Surface() as unknown as StructInternal<Surface>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as Surface;
   }
 
@@ -580,7 +580,7 @@ export class SysWMinfo implements Struct {
 
     const struct = new SysWMinfo() as unknown as StructInternal<SysWMinfo>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as SysWMinfo;
   }
 
@@ -618,7 +618,7 @@ export class version implements AllocatableStruct {
 
     const struct = new version(STRUCT_NO_ALLOCATE) as unknown as StructInternal<version>;
     struct._data = data;
-    struct._view = new Platform.DataView(Pointer.isPointer(data) ? Platform.toPlatformPointer(data)! : data);
+    struct._view = new Platform.DataView(data);
     return struct as unknown as version;
   }
 

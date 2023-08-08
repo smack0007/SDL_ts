@@ -24,7 +24,10 @@ export type PlatformPointer<T> = { [_]: "PlatformPointer" };
 export type PlatformString = { [_]: "PlatformString" };
 
 export interface PlatformDataViewConstructor {
-  new (data: Uint8Array | PlatformPointer<unknown>): PlatformDataView;
+  new (
+    data: Uint8Array | Pointer<unknown>,
+    offset?: number,
+  ): PlatformDataView;
 }
 
 export interface PlatformDataView {
