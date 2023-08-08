@@ -13,7 +13,7 @@ export class DenoPlatformDataView {
 
   constructor(
     public readonly data: Uint8Array | Pointer<unknown>,
-    public readonly offset: number = 0
+    public readonly offset: number = 0,
   ) {
     if (this.data instanceof Uint8Array) {
       this._view = new globalThis.DataView(this.data.buffer, this.data.byteOffset, this.data.byteLength);
@@ -31,6 +31,7 @@ export class DenoPlatformDataView {
     }
   }
 
+  // TODO: Maybe this should be renamed to getU8Array?
   public getArray(byteLength: number, byteOffset: number): Uint8Array {
     if (this._view instanceof globalThis.DataView) {
       throw new Error("Not implemented.");

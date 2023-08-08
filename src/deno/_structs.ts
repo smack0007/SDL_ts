@@ -13,16 +13,15 @@ export function denoToPlatformStruct<T extends AllocatableStruct>(
     return data;
   } else if (isTypedArray(data)) {
     return new Uint8Array(data.buffer);
+  } else if (isTypedArray(data._data)) {
+    return new Uint8Array(data._data.buffer);
   } else {
-    if (isTypedArray(data._data)) {
-      return new Uint8Array(data._data.buffer);
+    if (dataType !== undefined) {
+      // TODO: Could we cache this?
+      const view = new DenoPlatformDataView(data);
+      return view.getArray(dataType.SIZE_IN_BYTES, 0);
     } else {
-      if (dataType === undefined) {
-        throwError("Cannot retrieve a buffer from a pointer without type!");
-      } else {
-        const view = new DenoPlatformDataView(data._data);
-        return view.getArray(dataType.SIZE_IN_BYTES, 0);
-      }
+      throwError("Cannot retrieve a buffer from a pointer without type!");
     }
   }
 }

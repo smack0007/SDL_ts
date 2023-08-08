@@ -31,7 +31,7 @@ export interface PlatformDataViewConstructor {
 }
 
 export interface PlatformDataView {
-  readonly data: Uint8Array | PlatformPointer<unknown>;
+  readonly data: Uint8Array | Pointer<unknown>;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
   getF32(byteOffset: number): f32;
