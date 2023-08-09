@@ -9,6 +9,7 @@ export function denoToPlatformStruct<T extends AllocatableStruct>(
   data: TypedArray | Pointer<T>,
   dataType?: AllocatableStructConstructor<T>,
 ): Uint8Array {
+  // TODO: Handle struct offsets.
   if (data instanceof Uint8Array) {
     return data;
   } else if (isTypedArray(data)) {

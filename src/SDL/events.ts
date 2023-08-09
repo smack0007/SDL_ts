@@ -64,8 +64,7 @@ export class KeyboardEvent {
     public readonly _data: Uint8Array | Pointer<Event>,
     private _view: PlatformDataView,
   ) {
-    // TODO: Struct.of needs to accept an offset in order to not to have to cast this._data here
-    this._keysym = Keysym.of(new Uint8Array((this._data as Uint8Array).buffer, 16, Keysym.SIZE_IN_BYTES)) as Keysym;
+    this._keysym = Keysym.of(this._data, 16) as Keysym;
   }
 
   public get type(): EventType {
@@ -273,7 +272,7 @@ export class Event implements AllocatableStruct {
   public static SIZE_IN_BYTES = 64;
 
   public readonly _data: Uint8Array | Pointer<Event>;
-  private readonly _view: PlatformDataView;
+  public readonly _view: PlatformDataView;
 
   public readonly common: CommonEvent;
   public readonly display: DisplayEvent;
@@ -283,9 +282,12 @@ export class Event implements AllocatableStruct {
   public readonly mousewheel: MouseWheelEvent;
   public readonly window: WindowEvent;
 
-  constructor(data?: Uint8Array | Pointer<Event>) {
+  constructor(
+    data?: Uint8Array | Pointer<Event>,
+    offset: number = 0,
+  ) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data, offset);
 
     this.common = new CommonEvent(this._data, this._view);
     this.display = new DisplayEvent(this._data, this._view);
@@ -296,8 +298,15 @@ export class Event implements AllocatableStruct {
     this.window = new WindowEvent(this._data, this._view);
   }
 
-  public static of(data: Uint8Array | Pointer<Event> | null): Event | null {
-    return data !== null ? new Event(data) : null;
+  public static of(
+    data: Uint8Array | Pointer<Event> | null,
+    offset: number = 0,
+  ): Event | null {
+    return data !== null ? new Event(data, offset) : null;
+  }
+
+  public get _offset(): number {
+    return this._view.offset;
   }
 
   public get type(): EventType {

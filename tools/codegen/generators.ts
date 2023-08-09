@@ -367,9 +367,7 @@ import { Pointer } from "../pointers.ts";
     for (const [memberName, member] of subStructMembers) {
       const memberTypeName = stripPrefixes(member.type);
 
-      lines.push(`
-    // TODO: Struct.of needs to accept an offset in order to not to have to cast this._data here
-    this._${memberName} = ${memberTypeName}.of(new Uint8Array((this._data as Uint8Array).buffer, ${member.offset}, ${memberTypeName}.SIZE_IN_BYTES)) as ${memberTypeName};`);
+      lines.push(`this._${memberName} = ${memberTypeName}.of(this._data, ${member.offset}) as ${memberTypeName};`);
     }
 
     lines.push("\t}");
@@ -423,7 +421,7 @@ import { Pointer } from "../pointers.ts";
   public static SIZE_IN_BYTES = 64;
 
   public readonly _data: Uint8Array | Pointer<Event>;
-  private readonly _view: PlatformDataView;
+  public readonly _view: PlatformDataView;
 
 `);
 
@@ -432,9 +430,12 @@ import { Pointer } from "../pointers.ts";
   }
 
   lines.push(`
-  constructor(data?: Uint8Array | Pointer<Event>) {
+  constructor(
+    data?: Uint8Array | Pointer<Event>,
+    offset: number = 0
+  ) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data, offset);
 `);
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -444,10 +445,17 @@ import { Pointer } from "../pointers.ts";
   lines.push(`
   }
 
-  public static of(data: Uint8Array | Pointer<Event> | null): Event | null {
-    return data !== null ? new Event(data) : null;
+  public static of(
+    data: Uint8Array | Pointer<Event> | null,
+    offset: number = 0
+  ): Event | null {
+    return data !== null ? new Event(data, offset) : null;
   }
   
+  public get _offset(): number {
+    return this._view.offset;
+  }
+
   public get type(): EventType {
     return this._view.getU32(0) as EventType;
   }
@@ -488,11 +496,24 @@ export async function writeStructs(
     lines.push(`export class ${className} implements Struct {
   public static IS_OPAQUE = true;
 
-  constructor(public readonly _data: Pointer<${className}>) {
+  public readonly _view: PlatformDataView;
+
+  constructor(
+    public readonly _data: Pointer<${className}>,
+    offset: number = 0
+  ) {
+    this._view = new Platform.DataView(this._data, offset);
   }
 
-  public static of(data: Pointer<${className}> | null): ${className} | null {
-    return data !== null ? new ${className}(data) : null;
+  public static of(
+    data: Pointer<${className}> | null,
+    offset: number = 0
+  ): ${className} | null {
+    return data !== null ? new ${className}(data, offset) : null;
+  }
+
+  public get _offset(): number {
+    return this._view.offset;
   }
 }
 `);
@@ -512,9 +533,12 @@ export async function writeStructs(
 
     if (struct.allocatable && struct.mutable) {
       lines.push(`public readonly _data: Uint8Array | Pointer<${className}>;
-  private readonly _view: PlatformDataView;
+  public readonly _view: PlatformDataView;
       
-  constructor(data: Uint8Array | Pointer<${className}>);
+  constructor(
+    data: Uint8Array | Pointer<${className}>,
+    offset: number,
+  );
   constructor(props: Partial<${className}>);`);
 
       const constructorParams = Object.entries(struct.members).map(([memberName, member]) =>
@@ -523,11 +547,16 @@ export async function writeStructs(
       lines.push(`constructor(${constructorParams});`);
 
       const firstMemberType = mapStructMemberType(enums, structs, opaqueStructs, Object.values(struct.members)[0]);
-      const otherMembers = Object.values(struct.members).slice(1).map((member, index) =>
-        `, _${index + 2}?: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
-      ).join("");
+      const secondMemberType = mapStructMemberType(enums, structs, opaqueStructs, Object.values(struct.members)[1]);
+      const otherMembers = Object.values(struct.members).slice(2).map((member, index) =>
+        `_${index + 3}?: ${mapStructMemberType(enums, structs, opaqueStructs, member)}`
+      ).join(",\n");
       lines.push(
-        `constructor(_1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType}${otherMembers}) {`,
+        `constructor(
+          _1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType},
+          _2?: number | ${secondMemberType},
+          ${otherMembers}
+        ) {`,
       );
 
       const assignMemmbersFromObject = Object.keys(struct.members).map((memberName) =>
@@ -542,12 +571,12 @@ export async function writeStructs(
     const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
     if (dataPassedIn) {
       this._data = _1;
+      this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
+      this._view = new Platform.DataView(this._data, 0);
     }
     
-    this._view = new Platform.DataView(this._data);
-
     if (!dataPassedIn && _1 !== undefined) {
       if (typeof _1 === "object") {
         ${assignMemmbersFromObject}
@@ -561,22 +590,35 @@ export async function writeStructs(
       lines.push(`public readonly _data: Uint8Array | Pointer<${className}>;
   private readonly _view: PlatformDataView;
 
-  constructor(data?: Uint8Array | Pointer<${className}>) {
+  constructor(
+    data?: Uint8Array | Pointer<${className}>,
+    offset: number = 0,
+  ) {
     this._data = data ?? new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data);
+    this._view = new Platform.DataView(this._data, offset);
   }
 `);
     } else {
       lines.push(`private readonly _view: PlatformDataView;
 
-  constructor(public readonly _data: Uint8Array | Pointer<${className}>) {
-    this._view = new Platform.DataView(this._data);
+  constructor(
+    public readonly _data: Uint8Array | Pointer<${className}>,
+    offset: number = 0,
+  ) {
+    this._view = new Platform.DataView(this._data, offset);
   }
 `);
     }
 
-    lines.push(`public static of(data: Uint8Array | Pointer<${className}> | null): ${className} | null {
-      return data !== null ? new ${className}(data) : null;
+    lines.push(`public static of(
+      data: Uint8Array | Pointer<${className}> | null,
+      offset: number = 0,
+    ): ${className} | null {
+      return data !== null ? new ${className}(data, offset) : null;
+    }
+
+    public get _offset(): number {
+      return this._view.offset;
     }
 `);
 
