@@ -18,6 +18,11 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 // Functions
 //
 
+// deno-lint-ignore ban-types
+export function hasSizeInBytesProperty(value: {}): value is { SIZE_IN_BYTES: number } {
+  return "SIZE_IN_BYTES" in value;
+}
+
 export function isTypedArray(value: unknown): value is TypedArray {
   return (
     value instanceof Uint8Array ||

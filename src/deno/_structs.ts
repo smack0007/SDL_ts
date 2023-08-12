@@ -1,8 +1,8 @@
-import { AllocatableStructConstructor, Struct, StructConstructor } from "../types.ts";
+import { Struct, StructConstructor } from "../types.ts";
 import { DenoPlatformDataView } from "./_dataView.ts";
 import { PlatformPointer } from "../_types.ts";
 import { denoFromPlatformPointer } from "./_pointers.ts";
-import { throwError } from "../_utils.ts";
+import { hasSizeInBytesProperty, throwError } from "../_utils.ts";
 
 export function denoToPlatformStruct<T extends Struct>(
   struct: T,
@@ -14,9 +14,9 @@ export function denoToPlatformStruct<T extends Struct>(
     } else {
       return new Uint8Array(struct._data, struct._byteOffset);
     }
-  } else if ("SIZE_IN_BYTES" in structConstructor) {
+  } else if (hasSizeInBytesProperty(structConstructor)) {
     const view = new DenoPlatformDataView(struct._data);
-    return view.getArray((structConstructor as AllocatableStructConstructor<T>).SIZE_IN_BYTES, struct._byteOffset);
+    return view.getArray(structConstructor.SIZE_IN_BYTES, struct._byteOffset);
   }
 
   throwError(`Unable to convert struct to platform struct in ${denoToPlatformStruct.name}.`);
