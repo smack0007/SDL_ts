@@ -1,29 +1,25 @@
 import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, AllocatableStructConstructor, Struct, StructConstructor, TypedArray } from "../types.ts";
-import { isTypedArray, throwError } from "../_utils.ts";
+import { AllocatableStruct, AllocatableStructConstructor, TypedArray } from "../types.ts";
+import { isTypedArray } from "../_utils.ts";
 import { DenoPlatformDataView } from "./_dataView.ts";
 import { PlatformPointer } from "../_types.ts";
 import { denoFromPlatformPointer } from "./_pointers.ts";
 
 export function denoToPlatformStruct<T extends AllocatableStruct>(
   data: TypedArray | Pointer<T>,
-  dataType?: AllocatableStructConstructor<T>,
+  dataType: AllocatableStructConstructor<T>,
+  byteOffset: number,
 ): Uint8Array {
-  // TODO: Handle struct offsets.
   if (data instanceof Uint8Array) {
     return data;
   } else if (isTypedArray(data)) {
-    return new Uint8Array(data.buffer);
+    return new Uint8Array(data.buffer, byteOffset);
   } else if (isTypedArray(data._data)) {
-    return new Uint8Array(data._data.buffer);
+    return new Uint8Array(data._data.buffer, byteOffset);
   } else {
-    if (dataType !== undefined) {
-      // TODO: Could we cache this?
-      const view = new DenoPlatformDataView(data);
-      return view.getArray(dataType.SIZE_IN_BYTES, 0);
-    } else {
-      throwError("Cannot retrieve a buffer from a pointer without type!");
-    }
+    // TODO: Could we cache this?
+    const view = new DenoPlatformDataView(data);
+    return view.getArray(dataType.SIZE_IN_BYTES, byteOffset);
   }
 }
 

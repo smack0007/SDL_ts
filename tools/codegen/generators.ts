@@ -432,10 +432,10 @@ import { Pointer } from "../pointers.ts";
   lines.push(`
   constructor(
     data?: Uint8Array | Pointer<Event>,
-    offset: number = 0
+    byteOffset: number = 0
   ) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
 `);
 
   for (const [eventName, event] of Object.entries(events)) {
@@ -447,13 +447,13 @@ import { Pointer } from "../pointers.ts";
 
   public static of(
     data: Uint8Array | Pointer<Event> | null,
-    offset: number = 0
+    byteOffset: number = 0
   ): Event | null {
-    return data !== null ? new Event(data, offset) : null;
+    return data !== null ? new Event(data, byteOffset) : null;
   }
   
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get type(): EventType {
@@ -500,20 +500,20 @@ export async function writeStructs(
 
   constructor(
     public readonly _data: Pointer<${className}>,
-    offset: number = 0
+    byteOffset: number = 0
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<${className}> | null,
-    offset: number = 0
+    byteOffset: number = 0
   ): ${className} | null {
-    return data !== null ? new ${className}(data, offset) : null;
+    return data !== null ? new ${className}(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }
 `);
@@ -537,7 +537,7 @@ export async function writeStructs(
       
   constructor(
     data: Uint8Array | Pointer<${className}>,
-    offset: number,
+    byteOffset: number,
   );
   constructor(props: Partial<${className}>);`);
 
@@ -592,10 +592,10 @@ export async function writeStructs(
 
   constructor(
     data?: Uint8Array | Pointer<${className}>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
     this._data = data ?? new Uint8Array(${className}.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 `);
     } else {
@@ -603,22 +603,22 @@ export async function writeStructs(
 
   constructor(
     public readonly _data: Uint8Array | Pointer<${className}>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 `);
     }
 
     lines.push(`public static of(
       data: Uint8Array | Pointer<${className}> | null,
-      offset: number = 0,
+      byteOffset: number = 0,
     ): ${className} | null {
-      return data !== null ? new ${className}(data, offset) : null;
+      return data !== null ? new ${className}(data, byteOffset) : null;
     }
 
-    public get _offset(): number {
-      return this._view.offset;
+    public get _byteOffset(): number {
+      return this._view.byteOffset;
     }
 `);
 
@@ -1146,7 +1146,11 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         } else if (isFunctionParamDoublePointer(param)) {
           lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
         } else if (isFunctionParamStructByValue(structs, param)) {
-          lines.push(`\t\tPlatform.toPlatformStruct(${paramName}._data, ${stripPrefixes(param.type)}),`);
+          lines.push(
+            `\t\tPlatform.toPlatformStruct(${paramName}._data, ${
+              stripPrefixes(param.type)
+            }, ${paramName}._byteOffset),`,
+          );
         } else if (
           isFunctionParamPointer(param) ||
           isFunctionParamOpaqueStruct(opaqueStructs, param) ||

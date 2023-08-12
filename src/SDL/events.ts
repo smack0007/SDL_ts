@@ -284,10 +284,10 @@ export class Event implements AllocatableStruct {
 
   constructor(
     data?: Uint8Array | Pointer<Event>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
     this._data = data ?? new Uint8Array(Event.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
 
     this.common = new CommonEvent(this._data, this._view);
     this.display = new DisplayEvent(this._data, this._view);
@@ -300,13 +300,13 @@ export class Event implements AllocatableStruct {
 
   public static of(
     data: Uint8Array | Pointer<Event> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Event | null {
-    return data !== null ? new Event(data, offset) : null;
+    return data !== null ? new Event(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get type(): EventType {

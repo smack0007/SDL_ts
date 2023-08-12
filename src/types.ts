@@ -70,7 +70,7 @@ export type FunctionWithSymbolName = Function & { symbolName: string };
 
 export type AllocatableStructConstructor<T extends AllocatableStruct> = {
   SIZE_IN_BYTES: number;
-  of(data: Uint8Array | Pointer<T> | null, offset?: number): T | null;
+  of(data: Uint8Array | Pointer<T> | null, byteOffset?: number): T | null;
 };
 
 export interface AllocatableStruct extends Struct {
@@ -83,11 +83,11 @@ export interface InitOptions {
 
 export interface StructConstructor<T extends Struct> {
   SIZE_IN_BYTES: number;
-  of(data: Pointer<T>, offset?: number): T;
+  of(data: Pointer<T>, byteOffset?: number): T;
 }
 
 export interface Struct {
-  readonly _offset: number;
+  readonly _byteOffset: number;
 }
 
 //

@@ -11,7 +11,7 @@ export type PointerLike<T> = TypedArray | Struct | PointerBoxableValue<T>;
 export class Pointer<T> {
   constructor(
     public readonly _data: TypedArray | PlatformPointer<T>,
-    public readonly _offset = 0,
+    public readonly _byteOffset = 0,
   ) {
   }
 

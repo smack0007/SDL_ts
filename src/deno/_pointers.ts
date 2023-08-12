@@ -12,10 +12,10 @@ export function denoToPlatformPointer<T>(value: Pointer<T> | null): PlatformPoin
       result = value._data;
     }
 
-    if (value._offset != 0) {
+    if (value._byteOffset != 0) {
       result = Deno.UnsafePointer.offset(
         result as unknown as NonNullable<Deno.PointerValue>,
-        value._offset,
+        value._byteOffset,
       ) as unknown as PlatformPointer<T>;
     }
   }

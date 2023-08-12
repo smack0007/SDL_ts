@@ -32,7 +32,7 @@ export interface PlatformDataViewConstructor {
 
 export interface PlatformDataView {
   readonly data: Uint8Array | Pointer<unknown>;
-  readonly offset: number;
+  readonly byteOffset: number;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
   getF32(byteOffset: number): f32;
@@ -88,5 +88,6 @@ export interface Platform {
   toPlatformStruct<T extends AllocatableStruct>(
     data: TypedArray | Pointer<T>,
     dataType: AllocatableStructConstructor<T>,
+    byteOffset: number,
   ): Uint8Array;
 }

@@ -40,20 +40,20 @@ export class Renderer implements Struct {
 
   constructor(
     public readonly _data: Pointer<Renderer>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<Renderer> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Renderer | null {
-    return data !== null ? new Renderer(data, offset) : null;
+    return data !== null ? new Renderer(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }
 
@@ -64,20 +64,20 @@ export class RWops implements Struct {
 
   constructor(
     public readonly _data: Pointer<RWops>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<RWops> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): RWops | null {
-    return data !== null ? new RWops(data, offset) : null;
+    return data !== null ? new RWops(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }
 
@@ -88,20 +88,20 @@ export class Texture implements Struct {
 
   constructor(
     public readonly _data: Pointer<Texture>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<Texture> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Texture | null {
-    return data !== null ? new Texture(data, offset) : null;
+    return data !== null ? new Texture(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }
 
@@ -112,20 +112,20 @@ export class Window implements Struct {
 
   constructor(
     public readonly _data: Pointer<Window>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<Window> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Window | null {
-    return data !== null ? new Window(data, offset) : null;
+    return data !== null ? new Window(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }
 
@@ -137,7 +137,7 @@ export class Color implements AllocatableStruct {
 
   constructor(
     data: Uint8Array | Pointer<Color>,
-    offset: number,
+    byteOffset: number,
   );
   constructor(props: Partial<Color>);
   constructor(r: u8, g: u8, b: u8, a: u8);
@@ -173,13 +173,13 @@ export class Color implements AllocatableStruct {
 
   public static of(
     data: Uint8Array | Pointer<Color> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Color | null {
-    return data !== null ? new Color(data, offset) : null;
+    return data !== null ? new Color(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get r(): u8 {
@@ -222,20 +222,20 @@ export class DisplayMode implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<DisplayMode>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<DisplayMode> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): DisplayMode | null {
-    return data !== null ? new DisplayMode(data, offset) : null;
+    return data !== null ? new DisplayMode(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get format(): u32 {
@@ -266,20 +266,20 @@ export class Keysym implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<Keysym>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<Keysym> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Keysym | null {
-    return data !== null ? new Keysym(data, offset) : null;
+    return data !== null ? new Keysym(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get scancode(): Scancode {
@@ -306,20 +306,20 @@ export class Palette implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<Palette>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<Palette> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Palette | null {
-    return data !== null ? new Palette(data, offset) : null;
+    return data !== null ? new Palette(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get ncolors(): i32 {
@@ -342,20 +342,20 @@ export class PixelFormat implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<PixelFormat>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<PixelFormat> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): PixelFormat | null {
-    return data !== null ? new PixelFormat(data, offset) : null;
+    return data !== null ? new PixelFormat(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get format(): u32 {
@@ -419,7 +419,7 @@ export class Point implements AllocatableStruct {
 
   constructor(
     data: Uint8Array | Pointer<Point>,
-    offset: number,
+    byteOffset: number,
   );
   constructor(props: Partial<Point>);
   constructor(x: i32, y: i32);
@@ -449,13 +449,13 @@ export class Point implements AllocatableStruct {
 
   public static of(
     data: Uint8Array | Pointer<Point> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Point | null {
-    return data !== null ? new Point(data, offset) : null;
+    return data !== null ? new Point(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get x(): i32 {
@@ -483,7 +483,7 @@ export class Rect implements AllocatableStruct {
 
   constructor(
     data: Uint8Array | Pointer<Rect>,
-    offset: number,
+    byteOffset: number,
   );
   constructor(props: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
@@ -519,13 +519,13 @@ export class Rect implements AllocatableStruct {
 
   public static of(
     data: Uint8Array | Pointer<Rect> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Rect | null {
-    return data !== null ? new Rect(data, offset) : null;
+    return data !== null ? new Rect(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get x(): i32 {
@@ -569,21 +569,21 @@ export class RendererInfo implements AllocatableStruct {
 
   constructor(
     data?: Uint8Array | Pointer<RendererInfo>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
     this._data = data ?? new Uint8Array(RendererInfo.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<RendererInfo> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): RendererInfo | null {
-    return data !== null ? new RendererInfo(data, offset) : null;
+    return data !== null ? new RendererInfo(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get name(): string {
@@ -617,20 +617,20 @@ export class Surface implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<Surface>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<Surface> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Surface | null {
-    return data !== null ? new Surface(data, offset) : null;
+    return data !== null ? new Surface(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get flags(): u32 {
@@ -683,20 +683,20 @@ export class SysWMinfo implements Struct {
 
   constructor(
     public readonly _data: Uint8Array | Pointer<SysWMinfo>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<SysWMinfo> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): SysWMinfo | null {
-    return data !== null ? new SysWMinfo(data, offset) : null;
+    return data !== null ? new SysWMinfo(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get version(): version {
@@ -719,21 +719,21 @@ export class version implements AllocatableStruct {
 
   constructor(
     data?: Uint8Array | Pointer<version>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
     this._data = data ?? new Uint8Array(version.SIZE_IN_BYTES);
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Uint8Array | Pointer<version> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): version | null {
-    return data !== null ? new version(data, offset) : null;
+    return data !== null ? new version(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 
   public get major(): u8 {

@@ -17,19 +17,19 @@ export class Font implements Struct {
 
   constructor(
     public readonly _data: Pointer<Font>,
-    offset: number = 0,
+    byteOffset: number = 0,
   ) {
-    this._view = new Platform.DataView(this._data, offset);
+    this._view = new Platform.DataView(this._data, byteOffset);
   }
 
   public static of(
     data: Pointer<Font> | null,
-    offset: number = 0,
+    byteOffset: number = 0,
   ): Font | null {
-    return data !== null ? new Font(data, offset) : null;
+    return data !== null ? new Font(data, byteOffset) : null;
   }
 
-  public get _offset(): number {
-    return this._view.offset;
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
   }
 }

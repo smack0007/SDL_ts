@@ -195,7 +195,7 @@ export class BoxArray<T extends BoxValue> {
   // TODO: This is terrible. Just replace this with a funciton named pointersAt(index: number)
   public readonly pointers = {
     at: (index: number) => {
-      return Pointer.ofTypedArray(this._data, this.sizeOfElementInBytes * index);
+      return Pointer.ofTypedArray<T>(this._data, this.sizeOfElementInBytes * index);
     },
   };
 }
