@@ -4,10 +4,6 @@ import { Box, BoxArray, BoxValue } from "./boxes.ts";
 import { Struct, TypedArray } from "./types.ts";
 import { PlatformPointer } from "./_types.ts";
 
-type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
-
-export type PointerLike<T> = TypedArray | Struct | PointerBoxableValue<T>;
-
 export class Pointer<T> {
   constructor(
     public readonly _data: TypedArray | PlatformPointer<T>,
@@ -50,3 +46,7 @@ export class Pointer<T> {
     return new Pointer(value, offset);
   }
 }
+
+type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
+
+export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerBoxableValue<T>;

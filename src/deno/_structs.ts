@@ -1,31 +1,30 @@
-import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, AllocatableStructConstructor, TypedArray } from "../types.ts";
-import { isTypedArray } from "../_utils.ts";
+import { AllocatableStructConstructor, Struct, StructConstructor } from "../types.ts";
 import { DenoPlatformDataView } from "./_dataView.ts";
 import { PlatformPointer } from "../_types.ts";
 import { denoFromPlatformPointer } from "./_pointers.ts";
+import { throwError } from "../_utils.ts";
 
-export function denoToPlatformStruct<T extends AllocatableStruct>(
-  data: TypedArray | Pointer<T>,
-  dataType: AllocatableStructConstructor<T>,
-  byteOffset: number,
+export function denoToPlatformStruct<T extends Struct>(
+  struct: T,
+  structConstructor: StructConstructor<T>,
 ): Uint8Array {
-  if (data instanceof Uint8Array) {
-    return data;
-  } else if (isTypedArray(data)) {
-    return new Uint8Array(data.buffer, byteOffset);
-  } else if (isTypedArray(data._data)) {
-    return new Uint8Array(data._data.buffer, byteOffset);
-  } else {
-    // TODO: Could we cache this?
-    const view = new DenoPlatformDataView(data);
-    return view.getArray(dataType.SIZE_IN_BYTES, byteOffset);
+  if (struct._data instanceof Uint8Array) {
+    if (struct._byteOffset === 0) {
+      return struct._data;
+    } else {
+      return new Uint8Array(struct._data, struct._byteOffset);
+    }
+  } else if ("SIZE_IN_BYTES" in structConstructor) {
+    const view = new DenoPlatformDataView(struct._data);
+    return view.getArray((structConstructor as AllocatableStructConstructor<T>).SIZE_IN_BYTES, struct._byteOffset);
   }
+
+  throwError(`Unable to convert struct to platform struct in ${denoToPlatformStruct.name}.`);
 }
 
-export function denoFromPlatformStruct<T extends AllocatableStruct>(
+export function denoFromPlatformStruct<T extends Struct>(
   data: PlatformPointer<T>,
-  dataType: AllocatableStructConstructor<T>,
+  structConstructor: StructConstructor<T>,
 ): T | null {
-  return dataType.of(denoFromPlatformPointer(data));
+  return structConstructor.of(denoFromPlatformPointer(data));
 }

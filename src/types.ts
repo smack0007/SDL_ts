@@ -68,9 +68,8 @@ export type FunctionWithSymbolName = Function & { symbolName: string };
 // Complex types
 //
 
-export type AllocatableStructConstructor<T extends AllocatableStruct> = {
+export type AllocatableStructConstructor<T extends AllocatableStruct> = StructConstructor<T> & {
   SIZE_IN_BYTES: number;
-  of(data: Uint8Array | Pointer<T> | null, byteOffset?: number): T | null;
 };
 
 export interface AllocatableStruct extends Struct {
@@ -82,11 +81,11 @@ export interface InitOptions {
 }
 
 export interface StructConstructor<T extends Struct> {
-  SIZE_IN_BYTES: number;
-  of(data: Pointer<T>, byteOffset?: number): T;
+  of(data: Uint8Array | Pointer<T> | null, byteOffset?: number): T | null;
 }
 
 export interface Struct {
+  readonly _data: Uint8Array | Pointer<unknown>;
   readonly _byteOffset: number;
 }
 

@@ -1147,9 +1147,7 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
           lines.push(`\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`);
         } else if (isFunctionParamStructByValue(structs, param)) {
           lines.push(
-            `\t\tPlatform.toPlatformStruct(${paramName}._data, ${
-              stripPrefixes(param.type)
-            }, ${paramName}._byteOffset),`,
+            `\t\tPlatform.toPlatformStruct(${paramName}, ${stripPrefixes(param.type)}),`,
           );
         } else if (
           isFunctionParamPointer(param) ||
