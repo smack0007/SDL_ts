@@ -32,12 +32,13 @@ export async function codegenSDL_image(): Promise<void> {
 
   await writeEnums(`${SDL_IMAGE_SRC_PATH}/enums.ts`, enums, []);
   // await writeStructs(`${SDL_IMAGE_SRC_PATH}/structs.ts`, structs, opaqueStructs);
-  await writeSymbols(`${SDL_IMAGE_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
+  await writeSymbols(`${SDL_IMAGE_SRC_PATH}/_symbols.ts`, functions, callbacks, enums, allStructs, opaqueStructs);
   await writeCallbacks(`${SDL_IMAGE_SRC_PATH}/callbacks.ts`, callbacks, enums, structs, opaqueStructs, []);
   await writeFunctions(
     `${SDL_IMAGE_SRC_PATH}/functions.ts`,
     "SDL2_image",
     functions,
+    callbacks,
     enums,
     allStructs,
     opaqueStructs,

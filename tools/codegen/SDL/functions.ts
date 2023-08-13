@@ -1,6 +1,20 @@
 import { CodeGenFunctions } from "../types.ts";
 
 export const functions: CodeGenFunctions = {
+  SDL_AddEventWatch: {
+    parameters: {
+      filter: {
+        type: "SDL_EventFilter",
+      },
+      userdata: {
+        type: "void*",
+        nullable: true,
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_BlitScaled: {
     symbolName: "SDL_UpperBlitScaled",
     parameters: {

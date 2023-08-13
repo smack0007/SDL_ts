@@ -6,7 +6,7 @@ export const symbols = {
       /* SDL_EventFilter filter */ "function",
       /* void* userdata */ "pointer",
     ],
-    result: /* int */ "i32",
+    result: /* void */ "void",
   },
   SDL_UpperBlitScaled: {
     parameters: [
