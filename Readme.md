@@ -39,6 +39,9 @@ sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
 pacman -S mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image mingw-w64-ucrt-x86_64-SDL2_ttf
 ```
 
+You'll need to ensure then that the sysroot (in this case ucrt) is in your path. Assuming the default install location
+for msys2 then `C:\msys64\ucrt64\bin`.
+
 #### MacOS
 
 ##### Homebrew
@@ -46,9 +49,6 @@ pacman -S mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image mingw-w64-
 ```shell
 brew install sdl2 sdl2_image sdl2_ttf
 ```
-
-You'll need to ensure then that the sysroot (in this case ucrt) is in your path. Assuming the default install location
-for msys2 then `C:\msys64\ucrt64\bin`.
 
 ### Creating a Project
 
