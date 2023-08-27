@@ -1,3 +1,4 @@
+export * from "./src/SDL/callbacks.ts";
 export * from "./src/SDL/constants.ts";
 export * from "./src/SDL/enums.ts";
 export * from "./src/SDL/events.ts";

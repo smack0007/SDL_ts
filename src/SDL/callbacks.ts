@@ -3,7 +3,14 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { Pointer } from "../pointers.ts";
-import { Callback, int } from "../types.ts";
+import { Callback, i32 } from "../types.ts";
 import { Event } from "./events.ts";
 
-export type EventFilter = Callback & ((userdata: Pointer<unknown> | null, event: Event) => int);
+export type EventFilter =
+  & (
+    (
+      userdata: Pointer<unknown> | null,
+      event: Pointer<Event>,
+    ) => i32
+  )
+  & Callback;

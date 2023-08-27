@@ -1148,7 +1148,33 @@ export async function writeCallbacks(
 ): Promise<void> {
   const lines = createLines();
   lines.push(`// deno-lint-ignore-file no-unused-vars
+
+import { Pointer } from "../pointers.ts";
+import { Callback, i32 } from "../types.ts";
+import { Event } from "./events.ts";
 `);
+
+  lines.push(...imports);
+  lines.push("");
+
+  for (const [callbackName, callback] of Object.entries(callbacks)) {
+    lines.push(`export type ${stripPrefixes(callbackName)} = (`);
+
+    lines.push("(");
+    for (const [paramName, param] of Object.entries(callback.parameters)) {
+      const paramType = mapFunctionParamType(callbacks, enums, structs, opaqueStructs, param).replace(
+        "PointerLike<",
+        "Pointer<",
+      );
+
+      lines.push(`${paramName}: ${paramType},`);
+    }
+
+    const returnType = mapFunctionReturnType(callbacks, enums, structs, opaqueStructs, callback.result);
+    lines.push(`) => ${returnType}`);
+
+    lines.push(") & Callback;");
+  }
 
   await writeLinesToFile(filePath, lines);
 }
