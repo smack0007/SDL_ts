@@ -37,7 +37,7 @@ export const callbacks = {
       return (userdata: PlatformPointer<unknown>, event: PlatformPointer<Event>): i32 => {
         return callback(
           Platform.fromPlatformPointer(userdata)!,
-          Platform.fromPlatformStruct(event, Event)!,
+          Event.of(Platform.fromPlatformPointer(event))!,
         );
       };
     },

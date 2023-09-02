@@ -10,7 +10,7 @@ export type EventFilter =
   & (
     (
       userdata: Pointer<unknown> | null,
-      event: Pointer<Event>,
+      event: Event,
     ) => i32
   )
   & Callback;

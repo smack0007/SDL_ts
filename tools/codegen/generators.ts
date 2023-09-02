@@ -1117,8 +1117,11 @@ import { i32 } from "../types.ts";
 
       if (isFunctionParamString(param)) {
         lines.push(`\t\tPlatform.fromPlatformString(${paramName})`);
-      } else if (isFunctionParamStruct(structs, param)) {
-        lines.push(`\t\tPlatform.fromPlatformStruct(${paramName}, ${getGenericParam(paramType)})`);
+      } else if (
+        isFunctionParamOpaqueStruct(opaqueStructs, param) ||
+        isFunctionParamStruct(structs, param)
+      ) {
+        lines.push(`\t\t${getGenericParam(paramType)}.of(Platform.fromPlatformPointer(${paramName}))`);
       } else if (isFunctionParamPointer(param)) {
         lines.push(`\t\tPlatform.fromPlatformPointer(${paramName})`);
       } else {
@@ -1162,10 +1165,16 @@ import { Event } from "./events.ts";
 
     lines.push("(");
     for (const [paramName, param] of Object.entries(callback.parameters)) {
-      const paramType = mapFunctionParamType(callbacks, enums, structs, opaqueStructs, param).replace(
-        "PointerLike<",
-        "Pointer<",
-      );
+      let paramType = mapFunctionParamType(callbacks, enums, structs, opaqueStructs, param);
+
+      if (
+        isFunctionParamOpaqueStruct(opaqueStructs, param) ||
+        isFunctionParamStruct(structs, param)
+      ) {
+        paramType = getGenericParam(paramType);
+      } else {
+        paramType = paramType.replace("PointerLike<", "Pointer<");
+      }
 
       lines.push(`${paramName}: ${paramType},`);
     }
