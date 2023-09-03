@@ -15,6 +15,24 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_AddTimer: {
+    todo: "Doesn't seem to be supported yet perhaps due to background thread?",
+    parameters: {
+      interval: {
+        type: "Uint32",
+      },
+      callback: {
+        type: "SDL_TimerCallback",
+      },
+      param: {
+        type: "void*",
+        nullable: true,
+      },
+    },
+    result: {
+      type: "SDL_TimerID",
+    },
+  },
   SDL_BlitScaled: {
     symbolName: "SDL_UpperBlitScaled",
     parameters: {
@@ -1079,6 +1097,17 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "void",
+    },
+  },
+  SDL_RemoveTimer: {
+    todo: "Doesn't seem to be supported yet perhaps due to background thread?",
+    parameters: {
+      id: {
+        type: "SDL_TimerID",
+      },
+    },
+    result: {
+      type: "SDL_bool",
     },
   },
   SDL_RenderClear: {

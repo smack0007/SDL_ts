@@ -3,7 +3,7 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { Pointer } from "../pointers.ts";
-import { Callback, i32 } from "../types.ts";
+import { Callback, i32, u32 } from "../types.ts";
 import { Event } from "./events.ts";
 
 export type EventFilter =
@@ -14,3 +14,6 @@ export type EventFilter =
     ) => i32
   )
   & Callback;
+
+// TODO: Doesn't seem to be supported yet perhaps due to background thread?
+// SDL_TimerCallback

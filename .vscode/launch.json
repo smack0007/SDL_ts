@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug CodeGen",
+      "name": "CodeGen",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -12,7 +12,7 @@
       "attachSimplePort": 9229
     },
     {
-      "name": "Debug Doom Fire",
+      "name": "Doom Fire",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -22,7 +22,7 @@
       "attachSimplePort": 9229
     },
     {
-      "name": "Debug Hello World",
+      "name": "Hello World",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -32,7 +32,7 @@
       "attachSimplePort": 9229
     },
     {
-      "name": "Debug Hello World Async",
+      "name": "Hello World Async",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -42,7 +42,7 @@
       "attachSimplePort": 9229
     },
     {
-      "name": "Debug Renderer",
+      "name": "Renderer",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -52,7 +52,7 @@
       "attachSimplePort": 9229
     },
     {
-      "name": "Debug Same Game",
+      "name": "Same Game",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",

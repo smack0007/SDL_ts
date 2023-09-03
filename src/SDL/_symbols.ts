@@ -8,6 +8,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: Doesn't seem to be supported yet perhaps due to background thread?
+  // SDL_AddTimer
   SDL_UpperBlitScaled: {
     parameters: [
       /* SDL_Surface* src */ "pointer",
@@ -549,6 +551,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: Doesn't seem to be supported yet perhaps due to background thread?
+  // SDL_RemoveTimer
   SDL_RenderClear: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

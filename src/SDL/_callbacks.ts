@@ -5,7 +5,7 @@
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Event } from "./events.ts";
-import { i32 } from "../types.ts";
+import { i32, u32 } from "../types.ts";
 
 import { EventFilter } from "./callbacks.ts";
 import {
@@ -42,4 +42,6 @@ export const callbacks = {
       };
     },
   },
+  // TODO: Doesn't seem to be supported yet perhaps due to background thread?
+  // SDL_TimerCallback
 } as const;

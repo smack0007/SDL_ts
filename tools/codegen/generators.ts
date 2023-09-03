@@ -245,6 +245,9 @@ function mapTypeToFFIType(
     case "SDL_bool":
       return "bool";
 
+    case "SDL_TimerID":
+      return "i32";
+
     case "double":
       return "f64";
 
@@ -1050,6 +1053,15 @@ function writeImportAllStructs(
   lines.push(`import { ${structNames} } from "./structs.ts";`);
 }
 
+function writeImportAllCallbacks(lines: string[], callbacks: CodeGenCallbacks): void {
+  lines.push(`import { ${
+    Object.entries(callbacks)
+      .filter(([_, value]) => !value.todo)
+      .map(([key, _]) => stripPrefixes(key))
+      .join(", ")
+  } } from "./callbacks.ts";`);
+}
+
 export async function writeCallbacksSymbols(
   filePath: string,
   callbacks: CodeGenCallbacks,
@@ -1064,10 +1076,10 @@ export async function writeCallbacksSymbols(
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Event } from "./events.ts";
-import { i32 } from "../types.ts";
+import { i32, u32 } from "../types.ts";
 `);
 
-  lines.push(`import { ${Object.keys(callbacks).map((x) => stripPrefixes(x)).join(", ")} } from "./callbacks.ts";`);
+  writeImportAllCallbacks(lines, callbacks);
   writeImportAllStructs(lines, structs, opaqueStructs);
   lines.push("");
 
@@ -1079,6 +1091,13 @@ import { i32 } from "../types.ts";
   lines.push("export const callbacks = {");
 
   for (const [callbackName, callback] of Object.entries(callbacks)) {
+    if (callback.todo) {
+      lines.push(`// TODO: ${callback.todo}`);
+      lines.push(`// ${callbackName}`);
+      lines.push("");
+      continue;
+    }
+
     lines.push(`\t${callbackName}: {`);
 
     writeSymbolParametersAndResult(lines, callback, callbacks, enums, structs, opaqueStructs);
@@ -1134,7 +1153,7 @@ import { i32 } from "../types.ts";
     lines.push(`\t\t\t\t);`);
     lines.push("\t\t\t};");
     lines.push("\t\t},");
-    lines.push("\t}");
+    lines.push("\t},");
   }
 
   lines.push("} as const;");
@@ -1153,7 +1172,7 @@ export async function writeCallbacks(
   lines.push(`// deno-lint-ignore-file no-unused-vars
 
 import { Pointer } from "../pointers.ts";
-import { Callback, i32 } from "../types.ts";
+import { Callback, i32, u32 } from "../types.ts";
 import { Event } from "./events.ts";
 `);
 
@@ -1161,6 +1180,13 @@ import { Event } from "./events.ts";
   lines.push("");
 
   for (const [callbackName, callback] of Object.entries(callbacks)) {
+    if (callback.todo) {
+      lines.push(`// TODO: ${callback.todo}`);
+      lines.push(`// ${callbackName}`);
+      lines.push("");
+      continue;
+    }
+
     lines.push(`export type ${stripPrefixes(callbackName)} = (`);
 
     lines.push("(");
@@ -1183,6 +1209,7 @@ import { Event } from "./events.ts";
     lines.push(`) => ${returnType}`);
 
     lines.push(") & Callback;");
+    lines.push("");
   }
 
   await writeLinesToFile(filePath, lines);
@@ -1212,8 +1239,7 @@ import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 `);
 
-  const callbackNames = Object.keys(callbacks).map((x) => stripPrefixes(x)).join(", ");
-  lines.push(`import { ${callbackNames} } from "./callbacks.ts";`);
+  writeImportAllCallbacks(lines, callbacks);
 
   const enumNames = Object.keys(enums).map((x) => stripPrefixes(x)).join(", ");
   lines.push(`import { ${enumNames} } from "./enums.ts";`);

@@ -15,4 +15,18 @@ export const callbacks: CodeGenCallbacks = {
       type: "int",
     },
   },
+  SDL_TimerCallback: {
+    todo: "Doesn't seem to be supported yet perhaps due to background thread?",
+    parameters: {
+      interval: {
+        type: "Uint32",
+      },
+      param: {
+        type: "void*",
+      },
+    },
+    result: {
+      type: "Uint32",
+    },
+  },
 };

@@ -1,6 +1,9 @@
 export type CodeGenCallbacks = Record<string, CodeGenCallback>;
 
 export interface CodeGenCallback {
+  // If set the callback is not yet supported and shouldn't be output.
+  todo?: string;
+
   parameters: Record<string, CodeGenFunctionParam>;
 
   result: CodeGenFunctionResult;

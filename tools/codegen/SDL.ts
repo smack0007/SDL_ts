@@ -34,7 +34,7 @@ export async function codegenSDL(): Promise<void> {
     opaqueStructs,
     [
       `import { Event } from "./events.ts";`,
-      `import { RWMode } from "./types.ts";`,
+      `import { RWMode /*, TimerID */ } from "./types.ts";`,
     ],
   );
 }

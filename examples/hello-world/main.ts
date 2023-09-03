@@ -42,8 +42,6 @@ SDL.FillRect(
 );
 SDL.UpdateWindowSurface(window);
 
-const event = new SDL.Event();
-
 SDL.MinimizeWindow(window);
 SDL.RestoreWindow(window);
 
@@ -54,6 +52,7 @@ SDL.AddEventWatch((_userdata, event) => {
   return 0;
 }, null);
 
+const event = new SDL.Event();
 let done = false;
 while (!done) {
   while (SDL.PollEvent(event) != 0) {

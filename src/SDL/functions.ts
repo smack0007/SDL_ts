@@ -56,7 +56,7 @@ import {
 } from "./structs.ts";
 
 import { Event } from "./events.ts";
-import { RWMode } from "./types.ts";
+import { RWMode /*, TimerID */ } from "./types.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
@@ -70,6 +70,9 @@ export function AddEventWatch(
   );
 }
 AddEventWatch.symbolName = "SDL_AddEventWatch";
+
+// TODO: Doesn't seem to be supported yet perhaps due to background thread?
+// SDL_AddTimer
 
 export function BlitScaled(
   src: PointerLike<Surface>,
@@ -937,6 +940,9 @@ export function RaiseWindow(
   );
 }
 RaiseWindow.symbolName = "SDL_RaiseWindow";
+
+// TODO: Doesn't seem to be supported yet perhaps due to background thread?
+// SDL_RemoveTimer
 
 export function RenderClear(
   renderer: PointerLike<Renderer>,
