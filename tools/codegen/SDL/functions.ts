@@ -324,6 +324,20 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_DelEventWatch: {
+    parameters: {
+      filter: {
+        type: "SDL_EventFilter",
+      },
+      userdata: {
+        type: "void*",
+        nullable: true,
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_DestroyRenderer: {
     parameters: {
       renderer: {

@@ -131,6 +131,13 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_DelEventWatch: {
+    parameters: [
+      /* SDL_EventFilter filter */ "function",
+      /* void* userdata */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
   SDL_DestroyRenderer: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

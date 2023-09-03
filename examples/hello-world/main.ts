@@ -1,4 +1,4 @@
-import { SDL } from "SDL_ts";
+import { Pointer, SDL, i32 } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 
 SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
@@ -45,12 +45,14 @@ SDL.UpdateWindowSurface(window);
 SDL.MinimizeWindow(window);
 SDL.RestoreWindow(window);
 
-SDL.AddEventWatch((_userdata, event) => {
+function eventWatcher(_userdata: Pointer<unknown> | null, event: SDL.Event): i32 {
   if (event.type === SDL.EventType.MOUSEMOTION) {
     console.info(`SDL.AddEventWatch[MOUSEMOTION]: (${event.mousemotion.x}, ${event.mousemotion.y})`);
   }
   return 0;
-}, null);
+}
+
+SDL.AddEventWatch(eventWatcher, null);
 
 const event = new SDL.Event();
 let done = false;
@@ -84,6 +86,10 @@ while (!done) {
       }
     } else if (event.type === SDL.EventType.KEYDOWN) {
       console.info(`KeyDown: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
+
+      if (event.key.keysym.scancode === SDL.Scancode.ESCAPE) {
+        SDL.DelEventWatch(eventWatcher, null);
+      }
     } else if (event.type === SDL.EventType.KEYUP) {
       console.info(`KeyUp: ${event.key.keysym.scancode} "${SDL.GetScancodeName(event.key.keysym.scancode)}"`);
     } else if (event.type === SDL.EventType.MOUSEMOTION) {

@@ -293,6 +293,17 @@ export function Delay(
 }
 Delay.symbolName = "SDL_Delay";
 
+export function DelEventWatch(
+  filter: EventFilter,
+  userdata: PointerLike<unknown> | null,
+): void {
+  _library.symbols.SDL_DelEventWatch(
+    Platform.toPlatformCallback(filter, callbacks["SDL_EventFilter"]),
+    Platform.toPlatformPointer(Pointer.of(userdata)),
+  );
+}
+DelEventWatch.symbolName = "SDL_DelEventWatch";
+
 export function DestroyRenderer(
   renderer: PointerLike<Renderer>,
 ): void {

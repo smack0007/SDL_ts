@@ -6,6 +6,7 @@ export const SDL_FUNCTIONS = [
   SDL.AddEventWatch,
   SDL.CreateWindow,
   SDL.Delay,
+  SDL.DelEventWatch,
   SDL.DestroyWindow,
   SDL.FillRect,
   SDL.GetError,
