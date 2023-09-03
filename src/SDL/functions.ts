@@ -8,9 +8,11 @@ import { DynamicLibrary } from "../_library.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { callbacks } from "./_callbacks.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
+import { EventFilter } from "./callbacks.ts";
 import {
   ArrayOrder,
   BitmapOrder,
@@ -54,9 +56,23 @@ import {
 } from "./structs.ts";
 
 import { Event } from "./events.ts";
-import { RWMode } from "./types.ts";
+import { RWMode /*, TimerID */ } from "./types.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
+
+export function AddEventWatch(
+  filter: EventFilter,
+  userdata: PointerLike<unknown> | null,
+): void {
+  _library.symbols.SDL_AddEventWatch(
+    Platform.toPlatformCallback(filter, callbacks["SDL_EventFilter"]),
+    Platform.toPlatformPointer(Pointer.of(userdata)),
+  );
+}
+AddEventWatch.symbolName = "SDL_AddEventWatch";
+
+// TODO: Doesn't seem to be supported yet perhaps due to background thread?
+// SDL_AddTimer
 
 export function BlitScaled(
   src: PointerLike<Surface>,
@@ -276,6 +292,17 @@ export function Delay(
   );
 }
 Delay.symbolName = "SDL_Delay";
+
+export function DelEventWatch(
+  filter: EventFilter,
+  userdata: PointerLike<unknown> | null,
+): void {
+  _library.symbols.SDL_DelEventWatch(
+    Platform.toPlatformCallback(filter, callbacks["SDL_EventFilter"]),
+    Platform.toPlatformPointer(Pointer.of(userdata)),
+  );
+}
+DelEventWatch.symbolName = "SDL_DelEventWatch";
 
 export function DestroyRenderer(
   renderer: PointerLike<Renderer>,
@@ -924,6 +951,9 @@ export function RaiseWindow(
   );
 }
 RaiseWindow.symbolName = "SDL_RaiseWindow";
+
+// TODO: Doesn't seem to be supported yet perhaps due to background thread?
+// SDL_RemoveTimer
 
 export function RenderClear(
   renderer: PointerLike<Renderer>,

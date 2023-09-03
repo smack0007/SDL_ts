@@ -17,6 +17,9 @@
       ],
       "include": [
         "explicit-function-return-type"
+      ],
+      "exclude": [
+        "no-inferrable-types"
       ]
     }
   },

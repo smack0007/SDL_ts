@@ -1,6 +1,15 @@
 // This file is auto generated. To update the file make changes to the code generator.
 
 export const symbols = {
+  SDL_AddEventWatch: {
+    parameters: [
+      /* SDL_EventFilter filter */ "function",
+      /* void* userdata */ "pointer",
+    ],
+    result: /* void */ "void",
+  },
+  // TODO: Doesn't seem to be supported yet perhaps due to background thread?
+  // SDL_AddTimer
   SDL_UpperBlitScaled: {
     parameters: [
       /* SDL_Surface* src */ "pointer",
@@ -119,6 +128,13 @@ export const symbols = {
   SDL_Delay: {
     parameters: [
       /* Uint32 ms */ "u32",
+    ],
+    result: /* void */ "void",
+  },
+  SDL_DelEventWatch: {
+    parameters: [
+      /* SDL_EventFilter filter */ "function",
+      /* void* userdata */ "pointer",
     ],
     result: /* void */ "void",
   },
@@ -542,6 +558,8 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  // TODO: Doesn't seem to be supported yet perhaps due to background thread?
+  // SDL_RemoveTimer
   SDL_RenderClear: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

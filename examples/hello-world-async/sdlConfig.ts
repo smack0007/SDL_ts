@@ -7,6 +7,7 @@ export const SDL_FUNCTIONS = [
   SDL.DestroyWindow,
   SDL.FillRect,
   SDL.GetError,
+  SDL.GetScancodeName,
   SDL.GetWindowSurface,
   SDL.Init,
   SDL.MapRGB,

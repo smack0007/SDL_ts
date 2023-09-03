@@ -109,11 +109,8 @@ export function getTransformer<T extends BoxValue>(
       return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;
   }
 
-  if ("of" in factoryOrConstructor as unknown as AllocatableStructConstructor<T>) {
-    return (factoryOrConstructor as unknown as AllocatableStructConstructor<T>)
-      .of as unknown as BoxValueTransformer<
-        T
-      >;
+  if ("of" in factoryOrConstructor) {
+    return factoryOrConstructor.of as unknown as BoxValueTransformer<T>;
   }
 
   throw new Error(
@@ -198,7 +195,7 @@ export class BoxArray<T extends BoxValue> {
   // TODO: This is terrible. Just replace this with a funciton named pointersAt(index: number)
   public readonly pointers = {
     at: (index: number) => {
-      return Pointer.ofTypedArray(this._data, this.sizeOfElementInBytes * index);
+      return Pointer.ofTypedArray<T>(this._data, this.sizeOfElementInBytes * index);
     },
   };
 }

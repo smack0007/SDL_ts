@@ -59,15 +59,17 @@ export type TypedArray =
   | BigUint64Array;
 
 // deno-lint-ignore ban-types
+export type Callback = Function;
+
+// deno-lint-ignore ban-types
 export type FunctionWithSymbolName = Function & { symbolName: string };
 
 //
 // Complex types
 //
 
-export type AllocatableStructConstructor<T extends AllocatableStruct> = {
+export type AllocatableStructConstructor<T extends AllocatableStruct> = StructConstructor<T> & {
   SIZE_IN_BYTES: number;
-  of(data: Uint8Array | Pointer<T> | null): T | null;
 };
 
 export interface AllocatableStruct extends Struct {
@@ -79,11 +81,13 @@ export interface InitOptions {
 }
 
 export interface StructConstructor<T extends Struct> {
-  SIZE_IN_BYTES: number;
-  of(data: Pointer<T>): T;
+  of(data: Uint8Array | Pointer<T> | null, byteOffset?: number): T | null;
 }
 
-export interface Struct {}
+export interface Struct {
+  readonly _data: Uint8Array | Pointer<unknown>;
+  readonly _byteOffset: number;
+}
 
 //
 // Type Helpers
@@ -103,8 +107,9 @@ export type Flags<T extends Record<string, number>, Name extends string> =
   }[keyof T]
   | number;
 
+export type Mutable<T> = T extends object ? { -readonly [P in keyof T]: Mutable<T[P]> }
+  : T;
+
 export type OrFactory<T> = T | Factory<T>;
 
 export type Predicate<T> = (value: T) => boolean;
-
-export type Writeable<T> = { -readonly [P in keyof T]: T[P] };

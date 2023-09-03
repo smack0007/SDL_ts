@@ -1,3 +1,14 @@
+export type CodeGenCallbacks = Record<string, CodeGenCallback>;
+
+export interface CodeGenCallback {
+  // If set the callback is not yet supported and shouldn't be output.
+  todo?: string;
+
+  parameters: Record<string, CodeGenFunctionParam>;
+
+  result: CodeGenFunctionResult;
+}
+
 export type CodeGenEnums = Record<string, CodeGenEnum>;
 
 export interface CodeGenEnum {
@@ -69,7 +80,7 @@ export interface CodeGenStruct {
 
   // Indicates whether the struct can be written to in
   // in script. If false it will only be written to by SDL.
-  writable?: boolean;
+  mutable?: boolean;
 
   // Size of the struct in bytes.
   size: number;

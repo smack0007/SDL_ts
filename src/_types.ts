@@ -1,32 +1,23 @@
 import { Pointer } from "./pointers.ts";
-import {
-  AllocatableStruct,
-  AllocatableStructConstructor,
-  f32,
-  f64,
-  i16,
-  i32,
-  i64,
-  i8,
-  TypedArray,
-  u16,
-  u32,
-  u64,
-  u8,
-} from "./types.ts";
-import { DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
+import { Callback, f32, f64, i16, i32, i64, i8, Struct, StructConstructor, u16, u32, u64, u8 } from "./types.ts";
+import { DynamicCallbackDefinition, DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 declare const _: unique symbol;
 
+export type PlatformCallback = { [_]: "PlatformCallback" };
 export type PlatformPointer<T> = { [_]: "PlatformPointer" };
 export type PlatformString = { [_]: "PlatformString" };
 
 export interface PlatformDataViewConstructor {
-  new (data: Uint8Array | PlatformPointer<unknown>): PlatformDataView;
+  new (
+    data: Uint8Array | Pointer<unknown>,
+    offset?: number,
+  ): PlatformDataView;
 }
 
 export interface PlatformDataView {
-  readonly data: Uint8Array | PlatformPointer<unknown>;
+  readonly data: Uint8Array | Pointer<unknown>;
+  readonly byteOffset: number;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
   getF32(byteOffset: number): f32;
@@ -62,18 +53,25 @@ export interface Platform {
 
   fromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string;
 
+  fromPlatformStruct<T extends Struct>(
+    data: PlatformPointer<T>,
+    structConstructor: StructConstructor<T>,
+  ): T | null;
+
   loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
     symbols: T,
     libraryPath?: string,
   ): DynamicLibrary<T>;
 
+  toPlatformCallback<T extends Callback>(value: T, definition: DynamicCallbackDefinition<T>): PlatformCallback;
+
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 
   toPlatformString(value: string): PlatformString;
 
-  toPlatformStruct<T extends AllocatableStruct>(
-    data: TypedArray | Pointer<T>,
-    dataType: AllocatableStructConstructor<T>,
+  toPlatformStruct<T extends Struct>(
+    struct: T,
+    stuctConstructor: StructConstructor<T>,
   ): Uint8Array;
 }

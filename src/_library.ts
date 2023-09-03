@@ -1,3 +1,5 @@
+import { Callback } from "./types.ts";
+
 export type DynamicLibraryType =
   | "bool"
   | "i8"
@@ -11,14 +13,19 @@ export type DynamicLibraryType =
   | "f32"
   | "f64"
   | "pointer"
+  | "function"
   | { struct: Readonly<Array<DynamicLibraryType>> };
 
-export type DynamicLibraryFunctionInterface = {
+export type DynamicLibraryFunctionDefinition = {
   readonly parameters: readonly DynamicLibraryType[];
   readonly result: DynamicLibraryType | "void";
 };
 
-export type DynamicLibraryInterface = Record<string, DynamicLibraryFunctionInterface>;
+export type DynamicCallbackDefinition<T extends Callback> = DynamicLibraryFunctionDefinition & {
+  wrap: (callback: T) => unknown;
+};
+
+export type DynamicLibraryInterface = Record<string, DynamicLibraryFunctionDefinition>;
 
 export type DynamicLibrary<T> = {
   symbols: Record<keyof T, (...args: unknown[]) => unknown>;

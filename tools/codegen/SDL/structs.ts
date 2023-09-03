@@ -12,7 +12,7 @@ export const opaqueStructs: CodeGenOpaqueStructs = [
 export const structs: CodeGenStructs = {
   SDL_Color: {
     allocatable: true,
-    writable: true,
+    mutable: true,
     size: 4,
     members: {
       r: {
@@ -191,7 +191,7 @@ export const structs: CodeGenStructs = {
   },
   SDL_Point: {
     allocatable: true,
-    writable: true,
+    mutable: true,
     size: 8,
     members: {
       x: {
@@ -206,7 +206,7 @@ export const structs: CodeGenStructs = {
   },
   SDL_Rect: {
     allocatable: true,
-    writable: true,
+    mutable: true,
     size: 16,
     members: {
       x: {
@@ -229,7 +229,7 @@ export const structs: CodeGenStructs = {
   },
   SDL_RendererInfo: {
     allocatable: true,
-    writable: false,
+    mutable: false,
     size: 88,
     members: {
       name: {
