@@ -13,7 +13,7 @@ const UNIX_LIBRARY_PATHS: string[] = [
   "/usr/lib64",
 ];
 
-const MACOS_LIBRARY_PATHS: string[] = ["/System/Volumes/Data/opt/homebrew/lib", "/usr/local/lib"];
+const MACOS_LIBRARY_PATHS: string[] = ["/usr/local/lib", "/System/Volumes/Data/opt/homebrew/lib"];
 
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
