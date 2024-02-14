@@ -31,6 +31,12 @@ Currently working via [deno](https://deno.land/) on Windows, Linux, and mac OS u
 sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
 ```
 
+##### Fedora
+
+```shell
+sudo dnf install SDL2 SDL2_image SDL2_ttf
+```
+
 #### Windows
 
 ##### MSYS2
