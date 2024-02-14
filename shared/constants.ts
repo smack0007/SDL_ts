@@ -7,9 +7,9 @@ export const REPO_URL = "https://deno.land/x/sdl_ts";
 export const ROOT_PATH = new URL(import.meta.url).pathname
   .replaceAll("/", IS_WINDOWS ? "\\" : "/")
   .substring(IS_WINDOWS ? 1 : 0)
-  .split(path.SEP)
+  .split(path.SEPARATOR)
   .slice(0, -2)
-  .join(path.SEP);
+  .join(path.SEPARATOR);
 
 export const ASSETS_PATH = path.join(ROOT_PATH, "assets");
 
