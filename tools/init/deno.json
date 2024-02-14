@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "deno.window",
-      "deno.unstable"
-    ]
+    "lib": ["deno.window", "deno.unstable"]
   },
   "fmt": {
     "useTabs": false,
@@ -12,16 +9,12 @@
   },
   "lint": {
     "rules": {
-      "tags": [
-        "recommended"
-      ],
-      "include": [
-        "explicit-function-return-type"
-      ]
+      "tags": ["recommended"],
+      "include": ["explicit-function-return-type"]
     }
   },
   "importMap": "imports.deno.json",
   "tasks": {
-    "start": "deno run --unstable --allow-env --allow-ffi ./main.ts"
+    "start": "deno run --unstable-ffi --allow-env --allow-ffi ./main.ts"
   }
 }
