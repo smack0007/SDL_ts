@@ -17,11 +17,15 @@ function main(): number {
     WINDOW_HEIGHT,
     SDL.WindowFlags.SHOWN,
     windowBox,
-    rendererBox,
+    rendererBox
   );
 
-  const window = windowBox.unboxNotNull(() => `Failed to create window: ${SDL.GetError()}`);
-  const renderer = rendererBox.unboxNotNull(() => `Failed to create renderer: ${SDL.GetError()}`);
+  const window = windowBox.unboxNotNull(
+    () => `Failed to create window: ${SDL.GetError()}`
+  );
+  const renderer = rendererBox.unboxNotNull(
+    () => `Failed to create renderer: ${SDL.GetError()}`
+  );
 
   const rendererInfo = new SDL.RendererInfo();
   if (SDL.GetRendererInfo(renderer, rendererInfo) != 0) {
@@ -32,7 +36,10 @@ function main(): number {
   console.info(rendererInfo.name);
   console.info(rendererInfo.max_texture_width);
   console.info(rendererInfo.max_texture_height);
-  console.info((rendererInfo.flags & SDL.RendererFlags.ACCELERATED) === SDL.RendererFlags.ACCELERATED);
+  console.info(
+    (rendererInfo.flags & SDL.RendererFlags.ACCELERATED) ===
+      SDL.RendererFlags.ACCELERATED
+  );
 
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
@@ -98,7 +105,7 @@ function main(): number {
       destRect,
       textureRotation,
       textureCenter,
-      SDL.RendererFlip.NONE,
+      SDL.RendererFlip.NONE
     );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -113,7 +120,7 @@ function main(): number {
     SDL.RenderPresent(renderer);
     SDL.RenderFlush(renderer);
 
-    SDL.Delay(16);
+    SDL.Delay(1);
   }
 
   SDL.DestroyTexture(texture);
