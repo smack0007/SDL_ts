@@ -3,10 +3,13 @@
 // deno-lint-ignore-file no-unused-vars
 
 import Platform from "../_platform.ts";
+import { callbacks } from "./_callbacks.ts";
 import { PlatformDataView } from "../_types.ts";
 import { isTypedArray } from "../_utils.ts";
 import { Pointer } from "../pointers.ts";
 import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
+
+import { AudioCallback, EventFilter } from "./callbacks.ts";
 
 import {
   ArrayOrder,
@@ -126,6 +129,157 @@ export class Window implements Struct {
 
   public get _byteOffset(): number {
     return this._view.byteOffset;
+  }
+}
+
+export class AudioSpec implements AllocatableStruct {
+  public static SIZE_IN_BYTES = 32;
+
+  public readonly _data: Uint8Array | Pointer<AudioSpec>;
+  public readonly _view: PlatformDataView;
+
+  constructor(
+    data: Uint8Array | Pointer<AudioSpec>,
+    byteOffset: number,
+  );
+  constructor(props: Partial<AudioSpec>);
+  constructor(
+    freq: i32,
+    format: u16,
+    channels: u8,
+    silence: u8,
+    samples: u16,
+    padding: u16,
+    size: u32,
+    callback: AudioCallback,
+    userdata: Pointer<void>,
+  );
+  constructor(
+    _1?: Uint8Array | Pointer<AudioSpec> | Partial<AudioSpec> | i32,
+    _2?: number | u16,
+    _3?: u8,
+    _4?: u8,
+    _5?: u16,
+    _6?: u16,
+    _7?: u32,
+    _8?: AudioCallback,
+    _9?: Pointer<void>,
+  ) {
+    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
+    if (dataPassedIn) {
+      this._data = _1;
+      this._view = new Platform.DataView(this._data, _2);
+    } else {
+      this._data = new Uint8Array(AudioSpec.SIZE_IN_BYTES);
+      this._view = new Platform.DataView(this._data, 0);
+    }
+
+    if (!dataPassedIn && _1 !== undefined) {
+      if (typeof _1 === "object") {
+        if (_1.freq !== undefined) this.freq = _1.freq;
+        if (_1.format !== undefined) this.format = _1.format;
+        if (_1.channels !== undefined) this.channels = _1.channels;
+        if (_1.silence !== undefined) this.silence = _1.silence;
+        if (_1.samples !== undefined) this.samples = _1.samples;
+        if (_1.padding !== undefined) this.padding = _1.padding;
+        if (_1.size !== undefined) this.size = _1.size;
+        if (_1.callback !== undefined) this.callback = _1.callback;
+        if (_1.userdata !== undefined) this.userdata = _1.userdata;
+      } else {
+        if (_1 !== undefined) this.freq = _1;
+        if (_2 !== undefined) this.format = _2;
+        if (_3 !== undefined) this.channels = _3;
+        if (_4 !== undefined) this.silence = _4;
+        if (_5 !== undefined) this.samples = _5;
+        if (_6 !== undefined) this.padding = _6;
+        if (_7 !== undefined) this.size = _7;
+        if (_8 !== undefined) this.callback = _8;
+        if (_9 !== undefined) this.userdata = _9;
+      }
+    }
+  }
+
+  public static of(
+    data: Uint8Array | Pointer<AudioSpec> | null,
+    byteOffset: number = 0,
+  ): AudioSpec | null {
+    return data !== null ? new AudioSpec(data, byteOffset) : null;
+  }
+
+  public get _byteOffset(): number {
+    return this._view.byteOffset;
+  }
+
+  public get freq(): i32 {
+    return this._view.getI32(0);
+  }
+
+  public set freq(value: i32) {
+    this._view.setI32(0, value);
+  }
+
+  public get format(): u16 {
+    return this._view.getU16(4);
+  }
+
+  public set format(value: u16) {
+    this._view.setU16(4, value);
+  }
+
+  public get channels(): u8 {
+    return this._view.getU8(6);
+  }
+
+  public set channels(value: u8) {
+    this._view.setU8(6, value);
+  }
+
+  public get silence(): u8 {
+    return this._view.getU8(7);
+  }
+
+  public set silence(value: u8) {
+    this._view.setU8(7, value);
+  }
+
+  public get samples(): u16 {
+    return this._view.getU16(8);
+  }
+
+  public set samples(value: u16) {
+    this._view.setU16(8, value);
+  }
+
+  public get padding(): u16 {
+    return this._view.getU16(10);
+  }
+
+  public set padding(value: u16) {
+    this._view.setU16(10, value);
+  }
+
+  public get size(): u32 {
+    return this._view.getU32(12);
+  }
+
+  public set size(value: u32) {
+    this._view.setU32(12, value);
+  }
+
+  public get callback(): AudioCallback {
+    return this._view.getCallback(16, callbacks["SDL_AudioCallback"]);
+  }
+
+  public set callback(value: AudioCallback) {
+    this._view.setCallback(16, value, callbacks["SDL_AudioCallback"]);
+  }
+
+  public get userdata(): Pointer<void> {
+    return this._view.getPointer(24);
+  }
+
+  public set userdata(value: Pointer<void>) {
+    this._view.setPointer(24, value);
   }
 }
 

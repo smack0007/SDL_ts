@@ -77,6 +77,16 @@ export const functions: CodeGenFunctions = {
       type: "int",
     },
   },
+  SDL_CloseAudioDevice: {
+    parameters: {
+      dev: {
+        type: "SDL_AudioDeviceID",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_ConvertSurface: {
     parameters: {
       src: {
@@ -406,6 +416,16 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "int",
+    },
+  },
+  SDL_FreeWAV: {
+    parameters: {
+      audio_buf: {
+        type: "Uint8*",
+      },
+    },
+    result: {
+      type: "void",
     },
   },
   SDL_FreeSurface: {
@@ -978,6 +998,28 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Surface*",
     },
   },
+  SDL_LoadWAV_RW: {
+    parameters: {
+      src: {
+        type: "SDL_RWops*",
+      },
+      freesrc: {
+        type: "int",
+      },
+      spec: {
+        type: "SDL_AudioSpec*",
+      },
+      audio_buf: {
+        type: "Uint8**",
+      },
+      audio_len: {
+        type: "Uint32*",
+      },
+    },
+    result: {
+      type: "SDL_AudioSpec*",
+    },
+  },
   SDL_LockSurface: {
     parameters: {
       surface: {
@@ -1049,6 +1091,43 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_OpenAudioDevice: {
+    parameters: {
+      device: {
+        type: "char*",
+        nullable: true,
+      },
+      iscapture: {
+        type: "int",
+      },
+      desired: {
+        type: "SDL_AudioSpec*",
+      },
+      obtained: {
+        type: "SDL_AudioSpec*",
+        nullable: true,
+      },
+      allowed_changes: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "SDL_AudioDeviceID",
+    },
+  },
+  SDL_PauseAudioDevice: {
+    parameters: {
+      dev: {
+        type: "SDL_AudioDeviceID",
+      },
+      pause_on: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_PollEvent: {
     parameters: {
       event: {
@@ -1087,6 +1166,22 @@ export const functions: CodeGenFunctions = {
     parameters: {},
     result: {
       type: "void",
+    },
+  },
+  SDL_QueueAudio: {
+    parameters: {
+      dev: {
+        type: "SDL_AudioDeviceID",
+      },
+      data: {
+        type: "void*",
+      },
+      len: {
+        type: "Uint32",
+      },
+    },
+    result: {
+      type: "int",
     },
   },
   SDL_RWFromFile: {

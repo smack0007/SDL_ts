@@ -1,16 +1,21 @@
 // This is a blunt tool that will produce output from the SDL headers
 // that can then be fed directly into the codegen.
 
-import { CodeGenEnums, CodeGenFunctions, CodeGenStructs } from "./codegen/types.ts";
+// clang -Wno-everything $(sdl2-config --cflags --libs) ./tmp/out/codegen-scraper.c -o ./tmp/out/codegen-scraper
+// ./tmp/out/codegen-scraper > ./tmp/out/codegen-scraper.txt
+
+import {
+  CodeGenEnums,
+  CodeGenFunctions,
+  CodeGenStructs,
+} from "./codegen/types.ts";
 
 const TMP_PATH = "../tmp";
-const SDL_PATH = `${TMP_PATH}/SDL`;
-const KHRONOS_PATH = `${TMP_PATH}/khronos`;
+// TODO: This should be read from sdl2-config
+const SDL_PATH = `/usr/include/SDL2`;
 const OUTPUT_PATH = `${TMP_PATH}/out`;
 
-const MACROS_TO_COMPUTE = [
-  "SDL_SCANCODE_TO_KEYCODE",
-];
+const MACROS_TO_COMPUTE = ["SDL_SCANCODE_TO_KEYCODE"];
 
 let buffer = "";
 
@@ -42,10 +47,10 @@ function writePrintF(value: string, ...args: string[]): void {
 async function main(): Promise<number> {
   writeStartCode();
 
-  for await (const entry of Deno.readDir(`${SDL_PATH}/include`)) {
+  for await (const entry of Deno.readDir(`${SDL_PATH}`)) {
     if (entry.name.startsWith("SDL") && entry.name.endsWith(".h")) {
       writePrintF(`// ${entry.name}`);
-      await scrapeFile(`${SDL_PATH}/include/${entry.name}`);
+      await scrapeFile(`${SDL_PATH}/${entry.name}`);
       writePrintF("");
     }
   }
@@ -61,35 +66,42 @@ async function main(): Promise<number> {
   const cOutputPath = `${OUTPUT_PATH}/codegen-scraper.c`;
   await Deno.writeTextFile(cOutputPath, buffer);
 
-  const exeOutputPath = `${OUTPUT_PATH}/codegen-scraper.exe`;
+  const sdlConfigCommand = new Deno.Command("sdl2-config", {
+    args: ["--cflags", "--libs"],
+  });
+  const { stdout: sdlFlags } = await sdlConfigCommand.output();
+  console.info(`sdlFlags: ${new TextDecoder().decode(sdlFlags)}`);
+
+  const exeOutputPath = `${OUTPUT_PATH}/codegen-scraper`;
   const compileCommand = new Deno.Command("clang", {
-    "args": [
+    args: [
+      ...new TextDecoder().decode(sdlFlags).split("\n"),
       cOutputPath,
       "-o",
       exeOutputPath,
-      `-I${SDL_PATH}/include`,
-      `-I${KHRONOS_PATH}`,
-      `-L${SDL_PATH}/lib/x64`,
-      "-Wl,/SUBSYSTEM:CONSOLE",
-      "-lSDL2main",
-      "-lSDL2",
-      "-lShell32",
     ],
   });
-  const { code: compileCode } = await compileCommand.output();
+  const { code: compileCode, stderr: compileError } =
+    await compileCommand.output();
 
   if (compileCode !== 0) {
+    console.error("Failed to compile with clang:");
+    console.error(new TextDecoder().decode(compileError));
     return 1;
   }
 
-  await Deno.copyFile(
-    `${SDL_PATH}/lib/x64/SDL2.dll`,
-    `${OUTPUT_PATH}/SDL2.dll`,
-  );
+  // await Deno.copyFile(
+  //   `${SDL_PATH}/lib/x64/SDL2.dll`,
+  //   `${OUTPUT_PATH}/SDL2.dll`
+  // );
 
   const exeCommand = new Deno.Command(exeOutputPath);
 
-  const { code: exeCode, stdout: exeStdout, stderr: exeStderr } = await exeCommand.output();
+  const {
+    code: exeCode,
+    stdout: exeStdout,
+    stderr: exeStderr,
+  } = await exeCommand.output();
 
   if (exeCode !== 0) {
     console.info(exeStdout);
@@ -98,9 +110,15 @@ async function main(): Promise<number> {
   }
 
   await Deno.writeFile(`${OUTPUT_PATH}/codegen-scraper.ts`, exeStdout);
-  const { enums, functions, structs } = await import(`${OUTPUT_PATH}/codegen-scraper.ts`);
+  const { enums, functions, structs } = await import(
+    `${OUTPUT_PATH}/codegen-scraper.ts`
+  );
 
-  await updateCodeGenInput(enums as CodeGenEnums, functions as CodeGenFunctions, structs as CodeGenStructs);
+  await updateCodeGenInput(
+    enums as CodeGenEnums,
+    functions as CodeGenFunctions,
+    structs as CodeGenStructs
+  );
 
   return 0;
 }
@@ -114,7 +132,9 @@ function writeStartCode(): void {
   write("");
   write("int main(int argc, char* args[]) {");
   write("SDL_Init(SDL_INIT_VIDEO);");
-  writePrintF('import { CodeGenEnums, CodeGenFunctions, CodeGenStructs } from "../../tools/codegen/types.ts";');
+  writePrintF(
+    'import { CodeGenEnums, CodeGenFunctions, CodeGenStructs } from "../../tools/codegen/types.ts";'
+  );
   writePrintF("export const sizeOfInt = %llu;", "sizeof(int)");
   writePrintF("export const enums: CodeGenEnums = {};");
   writePrintF("export const functions: CodeGenFunctions = {};");
@@ -176,9 +196,7 @@ async function scrapeFile(filePath: string): Promise<void> {
       flush();
       captureMode = "function";
       writeLineNumber(i);
-    } else if (
-      line.startsWith("typedef struct") && !line.endsWith(";")
-    ) {
+    } else if (line.startsWith("typedef struct") && !line.endsWith(";")) {
       flush();
       captureMode = "struct";
       writeLineNumber(i);
@@ -194,18 +212,18 @@ async function scrapeFile(filePath: string): Promise<void> {
       // outputDefine(capture);
       shouldFlush = true;
     } else if (
-      captureMode === "enum" && line.startsWith("} ") &&
+      captureMode === "enum" &&
+      line.startsWith("} ") &&
       line.endsWith(";")
     ) {
       outputEnum(capture);
       shouldFlush = true;
-    } else if (
-      captureMode === "function" && line.endsWith(";")
-    ) {
+    } else if (captureMode === "function" && line.endsWith(";")) {
       outputFunction(capture);
       shouldFlush = true;
     } else if (
-      captureMode === "struct" && line.startsWith("} ") &&
+      captureMode === "struct" &&
+      line.startsWith("} ") &&
       line.endsWith(";")
     ) {
       outputStruct(capture);
@@ -219,11 +237,10 @@ async function scrapeFile(filePath: string): Promise<void> {
 }
 
 function outputDefine(capture: string): void {
-  capture = capture
-    .replaceAll("#define", "")
-    .replaceAll("\\", "");
+  capture = capture.replaceAll("#define", "").replaceAll("\\", "");
 
-  const parts = capture.split(" ")
+  const parts = capture
+    .split(" ")
     .map((x) => x.trim())
     .filter((x) => x !== "");
 
@@ -245,7 +262,8 @@ function outputEnum(capture: string): void {
     .replaceAll("' '", "_") // These 2 come from SDL_keycode
     .replaceAll("','", "__");
 
-  const parts = capture.split(/(\,|\s)/)
+  const parts = capture
+    .split(/(\,|\s)/)
     .map((x) => x.trim())
     .filter((x) => x !== "")
     .filter((x) => x !== ",");
@@ -257,11 +275,7 @@ function outputEnum(capture: string): void {
   }
 
   if (
-    [
-      "SDL_KeyCode",
-      "SDL_PixelFormatEnum",
-      "SDL_WindowFlags",
-    ].includes(enumName)
+    ["SDL_KeyCode", "SDL_PixelFormatEnum", "SDL_WindowFlags"].includes(enumName)
   ) {
     return;
   }
@@ -290,7 +304,9 @@ function outputEnum(capture: string): void {
     if (value !== null) {
       value = value.replaceAll("\\", "\\\\");
 
-      const computeMacroValue = MACROS_TO_COMPUTE.some((x) => value!.startsWith(x));
+      const computeMacroValue = MACROS_TO_COMPUTE.some((x) =>
+        value!.startsWith(x)
+      );
 
       if (computeMacroValue) {
         writePrintF(`\t\t${key}: "%d",`, value);
@@ -315,7 +331,8 @@ function outputFunction(capture: string): void {
     .replaceAll("(", " ")
     .replaceAll(")", " ");
 
-  let parts = capture.split(/(\,|\s)/)
+  let parts = capture
+    .split(/(\,|\s)/)
     .map((x) => x.trim())
     .filter((x) => x !== "")
     .filter((x) => x !== ",");
@@ -347,7 +364,6 @@ function outputFunction(capture: string): void {
       "SDL_bsearch",
       "SDL_CreateShapedWindow",
       "SDL_hid_open_path",
-      "SDL_LoadWAV_RW",
       "SDL_LockMutex",
       "SDL_Log",
       "SDL_LogCritical",
@@ -423,7 +439,8 @@ function outputStruct(capture: string): void {
     .replaceAll("unsigned short", "ushort")
     .replaceAll("char * ", "char* ");
 
-  const parts = capture.split(/(\;|\s)/)
+  const parts = capture
+    .split(/(\;|\s)/)
     .map((x) => x.trim())
     .filter((x) => x !== "")
     .filter((x) => x !== ";");
@@ -515,23 +532,22 @@ function stringify(obj: unknown): string {
 }
 
 function sortObjectKeys<T extends Record<string, unknown>>(input: T): T {
-  return Object.keys(input).sort().reduce(
-    (obj, key) => {
+  return Object.keys(input)
+    .sort()
+    .reduce((obj, key) => {
       obj[key] = input[key];
       return obj;
-    },
-    {} as Record<string, unknown>,
-  ) as T;
+    }, {} as Record<string, unknown>) as T;
 }
 
 async function formatFile(path: string): Promise<void> {
-  await (new Deno.Command(Deno.execPath(), { "args": ["fmt", path] })).output();
+  await new Deno.Command(Deno.execPath(), { args: ["fmt", path] }).output();
 }
 
 async function updateCodeGenInput(
   scrapedEnums: CodeGenEnums,
   scrapedFunctions: CodeGenFunctions,
-  scrapedStructs: CodeGenStructs,
+  scrapedStructs: CodeGenStructs
 ): Promise<void> {
   await updateCodeGenEnums(scrapedEnums);
   await updateCodeGenFunctions(scrapedFunctions);
@@ -542,20 +558,27 @@ async function updateCodeGenEnums(scrapedEnums: CodeGenEnums): Promise<void> {
   const { enums } = await import("./codegen/SDL/enums.ts");
 
   for (const [enumName, _enum] of Object.entries(scrapedEnums)) {
-    if (["SDL_FlashOperation", "SDL_SYSWM_TYPE"].includes(enumName) && enums[enumName] === undefined) {
+    if (
+      ["SDL_FlashOperation", "SDL_SYSWM_TYPE"].includes(enumName) &&
+      enums[enumName] === undefined
+    ) {
       enums[enumName] = _enum;
     }
   }
 
   const output = `import { CodeGenEnums } from "../types.ts";
   
-export const enums: CodeGenEnums = ${stringify(sortObjectKeys(enums))} as const;`;
+export const enums: CodeGenEnums = ${stringify(
+    sortObjectKeys(enums)
+  )} as const;`;
 
   await Deno.writeTextFile("./codegen/SDL/enums.ts", output);
   await formatFile("./codegen/SDL/enums.ts");
 }
 
-async function updateCodeGenFunctions(scrapedFunctions: CodeGenFunctions): Promise<void> {
+async function updateCodeGenFunctions(
+  scrapedFunctions: CodeGenFunctions
+): Promise<void> {
   const { functions } = await import("./codegen/SDL/functions.ts");
 
   for (const [funcName, func] of Object.entries(scrapedFunctions)) {
@@ -570,18 +593,25 @@ async function updateCodeGenFunctions(scrapedFunctions: CodeGenFunctions): Promi
 
   const output = `import { CodeGenFunctions } from "../types.ts";
   
-export const functions: CodeGenFunctions = ${stringify(sortObjectKeys(functions))} as const;`;
+export const functions: CodeGenFunctions = ${stringify(
+    sortObjectKeys(functions)
+  )} as const;`;
 
   await Deno.writeTextFile("./codegen/SDL/functions.ts", output);
   await formatFile("./codegen/SDL/functions.ts");
 }
 
-async function updateCodeGenStructs(scrapedStructs: CodeGenStructs): Promise<void> {
+async function updateCodeGenStructs(
+  scrapedStructs: CodeGenStructs
+): Promise<void> {
   const { structs } = await import("./codegen/SDL/structs.ts");
 
   for (const [structName, struct] of Object.entries(scrapedStructs)) {
     console.info(structName);
-    if (["SDL_DisplayMode", "SDL_SysWMinfo"].includes(structName) && structs[structName] === undefined) {
+    if (
+      ["SDL_DisplayMode", "SDL_SysWMinfo"].includes(structName) &&
+      structs[structName] === undefined
+    ) {
       structs[structName] = struct;
     }
   }
@@ -597,7 +627,9 @@ export const opaqueStructs: CodeGenOpaqueStructs = [
   "SDL_Window",
 ];
 
-export const structs: CodeGenStructs = ${stringify(sortObjectKeys(structs))} as const;`;
+export const structs: CodeGenStructs = ${stringify(
+    sortObjectKeys(structs)
+  )} as const;`;
 
   await Deno.writeTextFile("./codegen/SDL/structs.ts", output);
   await formatFile("./codegen/SDL/structs.ts");
