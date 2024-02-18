@@ -33,6 +33,7 @@ export async function codegenSDL(): Promise<void> {
     structs,
     opaqueStructs,
     [
+      `import { AudioDeviceID } from "./audio.ts"`,
       `import { Event } from "./events.ts";`,
       `import { RWMode /*, TimerID */ } from "./types.ts";`,
     ],
