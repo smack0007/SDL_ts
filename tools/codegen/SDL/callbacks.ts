@@ -1,6 +1,23 @@
 import { CodeGenCallbacks } from "../types.ts";
 
 export const callbacks: CodeGenCallbacks = {
+  SDL_AudioCallback: {
+    parameters: {
+      userdata: {
+        type: "void*",
+        nullable: true,
+      },
+      stream: {
+        type: "Uint8*",
+      },
+      len: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "void",
+    },
+  },
   SDL_EventFilter: {
     parameters: {
       userdata: {

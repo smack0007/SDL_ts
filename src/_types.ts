@@ -1,6 +1,24 @@
 import { Pointer } from "./pointers.ts";
-import { Callback, f32, f64, i16, i32, i64, i8, Struct, StructConstructor, u16, u32, u64, u8 } from "./types.ts";
-import { DynamicCallbackDefinition, DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
+import {
+  Callback,
+  f32,
+  f64,
+  i16,
+  i32,
+  i64,
+  i8,
+  Struct,
+  StructConstructor,
+  u16,
+  u32,
+  u64,
+  u8,
+} from "./types.ts";
+import {
+  DynamicCallbackDefinition,
+  DynamicLibrary,
+  DynamicLibraryInterface,
+} from "./_library.ts";
 
 declare const _: unique symbol;
 
@@ -9,10 +27,7 @@ export type PlatformPointer<T> = { [_]: "PlatformPointer" };
 export type PlatformString = { [_]: "PlatformString" };
 
 export interface PlatformDataViewConstructor {
-  new (
-    data: Uint8Array | Pointer<unknown>,
-    offset?: number,
-  ): PlatformDataView;
+  new (data: Uint8Array | Pointer<unknown>, offset?: number): PlatformDataView;
 }
 
 export interface PlatformDataView {
@@ -20,6 +35,10 @@ export interface PlatformDataView {
   readonly byteOffset: number;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
+  getCallback<T extends Callback>(
+    byteOffset: number,
+    definition: DynamicCallbackDefinition<T>
+  ): T;
   getF32(byteOffset: number): f32;
   getF64(byteOffset: number): f64;
   getI8(byteOffset: number): i8;
@@ -31,6 +50,11 @@ export interface PlatformDataView {
   getU16(byteOffset: number): u16;
   getU32(byteOffset: number): u32;
   getU64(byteOffset: number): u64;
+  setCallback<T extends Callback>(
+    byteOffset: number,
+    value: T,
+    definition: DynamicCallbackDefinition<T>
+  ): void;
   setF32(byteOffset: number, value: f32): void;
   setF64(byteOffset: number, value: f64): void;
   setI8(byteOffset: number, value: i8): void;
@@ -49,29 +73,37 @@ export interface Platform {
 
   DataView: PlatformDataViewConstructor;
 
+  fromPlatformCallback<T extends Callback>(
+    value: PlatformCallback,
+    definition: DynamicCallbackDefinition<T>
+  ): T;
+
   fromPlatformPointer<T>(value: PlatformPointer<T> | null): Pointer<T> | null;
 
   fromPlatformString(value: Uint8Array | PlatformPointer<unknown>): string;
 
   fromPlatformStruct<T extends Struct>(
     data: PlatformPointer<T>,
-    structConstructor: StructConstructor<T>,
+    structConstructor: StructConstructor<T>
   ): T | null;
 
   loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
     symbols: T,
-    libraryPath?: string,
+    libraryPath?: string
   ): DynamicLibrary<T>;
 
-  toPlatformCallback<T extends Callback>(value: T, definition: DynamicCallbackDefinition<T>): PlatformCallback;
+  toPlatformCallback<T extends Callback>(
+    value: T,
+    definition: DynamicCallbackDefinition<T>
+  ): PlatformCallback;
 
   toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
 
-  toPlatformString(value: string): PlatformString;
+  toPlatformString(value: string | null): PlatformString;
 
   toPlatformStruct<T extends Struct>(
     struct: T,
-    stuctConstructor: StructConstructor<T>,
+    stuctConstructor: StructConstructor<T>
   ): Uint8Array;
 }

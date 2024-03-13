@@ -28,6 +28,12 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_CloseAudioDevice: {
+    parameters: [
+      /* SDL_AudioDeviceID dev */ "u32",
+    ],
+    result: /* void */ "void",
+  },
   SDL_ConvertSurface: {
     parameters: [
       /* SDL_Surface* src */ "pointer",
@@ -176,6 +182,12 @@ export const symbols = {
       /* SDL_FlashOperation operation */ "u32",
     ],
     result: /* int */ "i32",
+  },
+  SDL_FreeWAV: {
+    parameters: [
+      /* Uint8* audio_buf */ "pointer",
+    ],
+    result: /* void */ "void",
   },
   SDL_FreeSurface: {
     parameters: [
@@ -488,6 +500,16 @@ export const symbols = {
     ],
     result: /* SDL_Surface* */ "pointer",
   },
+  SDL_LoadWAV_RW: {
+    parameters: [
+      /* SDL_RWops* src */ "pointer",
+      /* int freesrc */ "i32",
+      /* SDL_AudioSpec* spec */ "pointer",
+      /* Uint8** audio_buf */ "pointer",
+      /* Uint32* audio_len */ "pointer",
+    ],
+    result: /* SDL_AudioSpec* */ "pointer",
+  },
   SDL_LockSurface: {
     parameters: [
       /* SDL_Surface* surface */ "pointer",
@@ -525,6 +547,23 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_OpenAudioDevice: {
+    parameters: [
+      /* char* device */ "pointer",
+      /* int iscapture */ "i32",
+      /* SDL_AudioSpec* desired */ "pointer",
+      /* SDL_AudioSpec* obtained */ "pointer",
+      /* int allowed_changes */ "i32",
+    ],
+    result: /* SDL_AudioDeviceID */ "u32",
+  },
+  SDL_PauseAudioDevice: {
+    parameters: [
+      /* SDL_AudioDeviceID dev */ "u32",
+      /* int pause_on */ "i32",
+    ],
+    result: /* void */ "void",
+  },
   SDL_PollEvent: {
     parameters: [
       /* SDL_Event* event */ "pointer",
@@ -544,6 +583,14 @@ export const symbols = {
   SDL_Quit: {
     parameters: [],
     result: /* void */ "void",
+  },
+  SDL_QueueAudio: {
+    parameters: [
+      /* SDL_AudioDeviceID dev */ "u32",
+      /* void* data */ "pointer",
+      /* Uint32 len */ "u32",
+    ],
+    result: /* int */ "i32",
   },
   SDL_RWFromFile: {
     parameters: [
