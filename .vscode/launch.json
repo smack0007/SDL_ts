@@ -42,6 +42,16 @@
       "attachSimplePort": 9229
     },
     {
+      "name": "Play Wav",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "env": { "DENO_FLAGS": "--inspect-brk" },
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["task", "run:play-wav"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Renderer",
       "type": "node",
       "request": "launch",

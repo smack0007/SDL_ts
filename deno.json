@@ -25,6 +25,7 @@
     "run:doom-fire": "cd ./examples/doom-fire && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:hello-world": "cd ./examples/hello-world && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:hello-world-async": "cd ./examples/hello-world-async && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
+    "run:play-wav": "cd ./examples/play-wav && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:renderer": "cd ./examples/renderer && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:same-game": "cd ./examples/same-game && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "test": "deno test --unstable-ffi --allow-ffi"
