@@ -1,4 +1,4 @@
-import { SDL } from "SDL_ts";
+import { SDL } from "@smack0007/sdl-ts";
 
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO);
@@ -9,13 +9,23 @@ function main(): number {
     SDL.WindowPos.CENTERED,
     1024,
     768,
-    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
+    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE
   );
 
   if (window == null) {
     console.error(`Failed to create window: ${SDL.GetError()}`);
-    Deno.exit(1);
+    return 1;
   }
+
+  const renderer = SDL.CreateRenderer(window, 0, SDL.RendererFlags.ACCELERATED);
+
+  if (renderer === null) {
+    console.error(`Failed to create window: ${SDL.GetError()}`);
+    return 1;
+  }
+
+  SDL.RenderClear(renderer);
+  SDL.RenderPresent(renderer);
 
   const event = new SDL.Event();
 

@@ -17,13 +17,12 @@ Currently working via [deno](https://deno.land/) on Windows, Linux, and mac OS u
 
 ## Non Goals
 
-- Creating a higher level API or Game Framework. This library's only purpose is to expose the SDL API to deno.
+- Creating a higher level API or Game Framework. This library's only purpose is to expose the SDL API to TypeScript.
 
 ## Versioning
 
-This library's version number will match the SDL version against which it is currently tested plus a revision number
-after the hyphen. I.E. `2.30.3-4` would indicate the library has been tested against SDL `2.30.3` and the revision
-number is `4`.
+This library's version number will match the SDL major and minor version against which it is currently tested. The patch
+number will be specifici to this library. I.E.
 
 ## Getting Started
 
@@ -64,19 +63,9 @@ brew install sdl2 sdl2_image sdl2_ttf
 
 ### Creating a Project
 
-To aid in creating a new project which uses `SDL_ts` there is an `init.ts` script to aid in getting your project set up:
-
-```bash
-deno run --allow-net --allow-read=/path/to/project --allow-write=/path/to/project --import-map https://deno.land/x/sdl_ts@0.0.4/imports.deno.json https://deno.land/x/sdl_ts@0.0.4/init.ts /path/to/project
-```
-
-Replace `/path/to/project` with the desired project path. After that the new project can be started via a deno task:
-
-```bash
-deno task start
-```
-
-You should be presented with a window titled "SDL_ts".
+Located in the directory [examples/getting-started](examples/getting-started/) are a minimal set of files needed to get
+a project up and running. Copy these files onto your computer and start the project with `deno task start`. You should
+see a window with `SDL_ts` as the title.
 
 ### Loading only required functions
 
