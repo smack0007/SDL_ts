@@ -9,7 +9,7 @@
 
   "editor.tabSize": 2,
 
-  "[josn,ts]": {
+  "[josn,typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }

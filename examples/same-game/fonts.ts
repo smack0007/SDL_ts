@@ -17,7 +17,7 @@ export type FontAtlas = {
 export function createFontAtlas(
   renderer: Pointer<SDL.Renderer>,
   fontPath: string,
-  fontSize: number,
+  fontSize: number
 ): FontAtlas {
   const fg = new SDL.Color(255, 255, 255, 255);
   const bg = new SDL.Color(0, 0, 0, 0);
@@ -25,16 +25,32 @@ export function createFontAtlas(
   const font = TTF.OpenFont(fontPath, fontSize);
 
   if (font === null) {
-    throw new Error(`Failed to open font in ${createFontAtlas.name}: ${SDL.GetError()}`);
+    throw new Error(
+      `Failed to open font in ${createFontAtlas.name}: ${SDL.GetError()}`
+    );
   }
 
-  const surface = SDL.CreateRGBSurfaceWithFormat(0, FONT_TEXTURE_SIZE, FONT_TEXTURE_SIZE, 32, SDL.PIXELFORMAT_RGBA8888);
+  const surface = SDL.CreateRGBSurfaceWithFormat(
+    0,
+    FONT_TEXTURE_SIZE,
+    FONT_TEXTURE_SIZE,
+    32,
+    SDL.PIXELFORMAT_RGBA8888
+  );
 
   if (surface === null) {
-    throw new Error(`Failed to create font surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
+    throw new Error(
+      `Failed to create font surface in ${
+        createFontAtlas.name
+      }: ${SDL.GetError()}`
+    );
   }
 
-  SDL.FillRect(surface, null, SDL.MapRGBA(surface.format, bg.r, bg.g, bg.b, bg.a));
+  SDL.FillRect(
+    surface,
+    null,
+    SDL.MapRGBA(surface.format, bg.r, bg.g, bg.b, bg.a)
+  );
 
   const glyphs: GlyphData[] = [];
   let maxGlyphHeight = 0;
@@ -45,12 +61,21 @@ export function createFontAtlas(
     const glyphSurface = TTF.RenderUTF8_Blended(font, character, fg);
 
     if (glyphSurface === null) {
-      throw new Error(`Failed to create glyph surface in ${createFontAtlas.name}: ${SDL.GetError()}`);
+      throw new Error(
+        `Failed to create glyph surface in ${
+          createFontAtlas.name
+        }: ${SDL.GetError()}`
+      );
     }
 
     // TODO(idea): Can we allow structs to return pointers to their members?
     const glyphSizeBox = new BoxArray<int>(Int, 2);
-    TTF.SizeUTF8(font, character, glyphSizeBox.pointers.at(0), glyphSizeBox.pointers.at(1));
+    TTF.SizeUTF8(
+      font,
+      character,
+      glyphSizeBox.pointersAt(0),
+      glyphSizeBox.pointersAt(1)
+    );
 
     const glyphWidth = glyphSizeBox.at(0);
     const glyphHeight = glyphSizeBox.at(1);
@@ -80,7 +105,9 @@ export function createFontAtlas(
       destination.y += maxGlyphHeight + 1;
 
       if (destination.y + destination.h >= FONT_TEXTURE_SIZE) {
-        throw new Error(`Ran out of glyph space in font atlas in ${createFontAtlas.name}`);
+        throw new Error(
+          `Ran out of glyph space in font atlas in ${createFontAtlas.name}`
+        );
       }
     }
 
@@ -98,7 +125,11 @@ export function createFontAtlas(
   const texture = SDL.CreateTextureFromSurface(renderer, surface);
 
   if (texture === null) {
-    throw new Error(`Failed to create font texture in ${createFontAtlas.name}: ${SDL.GetError()}`);
+    throw new Error(
+      `Failed to create font texture in ${
+        createFontAtlas.name
+      }: ${SDL.GetError()}`
+    );
   }
 
   SDL.SetTextureBlendMode(texture, SDL.BlendMode.BLEND);
@@ -117,7 +148,7 @@ export function drawString(
   renderer: Pointer<SDL.Renderer>,
   font: FontAtlas,
   destination: SDL.Point,
-  text: string,
+  text: string
 ): void {
   const destRect = new SDL.Rect(destination.x, destination.y, 0, 0);
 
@@ -139,7 +170,7 @@ export function drawString(
 
 export function measureString(
   font: FontAtlas,
-  text: string,
+  text: string
 ): { width: number; height: number } {
   let width = 0;
   let height = 0;

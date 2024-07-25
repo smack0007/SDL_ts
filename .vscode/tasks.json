@@ -146,6 +146,20 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "Run Version",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run:version"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "type": "deno",
       "command": "task",
       "args": ["test"],

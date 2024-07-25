@@ -1,4 +1,7 @@
 {
+  "name": "@smack0007/sdl-ts",
+  "version": "2.30.3-1",
+  "exports": "./mod.ts",
   "compilerOptions": {
     "lib": ["deno.window", "deno.unstable"]
   },
@@ -28,6 +31,7 @@
     "run:play-wav": "cd ./examples/play-wav && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:renderer": "cd ./examples/renderer && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:same-game": "cd ./examples/same-game && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
+    "run:version": "cd ./examples/version && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "test": "deno test --unstable-ffi --allow-ffi"
   }
 }

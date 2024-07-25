@@ -19,6 +19,12 @@ Currently working via [deno](https://deno.land/) on Windows, Linux, and mac OS u
 
 - Creating a higher level API or Game Framework. This library's only purpose is to expose the SDL API to deno.
 
+## Versioning
+
+This library's version number will match the SDL version against which it is currently tested plus a revision number
+after the hyphen. I.E. `2.30.3-4` would indicate the library has been tested against SDL `2.30.3` and the revision
+number is `4`.
+
 ## Getting Started
 
 ### SDL2 Installation
