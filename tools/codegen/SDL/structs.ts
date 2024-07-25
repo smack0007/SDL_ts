@@ -44,6 +44,7 @@ export const structs: CodeGenStructs = {
         offset: 12,
       },
       callback: {
+        todo: "Doesn't seem to work due to background thread.",
         type: "SDL_AudioCallback",
         offset: 16,
       },

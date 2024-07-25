@@ -12,8 +12,7 @@ const main = (): number => {
 
   console.info("SDL Initialized.");
 
-  // TODO: We should be able just to new up this struct without any params.
-  const wavSpec = new SDL.AudioSpec({});
+  const wavSpec = new SDL.AudioSpec();
   const wavBufferBox = new Box<Pointer<u8>>(Pointer);
   const wavLengthBox = new Box<u32>(U32);
 

@@ -138,6 +138,7 @@ export class AudioSpec implements AllocatableStruct {
   public readonly _data: Uint8Array | Pointer<AudioSpec>;
   public readonly _view: PlatformDataView;
 
+  constructor();
   constructor(
     data: Uint8Array | Pointer<AudioSpec>,
     byteOffset: number,
@@ -151,18 +152,18 @@ export class AudioSpec implements AllocatableStruct {
     samples: u16,
     padding: u16,
     size: u32,
-    callback: AudioCallback,
+    // callback: AudioCallback,
     userdata: Pointer<void>,
   );
   constructor(
-    _1?: Uint8Array | Pointer<AudioSpec> | Partial<AudioSpec> | i32,
+    _1: Uint8Array | Pointer<AudioSpec> | Partial<AudioSpec> | i32 = {},
     _2?: number | u16,
     _3?: u8,
     _4?: u8,
     _5?: u16,
     _6?: u16,
     _7?: u32,
-    _8?: AudioCallback,
+    // _8?: AudioCallback,
     _9?: Pointer<void>,
   ) {
     const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
@@ -183,7 +184,7 @@ export class AudioSpec implements AllocatableStruct {
         if (_1.samples !== undefined) this.samples = _1.samples;
         if (_1.padding !== undefined) this.padding = _1.padding;
         if (_1.size !== undefined) this.size = _1.size;
-        if (_1.callback !== undefined) this.callback = _1.callback;
+        // if (_1.callback !== undefined) this.callback = _1.callback;
         if (_1.userdata !== undefined) this.userdata = _1.userdata;
       } else {
         if (_1 !== undefined) this.freq = _1;
@@ -193,7 +194,7 @@ export class AudioSpec implements AllocatableStruct {
         if (_5 !== undefined) this.samples = _5;
         if (_6 !== undefined) this.padding = _6;
         if (_7 !== undefined) this.size = _7;
-        if (_8 !== undefined) this.callback = _8;
+        // if (_8 !== undefined) this.callback = _8;
         if (_9 !== undefined) this.userdata = _9;
       }
     }
@@ -266,13 +267,8 @@ export class AudioSpec implements AllocatableStruct {
     this._view.setU32(12, value);
   }
 
-  public get callback(): AudioCallback {
-    return this._view.getCallback(16, callbacks["SDL_AudioCallback"]);
-  }
-
-  public set callback(value: AudioCallback) {
-    this._view.setCallback(16, value, callbacks["SDL_AudioCallback"]);
-  }
+  // TODO: Doesn't seem to work due to background thread.
+  // callback
 
   public get userdata(): Pointer<void> {
     return this._view.getPointer(24);
@@ -289,6 +285,7 @@ export class Color implements AllocatableStruct {
   public readonly _data: Uint8Array | Pointer<Color>;
   public readonly _view: PlatformDataView;
 
+  constructor();
   constructor(
     data: Uint8Array | Pointer<Color>,
     byteOffset: number,
@@ -296,7 +293,7 @@ export class Color implements AllocatableStruct {
   constructor(props: Partial<Color>);
   constructor(r: u8, g: u8, b: u8, a: u8);
   constructor(
-    _1?: Uint8Array | Pointer<Color> | Partial<Color> | u8,
+    _1: Uint8Array | Pointer<Color> | Partial<Color> | u8 = {},
     _2?: number | u8,
     _3?: u8,
     _4?: u8,
@@ -571,6 +568,7 @@ export class Point implements AllocatableStruct {
   public readonly _data: Uint8Array | Pointer<Point>;
   public readonly _view: PlatformDataView;
 
+  constructor();
   constructor(
     data: Uint8Array | Pointer<Point>,
     byteOffset: number,
@@ -578,7 +576,7 @@ export class Point implements AllocatableStruct {
   constructor(props: Partial<Point>);
   constructor(x: i32, y: i32);
   constructor(
-    _1?: Uint8Array | Pointer<Point> | Partial<Point> | i32,
+    _1: Uint8Array | Pointer<Point> | Partial<Point> | i32 = {},
     _2?: number | i32,
   ) {
     const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
@@ -635,6 +633,7 @@ export class Rect implements AllocatableStruct {
   public readonly _data: Uint8Array | Pointer<Rect>;
   public readonly _view: PlatformDataView;
 
+  constructor();
   constructor(
     data: Uint8Array | Pointer<Rect>,
     byteOffset: number,
@@ -642,7 +641,7 @@ export class Rect implements AllocatableStruct {
   constructor(props: Partial<Rect>);
   constructor(x: i32, y: i32, w: i32, h: i32);
   constructor(
-    _1?: Uint8Array | Pointer<Rect> | Partial<Rect> | i32,
+    _1: Uint8Array | Pointer<Rect> | Partial<Rect> | i32 = {},
     _2?: number | i32,
     _3?: i32,
     _4?: i32,

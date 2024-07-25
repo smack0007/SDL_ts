@@ -634,6 +634,7 @@ export async function writeStructs(
       lines.push(`public readonly _data: Uint8Array | Pointer<${className}>;
   public readonly _view: PlatformDataView;
       
+  constructor();
   constructor(
     data: Uint8Array | Pointer<${className}>,
     byteOffset: number,
@@ -643,6 +644,7 @@ export async function writeStructs(
       const constructorParams = Object.entries(struct.members)
         .map(
           ([memberName, member]) =>
+            (member.todo ? "// " : "") +
             `${memberName}: ${mapStructMemberType(
               callbacks,
               enums,
@@ -651,7 +653,7 @@ export async function writeStructs(
               member
             )}`
         )
-        .join(", ");
+        .join(",\n");
       lines.push(`constructor(${constructorParams});`);
 
       const firstMemberType = mapStructMemberType(
@@ -672,6 +674,7 @@ export async function writeStructs(
         .slice(2)
         .map(
           (member, index) =>
+            (member.todo ? "// " : "") +
             `_${index + 3}?: ${mapStructMemberType(
               callbacks,
               enums,
@@ -683,22 +686,24 @@ export async function writeStructs(
         .join(",\n");
       lines.push(
         `constructor(
-          _1?: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType},
+          _1: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType} = {},
           _2?: number | ${secondMemberType},
           ${otherMembers}
         ) {`
       );
 
-      const assignMemmbersFromObject = Object.keys(struct.members)
+      const assignMemmbersFromObject = Object.entries(struct.members)
         .map(
-          (memberName) =>
+          ([memberName, member]) =>
+            (member.todo ? "// " : "") +
             `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`
         )
         .join("\n");
 
-      const assignMemmbersFromParameters = Object.keys(struct.members)
+      const assignMemmbersFromParameters = Object.entries(struct.members)
         .map(
-          (memberName, index) =>
+          ([memberName, member], index) =>
+            (member.todo ? "// " : "") +
             `if (_${index + 1} !== undefined) this.${memberName} = _${
               index + 1
             };`
