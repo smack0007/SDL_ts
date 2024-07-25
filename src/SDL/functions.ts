@@ -12,7 +12,7 @@ import { callbacks } from "./_callbacks.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
 import { symbols } from "./_symbols.ts";
 
-import { EventFilter } from "./callbacks.ts";
+import { AudioCallback, EventFilter } from "./callbacks.ts";
 import {
   ArrayOrder,
   BitmapOrder,
@@ -38,6 +38,7 @@ import {
   WindowPos,
 } from "./enums.ts";
 import {
+  AudioSpec,
   Color,
   DisplayMode,
   Keysym,
@@ -55,8 +56,9 @@ import {
   Window,
 } from "./structs.ts";
 
+import { AudioDeviceID } from "./audio.ts";
 import { Event } from "./events.ts";
-import { RWMode /*, TimerID */ } from "./types.ts";
+import { RWMode } from "./rw.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
@@ -103,6 +105,15 @@ export function BlitSurface(
   ) as i32;
 }
 BlitSurface.symbolName = "SDL_UpperBlit";
+
+export function CloseAudioDevice(
+  dev: AudioDeviceID,
+): void {
+  _library.symbols.SDL_CloseAudioDevice(
+    dev,
+  );
+}
+CloseAudioDevice.symbolName = "SDL_CloseAudioDevice";
 
 export function ConvertSurface(
   src: PointerLike<Surface>,
@@ -363,6 +374,15 @@ export function FlashWindow(
   ) as i32;
 }
 FlashWindow.symbolName = "SDL_FlashWindow";
+
+export function FreeWAV(
+  audio_buf: PointerLike<u8>,
+): void {
+  _library.symbols.SDL_FreeWAV(
+    Platform.toPlatformPointer(Pointer.of(audio_buf)),
+  );
+}
+FreeWAV.symbolName = "SDL_FreeWAV";
 
 export function FreeSurface(
   surface: PointerLike<Surface>,
@@ -841,6 +861,23 @@ export function LoadBMP_RW(
 }
 LoadBMP_RW.symbolName = "SDL_LoadBMP_RW";
 
+export function LoadWAV_RW(
+  src: PointerLike<RWops>,
+  freesrc: i32,
+  spec: PointerLike<AudioSpec>,
+  audio_buf: Box<Pointer<u8>>,
+  audio_len: PointerLike<u32>,
+): AudioSpec | null {
+  return AudioSpec.of(Platform.fromPlatformPointer(_library.symbols.SDL_LoadWAV_RW(
+    Platform.toPlatformPointer(Pointer.of(src)),
+    freesrc,
+    Platform.toPlatformPointer(Pointer.of(spec)),
+    Platform.toPlatformPointer(Pointer.ofTypedArray(audio_buf._data)),
+    Platform.toPlatformPointer(Pointer.of(audio_len)),
+  ) as PlatformPointer<AudioSpec>));
+}
+LoadWAV_RW.symbolName = "SDL_LoadWAV_RW";
+
 export function LockSurface(
   surface: PointerLike<Surface>,
 ): i32 {
@@ -900,6 +937,34 @@ export function MinimizeWindow(
 }
 MinimizeWindow.symbolName = "SDL_MinimizeWindow";
 
+export function OpenAudioDevice(
+  device: string | null,
+  iscapture: i32,
+  desired: PointerLike<AudioSpec>,
+  obtained: PointerLike<AudioSpec> | null,
+  allowed_changes: i32,
+): AudioDeviceID {
+  return _library.symbols.SDL_OpenAudioDevice(
+    Platform.toPlatformString(device),
+    iscapture,
+    Platform.toPlatformPointer(Pointer.of(desired)),
+    Platform.toPlatformPointer(Pointer.of(obtained)),
+    allowed_changes,
+  ) as AudioDeviceID;
+}
+OpenAudioDevice.symbolName = "SDL_OpenAudioDevice";
+
+export function PauseAudioDevice(
+  dev: AudioDeviceID,
+  pause_on: i32,
+): void {
+  _library.symbols.SDL_PauseAudioDevice(
+    dev,
+    pause_on,
+  );
+}
+PauseAudioDevice.symbolName = "SDL_PauseAudioDevice";
+
 export function PollEvent(
   event: PointerLike<Event>,
 ): i32 {
@@ -931,6 +996,19 @@ export function Quit(): void {
   _library.close();
 }
 Quit.symbolName = "SDL_Quit";
+
+export function QueueAudio(
+  dev: AudioDeviceID,
+  data: PointerLike<unknown>,
+  len: u32,
+): i32 {
+  return _library.symbols.SDL_QueueAudio(
+    dev,
+    Platform.toPlatformPointer(Pointer.of(data)),
+    len,
+  ) as i32;
+}
+QueueAudio.symbolName = "SDL_QueueAudio";
 
 export function RWFromFile(
   file: string,

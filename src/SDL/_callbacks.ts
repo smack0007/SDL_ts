@@ -5,10 +5,11 @@
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Event } from "./events.ts";
-import { i32, u32 } from "../types.ts";
+import { i32, u32, u8 } from "../types.ts";
 
-import { EventFilter } from "./callbacks.ts";
+import { AudioCallback, EventFilter } from "./callbacks.ts";
 import {
+  AudioSpec,
   Color,
   DisplayMode,
   Keysym,
@@ -27,6 +28,23 @@ import {
 } from "./structs.ts";
 
 export const callbacks = {
+  SDL_AudioCallback: {
+    parameters: [
+      /* void* userdata */ "pointer",
+      /* Uint8* stream */ "pointer",
+      /* int len */ "i32",
+    ],
+    result: /* void */ "void",
+    wrap: (callback: AudioCallback) => {
+      return (userdata: PlatformPointer<unknown>, stream: PlatformPointer<u8>, len: i32): void => {
+        return callback(
+          Platform.fromPlatformPointer(userdata)!,
+          Platform.fromPlatformPointer(stream)!,
+          len!,
+        );
+      };
+    },
+  },
   SDL_EventFilter: {
     parameters: [
       /* void* userdata */ "pointer",

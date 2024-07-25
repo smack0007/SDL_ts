@@ -10,6 +10,50 @@ export const opaqueStructs: CodeGenOpaqueStructs = [
 ];
 
 export const structs: CodeGenStructs = {
+  SDL_AudioSpec: {
+    allocatable: true,
+    mutable: true,
+    size: 32,
+    members: {
+      freq: {
+        type: "int",
+        offset: 0,
+      },
+      format: {
+        type: "SDL_AudioFormat",
+        offset: 4,
+      },
+      channels: {
+        type: "Uint8",
+        offset: 6,
+      },
+      silence: {
+        type: "Uint8",
+        offset: 7,
+      },
+      samples: {
+        type: "Uint16",
+        offset: 8,
+      },
+      padding: {
+        type: "Uint16",
+        offset: 10,
+      },
+      size: {
+        type: "Uint32",
+        offset: 12,
+      },
+      callback: {
+        todo: "Doesn't seem to work due to background thread.",
+        type: "SDL_AudioCallback",
+        offset: 16,
+      },
+      userdata: {
+        type: "void*",
+        offset: 24,
+      },
+    },
+  },
   SDL_Color: {
     allocatable: true,
     mutable: true,

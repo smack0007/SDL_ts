@@ -95,6 +95,23 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "Run Play Wav",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["run:play-wav"],
+      "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "label": "Run Renderer",
       "group": {
         "kind": "none",
