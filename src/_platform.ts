@@ -4,7 +4,7 @@ import { Platform } from "./_types.ts";
 
 let platform: Platform | null = null;
 
-if ("Deno" in window) {
+if ("Deno" in globalThis) {
   platform = DenoPlatform;
 }
 

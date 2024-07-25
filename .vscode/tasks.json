@@ -9,15 +9,11 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "build"
-      ],
+      "args": ["build"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "CodeGen",
@@ -27,15 +23,11 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "codegen"
-      ],
+      "args": ["codegen"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "CodeGen Scraper",
@@ -45,15 +37,11 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "codegen-scraper"
-      ],
+      "args": ["codegen-scraper"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "Run Doom Fire",
@@ -63,15 +51,14 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "run:doom-fire"
-      ],
+      "args": ["run:doom-fire"],
       "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "Run Hello World",
@@ -81,15 +68,14 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "run:hello-world"
-      ],
+      "args": ["run:hello-world"],
       "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "Run Hello World Async",
@@ -99,15 +85,14 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "run:hello-world-async"
-      ],
+      "args": ["run:hello-world-async"],
       "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "Run Renderer",
@@ -117,15 +102,14 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "run:renderer"
-      ],
+      "args": ["run:renderer"],
       "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "label": "Run Same Game",
@@ -135,25 +119,20 @@
       },
       "type": "deno",
       "command": "task",
-      "args": [
-        "run:same-game"
-      ],
+      "args": ["run:same-game"],
       "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": [
-        "$deno"
-      ]
+      "problemMatcher": ["$deno"]
     },
     {
       "type": "deno",
       "command": "task",
-      "args": [
-        "test"
-      ],
-      "problemMatcher": [
-        "$deno-test"
-      ],
+      "args": ["test"],
+      "problemMatcher": ["$deno-test"],
       "group": "test",
       "label": "Run Tests"
     }
