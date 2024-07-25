@@ -1,5 +1,3 @@
-import { u16 } from "../types.ts";
-
 export type RWMode =
   | "a"
   | "a+"
@@ -13,5 +11,3 @@ export type RWMode =
   | "rb+"
   | "wb"
   | "wb+";
-
-// export type TimerID = int;

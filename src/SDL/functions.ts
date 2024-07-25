@@ -58,7 +58,7 @@ import {
 
 import { AudioDeviceID } from "./audio.ts";
 import { Event } from "./events.ts";
-import { RWMode /*, TimerID */ } from "./types.ts";
+import { RWMode } from "./rw.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
