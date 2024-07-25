@@ -1,7 +1,7 @@
 import { Box, BoxArray, Int, int, Memory, Pointer, SDL } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
-import { path } from "../../deps.ts";
+import { join } from "@std/path";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -46,7 +46,7 @@ function main(): number {
   SDL.RenderPresent(renderer);
   SDL.RenderFlush(renderer);
 
-  const denoSurface = SDL.LoadBMP(path.join(ASSETS_PATH, "jurassicDeno.bmp"));
+  const denoSurface = SDL.LoadBMP(join(ASSETS_PATH, "jurassicDeno.bmp"));
 
   if (denoSurface == null) {
     console.error("Failed to load jurassicDeno.bmp.");

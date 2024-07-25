@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "SDL_ts": "./mod.ts"
-  }
-}

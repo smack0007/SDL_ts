@@ -1,12 +1,10 @@
-import { asserts } from "../deps.ts";
+import { assertEquals } from "@std/assert";
 import { Box, BoxValueFactory } from "./boxes.ts";
 import { Pointer } from "./pointers.ts";
 import { F32, F64, I16, I32, I8, Int, U16, U32, U8 } from "./types.ts";
 import { PlatformDataView, PlatformPointer } from "./_types.ts";
 
-const { assertEquals } = asserts;
-
-(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>> [
+(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>>[
   [I8, "setI8", -42],
   [U8, "setU8", 42],
   [I16, "setI16", -256],
@@ -17,7 +15,10 @@ const { assertEquals } = asserts;
 ]).forEach((testData) => {
   Deno.test(`${testData[0].name} can be boxed`, () => {
     const box = new Box(testData[0]);
-    const setter = (box._view[testData[1]]) as (arg1: number, arg2: number) => void;
+    const setter = box._view[testData[1]] as (
+      arg1: number,
+      arg2: number
+    ) => void;
     setter.apply(box._view, [0, testData[2]]);
 
     const result = box.value;
@@ -26,13 +27,16 @@ const { assertEquals } = asserts;
   });
 });
 
-(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>> [
+(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>>[
   [F32, "setF32", 12.34],
   [F64, "setF64", 12.34],
 ]).forEach((testData) => {
   Deno.test(`${testData[0].name} can be boxed`, () => {
     const box = new Box(testData[0]);
-    const setter = (box._view[testData[1]]) as (arg1: number, arg2: number) => void;
+    const setter = box._view[testData[1]] as (
+      arg1: number,
+      arg2: number
+    ) => void;
     setter.apply(box._view, [0, testData[2]]);
 
     const result = box.value;
@@ -42,7 +46,9 @@ const { assertEquals } = asserts;
 });
 
 Deno.test(`Pointer can be boxed`, () => {
-  const pointerValue = new Pointer(Deno.UnsafePointer.create(12345n) as unknown as PlatformPointer<unknown>);
+  const pointerValue = new Pointer(
+    Deno.UnsafePointer.create(12345n) as unknown as PlatformPointer<unknown>
+  );
 
   const box = new Box<Pointer<number>>(Pointer);
   box._view.setPointer(0, pointerValue);

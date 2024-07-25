@@ -1,9 +1,9 @@
 // Adapted from https://gigi.nullneuron.net/gigilabs/playing-a-wav-file-using-sdl2/
 
-import { Box, Pointer, SDL, U32, U8, u32, u8 } from "SDL_ts";
+import { Box, Pointer, SDL, U32, u32, u8 } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
-import { path } from "../../deps.ts";
+import { join } from "@std/path";
 
 const main = (): number => {
   if (SDL.Init(SDL.InitFlags.AUDIO, { functions: SDL_FUNCTIONS }) < 0) {
@@ -18,7 +18,7 @@ const main = (): number => {
 
   if (
     SDL.LoadWav(
-      path.join(ASSETS_PATH, "powerup.wav"),
+      join(ASSETS_PATH, "powerup.wav"),
       wavSpec,
       wavBufferBox,
       wavLengthBox
