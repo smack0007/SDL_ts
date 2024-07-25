@@ -1,12 +1,8 @@
-import { EXAMPLES_PATH, ROOT_PATH, TOOLS_PATH } from "../shared/constants.ts";
+import { EXAMPLES_PATH, TOOLS_PATH } from "../shared/constants.ts";
 import { colors, path } from "../deps.ts";
 
 async function main(): Promise<number> {
   let failure = false;
-
-  if (!(await typeCheck(path.join(ROOT_PATH, "init.ts")))) {
-    failure = true;
-  }
 
   if (!(await typeCheck(path.join(TOOLS_PATH, "codegen.ts")))) {
     failure = true;
