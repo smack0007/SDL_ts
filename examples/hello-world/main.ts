@@ -5,11 +5,6 @@ SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
 
 console.info("SDL Initialized.");
 
-const version = new SDL.version();
-SDL.GetVersion(version);
-console.info(`SDL Version: ${version.major}.${version.minor}.${version.patch}`);
-console.info(`SDL Revision: ${SDL.GetRevision()}`);
-
 console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
 const createWindowResult = SDL.CreateWindow(

@@ -1,7 +1,7 @@
 import { IMG, SDL } from "SDL_ts";
 import { IMG_FUNCTIONS, SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
-import { path } from "../../deps.ts";
+import { join } from "@std/path";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -11,43 +11,13 @@ const FIRE_WIDTH = 1024;
 const FIRE_HEIGHT = 120;
 
 const FIRE_COLORS = [
-  0x00000000,
-  0xC0070707,
-  0xC007071F,
-  0xC0070F2F,
-  0xC0070F47,
-  0xC0071757,
-  0xC0071F67,
-  0xC0071F77,
-  0xC007278F,
-  0xC0072F9F,
-  0xC0073FAF,
-  0xC00747BF,
-  0xC00747C7,
-  0xC0074FDF,
-  0xC00757DF,
-  0xC00757DF,
-  0xC0075FD7,
-  0xC00F67D7,
-  0xC00F6FCF,
-  0xC00F77CF,
-  0xC00F7FCF,
-  0xC01787CF,
-  0xC01787C7,
-  0xC0178FC7,
-  0xC01F97C7,
-  0xC01F9FBF,
-  0xC01F9FBF,
-  0xC027A7BF,
-  0xC027A7BF,
-  0xC02FAFBF,
-  0xC02FAFB7,
-  0xC02FB7B7,
-  0xC037B7B7,
-  0xC06FCFCF,
-  0xC09FDFDF,
-  0xC0C7EFEF,
-  0xC0FFFFFF,
+  0x00000000, 0xc0070707, 0xc007071f, 0xc0070f2f, 0xc0070f47, 0xc0071757,
+  0xc0071f67, 0xc0071f77, 0xc007278f, 0xc0072f9f, 0xc0073faf, 0xc00747bf,
+  0xc00747c7, 0xc0074fdf, 0xc00757df, 0xc00757df, 0xc0075fd7, 0xc00f67d7,
+  0xc00f6fcf, 0xc00f77cf, 0xc00f7fcf, 0xc01787cf, 0xc01787c7, 0xc0178fc7,
+  0xc01f97c7, 0xc01f9fbf, 0xc01f9fbf, 0xc027a7bf, 0xc027a7bf, 0xc02fafbf,
+  0xc02fafb7, 0xc02fb7b7, 0xc037b7b7, 0xc06fcfcf, 0xc09fdfdf, 0xc0c7efef,
+  0xc0ffffff,
 ];
 
 function main(): number {
@@ -61,7 +31,9 @@ function main(): number {
     return 1;
   }
 
-  console.info(`SDL_image Version: ${version.major}.${version.minor}.${version.patch}`);
+  console.info(
+    `SDL_image Version: ${version.major}.${version.minor}.${version.patch}`
+  );
 
   const window = SDL.CreateWindow(
     "Doom Fire",
@@ -69,7 +41,7 @@ function main(): number {
     SDL.WindowPos.CENTERED,
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN,
+    SDL.WindowFlags.SHOWN
   );
 
   if (window == null) {
@@ -84,14 +56,20 @@ function main(): number {
     return 1;
   }
 
-  const denoSurfaceUnoptimized = IMG.Load(path.join(ASSETS_PATH, "jurassicDeno.png"));
+  const denoSurfaceUnoptimized = IMG.Load(
+    join(ASSETS_PATH, "jurassicDeno.png")
+  );
 
   if (denoSurfaceUnoptimized == null) {
     console.error("Failed to load jurassicDeno.png.");
     return 1;
   }
 
-  const denoSurface = SDL.ConvertSurface(denoSurfaceUnoptimized, frontBuffer.format, 0);
+  const denoSurface = SDL.ConvertSurface(
+    denoSurfaceUnoptimized,
+    frontBuffer.format,
+    0
+  );
 
   if (denoSurface == null) {
     console.error("Failed to convert surface format of jurassicDeno.png.");
@@ -107,10 +85,10 @@ function main(): number {
     FIRE_HEIGHT,
     32,
     4 * FIRE_WIDTH,
-    0x000000FF,
-    0x0000FF00,
-    0x00FF0000,
-    0xFF000000,
+    0x000000ff,
+    0x0000ff00,
+    0x00ff0000,
+    0xff000000
   );
 
   if (fireSurface == null) {
@@ -118,12 +96,18 @@ function main(): number {
     return 1;
   }
 
-  const flamesRect = new SDL.Rect(0, HALF_WINDOW_HEIGHT, frontBuffer.w, HALF_WINDOW_HEIGHT);
+  const flamesRect = new SDL.Rect(
+    0,
+    HALF_WINDOW_HEIGHT,
+    frontBuffer.w,
+    HALF_WINDOW_HEIGHT
+  );
 
   firePixels.fill(0x00000000);
 
   for (let x = 0; x < FIRE_WIDTH; x += 1) {
-    firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] = FIRE_COLORS[FIRE_COLORS.length - 1];
+    firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] =
+      FIRE_COLORS[FIRE_COLORS.length - 1];
   }
 
   let lastFrame = SDL.GetTicks64();

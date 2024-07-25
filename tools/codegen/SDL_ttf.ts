@@ -1,13 +1,19 @@
-import { path } from "../../deps.ts";
+import { join } from "@std/path";
 import { SRC_PATH } from "../../shared/constants.ts";
-import { writeCallbacks, writeEnums, writeFunctions, writeStructs, writeSymbols } from "./generators.ts";
+import {
+  writeCallbacks,
+  writeEnums,
+  writeFunctions,
+  writeStructs,
+  writeSymbols,
+} from "./generators.ts";
 import { callbacks } from "./SDL_ttf/callbacks.ts";
 import { enums } from "./SDL_ttf/enums.ts";
 import { functions } from "./SDL_ttf/functions.ts";
 import { opaqueStructs, structs } from "./SDL_ttf/structs.ts";
 import { structs as SDL_structs } from "./SDL/structs.ts";
 
-const SDL_TTF_SRC_PATH = path.join(SRC_PATH, "SDL_ttf");
+const SDL_TTF_SRC_PATH = join(SRC_PATH, "SDL_ttf");
 
 export async function codegenSDL_ttf(): Promise<void> {
   const allStructs = {
@@ -27,7 +33,13 @@ export async function codegenSDL_ttf(): Promise<void> {
   };
 
   // await writeEnums(`${SDL_TTF_SRC_PATH}/enums.ts`, enums, []);
-  await writeStructs(`${SDL_TTF_SRC_PATH}/structs.ts`, callbacks, enums, structs, opaqueStructs);
+  await writeStructs(
+    `${SDL_TTF_SRC_PATH}/structs.ts`,
+    callbacks,
+    enums,
+    structs,
+    opaqueStructs
+  );
   // await writeSymbols(`${SDL_TTF_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
   // await writeCallbacks(`${SDL_TTF_SRC_PATH}/callbacks.ts`, callbacks, enums, structs, opaqueStructs, []);
   await writeFunctions(
@@ -38,8 +50,6 @@ export async function codegenSDL_ttf(): Promise<void> {
     enums,
     allStructs,
     opaqueStructs,
-    [
-      `import { Color, Surface, version } from "../SDL/structs.ts";`,
-    ],
+    [`import { Color, Surface, version } from "../SDL/structs.ts";`]
   );
 }

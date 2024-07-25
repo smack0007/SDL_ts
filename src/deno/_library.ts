@@ -1,19 +1,19 @@
-import { dotenv, path } from "../../deps.ts";
+import { join } from "@std/path";
 import { SDLError } from "../error.ts";
 import { DynamicLibrary, DynamicLibraryInterface } from "../_library.ts";
-import { ENV_ENV_DIR, ENV_LIBRARY_PATH } from "../_constants.ts";
+import { ENV_LIBRARY_PATH } from "../_constants.ts";
 
 const IS_WINDOWS = Deno.build.os === "windows";
 const IS_MAC = Deno.build.os === "darwin";
 
 const WINDOWS_LIBRARY_PATHS: string[] = [];
 
-const UNIX_LIBRARY_PATHS: string[] = [
-  "/usr/local/lib",
-  "/usr/lib64",
-];
+const UNIX_LIBRARY_PATHS: string[] = ["/usr/local/lib", "/usr/lib64"];
 
-const MACOS_LIBRARY_PATHS: string[] = ["/usr/local/lib", "/System/Volumes/Data/opt/homebrew/lib"];
+const MACOS_LIBRARY_PATHS: string[] = [
+  "/usr/local/lib",
+  "/System/Volumes/Data/opt/homebrew/lib",
+];
 
 function getLibrarySuffix(): string {
   switch (Deno.build.os) {
@@ -38,57 +38,22 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   const arch = "x64"; // TODO: Detect this somehow.
 
   if (libraryPath) {
-    libraryPaths.push(path.join(
-      libraryPath,
-      os,
-      arch,
-      fullLibraryName,
-    ));
+    libraryPaths.push(join(libraryPath, os, arch, fullLibraryName));
   }
 
-  libraryPaths.push(path.join(".", fullLibraryName));
+  libraryPaths.push(join(".", fullLibraryName));
 
   if (!IS_WINDOWS && !IS_MAC) {
     // On Debain libSDL2_image and libSDL2_ttf only have symbolic links with this format.
-    libraryPaths.push(libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0");
-  }
-
-  try {
-    const envDir = Deno.env.get(ENV_ENV_DIR) ?? ".";
-
-    const env = dotenv.loadSync({
-      envPath: path.join(envDir, `.env.${Deno.build.os}`),
-    });
-
-    libraryPath = env[ENV_LIBRARY_PATH];
-
-    if (libraryPath) {
-      // If the path in the .env file starts with a . then replace it with
-      // the directory of the .env file.
-      if (libraryPath.startsWith(".")) {
-        libraryPath = path.join(envDir, libraryPath.substring(1));
-      }
-
-      libraryPaths.push(path.join(
-        libraryPath,
-        os,
-        arch,
-        fullLibraryName,
-      ));
-    }
-  } catch {
-    // If we can't load the .env than just ignore it.
+    libraryPaths.push(
+      libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0"
+    );
   }
 
   libraryPath = Deno.env.get(ENV_LIBRARY_PATH);
 
   if (libraryPath) {
-    libraryPaths.push(path.join(
-      libraryPath,
-      os,
-      arch,
-      fullLibraryName,
-    ));
+    libraryPaths.push(join(libraryPath, os, arch, fullLibraryName));
   }
 
   if (!IS_WINDOWS) {
@@ -98,7 +63,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
       libraryPaths.push(
         ...ldLibraryPath
           .split(":")
-          .map((libraryPath) => path.join(libraryPath, fullLibraryName)),
+          .map((libraryPath) => join(libraryPath, fullLibraryName))
       );
     }
   }
@@ -120,7 +85,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
   }
 
   libraryPaths.push(
-    ...searchPaths.map((libraryPath) => path.join(libraryPath, fullLibraryName)),
+    ...searchPaths.map((libraryPath) => join(libraryPath, fullLibraryName))
   );
 
   return libraryPaths;
@@ -129,7 +94,7 @@ function getLibraryPaths(libraryName: string, libraryPath?: string): string[] {
 export function denoLoadLibrary<T extends DynamicLibraryInterface>(
   libraryName: string,
   symbols: T,
-  libraryPath?: string,
+  libraryPath?: string
 ): DynamicLibrary<T> {
   const libraryPaths = getLibraryPaths(libraryName, libraryPath);
   const errors: Record<string, Error> = {};
@@ -145,8 +110,12 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
   }
 
   throw new SDLError(
-    `Failed to load library "${libraryName}" from "${libraryPaths.join(", ")}"\n` +
-      Object.entries(errors).map(([libraryPath, error]) => `\t=> ${libraryPath}: ${error.message}`).join("\n"),
-    new AggregateError(Object.values(errors)),
+    `Failed to load library "${libraryName}" from "${libraryPaths.join(
+      ", "
+    )}"\n` +
+      Object.entries(errors)
+        .map(([libraryPath, error]) => `\t=> ${libraryPath}: ${error.message}`)
+        .join("\n"),
+    new AggregateError(Object.values(errors))
   );
 }

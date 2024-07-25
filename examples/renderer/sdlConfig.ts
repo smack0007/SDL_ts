@@ -5,6 +5,9 @@ import { SDL } from "SDL_ts";
 export const SDL_FUNCTIONS = [
   SDL.CreateTextureFromSurface,
   SDL.CreateWindowAndRenderer,
+  SDL.DestroyRenderer,
+  SDL.DestroyTexture,
+  SDL.DestroyWindow,
   SDL.Delay,
   SDL.FreeSurface,
   SDL.GetError,

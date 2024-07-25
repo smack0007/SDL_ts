@@ -1,30 +1,27 @@
-import { EXAMPLES_PATH, ROOT_PATH, TOOLS_PATH } from "../shared/constants.ts";
-import { colors, path } from "../deps.ts";
+import { EXAMPLES_PATH, TOOLS_PATH } from "../shared/constants.ts";
+import { green } from "@std/colors";
+import { join } from "@std/path";
 
 async function main(): Promise<number> {
   let failure = false;
 
-  if (!await typeCheck(path.join(ROOT_PATH, "init.ts"))) {
+  if (!(await typeCheck(join(TOOLS_PATH, "codegen.ts")))) {
     failure = true;
   }
 
-  if (!await typeCheck(path.join(TOOLS_PATH, "codegen.ts"))) {
-    failure = true;
-  }
-
-  if (!await typeCheck(path.join(TOOLS_PATH, "codegen-scraper.ts"))) {
+  if (!(await typeCheck(join(TOOLS_PATH, "codegen-scraper.ts")))) {
     failure = true;
   }
 
   for await (const entry of Deno.readDir(EXAMPLES_PATH)) {
     if (entry.isDirectory) {
-      if (!await typeCheck(path.join(EXAMPLES_PATH, entry.name, "main.ts"))) {
+      if (!(await typeCheck(join(EXAMPLES_PATH, entry.name, "main.ts")))) {
         failure = true;
       }
     }
   }
 
-  if (!await runTests()) {
+  if (!(await runTests())) {
     failure = true;
   }
 
@@ -32,17 +29,25 @@ async function main(): Promise<number> {
 }
 
 async function typeCheck(filePath: string): Promise<boolean> {
-  console.info(`${colors.green("Type checking:")} ${filePath}`);
-  return (await Deno.run({
-    cmd: ["deno", "task", "-q", "check", filePath],
-  }).status()).code === 0;
+  console.info(`${green("Type checking:")} ${filePath}`);
+  return (
+    (
+      await Deno.run({
+        cmd: ["deno", "task", "-q", "check", filePath],
+      }).status()
+    ).code === 0
+  );
 }
 
 async function runTests(): Promise<boolean> {
-  console.info(`${colors.green("Running tests...")}`);
-  return (await Deno.run({
-    cmd: ["deno", "task", "-q", "test"],
-  }).status()).code === 0;
+  console.info(`${green("Running tests...")}`);
+  return (
+    (
+      await Deno.run({
+        cmd: ["deno", "task", "-q", "test"],
+      }).status()
+    ).code === 0
+  );
 }
 
 Deno.exit(await main());

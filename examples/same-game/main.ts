@@ -1,6 +1,6 @@
 import { Box, IMG, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
 import { IMG_FUNCTIONS, SDL_FUNCTIONS, TTF_FUNCTIONS } from "./sdlConfig.ts";
-import { path } from "../../deps.ts";
+import { join } from "@std/path";
 import { Board } from "./logic/board.ts";
 import { Random } from "./logic/random.ts";
 import { drawBoard } from "./rendering/board.ts";
@@ -25,21 +25,32 @@ function main(): number {
     WINDOW_HEIGHT,
     SDL.WindowFlags.SHOWN,
     windowBox,
-    rendererBox,
+    rendererBox
   );
 
-  const window = windowBox.unboxNotNull(() => `Failed to create window: ${SDL.GetError()}`);
-  const renderer = rendererBox.unboxNotNull(() => `Failed to create renderer: ${SDL.GetError()}`);
+  const window = windowBox.unboxNotNull(
+    () => `Failed to create window: ${SDL.GetError()}`
+  );
+  const renderer = rendererBox.unboxNotNull(
+    () => `Failed to create renderer: ${SDL.GetError()}`
+  );
 
   SDL.SetWindowTitle(window, "Same Game");
 
-  const blockTexture = IMG.LoadTexture(renderer, path.join(ASSETS_PATH, "blocks.png"));
+  const blockTexture = IMG.LoadTexture(
+    renderer,
+    join(ASSETS_PATH, "blocks.png")
+  );
 
   if (blockTexture == null) {
     throw new SDLError("Failed to create texture for block.png");
   }
 
-  const font = createFontAtlas(renderer, path.join(ASSETS_PATH, "Hack.ttf"), FONT_SIZE);
+  const font = createFontAtlas(
+    renderer,
+    join(ASSETS_PATH, "Hack.ttf"),
+    FONT_SIZE
+  );
 
   const board = new Board(new Random(12345));
 
@@ -87,10 +98,7 @@ function main(): number {
   return 0;
 }
 
-function update(
-  elapsed: u64,
-  board: Board,
-): void {
+function update(elapsed: u64, board: Board): void {
   board.update(elapsed);
 }
 
@@ -98,19 +106,24 @@ function draw(
   renderer: Pointer<SDL.Renderer>,
   board: Board,
   blockTexture: SDL.Texture,
-  font: FontAtlas,
+  font: FontAtlas
 ): void {
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
 
   drawBoard(renderer, board, blockTexture);
 
-  drawString(renderer, font, new SDL.Point(0, Board.HeightInPixels + 2), `Score: ${board.score}`);
+  drawString(
+    renderer,
+    font,
+    new SDL.Point(0, Board.HeightInPixels + 2),
+    `Score: ${board.score}`
+  );
   drawString(
     renderer,
     font,
     new SDL.Point(0, Board.HeightInPixels + FONT_SIZE + 2),
-    `Selected: ${board.selectedBlockCount}`,
+    `Selected: ${board.selectedBlockCount}`
   );
 
   SDL.RenderPresent(renderer);

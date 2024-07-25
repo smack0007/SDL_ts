@@ -1,4 +1,7 @@
 {
+  "name": "@smack0007/sdl-ts",
+  "version": "2.30.1",
+  "exports": "./mod.ts",
   "compilerOptions": {
     "lib": ["deno.window", "deno.unstable"]
   },
@@ -14,7 +17,12 @@
       "exclude": ["no-inferrable-types"]
     }
   },
-  "importMap": "imports.json",
+  "imports": {
+    "SDL_ts": "./mod.ts",
+    "@std/assert": "jsr:@std/assert@1.0.0",
+    "@std/colors": "jsr:@std/fmt@0.225.6/colors",
+    "@std/path": "jsr:@std/path@1.0.1"
+  },
   "tasks": {
     "build": "cd ./scripts && deno run --allow-read --allow-run ./build.ts",
     "build:ci": "deno task build --ci",
@@ -28,6 +36,7 @@
     "run:play-wav": "cd ./examples/play-wav && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:renderer": "cd ./examples/renderer && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "run:same-game": "cd ./examples/same-game && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
+    "run:version": "cd ./examples/version && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
     "test": "deno test --unstable-ffi --allow-ffi"
   }
 }

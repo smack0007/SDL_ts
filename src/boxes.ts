@@ -30,13 +30,22 @@ export type BoxValueConstructor<T extends BoxValue> = Constructor<T>;
 
 export type BoxValueFactory<T extends BoxValue> = Factory<T>;
 
-type BoxValueTransformer<T extends BoxValue> = (data: Uint8Array, view: PlatformDataView, offset: number) => T;
+type BoxValueTransformer<T extends BoxValue> = (
+  data: Uint8Array,
+  view: PlatformDataView,
+  offset: number
+) => T;
 
 function sizeof<T extends BoxValue>(
-  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
 ): number {
-  if ("SIZE_IN_BYTES" in (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)) {
-    return (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>).SIZE_IN_BYTES;
+  if (
+    "SIZE_IN_BYTES" in
+    (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)
+  ) {
+    return (
+      factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>
+    ).SIZE_IN_BYTES;
   }
 
   switch (factoryOrConstructor) {
@@ -65,48 +74,62 @@ function sizeof<T extends BoxValue>(
       return Platform.POINTER_SIZE_IN_BYTES;
   }
 
-  throwError(`${(factoryOrConstructor)?.name} is not boxable. sizeof not implemented.`);
+  throwError(
+    `${factoryOrConstructor?.name} is not boxable. sizeof not implemented.`
+  );
 }
 
 export function getTransformer<T extends BoxValue>(
-  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
 ): BoxValueTransformer<T> {
   switch (factoryOrConstructor) {
     case I8:
-      return ((_, view, offset) => view.getI8(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getI8(offset)) as BoxValueTransformer<T>;
 
     case U8:
-      return ((_, view, offset) => view.getU8(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getU8(offset)) as BoxValueTransformer<T>;
 
     case I16:
-      return ((_, view, offset) => view.getI16(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getI16(offset)) as BoxValueTransformer<T>;
 
     case U16:
-      return ((_, view, offset) => view.getU16(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getU16(offset)) as BoxValueTransformer<T>;
 
     case I32:
-      return ((_, view, offset) => view.getI32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getI32(offset)) as BoxValueTransformer<T>;
 
     case U32:
-      return ((_, view, offset) => view.getU32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getU32(offset)) as BoxValueTransformer<T>;
 
     case F32:
-      return ((_, view, offset) => view.getF32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getF32(offset)) as BoxValueTransformer<T>;
 
     case I64:
-      return ((_, view, offset) => view.getI64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getI64(offset)) as BoxValueTransformer<T>;
 
     case U64:
-      return ((_, view, offset) => view.getU64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getU64(offset)) as BoxValueTransformer<T>;
 
     case F64:
-      return ((_, view, offset) => view.getF64(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getF64(offset)) as BoxValueTransformer<T>;
 
     case Int: // TODO: Does this need to be platform dependent?
-      return ((_, view, offset) => view.getI32(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getI32(offset)) as BoxValueTransformer<T>;
 
     case Pointer as unknown as BoxValueFactory<T>:
-      return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) =>
+        view.getPointer(offset)) as BoxValueTransformer<T>;
   }
 
   if ("of" in factoryOrConstructor) {
@@ -114,7 +137,7 @@ export function getTransformer<T extends BoxValue>(
   }
 
   throw new Error(
-    `${(factoryOrConstructor)?.name} is not boxable. getTransformer not implemented.`,
+    `${factoryOrConstructor?.name} is not boxable. getTransformer not implemented.`
   );
 }
 
@@ -123,7 +146,9 @@ export class Box<T extends BoxValue> {
   public readonly _data: Uint8Array;
   public readonly _view: PlatformDataView;
 
-  public constructor(factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>) {
+  public constructor(
+    factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
+  ) {
     const dataLength = sizeof(factoryOrConstructor);
     this._transformer = getTransformer(factoryOrConstructor);
 
@@ -132,24 +157,19 @@ export class Box<T extends BoxValue> {
   }
 
   public static isBox(value: unknown): value is Box<BoxValue> {
-    return (value instanceof Box);
+    return value instanceof Box;
   }
 
   public get value(): T {
     return this._transformer(this._data, this._view, 0);
   }
 
-  public unbox(
-    predicate: Predicate<T>,
-    errorMessage: OrFactory<string>,
-  ): T {
+  public unbox(predicate: Predicate<T>, errorMessage: OrFactory<string>): T {
     const value = this.value;
     return predicate(value) ? value : throwError(errorMessage);
   }
 
-  public unboxNotNull(
-    errorMessage: OrFactory<string>,
-  ): T {
+  public unboxNotNull(errorMessage: OrFactory<string>): T {
     return this.unbox((value) => value != 0, errorMessage);
   }
 }
@@ -162,7 +182,7 @@ export class BoxArray<T extends BoxValue> {
 
   public constructor(
     factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
-    length: number,
+    length: number
   ) {
     if (length <= 0) {
       throw new Error("length must be > 0.");
@@ -180,22 +200,26 @@ export class BoxArray<T extends BoxValue> {
   }
 
   public at(index: number): T {
-    return this._transformer(this._data, this._view, this.sizeOfElementInBytes * index);
+    return this._transformer(
+      this._data,
+      this._view,
+      this.sizeOfElementInBytes * index
+    );
   }
 
   public unboxAt(
     index: number,
     predicate: Predicate<T>,
-    errorMessage: string,
+    errorMessage: string
   ): T {
     const value = this.at(index);
     return predicate(value) ? value : throwError(errorMessage);
   }
 
-  // TODO: This is terrible. Just replace this with a funciton named pointersAt(index: number)
-  public readonly pointers = {
-    at: (index: number) => {
-      return Pointer.ofTypedArray<T>(this._data, this.sizeOfElementInBytes * index);
-    },
-  };
+  public pointersAt(index: number): Pointer<T> {
+    return Pointer.ofTypedArray<T>(
+      this._data,
+      this.sizeOfElementInBytes * index
+    );
+  }
 }
