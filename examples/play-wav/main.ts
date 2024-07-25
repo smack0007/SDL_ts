@@ -25,7 +25,7 @@ const main = (): number => {
       wavLengthBox
     ) == null
   ) {
-    console.error("ERROR: Faield to load wav file.");
+    console.error("ERROR: Failed to load wav file.");
     return 1;
   }
 

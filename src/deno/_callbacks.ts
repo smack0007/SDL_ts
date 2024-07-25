@@ -1,5 +1,6 @@
 import { DynamicCallbackDefinition } from "../_library.ts";
 import { PlatformCallback } from "../_types.ts";
+import { SDLError } from "../error.ts";
 import { Callback } from "../types.ts";
 
 interface CallbackInternal extends Callback {
@@ -7,10 +8,10 @@ interface CallbackInternal extends Callback {
 }
 
 export function denoFromPlatformCallback<T extends Callback>(
-  callback: PlatformCallback,
-  definition: DynamicCallbackDefinition<T>
+  _callback: PlatformCallback,
+  _definition: DynamicCallbackDefinition<T>
 ): T {
-  return null as unknown as T;
+  throw new SDLError(`${denoFromPlatformCallback.name} not implemented.`);
 }
 
 export function denoToPlatformCallback<T extends Callback>(
