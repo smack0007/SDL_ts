@@ -1,5 +1,5 @@
 {
-  "imports": { "@smack0007/sdl-ts": "jsr:@smack0007/sdl-ts@latest" },
+  "imports": { "@smack0007/sdl-ts": "jsr:@smack0007/sdl-ts" },
   "tasks": {
     "start": "deno run --unstable-ffi --allow-env --allow-ffi --allow-read=. ./main.ts"
   }
