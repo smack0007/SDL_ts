@@ -8,7 +8,11 @@ const IS_MAC = Deno.build.os === "darwin";
 
 const WINDOWS_LIBRARY_PATHS: string[] = [];
 
-const UNIX_LIBRARY_PATHS: string[] = ["/usr/local/lib", "/usr/lib64"];
+const UNIX_LIBRARY_PATHS: string[] = [
+  "/usr/local/lib",
+  "/usr/lib64",
+  "/home/linuxbrew/.linuxbrew/lib"
+];
 
 const MACOS_LIBRARY_PATHS: string[] = [
   "/usr/local/lib",
