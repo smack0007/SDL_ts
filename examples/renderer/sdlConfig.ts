@@ -25,6 +25,7 @@ export const SDL_FUNCTIONS = [
   SDL.RenderFillRect,
   SDL.RenderFlush,
   SDL.RenderPresent,
+  SDL.RenderSetLogicalSize,
   SDL.RWFromFile,
   SDL.SetRenderDrawColor,
 ] as const;

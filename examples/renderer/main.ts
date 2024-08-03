@@ -15,7 +15,7 @@ function main(): number {
   SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN,
+    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
     windowBox,
     rendererBox
   );
@@ -26,6 +26,8 @@ function main(): number {
   const renderer = rendererBox.unboxNotNull(
     () => `Failed to create renderer: ${SDL.GetError()}`
   );
+
+  SDL.RenderSetLogicalSize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT)
 
   const rendererInfo = new SDL.RendererInfo();
   if (SDL.GetRendererInfo(renderer, rendererInfo) != 0) {
