@@ -710,6 +710,14 @@ export const symbols = {
     ],
     result: /* SDL_Window* */ "pointer",
   },
+  SDL_RenderSetLogicalSize: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* int width */ "i32",
+      /* int height */ "i32",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_RenderLogicalToWindow: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

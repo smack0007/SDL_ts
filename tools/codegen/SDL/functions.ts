@@ -1426,6 +1426,22 @@ export const functions: CodeGenFunctions = {
       type: "SDL_Window*",
     },
   },
+  SDL_RenderSetLogicalSize: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      width: {
+        type: "int",
+      },
+      height: {
+        type: "int",
+      },
+    },
+    result: {
+      type: "int"
+    }
+  },
   SDL_RenderLogicalToWindow: {
     parameters: {
       renderer: {

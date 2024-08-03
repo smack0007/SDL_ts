@@ -1200,6 +1200,19 @@ export function RenderGetWindow(
 }
 RenderGetWindow.symbolName = "SDL_RenderGetWindow";
 
+export function RenderSetLogicalSize(
+  renderer: PointerLike<Renderer>,
+  width: i32,
+  height: i32,
+): i32 {
+  return _library.symbols.SDL_RenderSetLogicalSize(
+    Platform.toPlatformPointer(Pointer.of(renderer)),
+    width,
+    height,
+  ) as i32;
+}
+RenderSetLogicalSize.symbolName = "SDL_RenderSetLogicalSize";
+
 export function RenderLogicalToWindow(
   renderer: PointerLike<Renderer>,
   logicalX: f32,
