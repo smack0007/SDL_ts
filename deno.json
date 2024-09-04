@@ -24,19 +24,19 @@
     "@std/path": "jsr:@std/path@1.0.1"
   },
   "tasks": {
-    "build": "cd ./scripts && deno run --allow-read --allow-run ./build.ts",
+    "build": "cd ./scripts && deno run -R --allow-run ./build.ts",
     "build:ci": "deno task build --ci",
     "check": "deno check",
-    "codegen": "cd ./tools && deno run --unstable-ffi --allow-run --allow-read --allow-write $DENO_FLAGS ./codegen.ts",
-    "codegen-scraper": "cd ./tools && deno run --allow-read --allow-write --allow-run ./codegen-scraper.ts",
-    "run:init": "deno run --allow-net --allow-read=. --allow-write=. ./init.ts ./tmp/init",
-    "run:doom-fire": "cd ./examples/doom-fire && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:hello-world": "cd ./examples/hello-world && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:hello-world-async": "cd ./examples/hello-world-async && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:play-wav": "cd ./examples/play-wav && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:renderer": "cd ./examples/renderer && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:same-game": "cd ./examples/same-game && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
-    "run:version": "cd ./examples/version && SDL_TS_ENV_DIR=$INIT_CWD deno run --unstable-ffi --allow-env --allow-ffi --allow-read=../.. $DENO_FLAGS ./main.ts",
+    "codegen": "cd ./tools && deno run --unstable-ffi --allow-run -R -W $DENO_FLAGS ./codegen.ts",
+    "codegen-scraper": "cd ./tools && deno run -R -W --allow-run ./codegen-scraper.ts",
+    "run:init": "deno run --allow-net -R=. -W=. ./init.ts ./tmp/init",
+    "run:doom-fire": "cd ./examples/doom-fire && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:hello-world": "cd ./examples/hello-world && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:hello-world-async": "cd ./examples/hello-world-async && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:play-wav": "cd ./examples/play-wav && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:renderer": "cd ./examples/renderer && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:same-game": "cd ./examples/same-game && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:version": "cd ./examples/version && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
     "test": "deno test --unstable-ffi --allow-ffi"
   }
 }
