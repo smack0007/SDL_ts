@@ -29,14 +29,13 @@
     "check": "deno check",
     "codegen": "cd ./tools && deno run --unstable-ffi --allow-run -R -W $DENO_FLAGS ./codegen.ts",
     "codegen-scraper": "cd ./tools && deno run -R -W --allow-run ./codegen-scraper.ts",
-    "run:init": "deno run --allow-net -R=. -W=. ./init.ts ./tmp/init",
-    "run:doom-fire": "cd ./examples/doom-fire && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:hello-world": "cd ./examples/hello-world && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:hello-world-async": "cd ./examples/hello-world-async && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:play-wav": "cd ./examples/play-wav && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:renderer": "cd ./examples/renderer && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:same-game": "cd ./examples/same-game && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
-    "run:version": "cd ./examples/version && deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:doom-fire": "cd ./examples/doom-fire && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:hello-world": "cd ./examples/hello-world && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:hello-world-async": "cd ./examples/hello-world-async && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:play-wav": "cd ./examples/play-wav && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:renderer": "cd ./examples/renderer && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:same-game": "cd ./examples/same-game && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
+    "run:version": "cd ./examples/version && SDL_TS_LIBRARY_PATH=$INIT_CWD/.lib deno run --unstable-ffi -E --allow-ffi -R=../.. $DENO_FLAGS ./main.ts",
     "test": "deno test --unstable-ffi --allow-ffi"
   }
 }
