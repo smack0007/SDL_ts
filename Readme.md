@@ -67,6 +67,27 @@ Located in the directory [examples/getting-started](examples/getting-started/) a
 a project up and running. Copy these files onto your computer and start the project with `deno task start`. You should
 see a window with `SDL_ts` as the title.
 
+### Loading shared libraries
+
+Unless `libraryPath` is specified in the `Init` functions, `SDL_ts` will attempt to "find" the SDL shared libraries by
+determining the prefix and file extension appropriate for the operating system and looking in a set of different places
+also based on the operating system. The places where the shared libraries are searched for can be influenced by the
+environment variable [`SDL_TS_LIBRARY_PATH`](#sdl-ts-library-path).
+
+#### libraryPath
+
+The `Init` functions (i.e. `SDL_Init`) have in their `options` object a `libraryPath` property. This property should be
+a path to the shared library and `SDL_ts` will make no attempt to guess where the library should be loaded from. This
+means it's up to the caller of the `Init` function to account for changes in the name of the library between the
+different platforms. For example the shared library on Linux is called `libSDL2.so` and Windows it is called `SDL2.dll`.
+There is a `lib` prefix on Linux and on Windows the file extension is `.dll` instead of `.so`.
+
+#### SDL_TS_LIBRARY_PATH
+
+The environmnet variable `SDL_TS_LIBRARY_PATH` can be used to instruct SDL_ts where the SDL shared libraries should be
+loaded from. See [deno.json](deno.json). All example projects will load the SDL shared libraries from the `.lib`
+directory if it exists.
+
 ### Loading only required functions
 
 Per default `SDL.Init` (or `IMG.Init` or `TTF.Init`) will load all known functions from the SDL assemblies. This can be
