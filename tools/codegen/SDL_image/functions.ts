@@ -18,6 +18,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_version*",
     },
+    checkForError: true,
   },
 
   IMG_Load: {
@@ -29,6 +30,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   IMG_LoadTexture: {

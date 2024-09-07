@@ -7,7 +7,7 @@ console.info("SDL Initialized.");
 
 console.info(`${SDL.GetSystemRAM()} MB RAM available.`);
 
-const createWindowResult = SDL.CreateWindow(
+const window = SDL.CreateWindow(
   "Hello World!",
   SDL.WindowPos.CENTERED,
   SDL.WindowPos.CENTERED,
@@ -16,22 +16,10 @@ const createWindowResult = SDL.CreateWindow(
   SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE
 );
 
-if (createWindowResult == null) {
-  console.error(`Failed to create window: ${SDL.GetError()}`);
-  Deno.exit(1);
-}
-
-const window = createWindowResult;
-
 let surface: SDL.Surface = null!;
 
 function redraw(): void {
   const getWindowSurfaceResult = SDL.GetWindowSurface(window);
-
-  if (getWindowSurfaceResult == null) {
-    console.error(`Failed to get window surface: ${SDL.GetError()}`);
-    Deno.exit(1);
-  }
 
   surface = getWindowSurfaceResult;
   SDL.FillRect(surface, null, SDL.MapRGB(surface.format, 0x64, 0x95, 0xed));

@@ -56,6 +56,12 @@ export interface CodeGenFunction {
     parameters?: Record<string, Partial<CodeGenFunctionParam>>;
     result?: Partial<CodeGenFunctionResult>;
   }>;
+
+  // If true the CodeGen will generate code to check for an error
+  // and throw an exception if needed. This can probably be determined
+  // from the return type in the future but while developing the feature
+  // just set this manually.
+  checkForError?: boolean;
 }
 
 export interface CodeGenFunctionParam {
@@ -63,10 +69,12 @@ export interface CodeGenFunctionParam {
   type: string;
 
   // Can the parameter be null.
-  nullable?: boolean;
+  isNullable?: boolean;
 
   // If set this type will be used as the script type.
   overrideType?: string;
+
+  isOutput?: boolean;
 }
 
 export type CodeGenStructs = Record<string, CodeGenStruct>;

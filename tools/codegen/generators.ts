@@ -953,7 +953,7 @@ export async function writeSymbols(
     }
 
     if (func.symbolName !== undefined) {
-      lines.push(`\t${func.symbolName}: {`);
+      lines.push(`\t/* ${funcName} */ ${func.symbolName}: {`);
     } else {
       lines.push(`\t${funcName}: {`);
     }
@@ -1070,6 +1070,29 @@ function mapFunctionReturnType(
   );
 }
 
+function mapFunctionReturnTypeFromOutputParam(
+  callbacks: CodeGenCallbacks,
+  enums: CodeGenEnums,
+  structs: CodeGenStructs,
+  opaqueStructs: CodeGenOpaqueStructs,
+  param: CodeGenFunctionParam
+): string {
+  let result = mapFunctionParamType(
+    callbacks,
+    enums,
+    structs,
+    opaqueStructs,
+    param,
+    true
+  );
+
+  if (result.startsWith("Box<")) {
+    result = result.substring("Box<".length, result.length - 1);
+  }
+
+  return result;
+}
+
 function mapFunctionParamType(
   callbacks: CodeGenCallbacks,
   enums: CodeGenEnums,
@@ -1079,7 +1102,7 @@ function mapFunctionParamType(
   isReturnType = false
 ): string {
   if (param.overrideType) {
-    if (param.nullable) {
+    if (param.isNullable) {
       return param.overrideType + "| null";
     }
 
@@ -1108,7 +1131,7 @@ function mapFunctionParamType(
       }
     }
 
-    if (param.nullable) {
+    if (param.isNullable) {
       structName += "| null";
     }
 
@@ -1180,7 +1203,7 @@ function mapFunctionParamType(
   }
 
   if (result) {
-    if (param.nullable) {
+    if (param.isNullable) {
       result += "| null";
     }
 
@@ -1212,7 +1235,7 @@ function mapFunctionParamType(
     result = ffiType;
   }
 
-  if (param.nullable) {
+  if (param.isNullable) {
     result += "| null";
   }
 
@@ -1228,13 +1251,14 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
-function getReturnTypePostfix(
+function getFuncReturnTypePostfix(
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
-  result: CodeGenFunctionResult
+  func: CodeGenFunction
 ): string {
-  return isFunctionParamOpaqueStruct(opaqueStructs, result) ||
-    isFunctionParamStruct(structs, result)
+  return (isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
+    isFunctionParamStruct(structs, func.result)) &&
+    !func.checkForError
     ? "| null"
     : "";
 }
@@ -1477,14 +1501,15 @@ export async function writeFunctions(
   lines.push(`// deno-lint-ignore-file no-unused-vars
   
 import Platform from "../_platform.ts";
-import { Box } from "../boxes.ts";
-import { DynamicLibrary } from "../_library.ts";
-import { PlatformPointer } from "../_types.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { callbacks } from "./_callbacks.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { symbols } from "./_symbols.ts";
+import { PlatformPointer } from "../_types.ts";
+import { Box } from "../boxes.ts";
+import { SDLError } from "../error.ts";
+import { Pointer, PointerLike } from "../pointers.ts";
+import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 `);
 
   writeImportAllCallbacks(lines, callbacks);
@@ -1513,31 +1538,9 @@ import { symbols } from "./_symbols.ts";
     }
 
     if (funcName.endsWith("_Init")) {
-      if (Object.values(func.parameters).length >= 1) {
-        lines.push(`export function Init(flags: InitFlags, options?: InitOptions): number;
-export function Init(flags: number, options?: InitOptions): number;
-export function Init(flags: InitFlags | number, options?: InitOptions): number {`);
-      } else {
-        lines.push(`export function Init(options?: InitOptions): number {`);
-      }
-
-      lines.push(
-        `const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
-      _library = Platform.loadLibrary("${libraryName}", symbolsToLoad, options?.libraryPath);`
-      );
-
-      if (Object.values(func.parameters).length >= 1) {
-        lines.push(`\treturn _library.symbols.${funcName}(flags) as number;`);
-      } else {
-        lines.push(`\treturn _library.symbols.${funcName}() as number;`);
-      }
-
-      lines.push("}");
+      writeInitFunction(lines, libraryName, funcName, func);
     } else if (funcName.endsWith("_Quit")) {
-      lines.push(`export function Quit(): void {
-        _library.symbols.${funcName}();
-        _library.close();
-      }`);
+      writeQuitFunction(lines, funcName);
     } else {
       for (const overload of func.overloads ?? []) {
         const returnType = mapFunctionReturnType(
@@ -1553,7 +1556,9 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
 
         lines.push(`export function ${stripPrefixes(funcName)}(`);
 
-        for (const [paramName, param] of Object.entries(func.parameters)) {
+        for (const [paramName, param] of Object.entries(func.parameters).filter(
+          ([_, param]) => !param.isOutput
+        )) {
           lines.push(
             `${paramName}: ${mapFunctionParamType(
               callbacks,
@@ -1568,15 +1573,22 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
           );
         }
 
-        const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, {
-          ...func.result,
-          ...overload.result,
-        });
+        const returnTypePostfix = getFuncReturnTypePostfix(
+          structs,
+          opaqueStructs,
+          {
+            ...func,
+            result: {
+              ...func.result,
+              ...overload,
+            },
+          }
+        );
 
         lines.push(`): ${returnType}${returnTypePostfix};`);
       }
 
-      const returnType = mapFunctionReturnType(
+      const symbolReturnType = mapFunctionReturnType(
         callbacks,
         enums,
         structs,
@@ -1584,9 +1596,53 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         func.result
       );
 
+      const outputParams = Object.entries(func.parameters).filter(
+        ([_, param]) => param.isOutput
+      );
+
+      let returnType = "";
+      if (outputParams.length === 0) {
+        returnType = mapFunctionReturnType(
+          callbacks,
+          enums,
+          structs,
+          opaqueStructs,
+          func.result
+        );
+      } else if (outputParams.length === 1) {
+        returnType = mapFunctionReturnTypeFromOutputParam(
+          callbacks,
+          enums,
+          structs,
+          opaqueStructs,
+          outputParams[0][1]
+        );
+      } else {
+        returnType =
+          "[" +
+          outputParams
+            .map(([_, outputParam]) =>
+              mapFunctionReturnTypeFromOutputParam(
+                callbacks,
+                enums,
+                structs,
+                opaqueStructs,
+                outputParam
+              )
+            )
+            .join(", ") +
+          "]";
+      }
+
+      if (func.checkForError && returnType === "i32") {
+        returnType = "void";
+      }
+
       lines.push(`export function ${stripPrefixes(funcName)}(`);
 
-      for (const [paramName, param] of Object.entries(func.parameters)) {
+      for (const [paramName, param] of Object.entries(func.parameters).filter(
+        ([_, param]) => !param.isOutput
+      )) {
         lines.push(
           `${paramName}: ${mapFunctionParamType(
             callbacks,
@@ -1598,37 +1654,47 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         );
       }
 
-      const returnTypePostfix = getReturnTypePostfix(
+      const returnTypePostfix = getFuncReturnTypePostfix(
         structs,
         opaqueStructs,
-        func.result
+        func
       );
 
       lines.push(`): ${returnType}${returnTypePostfix} {`);
 
-      let symbolName = funcName;
-      if (func.symbolName !== undefined) {
-        symbolName = func.symbolName;
+      const symbolName = func.symbolName ?? funcName;
+
+      for (const [paramName, param] of outputParams) {
+        lines.push(
+          `const ${paramName} = new ${mapFunctionParamType(
+            callbacks,
+            enums,
+            structs,
+            opaqueStructs,
+            param
+          )}(Pointer);`
+        );
       }
 
-      if (returnType !== "void") {
-        let returnStatement = "\treturn ";
+      if (symbolReturnType !== "void") {
+        let resultStatement = "\tconst _result = ";
 
         if (isFunctionParamBigInt(func.result)) {
-          returnStatement += "\t\tBigInt(";
+          resultStatement += "\t\tBigInt(";
         } else if (isFunctionParamString(func.result)) {
-          returnStatement += "\t\tPlatform.fromPlatformString(";
+          resultStatement += "\t\tPlatform.fromPlatformString(";
         } else if (
           isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
           isFunctionParamStruct(structs, func.result)
         ) {
-          returnStatement += `\t\t${returnType}.of(Platform.fromPlatformPointer(`;
+          resultStatement += `\t\t${symbolReturnType}.of(Platform.fromPlatformPointer(`;
         } else if (isFunctionParamPointer(func.result)) {
-          returnStatement += `\t\tPlatform.fromPlatformPointer(`;
+          resultStatement += `\t\tPlatform.fromPlatformPointer(`;
         }
 
-        returnStatement += `_library.symbols.${symbolName}(`;
-        lines.push(returnStatement);
+        resultStatement += `_library.symbols.${symbolName}(`;
+
+        lines.push(resultStatement);
       } else {
         lines.push(`\t_library.symbols.${symbolName}(`);
       }
@@ -1667,27 +1733,54 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
         }
       }
 
-      if (returnType !== "void") {
+      if (symbolReturnType !== "void") {
         if (isFunctionParamBigInt(func.result)) {
           lines.push("\t) as bigint | number);");
-        } else if (returnType === "string") {
+        } else if (symbolReturnType === "string") {
           lines.push(`\t) as PlatformPointer<unknown>);`);
         } else if (
           isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
           isFunctionParamStruct(structs, func.result)
         ) {
-          lines.push(`\t) as PlatformPointer<${returnType}>));`);
+          lines.push(`\t) as PlatformPointer<${symbolReturnType}>));`);
         } else if (isFunctionParamPointer(func.result)) {
           const nonNullAssertion = !func.result.nullable ? "!" : "";
           lines.push(
             `\t) as PlatformPointer<${getGenericParam(
-              returnType
+              symbolReturnType
             )}>)${nonNullAssertion};`
           );
-        } else if (returnType === "bigint") {
-          lines.push(`\t) as unknown as ${returnType};`);
+        } else if (symbolReturnType === "bigint") {
+          lines.push(`\t) as unknown as ${symbolReturnType};`);
         } else {
-          lines.push(`\t) as ${returnType};`);
+          lines.push(`\t) as ${symbolReturnType};`);
+        }
+
+        if (func.checkForError) {
+          if (isFunctionParamPointer(func.result)) {
+            lines.push(`\tif (_result === null) {`);
+          } else {
+            lines.push(`\tif (_result < 0) {`);
+          }
+
+          lines.push(`\t\tthrow new SDLError(GetError());`);
+          lines.push("\t}");
+        }
+
+        // returnType will be set to void if checkForErrors is true and only the error code
+        // would have been returned.
+        if (returnType !== "void") {
+          if (outputParams.length === 0) {
+            lines.push("return _result;");
+          } else if (outputParams.length === 1) {
+            lines.push(`return ${outputParams[0][0]};`);
+          } else {
+            const outputParamNames = outputParams
+              .map(([paramName, _]) => `${paramName}.value`)
+              .join(", ");
+
+            lines.push(`return [${outputParamNames}];`);
+          }
         }
       } else {
         lines.push(`\t);`);
@@ -1705,4 +1798,45 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
   }
 
   await writeLinesToFile(filePath, lines);
+}
+
+function writeInitFunction(
+  lines: string[],
+  libraryName: string,
+  funcName: string,
+  func: CodeGenFunction
+): void {
+  if (Object.values(func.parameters).length >= 1) {
+    lines.push(`export function Init(flags: InitFlags, options?: InitOptions): void;
+export function Init(flags: number, options?: InitOptions): void;
+export function Init(flags: InitFlags | number, options?: InitOptions): void {`);
+  } else {
+    lines.push(`export function Init(options?: InitOptions): void {`);
+  }
+
+  lines.push(
+    `const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
+      _library = Platform.loadLibrary("${libraryName}", symbolsToLoad, options?.libraryPath);`
+  );
+
+  if (Object.values(func.parameters).length >= 1) {
+    lines.push(
+      `\tconst _result = _library.symbols.${funcName}(flags) as number;`
+    );
+  } else {
+    lines.push(`\tconst _result = _library.symbols.${funcName}() as number;`);
+  }
+
+  lines.push(`\tif (_result < 0) {`);
+  lines.push(`\t\tthrow new SDLError(GetError());`);
+  lines.push("\t}");
+
+  lines.push("}");
+}
+
+function writeQuitFunction(lines: string[], funcName: string): void {
+  lines.push(`export function Quit(): void {
+    _library.symbols.${funcName}();
+    _library.close();
+  }`);
 }

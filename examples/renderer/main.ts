@@ -9,25 +9,13 @@ const WINDOW_HEIGHT = 768;
 function main(): number {
   SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
 
-  const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
-  const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);
-
-  SDL.CreateWindowAndRenderer(
+  const [window, renderer] = SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
-    windowBox,
-    rendererBox
+    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE
   );
 
-  const window = windowBox.unboxNotNull(
-    () => `Failed to create window: ${SDL.GetError()}`
-  );
-  const renderer = rendererBox.unboxNotNull(
-    () => `Failed to create renderer: ${SDL.GetError()}`
-  );
-
-  SDL.RenderSetLogicalSize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT)
+  SDL.RenderSetLogicalSize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);
 
   const rendererInfo = new SDL.RendererInfo();
   if (SDL.GetRendererInfo(renderer, rendererInfo) != 0) {

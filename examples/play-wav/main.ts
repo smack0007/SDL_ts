@@ -5,41 +5,24 @@ import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "@std/path";
 
-const main = (): number => {
-  if (SDL.Init(SDL.InitFlags.AUDIO, { functions: SDL_FUNCTIONS }) < 0) {
-    return 1;
-  }
-
-  console.info("SDL Initialized.");
+function main(): void {
+  SDL.Init(SDL.InitFlags.AUDIO, { functions: SDL_FUNCTIONS });
 
   const wavSpec = new SDL.AudioSpec();
   const wavBufferBox = new Box<Pointer<u8>>(Pointer);
   const wavLengthBox = new Box<u32>(U32);
 
-  if (
-    SDL.LoadWav(
-      join(ASSETS_PATH, "powerup.wav"),
-      wavSpec,
-      wavBufferBox,
-      wavLengthBox
-    ) == null
-  ) {
-    console.error("ERROR: Failed to load wav file.");
-    return 1;
-  }
+  // TODO: wavBuffer and wavLength could be made into outputParam(s).
+  const _wav = SDL.LoadWav(
+    join(ASSETS_PATH, "powerup.wav"),
+    wavSpec,
+    wavBufferBox,
+    wavLengthBox
+  );
 
   const audioDeviceID = SDL.OpenAudioDevice(null, 0, wavSpec, null, 0);
-  if (audioDeviceID <= 0) {
-    console.error("ERROR: Faield to open an audio device.");
-    return 1;
-  }
 
-  if (
-    SDL.QueueAudio(audioDeviceID, wavBufferBox.value, wavLengthBox.value) != 0
-  ) {
-    console.error(`ERROR: Faield to queue audio: ${SDL.GetError()}`);
-    return 1;
-  }
+  SDL.QueueAudio(audioDeviceID, wavBufferBox.value, wavLengthBox.value);
 
   SDL.PauseAudioDevice(audioDeviceID, 0);
 
@@ -48,13 +31,10 @@ const main = (): number => {
   SDL.CloseAudioDevice(audioDeviceID);
   SDL.FreeWAV(wavBufferBox.value);
   SDL.Quit();
-  console.info("SDL Shutdown.");
-
-  return 0;
-};
+}
 
 try {
-  Deno.exit(main());
+  main();
 } catch (error) {
   console.error(error);
   Deno.exit(1);

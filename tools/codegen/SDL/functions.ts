@@ -8,7 +8,7 @@ export const functions: CodeGenFunctions = {
       },
       userdata: {
         type: "void*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -26,7 +26,7 @@ export const functions: CodeGenFunctions = {
       },
       param: {
         type: "void*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -41,14 +41,14 @@ export const functions: CodeGenFunctions = {
       },
       srcrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
       dst: {
         type: "SDL_Surface*",
       },
       dstrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -63,14 +63,14 @@ export const functions: CodeGenFunctions = {
       },
       srcrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
       dst: {
         type: "SDL_Surface*",
       },
       dstrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -102,6 +102,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_CreateRGBSurface: {
     parameters: {
@@ -133,6 +134,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_CreateRGBSurfaceFrom: {
     parameters: {
@@ -167,6 +169,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_CreateRGBSurfaceWithFormat: {
     parameters: {
@@ -189,6 +192,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_CreateRenderer: {
     parameters: {
@@ -205,6 +209,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Renderer*",
     },
+    checkForError: true,
   },
   SDL_CreateTexture: {
     parameters: {
@@ -227,6 +232,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Texture*",
     },
+    checkForError: true,
   },
   SDL_CreateTextureFromSurface: {
     parameters: {
@@ -240,6 +246,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Texture*",
     },
+    checkForError: true,
   },
   SDL_CreateWindow: {
     parameters: {
@@ -290,6 +297,7 @@ export const functions: CodeGenFunctions = {
         },
       },
     ],
+    checkForError: true,
   },
   SDL_CreateWindowAndRenderer: {
     parameters: {
@@ -305,14 +313,17 @@ export const functions: CodeGenFunctions = {
       },
       window: {
         type: "SDL_Window**",
+        isOutput: true,
       },
       renderer: {
         type: "SDL_Renderer**",
+        isOutput: true,
       },
     },
     result: {
       type: "int",
     },
+    checkForError: true,
   },
   SDL_CreateWindowFrom: {
     parameters: {
@@ -323,6 +334,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Window*",
     },
+    checkForError: true,
   },
   SDL_Delay: {
     parameters: {
@@ -341,7 +353,7 @@ export const functions: CodeGenFunctions = {
       },
       userdata: {
         type: "void*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -395,7 +407,7 @@ export const functions: CodeGenFunctions = {
       },
       rect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
       color: {
         type: "Uint32",
@@ -467,7 +479,7 @@ export const functions: CodeGenFunctions = {
     parameters: {
       numkeys: {
         type: "int*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -882,6 +894,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_GetWindowTitle: {
     parameters: {
@@ -997,6 +1010,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
   SDL_LoadWAV_RW: {
     parameters: {
@@ -1019,6 +1033,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_AudioSpec*",
     },
+    checkForError: true,
   },
   SDL_LockSurface: {
     parameters: {
@@ -1095,7 +1110,7 @@ export const functions: CodeGenFunctions = {
     parameters: {
       device: {
         type: "char*",
-        nullable: true,
+        isNullable: true,
       },
       iscapture: {
         type: "int",
@@ -1105,7 +1120,7 @@ export const functions: CodeGenFunctions = {
       },
       obtained: {
         type: "SDL_AudioSpec*",
-        nullable: true,
+        isNullable: true,
       },
       allowed_changes: {
         type: "int",
@@ -1114,6 +1129,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_AudioDeviceID",
     },
+    checkForError: true,
   },
   SDL_PauseAudioDevice: {
     parameters: {
@@ -1145,11 +1161,11 @@ export const functions: CodeGenFunctions = {
       },
       format: {
         type: "Uint32*",
-        nullable: true,
+        isNullable: true,
       },
       access: {
         type: "int*",
-        nullable: true,
+        isNullable: true,
       },
       w: {
         type: "int*",
@@ -1183,6 +1199,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
   SDL_RWFromFile: {
     parameters: {
@@ -1197,6 +1214,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_RWops*",
     },
+    checkForError: true,
   },
   SDL_RaiseWindow: {
     parameters: {
@@ -1239,11 +1257,11 @@ export const functions: CodeGenFunctions = {
       },
       srcrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
       dstrect: {
         type: "SDL_Rect*",
-        nullable: true,
+        isNullable: true,
       },
     },
     result: {
@@ -1439,8 +1457,9 @@ export const functions: CodeGenFunctions = {
       },
     },
     result: {
-      type: "int"
-    }
+      type: "int",
+    },
+    checkForError: true,
   },
   SDL_RenderLogicalToWindow: {
     parameters: {
@@ -1983,6 +2002,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
   SDL_UpdateWindowSurfaceRects: {
     parameters: {

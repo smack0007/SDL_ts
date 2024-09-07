@@ -50,6 +50,9 @@ export async function codegenSDL_ttf(): Promise<void> {
     enums,
     allStructs,
     opaqueStructs,
-    [`import { Color, Surface, version } from "../SDL/structs.ts";`]
+    [
+      `import { GetError } from "../SDL/functions.ts";`,
+      `import { Color, Surface, version } from "../SDL/structs.ts";`,
+    ]
   );
 }

@@ -55,6 +55,9 @@ export async function codegenSDL_image(): Promise<void> {
     enums,
     allStructs,
     opaqueStructs,
-    [`import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";`]
+    [
+      `import { GetError } from "../SDL/functions.ts";`,
+      `import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";`,
+    ]
   );
 }

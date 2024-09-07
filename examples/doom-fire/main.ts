@@ -20,20 +20,9 @@ const FIRE_COLORS = [
   0xc0ffffff,
 ];
 
-function main(): number {
+function main(): void {
   SDL.Init(SDL.InitFlags.VIDEO, { functions: SDL_FUNCTIONS });
   IMG.Init(IMG.InitFlags.PNG, { functions: IMG_FUNCTIONS });
-
-  const version = IMG.Linked_Version();
-
-  if (version == null) {
-    console.error("Failed to get SDL_image version.");
-    return 1;
-  }
-
-  console.info(
-    `SDL_image Version: ${version.major}.${version.minor}.${version.patch}`
-  );
 
   const window = SDL.CreateWindow(
     "Doom Fire",
@@ -44,37 +33,17 @@ function main(): number {
     SDL.WindowFlags.SHOWN
   );
 
-  if (window == null) {
-    console.error("Failed to create window.");
-    return 1;
-  }
-
   const frontBuffer = SDL.GetWindowSurface(window);
-
-  if (frontBuffer == null) {
-    console.error("Failed to get window surface.");
-    return 1;
-  }
 
   const denoSurfaceUnoptimized = IMG.Load(
     join(ASSETS_PATH, "jurassicDeno.png")
   );
-
-  if (denoSurfaceUnoptimized == null) {
-    console.error("Failed to load jurassicDeno.png.");
-    return 1;
-  }
 
   const denoSurface = SDL.ConvertSurface(
     denoSurfaceUnoptimized,
     frontBuffer.format,
     0
   );
-
-  if (denoSurface == null) {
-    console.error("Failed to convert surface format of jurassicDeno.png.");
-    return 1;
-  }
 
   SDL.FreeSurface(denoSurfaceUnoptimized);
 
@@ -90,11 +59,6 @@ function main(): number {
     0x00ff0000,
     0xff000000
   );
-
-  if (fireSurface == null) {
-    console.error("Failed to create fireSurface.");
-    return 1;
-  }
 
   const flamesRect = new SDL.Rect(
     0,
@@ -147,8 +111,6 @@ function main(): number {
 
   IMG.Quit();
   SDL.Quit();
-
-  return 0;
 }
 
 function update(firePixels: Uint32Array): void {
@@ -173,7 +135,7 @@ function spreadFire(firePixels: Uint32Array, from: number): void {
 }
 
 try {
-  Deno.exit(main());
+  main();
 } catch (error) {
   console.error(error);
   Deno.exit(1);

@@ -5,7 +5,7 @@ export const callbacks: CodeGenCallbacks = {
     parameters: {
       userdata: {
         type: "void*",
-        nullable: true,
+        isNullable: true,
       },
       stream: {
         type: "Uint8*",
@@ -22,7 +22,7 @@ export const callbacks: CodeGenCallbacks = {
     parameters: {
       userdata: {
         type: "void*",
-        nullable: true,
+        isNullable: true,
       },
       event: {
         type: "SDL_Event*",
