@@ -29,6 +29,19 @@ export interface CodeGenEventType extends CodeGenStruct {
 
 export type CodeGenFunctions = Record<string, CodeGenFunction>;
 
+export interface CodeGenFunctionParam {
+  // SDL type.
+  type: string;
+
+  // Can the parameter be null.
+  isNullable?: boolean;
+
+  // If set this type will be used as the script type.
+  overrideType?: string;
+
+  isOutput?: boolean;
+}
+
 export interface CodeGenFunctionResult {
   // SDL type
   type: string;
@@ -52,6 +65,11 @@ export interface CodeGenFunction {
 
   result: CodeGenFunctionResult;
 
+  // If any parameter is marked as an output parameter than the return value
+  // will generally be discarded. This flag specifies that the return value
+  // should not be discarded when there are output parameters.
+  resultIsOutput?: boolean;
+
   overloads?: ReadonlyArray<{
     parameters?: Record<string, Partial<CodeGenFunctionParam>>;
     result?: Partial<CodeGenFunctionResult>;
@@ -62,19 +80,9 @@ export interface CodeGenFunction {
   // from the return type in the future but while developing the feature
   // just set this manually.
   checkForError?: boolean;
-}
 
-export interface CodeGenFunctionParam {
-  // SDL type.
-  type: string;
-
-  // Can the parameter be null.
-  isNullable?: boolean;
-
-  // If set this type will be used as the script type.
-  overrideType?: string;
-
-  isOutput?: boolean;
+  // If set the function is implemented by hand only the symbol definition will be generated.
+  implementation?: string;
 }
 
 export type CodeGenStructs = Record<string, CodeGenStruct>;

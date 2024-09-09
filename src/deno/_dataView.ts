@@ -53,12 +53,19 @@ export class DenoPlatformDataView {
     }
   }
 
-  // TODO: Maybe this should be renamed to getU8Array?
   public getArray(byteLength: number, byteOffset: number): Uint8Array {
     if (this._view instanceof globalThis.DataView) {
       throw new Error("Not implemented.");
     } else {
       return new Uint8Array(this._view.getArrayBuffer(byteLength, byteOffset));
+    }
+  }
+
+  public getArrayBuffer(byteLength: number, byteOffset: number): ArrayBuffer {
+    if (this._view instanceof globalThis.DataView) {
+      throw new Error("Not implemented.");
+    } else {
+      return this._view.getArrayBuffer(byteLength, byteOffset);
     }
   }
 

@@ -35,6 +35,7 @@ export interface PlatformDataView {
   readonly byteOffset: number;
 
   getArray(byteLength: number, byteOffset: number): Uint8Array;
+  getArrayBuffer(byteLength: number, byteOffset: number): ArrayBuffer;
   getCallback<T extends Callback>(
     byteOffset: number,
     definition: DynamicCallbackDefinition<T>

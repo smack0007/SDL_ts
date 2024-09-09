@@ -11,7 +11,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, Int, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 
 import { AudioCallback, EventFilter } from "./callbacks.ts";
 import {
@@ -465,25 +465,30 @@ export function GetGrabbedWindow(): Window | null {
 }
 GetGrabbedWindow.symbolName = "SDL_GetGrabbedWindow";
 
-export function GetKeyboardState(
-  numkeys: PointerLike<int> | null,
-): Pointer<u8> {
-  const _result = Platform.fromPlatformPointer(_library.symbols.SDL_GetKeyboardState(
-    Platform.toPlatformPointer(Pointer.of(numkeys)),
-  ) as PlatformPointer<u8>)!;
-  return _result;
+export function GetKeyboardState(): Uint8Array {
+  const numkeys = new Box<int>(Int);
+  const _result = Platform.fromPlatformPointer(
+    _library.symbols.SDL_GetKeyboardState(
+      Platform.toPlatformPointer(Pointer.of(numkeys)),
+    ) as PlatformPointer<u8>,
+  )!;
+  const dataView = new Platform.DataView(_result);
+  return new Uint8Array(dataView.getArrayBuffer(numkeys.value, 0));
 }
 GetKeyboardState.symbolName = "SDL_GetKeyboardState";
 
 export function GetRendererInfo(
   renderer: PointerLike<Renderer>,
-  info: PointerLike<RendererInfo>,
-): i32 {
+): RendererInfo {
+  const info = new RendererInfo();
   const _result = _library.symbols.SDL_GetRendererInfo(
     Platform.toPlatformPointer(Pointer.of(renderer)),
     Platform.toPlatformPointer(Pointer.of(info)),
   ) as i32;
-  return _result;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
+  return info;
 }
 GetRendererInfo.symbolName = "SDL_GetRendererInfo";
 

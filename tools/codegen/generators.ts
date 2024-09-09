@@ -1251,7 +1251,7 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
-function getFuncReturnTypePostfix(
+function getFunctionReturnTypePostfix(
   structs: CodeGenStructs,
   opaqueStructs: CodeGenOpaqueStructs,
   func: CodeGenFunction
@@ -1509,7 +1509,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 `);
 
   writeImportAllCallbacks(lines, callbacks);
@@ -1533,6 +1533,13 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
     if (func.todo) {
       lines.push(`// TODO: ${func.todo}`);
       lines.push(`// ${funcName}`);
+      lines.push("");
+      continue;
+    }
+
+    if (func.implementation) {
+      lines.push(func.implementation);
+      writeFunctionSymbolName(lines, funcName, func);
       lines.push("");
       continue;
     }
@@ -1573,7 +1580,7 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
           );
         }
 
-        const returnTypePostfix = getFuncReturnTypePostfix(
+        const returnTypePostfix = getFunctionReturnTypePostfix(
           structs,
           opaqueStructs,
           {
@@ -1600,26 +1607,32 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
         ([_, param]) => param.isOutput
       );
 
-      let returnType = "";
-      if (outputParams.length === 0) {
-        returnType = mapFunctionReturnType(
-          callbacks,
-          enums,
-          structs,
-          opaqueStructs,
-          func.result
-        );
-      } else if (outputParams.length === 1) {
-        returnType = mapFunctionReturnTypeFromOutputParam(
+      let returnType = mapFunctionReturnType(
+        callbacks,
+        enums,
+        structs,
+        opaqueStructs,
+        func.result
+      );
+
+      if (outputParams.length === 1) {
+        const outputParam = mapFunctionReturnTypeFromOutputParam(
           callbacks,
           enums,
           structs,
           opaqueStructs,
           outputParams[0][1]
         );
-      } else {
+
+        if (func.resultIsOutput) {
+          returnType = "[" + returnType + ", " + outputParam + "]";
+        } else {
+          returnType = outputParam;
+        }
+      } else if (outputParams.length > 1) {
         returnType =
           "[" +
+          (func.resultIsOutput ? returnType + ", " : "") +
           outputParams
             .map(([_, outputParam]) =>
               mapFunctionReturnTypeFromOutputParam(
@@ -1654,7 +1667,7 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
         );
       }
 
-      const returnTypePostfix = getFuncReturnTypePostfix(
+      const returnTypePostfix = getFunctionReturnTypePostfix(
         structs,
         opaqueStructs,
         func
@@ -1665,14 +1678,21 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
       const symbolName = func.symbolName ?? funcName;
 
       for (const [paramName, param] of outputParams) {
+        const paramType = mapFunctionReturnType(
+          callbacks,
+          enums,
+          structs,
+          opaqueStructs,
+          param
+        );
+
+        let paramConstructorArgs = "";
+        if (paramType.startsWith("Box<")) {
+          paramConstructorArgs = "Pointer";
+        }
+
         lines.push(
-          `const ${paramName} = new ${mapFunctionParamType(
-            callbacks,
-            enums,
-            structs,
-            opaqueStructs,
-            param
-          )}(Pointer);`
+          `const ${paramName} = new ${paramType}(${paramConstructorArgs});`
         );
       }
 
@@ -1773,13 +1793,21 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
           if (outputParams.length === 0) {
             lines.push("return _result;");
           } else if (outputParams.length === 1) {
-            lines.push(`return ${outputParams[0][0]};`);
+            if (func.resultIsOutput) {
+              lines.push(`return [_result, ${outputParams[0][0]}];`);
+            } else {
+              lines.push(`return ${outputParams[0][0]};`);
+            }
           } else {
             const outputParamNames = outputParams
               .map(([paramName, _]) => `${paramName}.value`)
               .join(", ");
 
-            lines.push(`return [${outputParamNames}];`);
+            if (func.resultIsOutput) {
+              lines.push(`return [_result, ${outputParamNames}];`);
+            } else {
+              lines.push(`return [${outputParamNames}];`);
+            }
           }
         }
       } else {
@@ -1789,15 +1817,23 @@ import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "
       lines.push("}");
     }
 
-    lines.push(
-      `${stripPrefixes(funcName)}.symbolName = "${
-        func.symbolName ? func.symbolName : funcName
-      }";`
-    );
+    writeFunctionSymbolName(lines, funcName, func);
     lines.push("");
   }
 
   await writeLinesToFile(filePath, lines);
+}
+
+function writeFunctionSymbolName(
+  lines: string[],
+  funcName: string,
+  func: CodeGenFunction
+): void {
+  lines.push(
+    `${stripPrefixes(funcName)}.symbolName = "${
+      func.symbolName ? func.symbolName : funcName
+    }";`
+  );
 }
 
 function writeInitFunction(

@@ -1,4 +1,5 @@
 import { CodeGenFunctions } from "../types.ts";
+import { GET_KEYBOARD_STATE } from "./functionImplementations.ts";
 
 export const functions: CodeGenFunctions = {
   SDL_AddEventWatch: {
@@ -479,12 +480,14 @@ export const functions: CodeGenFunctions = {
     parameters: {
       numkeys: {
         type: "int*",
-        isNullable: true,
+        isOutput: true,
       },
     },
     result: {
       type: "Uint8*",
     },
+    resultIsOutput: true,
+    implementation: GET_KEYBOARD_STATE,
   },
   SDL_GetRendererInfo: {
     parameters: {
@@ -493,11 +496,13 @@ export const functions: CodeGenFunctions = {
       },
       info: {
         type: "SDL_RendererInfo*",
+        isOutput: true,
       },
     },
     result: {
       type: "int",
     },
+    checkForError: true,
   },
   SDL_GetRevision: {
     parameters: {},

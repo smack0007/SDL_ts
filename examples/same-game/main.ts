@@ -17,22 +17,10 @@ function main(): number {
   IMG.Init(IMG.InitFlags.PNG, { functions: IMG_FUNCTIONS });
   TTF.Init({ functions: TTF_FUNCTIONS });
 
-  const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
-  const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);
-
-  SDL.CreateWindowAndRenderer(
+  const [window, renderer] = SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN,
-    windowBox,
-    rendererBox
-  );
-
-  const window = windowBox.unboxNotNull(
-    () => `Failed to create window: ${SDL.GetError()}`
-  );
-  const renderer = rendererBox.unboxNotNull(
-    () => `Failed to create renderer: ${SDL.GetError()}`
+    SDL.WindowFlags.SHOWN
   );
 
   SDL.SetWindowTitle(window, "Same Game");
