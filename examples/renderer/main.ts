@@ -12,7 +12,7 @@ function main(): void {
   const [window, renderer] = SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE
+    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
   );
 
   SDL.RenderSetLogicalSize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -23,7 +23,7 @@ function main(): void {
   console.info(rendererInfo.max_texture_height);
   console.info(
     (rendererInfo.flags & SDL.RendererFlags.ACCELERATED) ===
-      SDL.RendererFlags.ACCELERATED
+      SDL.RendererFlags.ACCELERATED,
   );
 
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -40,15 +40,13 @@ function main(): void {
   const texture = SDL.CreateTextureFromSurface(renderer, denoSurface);
   SDL.FreeSurface(denoSurface);
 
-  const points = new BoxArray<SDL.Point>(SDL.Point, 4);
-  points.at(0).x = 0;
-  points.at(0).y = 0;
-  points.at(1).x = 1;
-  points.at(1).y = 0;
-  points.at(2).x = 1;
-  points.at(2).y = 1;
-  points.at(3).x = 0;
-  points.at(3).y = 1;
+  // deno-fmt-ignore
+  const points = new Uint32Array([
+    0, 0,
+    1, 0,
+    1, 1,
+    0, 1
+  ]);
 
   const event = new SDL.Event();
   let done = false;
@@ -81,7 +79,7 @@ function main(): void {
       destRect,
       textureRotation,
       textureCenter,
-      SDL.RendererFlip.NONE
+      SDL.RendererFlip.NONE,
     );
 
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);

@@ -11,12 +11,42 @@ const FIRE_WIDTH = 1024;
 const FIRE_HEIGHT = 120;
 
 const FIRE_COLORS = [
-  0x00000000, 0xc0070707, 0xc007071f, 0xc0070f2f, 0xc0070f47, 0xc0071757,
-  0xc0071f67, 0xc0071f77, 0xc007278f, 0xc0072f9f, 0xc0073faf, 0xc00747bf,
-  0xc00747c7, 0xc0074fdf, 0xc00757df, 0xc00757df, 0xc0075fd7, 0xc00f67d7,
-  0xc00f6fcf, 0xc00f77cf, 0xc00f7fcf, 0xc01787cf, 0xc01787c7, 0xc0178fc7,
-  0xc01f97c7, 0xc01f9fbf, 0xc01f9fbf, 0xc027a7bf, 0xc027a7bf, 0xc02fafbf,
-  0xc02fafb7, 0xc02fb7b7, 0xc037b7b7, 0xc06fcfcf, 0xc09fdfdf, 0xc0c7efef,
+  0x00000000,
+  0xc0070707,
+  0xc007071f,
+  0xc0070f2f,
+  0xc0070f47,
+  0xc0071757,
+  0xc0071f67,
+  0xc0071f77,
+  0xc007278f,
+  0xc0072f9f,
+  0xc0073faf,
+  0xc00747bf,
+  0xc00747c7,
+  0xc0074fdf,
+  0xc00757df,
+  0xc00757df,
+  0xc0075fd7,
+  0xc00f67d7,
+  0xc00f6fcf,
+  0xc00f77cf,
+  0xc00f7fcf,
+  0xc01787cf,
+  0xc01787c7,
+  0xc0178fc7,
+  0xc01f97c7,
+  0xc01f9fbf,
+  0xc01f9fbf,
+  0xc027a7bf,
+  0xc027a7bf,
+  0xc02fafbf,
+  0xc02fafb7,
+  0xc02fb7b7,
+  0xc037b7b7,
+  0xc06fcfcf,
+  0xc09fdfdf,
+  0xc0c7efef,
   0xc0ffffff,
 ];
 
@@ -30,19 +60,19 @@ function main(): void {
     SDL.WindowPos.CENTERED,
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN
+    SDL.WindowFlags.SHOWN,
   );
 
   const frontBuffer = SDL.GetWindowSurface(window);
 
   const denoSurfaceUnoptimized = IMG.Load(
-    join(ASSETS_PATH, "jurassicDeno.png")
+    join(ASSETS_PATH, "jurassicDeno.png"),
   );
 
   const denoSurface = SDL.ConvertSurface(
     denoSurfaceUnoptimized,
     frontBuffer.format,
-    0
+    0,
   );
 
   SDL.FreeSurface(denoSurfaceUnoptimized);
@@ -57,21 +87,20 @@ function main(): void {
     0x000000ff,
     0x0000ff00,
     0x00ff0000,
-    0xff000000
+    0xff000000,
   );
 
   const flamesRect = new SDL.Rect(
     0,
     HALF_WINDOW_HEIGHT,
     frontBuffer.w,
-    HALF_WINDOW_HEIGHT
+    HALF_WINDOW_HEIGHT,
   );
 
   firePixels.fill(0x00000000);
 
   for (let x = 0; x < FIRE_WIDTH; x += 1) {
-    firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] =
-      FIRE_COLORS[FIRE_COLORS.length - 1];
+    firePixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + x] = FIRE_COLORS[FIRE_COLORS.length - 1];
   }
 
   let lastFrame = SDL.GetTicks64();
