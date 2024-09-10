@@ -1,5 +1,5 @@
 import { CodeGenFunctions } from "../types.ts";
-import { GET_KEYBOARD_STATE } from "./functionImplementations.ts";
+import { GET_KEYBOARD_STATE, LOADWAV_RW } from "./functionImplementations.ts";
 
 export const functions: CodeGenFunctions = {
   SDL_AddEventWatch: {
@@ -1030,15 +1030,19 @@ export const functions: CodeGenFunctions = {
       },
       audio_buf: {
         type: "Uint8**",
+        isOutput: true,
       },
       audio_len: {
         type: "Uint32*",
+        isOutput: true,
       },
     },
     result: {
       type: "SDL_AudioSpec*",
     },
     checkForError: true,
+    resultIsOutput: true,
+    implementation: LOADWAV_RW,
   },
   SDL_LockSurface: {
     parameters: {

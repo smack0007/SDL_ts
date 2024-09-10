@@ -1509,7 +1509,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, U32, u64, u8 } from "../types.ts";
 `);
 
   writeImportAllCallbacks(lines, callbacks);

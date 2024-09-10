@@ -11,7 +11,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, Int, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
+import { f32, f64, i32, InitOptions, Int, int, TypedArray, u16, U32, u32, u64, u8 } from "../types.ts";
 
 import { AudioCallback, EventFilter } from "./callbacks.ts";
 import {
@@ -966,20 +966,21 @@ export function LoadWAV_RW(
   src: PointerLike<RWops>,
   freesrc: i32,
   spec: PointerLike<AudioSpec>,
-  audio_buf: Box<Pointer<u8>>,
-  audio_len: PointerLike<u32>,
-): AudioSpec {
+): [AudioSpec, Uint8Array] {
+  const audio_buf = new Box<Pointer<u8>>(Pointer);
+  const audio_len = new Box<u32>(U32);
   const _result = AudioSpec.of(Platform.fromPlatformPointer(_library.symbols.SDL_LoadWAV_RW(
     Platform.toPlatformPointer(Pointer.of(src)),
     freesrc,
     Platform.toPlatformPointer(Pointer.of(spec)),
-    Platform.toPlatformPointer(Pointer.ofTypedArray(audio_buf._data)),
+    Platform.toPlatformPointer(Pointer.of(audio_buf)),
     Platform.toPlatformPointer(Pointer.of(audio_len)),
   ) as PlatformPointer<AudioSpec>));
   if (_result === null) {
     throw new SDLError(GetError());
   }
-  return _result;
+  const dataView = new Platform.DataView(audio_buf.value);
+  return [_result, new Uint8Array(dataView.getArrayBuffer(audio_len.value, 0))];
 }
 LoadWAV_RW.symbolName = "SDL_LoadWAV_RW";
 

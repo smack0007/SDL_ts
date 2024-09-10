@@ -13,7 +13,6 @@ export const SDL_FUNCTIONS = [
   SDL.FreeSurface,
   SDL.GetError,
   SDL.GetRevision,
-  SDL.GetSystemRAM,
   SDL.GetTicks64,
   SDL.GetVersion,
   SDL.GetWindowSurface,
