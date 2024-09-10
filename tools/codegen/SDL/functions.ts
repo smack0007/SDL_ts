@@ -487,8 +487,8 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "Uint8*",
+      isOutput: true,
     },
-    resultIsOutput: true,
     implementation: GET_KEYBOARD_STATE,
   },
   SDL_GetRendererInfo: {
@@ -1041,9 +1041,9 @@ export const functions: CodeGenFunctions = {
     },
     result: {
       type: "SDL_AudioSpec*",
+      isOutput: true,
     },
     checkForError: true,
-    resultIsOutput: true,
     implementation: LOADWAV_RW,
   },
   SDL_LockSurface: {

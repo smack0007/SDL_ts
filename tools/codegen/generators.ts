@@ -1624,7 +1624,7 @@ import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, U32, u64, u
           outputParams[0][1]
         );
 
-        if (func.resultIsOutput) {
+        if (func.result.isOutput) {
           returnType = "[" + returnType + ", " + outputParam + "]";
         } else {
           returnType = outputParam;
@@ -1632,7 +1632,7 @@ import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, U32, u64, u
       } else if (outputParams.length > 1) {
         returnType =
           "[" +
-          (func.resultIsOutput ? returnType + ", " : "") +
+          (func.result.isOutput ? returnType + ", " : "") +
           outputParams
             .map(([_, outputParam]) =>
               mapFunctionReturnTypeFromOutputParam(
@@ -1793,7 +1793,7 @@ import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, U32, u64, u
           if (outputParams.length === 0) {
             lines.push("return _result;");
           } else if (outputParams.length === 1) {
-            if (func.resultIsOutput) {
+            if (func.result.isOutput) {
               lines.push(`return [_result, ${outputParams[0][0]}];`);
             } else {
               lines.push(`return ${outputParams[0][0]};`);
@@ -1803,7 +1803,7 @@ import { f32, f64, i32, InitOptions, int, Int, TypedArray, u16, u32, U32, u64, u
               .map(([paramName, _]) => `${paramName}.value`)
               .join(", ");
 
-            if (func.resultIsOutput) {
+            if (func.result.isOutput) {
               lines.push(`return [_result, ${outputParamNames}];`);
             } else {
               lines.push(`return [${outputParamNames}];`);

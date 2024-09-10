@@ -51,6 +51,11 @@ export interface CodeGenFunctionResult {
 
   // If set this type will be used as the script type.
   overrideType?: string;
+
+  // If any parameter is marked as an output parameter than the return value
+  // will generally be discarded. This flag specifies that the return value
+  // should not be discarded when there are output parameters.
+  isOutput?: boolean;
 }
 
 export interface CodeGenFunction {
@@ -64,11 +69,6 @@ export interface CodeGenFunction {
   parameters: Record<string, CodeGenFunctionParam>;
 
   result: CodeGenFunctionResult;
-
-  // If any parameter is marked as an output parameter than the return value
-  // will generally be discarded. This flag specifies that the return value
-  // should not be discarded when there are output parameters.
-  resultIsOutput?: boolean;
 
   overloads?: ReadonlyArray<{
     parameters?: Record<string, Partial<CodeGenFunctionParam>>;
