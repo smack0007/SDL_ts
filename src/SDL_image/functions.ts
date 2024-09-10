@@ -61,11 +61,14 @@ Load.symbolName = "IMG_Load";
 export function LoadTexture(
   renderer: PointerLike<Renderer>,
   file: string,
-): Texture | null {
+): Texture {
   const _result = Texture.of(Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
     Platform.toPlatformPointer(Pointer.of(renderer)),
     Platform.toPlatformString(file),
   ) as PlatformPointer<Texture>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 LoadTexture.symbolName = "IMG_LoadTexture";

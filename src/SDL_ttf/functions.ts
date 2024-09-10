@@ -41,10 +41,13 @@ export function CloseFont(
 }
 CloseFont.symbolName = "TTF_CloseFont";
 
-export function Linked_Version(): version | null {
+export function Linked_Version(): version {
   const _result = version.of(
     Platform.fromPlatformPointer(_library.symbols.TTF_Linked_Version() as PlatformPointer<version>),
   );
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 Linked_Version.symbolName = "TTF_Linked_Version";
@@ -52,11 +55,14 @@ Linked_Version.symbolName = "TTF_Linked_Version";
 export function OpenFont(
   file: string,
   ptsize: i32,
-): Font | null {
+): Font {
   const _result = Font.of(Platform.fromPlatformPointer(_library.symbols.TTF_OpenFont(
     Platform.toPlatformString(file),
     ptsize,
   ) as PlatformPointer<Font>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 OpenFont.symbolName = "TTF_OpenFont";
@@ -71,12 +77,15 @@ export function RenderText_Blended(
   font: PointerLike<Font>,
   text: string,
   fg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Blended(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderText_Blended.symbolName = "TTF_RenderText_Blended";
@@ -86,13 +95,16 @@ export function RenderText_LCD(
   text: string,
   fg: Color,
   bg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_LCD(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderText_LCD.symbolName = "TTF_RenderText_LCD";
@@ -101,12 +113,15 @@ export function RenderText_Solid(
   font: PointerLike<Font>,
   text: string,
   fg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Solid(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderText_Solid.symbolName = "TTF_RenderText_Solid";
@@ -116,13 +131,16 @@ export function RenderText_Shaded(
   text: string,
   fg: Color,
   bg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Shaded(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderText_Shaded.symbolName = "TTF_RenderText_Shaded";
@@ -131,12 +149,15 @@ export function RenderUTF8_Blended(
   font: PointerLike<Font>,
   text: string,
   fg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Blended(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderUTF8_Blended.symbolName = "TTF_RenderUTF8_Blended";
@@ -146,13 +167,16 @@ export function RenderUTF8_LCD(
   text: string,
   fg: Color,
   bg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_LCD(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderUTF8_LCD.symbolName = "TTF_RenderUTF8_LCD";
@@ -161,12 +185,15 @@ export function RenderUTF8_Solid(
   font: PointerLike<Font>,
   text: string,
   fg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Solid(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderUTF8_Solid.symbolName = "TTF_RenderUTF8_Solid";
@@ -176,13 +203,16 @@ export function RenderUTF8_Shaded(
   text: string,
   fg: Color,
   bg: Color,
-): Surface | null {
+): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Shaded(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
   ) as PlatformPointer<Surface>));
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
   return _result;
 }
 RenderUTF8_Shaded.symbolName = "TTF_RenderUTF8_Shaded";
@@ -192,14 +222,16 @@ export function SizeText(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): i32 {
+): void {
   const _result = _library.symbols.TTF_SizeText(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
-  return _result;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
 }
 SizeText.symbolName = "TTF_SizeText";
 
@@ -208,14 +240,16 @@ export function SizeUTF8(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): i32 {
+): void {
   const _result = _library.symbols.TTF_SizeUTF8(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
-  return _result;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
 }
 SizeUTF8.symbolName = "TTF_SizeUTF8";
 
@@ -224,13 +258,15 @@ export function SizeUNICODE(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): i32 {
+): void {
   const _result = _library.symbols.TTF_SizeUNICODE(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
   ) as i32;
-  return _result;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
 }
 SizeUNICODE.symbolName = "TTF_SizeUNICODE";

@@ -11,6 +11,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
 
   IMG_Linked_Version: {
@@ -45,6 +46,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Texture*",
     },
+    checkForError: true,
   },
 
   IMG_Quit: {
