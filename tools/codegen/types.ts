@@ -1,3 +1,5 @@
+export type CodeGenTypedefs = Record<string, string>;
+
 export type CodeGenCallbacks = Record<string, CodeGenCallback>;
 
 export interface CodeGenCallback {

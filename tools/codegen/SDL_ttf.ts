@@ -38,7 +38,8 @@ export async function codegenSDL_ttf(): Promise<void> {
     callbacks,
     enums,
     structs,
-    opaqueStructs
+    opaqueStructs,
+    []
   );
   // await writeSymbols(`${SDL_TTF_SRC_PATH}/_symbols.ts`, functions, enums, allStructs, opaqueStructs);
   // await writeCallbacks(`${SDL_TTF_SRC_PATH}/callbacks.ts`, callbacks, enums, structs, opaqueStructs, []);

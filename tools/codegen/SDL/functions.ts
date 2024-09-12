@@ -258,11 +258,11 @@ export const functions: CodeGenFunctions = {
       },
       x: {
         type: "int",
-        overrideType: "WindowPos | i32",
+        overrideType: "WindowPos | int",
       },
       y: {
         type: "int",
-        overrideType: "WindowPos | i32",
+        overrideType: "WindowPos | int",
       },
       w: {
         type: "int",
@@ -292,10 +292,10 @@ export const functions: CodeGenFunctions = {
       {
         parameters: {
           x: {
-            overrideType: "i32",
+            overrideType: "int",
           },
           y: {
-            overrideType: "i32",
+            overrideType: "int",
           },
         },
       },

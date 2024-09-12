@@ -1,23 +1,21 @@
 import { assertEquals } from "@std/assert";
 import { Box, BoxValueFactory } from "./boxes.ts";
 import { Pointer } from "./pointers.ts";
-import { F32, F64, I16, I32, I8, Int, U16, U32, U8 } from "./types.ts";
+import { double, float, int, Sint32, Uint16, Uint32, Uint8 } from "./types.ts";
 import { PlatformDataView, PlatformPointer } from "./_types.ts";
 
-(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>>[
-  [I8, "setI8", -42],
-  [U8, "setU8", 42],
-  [I16, "setI16", -256],
-  [U16, "setU16", 256],
-  [I32, "setI32", -32769],
-  [U32, "setU32", 32768],
-  [Int, "setI32", 1234],
+(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>> [
+  [int, "setI32", -42],
+  [Sint32, "setI32", -42],
+  [Uint8, "setU8", 42],
+  [Uint16, "setU16", 256],
+  [Uint32, "setU32", 32768],
 ]).forEach((testData) => {
   Deno.test(`${testData[0].name} can be boxed`, () => {
     const box = new Box(testData[0]);
     const setter = box._view[testData[1]] as (
       arg1: number,
-      arg2: number
+      arg2: number,
     ) => void;
     setter.apply(box._view, [0, testData[2]]);
 
@@ -27,15 +25,15 @@ import { PlatformDataView, PlatformPointer } from "./_types.ts";
   });
 });
 
-(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>>[
-  [F32, "setF32", 12.34],
-  [F64, "setF64", 12.34],
+(<Array<[BoxValueFactory<number>, keyof PlatformDataView, number]>> [
+  [float, "setF32", 12.34],
+  [double, "setF64", 12.34],
 ]).forEach((testData) => {
   Deno.test(`${testData[0].name} can be boxed`, () => {
     const box = new Box(testData[0]);
     const setter = box._view[testData[1]] as (
       arg1: number,
-      arg2: number
+      arg2: number,
     ) => void;
     setter.apply(box._view, [0, testData[2]]);
 
@@ -47,7 +45,7 @@ import { PlatformDataView, PlatformPointer } from "./_types.ts";
 
 Deno.test(`Pointer can be boxed`, () => {
   const pointerValue = new Pointer(
-    Deno.UnsafePointer.create(12345n) as unknown as PlatformPointer<unknown>
+    Deno.UnsafePointer.create(12345n) as unknown as PlatformPointer<unknown>,
   );
 
   const box = new Box<Pointer<number>>(Pointer);

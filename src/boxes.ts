@@ -3,22 +3,19 @@ import {
   AllocatableStruct,
   AllocatableStructConstructor,
   Constructor,
-  F32,
-  F64,
+  double,
   Factory,
-  I16,
-  I32,
-  I64,
-  I8,
-  Int,
+  float,
+  int,
   OrFactory,
   Predicate,
+  Sint32,
   Struct,
   TypedNumber,
-  U16,
-  U32,
-  U64,
-  U8,
+  Uint16,
+  Uint32,
+  Uint64,
+  Uint8,
 } from "./types.ts";
 import { throwError } from "./_utils.ts";
 import { PlatformDataView } from "./_types.ts";
@@ -33,15 +30,15 @@ export type BoxValueFactory<T extends BoxValue> = Factory<T>;
 type BoxValueTransformer<T extends BoxValue> = (
   data: Uint8Array,
   view: PlatformDataView,
-  offset: number
+  offset: number,
 ) => T;
 
 function sizeof<T extends BoxValue>(
-  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
 ): number {
   if (
     "SIZE_IN_BYTES" in
-    (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)
+      (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)
   ) {
     return (
       factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>
@@ -49,87 +46,59 @@ function sizeof<T extends BoxValue>(
   }
 
   switch (factoryOrConstructor) {
-    case I8:
-    case U8:
+    case Uint8:
       return 1;
 
-    case I16:
-    case U16:
+    case Uint16:
       return 2;
 
-    case I32:
-    case U32:
-    case F32:
+    case float:
+    case int:
+    case Sint32:
+    case Uint32:
       return 4;
 
-    case I64:
-    case U64:
-    case F64:
+    case double:
+    case Uint64:
       return 8;
-
-    case Int: // TODO: Does this need to be platform dependent?
-      return 4;
 
     case Pointer as unknown as BoxValueFactory<T>:
       return Platform.POINTER_SIZE_IN_BYTES;
   }
 
   throwError(
-    `${factoryOrConstructor?.name} is not boxable. sizeof not implemented.`
+    `${factoryOrConstructor?.name} is not boxable. sizeof not implemented.`,
   );
 }
 
 export function getTransformer<T extends BoxValue>(
-  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
+  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
 ): BoxValueTransformer<T> {
   switch (factoryOrConstructor) {
-    case I8:
-      return ((_, view, offset) =>
-        view.getI8(offset)) as BoxValueTransformer<T>;
+    case double:
+      return ((_, view, offset) => view.getF64(offset)) as BoxValueTransformer<T>;
 
-    case U8:
-      return ((_, view, offset) =>
-        view.getU8(offset)) as BoxValueTransformer<T>;
+    case float:
+      return ((_, view, offset) => view.getF32(offset)) as BoxValueTransformer<T>;
 
-    case I16:
-      return ((_, view, offset) =>
-        view.getI16(offset)) as BoxValueTransformer<T>;
+    case int:
+    case Sint32:
+      return ((_, view, offset) => view.getI32(offset)) as BoxValueTransformer<T>;
 
-    case U16:
-      return ((_, view, offset) =>
-        view.getU16(offset)) as BoxValueTransformer<T>;
+    case Uint8:
+      return ((_, view, offset) => view.getU8(offset)) as BoxValueTransformer<T>;
 
-    case I32:
-      return ((_, view, offset) =>
-        view.getI32(offset)) as BoxValueTransformer<T>;
+    case Uint16:
+      return ((_, view, offset) => view.getU16(offset)) as BoxValueTransformer<T>;
 
-    case U32:
-      return ((_, view, offset) =>
-        view.getU32(offset)) as BoxValueTransformer<T>;
+    case Uint32:
+      return ((_, view, offset) => view.getU32(offset)) as BoxValueTransformer<T>;
 
-    case F32:
-      return ((_, view, offset) =>
-        view.getF32(offset)) as BoxValueTransformer<T>;
-
-    case I64:
-      return ((_, view, offset) =>
-        view.getI64(offset)) as BoxValueTransformer<T>;
-
-    case U64:
-      return ((_, view, offset) =>
-        view.getU64(offset)) as BoxValueTransformer<T>;
-
-    case F64:
-      return ((_, view, offset) =>
-        view.getF64(offset)) as BoxValueTransformer<T>;
-
-    case Int: // TODO: Does this need to be platform dependent?
-      return ((_, view, offset) =>
-        view.getI32(offset)) as BoxValueTransformer<T>;
+    case Uint64:
+      return ((_, view, offset) => view.getU64(offset)) as BoxValueTransformer<T>;
 
     case Pointer as unknown as BoxValueFactory<T>:
-      return ((_, view, offset) =>
-        view.getPointer(offset)) as BoxValueTransformer<T>;
+      return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;
   }
 
   if ("of" in factoryOrConstructor) {
@@ -137,7 +106,7 @@ export function getTransformer<T extends BoxValue>(
   }
 
   throw new Error(
-    `${factoryOrConstructor?.name} is not boxable. getTransformer not implemented.`
+    `${factoryOrConstructor?.name} is not boxable. getTransformer not implemented.`,
   );
 }
 
@@ -147,7 +116,7 @@ export class Box<T extends BoxValue> {
   public readonly _view: PlatformDataView;
 
   public constructor(
-    factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>
+    factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
   ) {
     const dataLength = sizeof(factoryOrConstructor);
     this._transformer = getTransformer(factoryOrConstructor);
@@ -182,7 +151,7 @@ export class BoxArray<T extends BoxValue> {
 
   public constructor(
     factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
-    length: number
+    length: number,
   ) {
     if (length <= 0) {
       throw new Error("length must be > 0.");
@@ -203,14 +172,14 @@ export class BoxArray<T extends BoxValue> {
     return this._transformer(
       this._data,
       this._view,
-      this.sizeOfElementInBytes * index
+      this.sizeOfElementInBytes * index,
     );
   }
 
   public unboxAt(
     index: number,
     predicate: Predicate<T>,
-    errorMessage: string
+    errorMessage: string,
   ): T {
     const value = this.at(index);
     return predicate(value) ? value : throwError(errorMessage);
@@ -219,7 +188,7 @@ export class BoxArray<T extends BoxValue> {
   public pointersAt(index: number): Pointer<T> {
     return Pointer.ofTypedArray<T>(
       this._data,
-      this.sizeOfElementInBytes * index
+      this.sizeOfElementInBytes * index,
     );
   }
 }

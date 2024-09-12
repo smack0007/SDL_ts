@@ -9,41 +9,32 @@ declare const _: unique symbol;
 // Simple types
 //
 
-export type i8 = number;
-export const I8 = (value = 0): i8 => value;
-export type u8 = number;
-export const U8 = (value = 0): u8 => value;
-export type i16 = number;
-export const I16 = (value = 0): i16 => value;
-export type u16 = number;
-export const U16 = (value = 0): u16 => value;
-export type i32 = number;
-export const I32 = (value = 0): i32 => value;
-export type u32 = number;
-export const U32 = (value = 0): u32 => value;
-export type i64 = bigint;
-export const I64 = (value: number | bigint = 0n): i64 => BigInt(value);
-export type u64 = bigint;
-export const U64 = (value: number | bigint = 0n): u64 => BigInt(value);
-export type f32 = number;
-export const F32 = (value = 0): f32 => value;
-export type f64 = number;
-export const F64 = (value = 0): f64 => value;
+export type double = number;
+export type float = number;
 export type int = number;
-export const Int = (value = 0): int => value;
+export type Sint32 = number;
+export type Uint8 = number;
+export type Uint16 = number;
+export type Uint32 = number;
+export type Uint64 = bigint;
+
+export const double = (value = 0): double => value;
+export const float = (value = 0): float => value;
+export const int = (value = 0): int => value;
+export const Sint32 = (value = 0): Sint32 => value;
+export const Uint8 = (value = 0): Uint8 => value;
+export const Uint16 = (value = 0): Uint16 => value;
+export const Uint32 = (value = 0): Uint32 => value;
+export const Uint64 = (value = 0): Uint64 => BigInt(value);
 
 export type TypedNumber =
-  | i8
-  | u8
-  | i16
-  | u16
-  | i32
-  | u32
-  | i64
-  | u64
+  | double
+  | float
   | int
-  | f32
-  | f64;
+  | Uint8
+  | Uint16
+  | Uint32
+  | Uint64;
 
 export type TypedArray =
   | Int8Array

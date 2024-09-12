@@ -4,6 +4,6 @@
 
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
-import { i32 } from "../types.ts";
+import { int, Uint8 } from "../types.ts";
 
 export const callbacks = {} as const;

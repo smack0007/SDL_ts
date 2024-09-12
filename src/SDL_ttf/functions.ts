@@ -11,7 +11,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, Int, int, TypedArray, u16, U32, u32, u64, u8 } from "../types.ts";
+import { double, float, InitOptions, int, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 import {} from "./enums.ts";
@@ -54,7 +54,7 @@ Linked_Version.symbolName = "TTF_Linked_Version";
 
 export function OpenFont(
   file: string,
-  ptsize: i32,
+  ptsize: int,
 ): Font {
   const _result = Font.of(Platform.fromPlatformPointer(_library.symbols.TTF_OpenFont(
     Platform.toPlatformString(file),
@@ -222,16 +222,17 @@ export function SizeText(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): void {
+): int {
   const _result = _library.symbols.TTF_SizeText(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
-  ) as i32;
+  ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());
   }
+  return _result;
 }
 SizeText.symbolName = "TTF_SizeText";
 
@@ -240,16 +241,17 @@ export function SizeUTF8(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): void {
+): int {
   const _result = _library.symbols.TTF_SizeUTF8(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
-  ) as i32;
+  ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());
   }
+  return _result;
 }
 SizeUTF8.symbolName = "TTF_SizeUTF8";
 
@@ -258,15 +260,16 @@ export function SizeUNICODE(
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
-): void {
+): int {
   const _result = _library.symbols.TTF_SizeUNICODE(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
     Platform.toPlatformPointer(Pointer.of(w)),
     Platform.toPlatformPointer(Pointer.of(h)),
-  ) as i32;
+  ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());
   }
+  return _result;
 }
 SizeUNICODE.symbolName = "TTF_SizeUNICODE";

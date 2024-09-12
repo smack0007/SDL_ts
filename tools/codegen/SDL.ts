@@ -25,14 +25,17 @@ export async function codegenSDL(): Promise<void> {
     callbacks,
     enums,
     structs,
-    opaqueStructs
+    opaqueStructs,
   );
   await writeStructs(
     `${SDL_SRC_PATH}/structs.ts`,
     callbacks,
     enums,
     structs,
-    opaqueStructs
+    opaqueStructs,
+    [
+      `import { AudioFormat } from "./audio.ts"`,
+    ],
   );
   await writeSymbols(
     `${SDL_SRC_PATH}/_symbols.ts`,
@@ -40,7 +43,7 @@ export async function codegenSDL(): Promise<void> {
     callbacks,
     enums,
     structs,
-    opaqueStructs
+    opaqueStructs,
   );
   await writeCallbacksSymbols(
     `${SDL_SRC_PATH}/_callbacks.ts`,
@@ -48,7 +51,7 @@ export async function codegenSDL(): Promise<void> {
     enums,
     structs,
     opaqueStructs,
-    []
+    [],
   );
   await writeCallbacks(
     `${SDL_SRC_PATH}/callbacks.ts`,
@@ -56,7 +59,7 @@ export async function codegenSDL(): Promise<void> {
     enums,
     structs,
     opaqueStructs,
-    []
+    [],
   );
   await writeFunctions(
     `${SDL_SRC_PATH}/functions.ts`,
@@ -70,6 +73,6 @@ export async function codegenSDL(): Promise<void> {
       `import { AudioDeviceID } from "./audio.ts"`,
       `import { Event } from "./events.ts";`,
       `import { RWMode } from "./rw.ts";`,
-    ]
+    ],
   );
 }

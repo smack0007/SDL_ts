@@ -11,7 +11,7 @@ import { PlatformPointer } from "../_types.ts";
 import { Box } from "../boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, Int, int, TypedArray, u16, U32, u32, u64, u8 } from "../types.ts";
+import { double, float, InitOptions, int, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 import { InitFlags } from "./enums.ts";

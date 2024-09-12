@@ -1,4 +1,4 @@
-import { BoxArray, Int, int, Pointer, SDL, TTF } from "SDL_ts";
+import { BoxArray, int, Pointer, SDL, TTF } from "SDL_ts";
 
 const FONT_TEXTURE_SIZE = 256;
 
@@ -69,7 +69,7 @@ export function createFontAtlas(
     }
 
     // TODO(idea): Can we allow structs to return pointers to their members?
-    const glyphSizeBox = new BoxArray<int>(Int, 2);
+    const glyphSizeBox = new BoxArray<int>(int, 2);
     TTF.SizeUTF8(
       font,
       character,

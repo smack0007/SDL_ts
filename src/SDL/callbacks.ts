@@ -3,15 +3,15 @@
 // deno-lint-ignore-file no-unused-vars
 
 import { Pointer } from "../pointers.ts";
-import { Callback, i32, u32, u8 } from "../types.ts";
+import { Callback, int, Uint8 } from "../types.ts";
 import { Event } from "./events.ts";
 
 export type AudioCallback =
   & (
     (
       userdata: Pointer<unknown> | null,
-      stream: Pointer<u8>,
-      len: i32,
+      stream: Pointer<Uint8>,
+      len: int,
     ) => void
   )
   & Callback;
@@ -21,7 +21,7 @@ export type EventFilter =
     (
       userdata: Pointer<unknown> | null,
       event: Event,
-    ) => i32
+    ) => int
   )
   & Callback;
 

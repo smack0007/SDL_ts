@@ -1,4 +1,4 @@
-import { Box, IMG, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
+import { IMG, Pointer, SDL, SDLError, TTF } from "SDL_ts";
 import { IMG_FUNCTIONS, SDL_FUNCTIONS, TTF_FUNCTIONS } from "./sdlConfig.ts";
 import { join } from "@std/path";
 import { Board } from "./logic/board.ts";
@@ -86,7 +86,7 @@ function main(): number {
   return 0;
 }
 
-function update(elapsed: u64, board: Board): void {
+function update(elapsed: bigint, board: Board): void {
   board.update(elapsed);
 }
 
