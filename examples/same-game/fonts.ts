@@ -68,17 +68,10 @@ export function createFontAtlas(
       );
     }
 
-    // TODO(idea): Can we allow structs to return pointers to their members?
-    const glyphSizeBox = new BoxArray<int>(int, 2);
-    TTF.SizeUTF8(
+    const [ glyphWidth, glyphHeight ] = TTF.SizeUTF8(
       font,
       character,
-      glyphSizeBox.pointersAt(0),
-      glyphSizeBox.pointersAt(1)
     );
-
-    const glyphWidth = glyphSizeBox.at(0);
-    const glyphHeight = glyphSizeBox.at(1);
 
     glyphs.push({
       character,

@@ -208,13 +208,13 @@ function isStruct(
   type: string,
 ): boolean {
   for (const structName of Object.keys(structs)) {
-    if (structName === type) {
+    if (structName === type || stripPrefixes(structName) === type) {
       return true;
     }
   }
 
   for (const structName of opaqueStructs) {
-    if (structName === type) {
+    if (structName === type || stripPrefixes(structName) === type) {
       return true;
     }
   }
@@ -1080,8 +1080,8 @@ function mapFunctionReturnTypeFromOutputParam(
     true,
   );
 
-  if (result.startsWith("Box<")) {
-    result = result.substring("Box<".length, result.length - 1);
+  if (result.startsWith("Box<") || result.startsWith("Pointer<")) {
+    result = getGenericParam(result);
   }
 
   return result;
@@ -1660,7 +1660,7 @@ import { InitOptions, double, float, int, Uint8, Uint16, Uint32, Uint64 } from "
       const symbolName = func.symbolName ?? funcName;
 
       for (const [paramName, param] of outputParams) {
-        const paramType = mapFunctionReturnType(
+        let paramType = mapFunctionReturnTypeFromOutputParam(
           callbacks,
           enums,
           structs,
@@ -1669,8 +1669,14 @@ import { InitOptions, double, float, int, Uint8, Uint16, Uint32, Uint64 } from "
         );
 
         let paramConstructorArgs = "";
-        if (paramType.startsWith("Box<")) {
-          paramConstructorArgs = "Pointer";
+
+        if (!isStruct(structs, opaqueStructs, paramType)) {
+          paramConstructorArgs = paramType;
+          if (paramType.startsWith("Pointer<")) {
+            paramConstructorArgs = "Pointer";
+          }
+
+          paramType = `Box<${paramType}>`;
         }
 
         lines.push(

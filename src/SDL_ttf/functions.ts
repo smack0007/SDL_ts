@@ -239,9 +239,9 @@ SizeText.symbolName = "TTF_SizeText";
 export function SizeUTF8(
   font: PointerLike<Font>,
   text: string,
-  w: PointerLike<int>,
-  h: PointerLike<int>,
-): int {
+): [int, int] {
+  const w = new Box<int>(int);
+  const h = new Box<int>(int);
   const _result = _library.symbols.TTF_SizeUTF8(
     Platform.toPlatformPointer(Pointer.of(font)),
     Platform.toPlatformString(text),
@@ -251,7 +251,7 @@ export function SizeUTF8(
   if (_result < 0) {
     throw new SDLError(GetError());
   }
-  return _result;
+  return [w.value, h.value];
 }
 SizeUTF8.symbolName = "TTF_SizeUTF8";
 
