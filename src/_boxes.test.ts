@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { Box, BoxValueFactory } from "./boxes.ts";
+import { Box, BoxValueFactory } from "./_boxes.ts";
 import { Pointer } from "./pointers.ts";
 import { double, float, int, Sint32, Uint16, Uint32, Uint8 } from "./types.ts";
 import { PlatformDataView, PlatformPointer } from "./_types.ts";

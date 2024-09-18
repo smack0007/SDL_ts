@@ -1,6 +1,6 @@
 import { isStruct } from "./_structs.ts";
 import { isTypedArray } from "./_utils.ts";
-import { Box, BoxArray, BoxValue } from "./boxes.ts";
+import { Box, BoxArray, BoxValue } from "./_boxes.ts";
 import { Struct, TypedArray } from "./types.ts";
 import { PlatformPointer } from "./_types.ts";
 

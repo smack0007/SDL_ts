@@ -8,7 +8,7 @@ import { getSymbolsFromFunctions } from "../_init.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { symbols } from "./_symbols.ts";
 import { PlatformPointer } from "../_types.ts";
-import { Box } from "../boxes.ts";
+import { Box } from "../_boxes.ts";
 import { SDLError } from "../error.ts";
 import { Pointer, PointerLike } from "../pointers.ts";
 import { double, float, InitOptions, int, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";

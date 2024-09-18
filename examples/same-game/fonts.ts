@@ -1,4 +1,4 @@
-import { BoxArray, int, Pointer, SDL, TTF } from "SDL_ts";
+import { Pointer, SDL, TTF } from "SDL_ts";
 
 const FONT_TEXTURE_SIZE = 256;
 
@@ -17,7 +17,7 @@ export type FontAtlas = {
 export function createFontAtlas(
   renderer: Pointer<SDL.Renderer>,
   fontPath: string,
-  fontSize: number
+  fontSize: number,
 ): FontAtlas {
   const fg = new SDL.Color(255, 255, 255, 255);
   const bg = new SDL.Color(0, 0, 0, 0);
@@ -26,7 +26,7 @@ export function createFontAtlas(
 
   if (font === null) {
     throw new Error(
-      `Failed to open font in ${createFontAtlas.name}: ${SDL.GetError()}`
+      `Failed to open font in ${createFontAtlas.name}: ${SDL.GetError()}`,
     );
   }
 
@@ -35,21 +35,19 @@ export function createFontAtlas(
     FONT_TEXTURE_SIZE,
     FONT_TEXTURE_SIZE,
     32,
-    SDL.PIXELFORMAT_RGBA8888
+    SDL.PIXELFORMAT_RGBA8888,
   );
 
   if (surface === null) {
     throw new Error(
-      `Failed to create font surface in ${
-        createFontAtlas.name
-      }: ${SDL.GetError()}`
+      `Failed to create font surface in ${createFontAtlas.name}: ${SDL.GetError()}`,
     );
   }
 
   SDL.FillRect(
     surface,
     null,
-    SDL.MapRGBA(surface.format, bg.r, bg.g, bg.b, bg.a)
+    SDL.MapRGBA(surface.format, bg.r, bg.g, bg.b, bg.a),
   );
 
   const glyphs: GlyphData[] = [];
@@ -62,13 +60,11 @@ export function createFontAtlas(
 
     if (glyphSurface === null) {
       throw new Error(
-        `Failed to create glyph surface in ${
-          createFontAtlas.name
-        }: ${SDL.GetError()}`
+        `Failed to create glyph surface in ${createFontAtlas.name}: ${SDL.GetError()}`,
       );
     }
 
-    const [ glyphWidth, glyphHeight ] = TTF.SizeUTF8(
+    const [glyphWidth, glyphHeight] = TTF.SizeUTF8(
       font,
       character,
     );
@@ -99,7 +95,7 @@ export function createFontAtlas(
 
       if (destination.y + destination.h >= FONT_TEXTURE_SIZE) {
         throw new Error(
-          `Ran out of glyph space in font atlas in ${createFontAtlas.name}`
+          `Ran out of glyph space in font atlas in ${createFontAtlas.name}`,
         );
       }
     }
@@ -119,9 +115,7 @@ export function createFontAtlas(
 
   if (texture === null) {
     throw new Error(
-      `Failed to create font texture in ${
-        createFontAtlas.name
-      }: ${SDL.GetError()}`
+      `Failed to create font texture in ${createFontAtlas.name}: ${SDL.GetError()}`,
     );
   }
 
@@ -141,7 +135,7 @@ export function drawString(
   renderer: Pointer<SDL.Renderer>,
   font: FontAtlas,
   destination: SDL.Point,
-  text: string
+  text: string,
 ): void {
   const destRect = new SDL.Rect(destination.x, destination.y, 0, 0);
 
@@ -163,7 +157,7 @@ export function drawString(
 
 export function measureString(
   font: FontAtlas,
-  text: string
+  text: string,
 ): { width: number; height: number } {
   let width = 0;
   let height = 0;

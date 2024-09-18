@@ -1,4 +1,4 @@
-import { BoxArray, SDL } from "SDL_ts";
+import { SDL } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "@std/path";
