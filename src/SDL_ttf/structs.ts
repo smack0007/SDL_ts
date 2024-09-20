@@ -5,9 +5,8 @@
 import Platform from "../_platform.ts";
 import { callbacks } from "./_callbacks.ts";
 import { PlatformDataView } from "../_types.ts";
-import { isTypedArray } from "../_utils.ts";
-import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, double, float, int, Struct, Uint16, Uint32, Uint8 } from "../types.ts";
+import { isPointer, isTypedArray } from "../_utils.ts";
+import { AllocatableStruct, double, float, int, Pointer, Struct, Uint16, Uint32, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 

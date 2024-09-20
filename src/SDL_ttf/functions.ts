@@ -10,8 +10,7 @@ import { symbols } from "./_symbols.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Box } from "../_boxes.ts";
 import { SDLError } from "../error.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { double, float, InitOptions, int, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
+import { double, float, InitOptions, int, Pointer, PointerLike, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 import {} from "./enums.ts";
@@ -36,7 +35,7 @@ export function CloseFont(
   font: PointerLike<Font>,
 ): void {
   _library.symbols.TTF_CloseFont(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
   );
 }
 CloseFont.symbolName = "TTF_CloseFont";
@@ -79,7 +78,7 @@ export function RenderText_Blended(
   fg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Blended(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
@@ -97,7 +96,7 @@ export function RenderText_LCD(
   bg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_LCD(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
@@ -115,7 +114,7 @@ export function RenderText_Solid(
   fg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Solid(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
@@ -133,7 +132,7 @@ export function RenderText_Shaded(
   bg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderText_Shaded(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
@@ -151,7 +150,7 @@ export function RenderUTF8_Blended(
   fg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Blended(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
@@ -169,7 +168,7 @@ export function RenderUTF8_LCD(
   bg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_LCD(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
@@ -187,7 +186,7 @@ export function RenderUTF8_Solid(
   fg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Solid(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
   ) as PlatformPointer<Surface>));
@@ -205,7 +204,7 @@ export function RenderUTF8_Shaded(
   bg: Color,
 ): Surface {
   const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.TTF_RenderUTF8_Shaded(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
     Platform.toPlatformStruct(fg, Color),
     Platform.toPlatformStruct(bg, Color),
@@ -224,10 +223,10 @@ export function SizeText(
   h: PointerLike<int>,
 ): int {
   const _result = _library.symbols.TTF_SizeText(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
-    Platform.toPlatformPointer(Pointer.of(w)),
-    Platform.toPlatformPointer(Pointer.of(h)),
+    Platform.toPlatformPointer(w),
+    Platform.toPlatformPointer(h),
   ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());
@@ -243,10 +242,10 @@ export function SizeUTF8(
   const w = new Box<int>(int);
   const h = new Box<int>(int);
   const _result = _library.symbols.TTF_SizeUTF8(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
-    Platform.toPlatformPointer(Pointer.of(w)),
-    Platform.toPlatformPointer(Pointer.of(h)),
+    Platform.toPlatformPointer(w),
+    Platform.toPlatformPointer(h),
   ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());
@@ -262,10 +261,10 @@ export function SizeUNICODE(
   h: PointerLike<int>,
 ): int {
   const _result = _library.symbols.TTF_SizeUNICODE(
-    Platform.toPlatformPointer(Pointer.of(font)),
+    Platform.toPlatformPointer(font),
     Platform.toPlatformString(text),
-    Platform.toPlatformPointer(Pointer.of(w)),
-    Platform.toPlatformPointer(Pointer.of(h)),
+    Platform.toPlatformPointer(w),
+    Platform.toPlatformPointer(h),
   ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());

@@ -8,6 +8,7 @@ import {
   float,
   int,
   OrFactory,
+  Pointer,
   Predicate,
   Sint32,
   Struct,
@@ -19,7 +20,6 @@ import {
 } from "./types.ts";
 import { throwError } from "./_utils.ts";
 import { PlatformDataView } from "./_types.ts";
-import { Pointer } from "./pointers.ts";
 
 export type BoxValue = Pointer<unknown> | TypedNumber | Struct;
 
@@ -183,12 +183,5 @@ export class BoxArray<T extends BoxValue> {
   ): T {
     const value = this.at(index);
     return predicate(value) ? value : throwError(errorMessage);
-  }
-
-  public pointersAt(index: number): Pointer<T> {
-    return Pointer.ofTypedArray<T>(
-      this._data,
-      this.sizeOfElementInBytes * index,
-    );
   }
 }

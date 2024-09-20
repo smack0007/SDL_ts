@@ -1,5 +1,4 @@
-import { Pointer } from "../pointers.ts";
-import { Callback } from "../types.ts";
+import { Callback, type Pointer } from "../types.ts";
 import { PlatformCallback, PlatformPointer } from "../_types.ts";
 import { ENDIANNESS } from "../_utils.ts";
 import { denoFromPlatformCallback } from "./_callbacks.ts";

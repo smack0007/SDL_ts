@@ -392,8 +392,7 @@ export async function writeEvents(
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
-import { AllocatableStruct, float, int, Sint32, Uint8, Uint32 } from "../types.ts";
-import { Pointer } from "../pointers.ts";
+import { AllocatableStruct, float, int, Pointer, Sint32, Uint8, Uint32 } from "../types.ts";
 
 `);
 
@@ -565,10 +564,9 @@ export async function writeStructs(
   lines.push(`import Platform from "../_platform.ts";`);
   lines.push(`import { callbacks } from "./_callbacks.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
-  lines.push(`import { isTypedArray } from "../_utils.ts";`);
-  lines.push(`import { Pointer } from "../pointers.ts";`);
+  lines.push(`import { isPointer, isTypedArray } from "../_utils.ts";`);
   lines.push(
-    `import { AllocatableStruct, Struct, double, float, int, Uint8, Uint16, Uint32 } from "../types.ts";`,
+    `import { AllocatableStruct, Pointer, Struct, double, float, int, Uint8, Uint16, Uint32 } from "../types.ts";`,
   );
   lines.push("");
 
@@ -700,7 +698,7 @@ export async function writeStructs(
         .map(
           ([memberName, member]) =>
             (member.todo ? "// " : "") +
-            `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`,
+            `if (data.${memberName} !== undefined) this.${memberName} = data.${memberName};`,
         )
         .join("\n");
 
@@ -713,22 +711,22 @@ export async function writeStructs(
         .join("\n");
 
       lines.push(`
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<${className}>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
-    
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        ${assignMemmbersFromObject}
-      } else {
-        ${assignMemmbersFromParameters}
+
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<${className}> = _1;
+          ${assignMemmbersFromObject}
+        } else {
+          ${assignMemmbersFromParameters}
+        }
       }
-    }
+    }    
   }
 `);
     } else if (struct.allocatable && !struct.mutable) {
@@ -1405,8 +1403,7 @@ export async function writeCallbacks(
   const lines = createLines();
   lines.push(`// deno-lint-ignore-file no-unused-vars
 
-import { Pointer } from "../pointers.ts";
-import { Callback, int, Uint8 } from "../types.ts";
+import { Callback, int, Pointer, Uint8 } from "../types.ts";
 import { Event } from "./events.ts";
 `);
 
@@ -1480,10 +1477,9 @@ import { getSymbolsFromFunctions } from "../_init.ts";
 import { DynamicLibrary } from "../_library.ts";
 import { symbols } from "./_symbols.ts";
 import { PlatformPointer } from "../_types.ts";
-import { Box } from "../boxes.ts";
+import { Box } from "../_boxes.ts";
 import { SDLError } from "../error.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { InitOptions, double, float, int, Uint8, Uint16, Uint32, Uint64 } from "../types.ts";
+import { InitOptions, double, float, int, Pointer, PointerLike, Uint8, Uint16, Uint32, Uint64 } from "../types.ts";
 `);
 
   writeImportAllCallbacks(lines, callbacks);
@@ -1712,11 +1708,11 @@ import { InitOptions, double, float, int, Uint8, Uint16, Uint32, Uint64 } from "
           lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
         } else if (isFunctionParamVoidPointer(param)) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`,
+            `\t\tPlatform.toPlatformPointer(${paramName}),`,
           );
         } else if (isFunctionParamDoublePointer(param)) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`,
+            `\t\tPlatform.toPlatformPointer(${paramName}._data),`,
           );
         } else if (isFunctionParamCallback(callbacks, param)) {
           lines.push(
@@ -1736,7 +1732,7 @@ import { InitOptions, double, float, int, Uint8, Uint16, Uint32, Uint64 } from "
           isFunctionParamStruct(structs, param)
         ) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`,
+            `\t\tPlatform.toPlatformPointer(${paramName}),`,
           );
         } else {
           lines.push(`\t\t${paramName},`);

@@ -10,8 +10,7 @@ import { symbols } from "./_symbols.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Box } from "../_boxes.ts";
 import { SDLError } from "../error.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { double, float, InitOptions, int, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
+import { double, float, InitOptions, int, Pointer, PointerLike, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 import { InitFlags } from "./enums.ts";
@@ -63,7 +62,7 @@ export function LoadTexture(
   file: string,
 ): Texture {
   const _result = Texture.of(Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
-    Platform.toPlatformPointer(Pointer.of(renderer)),
+    Platform.toPlatformPointer(renderer),
     Platform.toPlatformString(file),
   ) as PlatformPointer<Texture>));
   if (_result === null) {

@@ -1,5 +1,5 @@
-import { Pointer } from "./pointers.ts";
-import { Callback, Struct, StructConstructor } from "./types.ts";
+import { type Pointer } from "./types.ts";
+import { Callback, PointerLike, Struct, StructConstructor } from "./types.ts";
 import { DynamicCallbackDefinition, DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
 
 declare const _: unique symbol;
@@ -70,6 +70,8 @@ export interface Platform {
     structConstructor: StructConstructor<T>,
   ): T | null;
 
+  isPlatformPointer<T>(value: unknown): value is PlatformPointer<T>;
+
   loadLibrary<T extends DynamicLibraryInterface>(
     libraryName: string,
     symbols: T,
@@ -81,7 +83,7 @@ export interface Platform {
     definition: DynamicCallbackDefinition<T>,
   ): PlatformCallback;
 
-  toPlatformPointer<T>(value: Pointer<T> | null): PlatformPointer<T> | null;
+  toPlatformPointer<T>(value: PointerLike<T> | null): PlatformPointer<T> | null;
 
   toPlatformString(value: string | null): PlatformString;
 

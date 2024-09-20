@@ -1,8 +1,9 @@
 // This file includes private utility types which should not be
 // exposed as part of the API.
 
+import Platform from "./_platform.ts";
 import { SDLError } from "./error.ts";
-import { OrFactory, TypedArray } from "./types.ts";
+import { type OrFactory, type Pointer, type TypedArray } from "./types.ts";
 
 //
 // Constants
@@ -21,6 +22,10 @@ export const ENDIANNESS = (function (): "BE" | "LE" {
 // deno-lint-ignore ban-types
 export function hasSizeInBytesProperty(value: {}): value is { SIZE_IN_BYTES: number } {
   return "SIZE_IN_BYTES" in value;
+}
+
+export function isPointer<T>(value: unknown): value is Pointer<T> {
+  return Platform.isPlatformPointer(value);
 }
 
 export function isTypedArray(value: unknown): value is TypedArray {

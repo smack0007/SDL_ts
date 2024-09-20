@@ -3,7 +3,7 @@
 
 import { LoadBMP_RW, RWFromFile } from "./functions.ts";
 import { AudioSpec, Surface } from "./structs.ts";
-import { PointerLike } from "../pointers.ts";
+import { type PointerLike } from "../types.ts";
 import { LoadWAV_RW } from "../../mod.SDL.ts";
 
 export function LoadBMP(file: string): Surface {
@@ -12,7 +12,7 @@ export function LoadBMP(file: string): Surface {
 
 export function LoadWAV(
   file: string,
-  spec: PointerLike<AudioSpec>
+  spec: PointerLike<AudioSpec>,
 ): [AudioSpec, Uint8Array] {
   return LoadWAV_RW(RWFromFile(file, "rb"), 1, spec);
 }

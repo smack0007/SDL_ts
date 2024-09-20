@@ -1,7 +1,9 @@
 // deno-lint-ignore-file no-empty-interface
 // This file is for types exposed as part of the API.
 
-import { Pointer } from "./pointers.ts";
+import Platform from "./_platform.ts";
+import { Box, BoxArray, BoxValue } from "./_boxes.ts";
+import { PlatformPointer } from "./_types.ts";
 
 declare const _: unique symbol;
 
@@ -18,6 +20,9 @@ export type Uint16 = number;
 export type Uint32 = number;
 export type Uint64 = bigint;
 
+// NOTE: Pointer<T> is an opaque type.
+export type Pointer<T> = unknown;
+
 export const double = (value = 0): double => value;
 export const float = (value = 0): float => value;
 export const int = (value = 0): int => value;
@@ -26,6 +31,9 @@ export const Uint8 = (value = 0): Uint8 => value;
 export const Uint16 = (value = 0): Uint16 => value;
 export const Uint32 = (value = 0): Uint32 => value;
 export const Uint64 = (value = 0): Uint64 => BigInt(value);
+
+export const Pointer = <T>(value: unknown): Pointer<T> =>
+  Platform.fromPlatformPointer(value as unknown as PlatformPointer<T>);
 
 export type TypedNumber =
   | double
@@ -54,6 +62,9 @@ export type Callback = Function;
 
 // deno-lint-ignore ban-types
 export type FunctionWithSymbolName = Function & { symbolName: string };
+
+type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
+export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerBoxableValue<T>;
 
 //
 // Complex types

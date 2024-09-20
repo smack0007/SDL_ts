@@ -4,8 +4,7 @@ import Platform from "../_platform.ts";
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
-import { AllocatableStruct, float, int, Sint32, Uint32, Uint8 } from "../types.ts";
-import { Pointer } from "../pointers.ts";
+import { AllocatableStruct, float, int, Pointer, Sint32, Uint32, Uint8 } from "../types.ts";
 
 export class CommonEvent {
   constructor(

@@ -5,9 +5,8 @@
 import Platform from "../_platform.ts";
 import { callbacks } from "./_callbacks.ts";
 import { PlatformDataView } from "../_types.ts";
-import { isTypedArray } from "../_utils.ts";
-import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, double, float, int, Struct, Uint16, Uint32, Uint8 } from "../types.ts";
+import { isPointer, isTypedArray } from "../_utils.ts";
+import { AllocatableStruct, double, float, int, Pointer, Struct, Uint16, Uint32, Uint8 } from "../types.ts";
 
 import { AudioFormat } from "./audio.ts";
 
@@ -168,36 +167,36 @@ export class AudioSpec implements AllocatableStruct {
     // _8?: AudioCallback,
     _9?: Pointer<void>,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<AudioSpec>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(AudioSpec.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.freq !== undefined) this.freq = _1.freq;
-        if (_1.format !== undefined) this.format = _1.format;
-        if (_1.channels !== undefined) this.channels = _1.channels;
-        if (_1.silence !== undefined) this.silence = _1.silence;
-        if (_1.samples !== undefined) this.samples = _1.samples;
-        if (_1.padding !== undefined) this.padding = _1.padding;
-        if (_1.size !== undefined) this.size = _1.size;
-        // if (_1.callback !== undefined) this.callback = _1.callback;
-        if (_1.userdata !== undefined) this.userdata = _1.userdata;
-      } else {
-        if (_1 !== undefined) this.freq = _1;
-        if (_2 !== undefined) this.format = _2;
-        if (_3 !== undefined) this.channels = _3;
-        if (_4 !== undefined) this.silence = _4;
-        if (_5 !== undefined) this.samples = _5;
-        if (_6 !== undefined) this.padding = _6;
-        if (_7 !== undefined) this.size = _7;
-        // if (_8 !== undefined) this.callback = _8;
-        if (_9 !== undefined) this.userdata = _9;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<AudioSpec> = _1;
+          if (data.freq !== undefined) this.freq = data.freq;
+          if (data.format !== undefined) this.format = data.format;
+          if (data.channels !== undefined) this.channels = data.channels;
+          if (data.silence !== undefined) this.silence = data.silence;
+          if (data.samples !== undefined) this.samples = data.samples;
+          if (data.padding !== undefined) this.padding = data.padding;
+          if (data.size !== undefined) this.size = data.size;
+          // if (data.callback !== undefined) this.callback = data.callback;
+          if (data.userdata !== undefined) this.userdata = data.userdata;
+        } else {
+          if (_1 !== undefined) this.freq = _1;
+          if (_2 !== undefined) this.format = _2;
+          if (_3 !== undefined) this.channels = _3;
+          if (_4 !== undefined) this.silence = _4;
+          if (_5 !== undefined) this.samples = _5;
+          if (_6 !== undefined) this.padding = _6;
+          if (_7 !== undefined) this.size = _7;
+          // if (_8 !== undefined) this.callback = _8;
+          if (_9 !== undefined) this.userdata = _9;
+        }
       }
     }
   }
@@ -300,26 +299,26 @@ export class Color implements AllocatableStruct {
     _3?: Uint8,
     _4?: Uint8,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Color>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Color.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.r !== undefined) this.r = _1.r;
-        if (_1.g !== undefined) this.g = _1.g;
-        if (_1.b !== undefined) this.b = _1.b;
-        if (_1.a !== undefined) this.a = _1.a;
-      } else {
-        if (_1 !== undefined) this.r = _1;
-        if (_2 !== undefined) this.g = _2;
-        if (_3 !== undefined) this.b = _3;
-        if (_4 !== undefined) this.a = _4;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Color> = _1;
+          if (data.r !== undefined) this.r = data.r;
+          if (data.g !== undefined) this.g = data.g;
+          if (data.b !== undefined) this.b = data.b;
+          if (data.a !== undefined) this.a = data.a;
+        } else {
+          if (_1 !== undefined) this.r = _1;
+          if (_2 !== undefined) this.g = _2;
+          if (_3 !== undefined) this.b = _3;
+          if (_4 !== undefined) this.a = _4;
+        }
       }
     }
   }
@@ -581,22 +580,22 @@ export class Point implements AllocatableStruct {
     _1: Uint8Array | Pointer<Point> | Partial<Point> | int = {},
     _2?: number | int,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Point>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Point.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.x !== undefined) this.x = _1.x;
-        if (_1.y !== undefined) this.y = _1.y;
-      } else {
-        if (_1 !== undefined) this.x = _1;
-        if (_2 !== undefined) this.y = _2;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Point> = _1;
+          if (data.x !== undefined) this.x = data.x;
+          if (data.y !== undefined) this.y = data.y;
+        } else {
+          if (_1 !== undefined) this.x = _1;
+          if (_2 !== undefined) this.y = _2;
+        }
       }
     }
   }
@@ -648,26 +647,26 @@ export class Rect implements AllocatableStruct {
     _3?: int,
     _4?: int,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Rect>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.x !== undefined) this.x = _1.x;
-        if (_1.y !== undefined) this.y = _1.y;
-        if (_1.w !== undefined) this.w = _1.w;
-        if (_1.h !== undefined) this.h = _1.h;
-      } else {
-        if (_1 !== undefined) this.x = _1;
-        if (_2 !== undefined) this.y = _2;
-        if (_3 !== undefined) this.w = _3;
-        if (_4 !== undefined) this.h = _4;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Rect> = _1;
+          if (data.x !== undefined) this.x = data.x;
+          if (data.y !== undefined) this.y = data.y;
+          if (data.w !== undefined) this.w = data.w;
+          if (data.h !== undefined) this.h = data.h;
+        } else {
+          if (_1 !== undefined) this.x = _1;
+          if (_2 !== undefined) this.y = _2;
+          if (_3 !== undefined) this.w = _3;
+          if (_4 !== undefined) this.h = _4;
+        }
       }
     }
   }
