@@ -2,8 +2,9 @@
 // This file is for types exposed as part of the API.
 
 import Platform from "./_platform.ts";
-import { Box, BoxArray, BoxValue } from "./_boxes.ts";
+import { Box, BoxValue } from "./_boxes.ts";
 import { PlatformPointer } from "./_types.ts";
+import { StructArray } from "./structs.ts";
 
 declare const _: unique symbol;
 
@@ -63,8 +64,9 @@ export type Callback = Function;
 // deno-lint-ignore ban-types
 export type FunctionWithSymbolName = Function & { symbolName: string };
 
-type PointerBoxableValue<T> = T extends BoxValue ? (BoxArray<T> | Box<T>) : never;
-export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerBoxableValue<T>;
+type PointerBoxValue<T> = T extends BoxValue ? Box<T> : never;
+type PointerStructArray<T> = T extends AllocatableStruct ? StructArray<T> : never;
+export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerBoxValue<T> | PointerStructArray<T>;
 
 //
 // Complex types
@@ -82,7 +84,7 @@ export interface InitOptions {
   functions?: ReadonlyArray<FunctionWithSymbolName>;
 }
 
-export interface StructConstructor<T extends Struct> {
+export interface StructConstructor<T extends Struct> extends Constructor<T> {
   of(data: Uint8Array | Pointer<T> | null, byteOffset?: number): T | null;
 }
 

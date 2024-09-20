@@ -2,6 +2,7 @@ import { SDL } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "@std/path";
+import { StructArray } from "../../src/structs.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -41,11 +42,11 @@ function main(): void {
   SDL.FreeSurface(denoSurface);
 
   // deno-fmt-ignore
-  const points = new Uint32Array([
-    0, 0,
-    1, 0,
-    1, 1,
-    0, 1
+  const points = new StructArray<SDL.Point>(SDL.Point, [
+    new SDL.Point(0, 0),
+    new SDL.Point(1, 0),
+    new SDL.Point(1, 1),
+    new SDL.Point(0, 1)
   ]);
 
   const event = new SDL.Event();
@@ -81,15 +82,16 @@ function main(): void {
       textureCenter,
       SDL.RendererFlip.NONE,
     );
-
+    
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL.RenderDrawPoints(renderer, points, 4);
-
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     SDL.RenderFillRect(renderer, rect);
     SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL.RenderDrawRect(renderer, rect);
+
+    SDL.SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    SDL.RenderDrawPoints(renderer, points, 4);
 
     SDL.RenderPresent(renderer);
     SDL.RenderFlush(renderer);

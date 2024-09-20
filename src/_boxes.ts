@@ -1,27 +1,22 @@
 import Platform from "./_platform.ts";
 import {
-  AllocatableStruct,
-  AllocatableStructConstructor,
   Constructor,
   double,
   Factory,
   float,
   int,
-  OrFactory,
   Pointer,
-  Predicate,
   Sint32,
-  Struct,
   TypedNumber,
   Uint16,
   Uint32,
   Uint64,
   Uint8,
 } from "./types.ts";
-import { throwError } from "./_utils.ts";
 import { PlatformDataView } from "./_types.ts";
+import { sizeof } from "./_utils.ts";
 
-export type BoxValue = Pointer<unknown> | TypedNumber | Struct;
+export type BoxValue = TypedNumber | Pointer<unknown>;
 
 export type BoxValueConstructor<T extends BoxValue> = Constructor<T>;
 
@@ -32,44 +27,6 @@ type BoxValueTransformer<T extends BoxValue> = (
   view: PlatformDataView,
   offset: number,
 ) => T;
-
-function sizeof<T extends BoxValue>(
-  factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
-): number {
-  if (
-    "SIZE_IN_BYTES" in
-      (factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>)
-  ) {
-    return (
-      factoryOrConstructor as unknown as AllocatableStructConstructor<AllocatableStruct>
-    ).SIZE_IN_BYTES;
-  }
-
-  switch (factoryOrConstructor) {
-    case Uint8:
-      return 1;
-
-    case Uint16:
-      return 2;
-
-    case float:
-    case int:
-    case Sint32:
-    case Uint32:
-      return 4;
-
-    case double:
-    case Uint64:
-      return 8;
-
-    case Pointer as unknown as BoxValueFactory<T>:
-      return Platform.POINTER_SIZE_IN_BYTES;
-  }
-
-  throwError(
-    `${factoryOrConstructor?.name} is not boxable. sizeof not implemented.`,
-  );
-}
 
 export function getTransformer<T extends BoxValue>(
   factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
@@ -101,10 +58,6 @@ export function getTransformer<T extends BoxValue>(
       return ((_, view, offset) => view.getPointer(offset)) as BoxValueTransformer<T>;
   }
 
-  if ("of" in factoryOrConstructor) {
-    return factoryOrConstructor.of as unknown as BoxValueTransformer<T>;
-  }
-
   throw new Error(
     `${factoryOrConstructor?.name} is not boxable. getTransformer not implemented.`,
   );
@@ -131,57 +84,5 @@ export class Box<T extends BoxValue> {
 
   public get value(): T {
     return this._transformer(this._data, this._view, 0);
-  }
-
-  public unbox(predicate: Predicate<T>, errorMessage: OrFactory<string>): T {
-    const value = this.value;
-    return predicate(value) ? value : throwError(errorMessage);
-  }
-
-  public unboxNotNull(errorMessage: OrFactory<string>): T {
-    return this.unbox((value) => value != 0, errorMessage);
-  }
-}
-
-export class BoxArray<T extends BoxValue> {
-  public readonly sizeOfElementInBytes: number;
-  private readonly _transformer: BoxValueTransformer<T>;
-  public readonly _data: Uint8Array;
-  public readonly _view: PlatformDataView;
-
-  public constructor(
-    factoryOrConstructor: BoxValueFactory<T> | BoxValueConstructor<T>,
-    length: number,
-  ) {
-    if (length <= 0) {
-      throw new Error("length must be > 0.");
-    }
-
-    this.sizeOfElementInBytes = sizeof(factoryOrConstructor);
-    this._transformer = getTransformer(factoryOrConstructor);
-
-    this._data = new Uint8Array(this.sizeOfElementInBytes * length);
-    this._view = new Platform.DataView(this._data);
-  }
-
-  public static isBoxArray(value: unknown): value is BoxArray<BoxValue> {
-    return value instanceof BoxArray;
-  }
-
-  public at(index: number): T {
-    return this._transformer(
-      this._data,
-      this._view,
-      this.sizeOfElementInBytes * index,
-    );
-  }
-
-  public unboxAt(
-    index: number,
-    predicate: Predicate<T>,
-    errorMessage: string,
-  ): T {
-    const value = this.at(index);
-    return predicate(value) ? value : throwError(errorMessage);
   }
 }
