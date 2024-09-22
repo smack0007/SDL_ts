@@ -2,7 +2,6 @@
 // This file is for types exposed as part of the API.
 
 import Platform from "./_platform.ts";
-import { Box, BoxValue } from "./_boxes.ts";
 import { PlatformPointer } from "./_types.ts";
 import { StructArray } from "./structs.ts";
 
@@ -64,9 +63,8 @@ export type Callback = Function;
 // deno-lint-ignore ban-types
 export type FunctionWithSymbolName = Function & { symbolName: string };
 
-type PointerBoxValue<T> = T extends BoxValue ? Box<T> : never;
 type PointerStructArray<T> = T extends AllocatableStruct ? StructArray<T> : never;
-export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerBoxValue<T> | PointerStructArray<T>;
+export type PointerLike<T> = Pointer<T> | TypedArray | Struct | PointerStructArray<T>;
 
 //
 // Complex types

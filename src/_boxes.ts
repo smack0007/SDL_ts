@@ -16,10 +16,8 @@ import {
 import { PlatformDataView } from "./_types.ts";
 import { sizeof } from "./_utils.ts";
 
-export type BoxValue = TypedNumber | Pointer<unknown>;
-
+type BoxValue = TypedNumber | Pointer<unknown>;
 export type BoxValueConstructor<T extends BoxValue> = Constructor<T>;
-
 export type BoxValueFactory<T extends BoxValue> = Factory<T>;
 
 type BoxValueTransformer<T extends BoxValue> = (

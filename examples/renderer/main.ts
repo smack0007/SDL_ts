@@ -1,8 +1,7 @@
-import { SDL } from "SDL_ts";
+import { SDL, StructArray } from "SDL_ts";
 import { SDL_FUNCTIONS } from "./sdlConfig.ts";
 import { ASSETS_PATH } from "../../shared/constants.ts";
 import { join } from "@std/path";
-import { StructArray } from "../../src/structs.ts";
 
 const WINDOW_WIDTH = 1024;
 const WINDOW_HEIGHT = 768;
@@ -82,7 +81,7 @@ function main(): void {
       textureCenter,
       SDL.RendererFlip.NONE,
     );
-    
+
     SDL.SetRenderDrawColor(renderer, 255, 0, 0, 255);
     const rect = new SDL.Rect(100, 100, 200, 400);
     SDL.RenderDrawLine(renderer, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);

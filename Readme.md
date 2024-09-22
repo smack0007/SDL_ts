@@ -106,6 +106,34 @@ SDL.Init(SDL.InitFlags.VIDEO, {
 });
 ```
 
+## Concepts
+
+- `AllocatableStruct`: is a `Struct` that can be allocated from JavaScript and will be backed by a `Uint8Array`. The
+  constructor allows all properties to be set in a few ways.
+
+- `OpaqueStruct`: is a `Struct` where no properties are known to JavaScript (C code would also know about the fields)
+  and can only be created by the native side. The `Struct` can only be passed back to the native side and usally to a
+  function that will return information related to the `Struct`. The best example of this concept is `SDL.Window`.
+
+- `Pointer<T>`: represents a pointer to something and is explicitly typed as `unknown` by SDL_ts. `Pointer<T>` can only
+  be returned from functions and will never be created by the JavaScript side. The concept of pointers can't completely
+  be hidden when interfacing with SDL but SDL_ts attempts to constrain pointers to a type level concept. SDL_ts will
+  take care of passing pointers to the native side as part of the marshalling process. See `PointerLike<T>`.
+
+- `PointerLike<T>`: is used only as an input to functions and is used to represent anything to which a pointer can be
+  created for. This includes `Pointer<T>`, `TypedArray`(s), `Struct`(s) and `StructArray`(s).
+
+- `Struct`: the JavaScript representation of structs from the native side. `Struct`(s) are special classes because their
+  data is either a `Pointer<T>` or a `Uint8Array`. If the `Struct` data is a `Pointer<T>` the `Struct` it was allocated
+  on the native side and is read only (see `OpaqueStruct`). If the `Struct` data is an instance of `Uint8Array` it was
+  allocated on the JavaScript side and can be written to as well as read from (see `AllocatableStruct`).
+
+- `StructArray`: Use the `StructArray` class to allocate an array on `Struct`(s). All `Struct`(s) in the the array will
+  be backed by a shared `Uint8Array` allowing the entire array to be passed to the native side. Normal JavaScript arrays
+  are not guarenteed to be laid out contiguously in memory. The `Struct` type passed to the constructor of the array
+  must be an `AllocatableStruct`. All `Struct`(s) passed into the the constructor will have their data copied into the
+  shared `Uint8Array`.
+
 ## Credits
 
 Deno images taken from https://deno.land/artwork.
