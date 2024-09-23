@@ -6,7 +6,7 @@ import { BlockColors } from "../logic/blockColors.ts";
 export function drawBoard(
   renderer: Pointer<SDL.Renderer>,
   board: Board,
-  blockTexture: SDL.Texture,
+  blockTexture: Pointer<SDL.Texture>,
 ): void {
   SDL.SetTextureBlendMode(blockTexture, SDL.BlendMode.BLEND);
 

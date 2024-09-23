@@ -37,101 +37,11 @@ import {
   WindowPos,
 } from "./enums.ts";
 
-export class Renderer implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Renderer>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Renderer> | null,
-    byteOffset: number = 0,
-  ): Renderer | null {
-    return data !== null ? new Renderer(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class RWops implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<RWops>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<RWops> | null,
-    byteOffset: number = 0,
-  ): RWops | null {
-    return data !== null ? new RWops(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class Texture implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Texture>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Texture> | null,
-    byteOffset: number = 0,
-  ): Texture | null {
-    return data !== null ? new Texture(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class Window implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Window>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Window> | null,
-    byteOffset: number = 0,
-  ): Window | null {
-    return data !== null ? new Window(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
+declare const _: unique symbol;
+export type Renderer = { [_]: "Renderer" };
+export type RWops = { [_]: "RWops" };
+export type Texture = { [_]: "Texture" };
+export type Window = { [_]: "Window" };
 
 export class AudioSpec implements AllocatableStruct {
   public static SIZE_IN_BYTES = 32;

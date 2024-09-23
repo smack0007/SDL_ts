@@ -10,19 +10,9 @@ import { structs as SDL_structs } from "./SDL/structs.ts";
 const SDL_IMAGE_SRC_PATH = join(SRC_PATH, "SDL_image");
 
 export async function codegenSDL_image(): Promise<void> {
+  const allOpaqueStructs = [ "SDL_Renderer", "SDL_Surface", "SDL_Texture", ...opaqueStructs, ]
+  
   const allStructs = {
-    SDL_Renderer: {
-      ...SDL_structs["SDL_Renderer"],
-      doNotImport: true,
-    },
-    SDL_Surface: {
-      ...SDL_structs["SDL_Surface"],
-      doNotImport: true,
-    },
-    SDL_Texture: {
-      ...SDL_structs["SDL_Texture"],
-      doNotImport: true,
-    },
     SDL_version: {
       ...SDL_structs["SDL_version"],
       doNotImport: true,
@@ -38,7 +28,7 @@ export async function codegenSDL_image(): Promise<void> {
     callbacks,
     enums,
     allStructs,
-    opaqueStructs,
+    allOpaqueStructs,
   );
   // await writeCallbacks(`${SDL_IMAGE_SRC_PATH}/callbacks.ts`, callbacks, enums, structs, opaqueStructs, []);
   await writeFunctions(
@@ -48,7 +38,7 @@ export async function codegenSDL_image(): Promise<void> {
     callbacks,
     enums,
     allStructs,
-    opaqueStructs,
+    allOpaqueStructs,
     [
       `import { GetError } from "../SDL/functions.ts";`,
       `import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";`,

@@ -588,32 +588,10 @@ export async function writeStructs(
   lines.push(`import { ${enumNames} } from "./enums.ts";`);
   lines.push("");
 
+  lines.push("declare const _: unique symbol;");
   for (const structName of opaqueStructs) {
     const className = stripPrefixes(structName);
-    lines.push(`export class ${className} implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<${className}>,
-    byteOffset: number = 0
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<${className}> | null,
-    byteOffset: number = 0
-  ): ${className} | null {
-    return data !== null ? new ${className}(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-`);
+    lines.push(`export type ${className} = { [_]: "${className}" };`);
   }
 
   lines.push("");
@@ -1111,15 +1089,22 @@ function mapFunctionParamType(
   ) {
     let structName = param.type.substring("SDL_".length);
 
-    if (structName.endsWith("**")) {
-      structName = structName.slice(0, -2);
-      structName = `Box<Pointer<${structName}>>`;
-    } else if (structName.endsWith("*")) {
-      structName = structName.slice(0, -1);
-      if (isReturnType) {
-        structName = `${structName}`;
+    if (isFunctionParamOpaqueStruct(opaqueStructs, param)) {
+      if (structName.endsWith("**")) {
+        structName = `Box<Pointer<${stripPointerPostfix(structName)}>>`;
       } else {
-        structName = `PointerLike<${structName}>`;
+        structName = `Pointer<${stripPointerPostfix(structName)}>`;
+      }
+    } else {
+      if (structName.endsWith("**")) {
+        structName = `Box<Pointer<${stripPointerPostfix(structName)}>>`;
+      } else if (structName.endsWith("*")) {
+        structName = stripPointerPostfix(structName);
+        if (isReturnType) {
+          structName = `${structName}`;
+        } else {
+          structName = `PointerLike<${structName}>`;
+        }
       }
     }
 
@@ -1489,7 +1474,13 @@ import { InitOptions, double, float, int, Pointer, PointerLike, Uint8, Uint16, U
     .join(", ");
   lines.push(`import { ${enumNames} } from "./enums.ts";`);
 
-  writeImportAllStructs(lines, structs, opaqueStructs);
+  // TODO: This is a hack as there is currently no way to attach metadata to opaqueStruct(s).
+  let opaqueStructsToImport = [...opaqueStructs];
+  if (libraryName === "SDL2_image") {
+    opaqueStructsToImport = opaqueStructsToImport.filter(x => x.startsWith("IMG_"));
+  }
+
+  writeImportAllStructs(lines, structs, opaqueStructsToImport);
 
   lines.push("");
 
@@ -1687,10 +1678,7 @@ import { InitOptions, double, float, int, Pointer, PointerLike, Uint8, Uint16, U
           resultStatement += "\t\tBigInt(";
         } else if (isFunctionParamString(func.result)) {
           resultStatement += "\t\tPlatform.fromPlatformString(";
-        } else if (
-          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-          isFunctionParamStruct(structs, func.result)
-        ) {
+        } else if (isFunctionParamStruct(structs, func.result)) {
           resultStatement += `\t\t${symbolReturnType}.of(Platform.fromPlatformPointer(`;
         } else if (isFunctionParamPointer(func.result)) {
           resultStatement += `\t\tPlatform.fromPlatformPointer(`;
@@ -1744,10 +1732,9 @@ import { InitOptions, double, float, int, Pointer, PointerLike, Uint8, Uint16, U
           lines.push("\t) as bigint | number);");
         } else if (symbolReturnType === "string") {
           lines.push(`\t) as PlatformPointer<unknown>);`);
-        } else if (
-          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-          isFunctionParamStruct(structs, func.result)
-        ) {
+        } else if (isFunctionParamOpaqueStruct(opaqueStructs, func.result)) {
+          lines.push(`\t) as PlatformPointer<${originalReturnType}>);`);
+        } else if (isFunctionParamStruct(structs, func.result)) {
           lines.push(`\t) as PlatformPointer<${originalReturnType}>));`);
         } else if (isFunctionParamPointer(func.result)) {
           const nonNullAssertion = !func.result.nullable ? "!" : "";

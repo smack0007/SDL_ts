@@ -46,10 +46,10 @@ Linked_Version.symbolName = "IMG_Linked_Version";
 
 export function Load(
   file: string,
-): Surface {
-  const _result = Surface.of(Platform.fromPlatformPointer(_library.symbols.IMG_Load(
+): Pointer<Surface> {
+  const _result = Platform.fromPlatformPointer(_library.symbols.IMG_Load(
     Platform.toPlatformString(file),
-  ) as PlatformPointer<Surface>));
+  ) as PlatformPointer<Pointer<Surface>>);
   if (_result === null) {
     throw new SDLError(GetError());
   }
@@ -58,13 +58,13 @@ export function Load(
 Load.symbolName = "IMG_Load";
 
 export function LoadTexture(
-  renderer: PointerLike<Renderer>,
+  renderer: Pointer<Renderer>,
   file: string,
-): Texture {
-  const _result = Texture.of(Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
+): Pointer<Texture> {
+  const _result = Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
     Platform.toPlatformPointer(renderer),
     Platform.toPlatformString(file),
-  ) as PlatformPointer<Texture>));
+  ) as PlatformPointer<Pointer<Texture>>);
   if (_result === null) {
     throw new SDLError(GetError());
   }

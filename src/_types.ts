@@ -1,6 +1,7 @@
 import { type Pointer } from "./types.ts";
 import { Callback, PointerLike, Struct, StructConstructor } from "./types.ts";
 import { DynamicCallbackDefinition, DynamicLibrary, DynamicLibraryInterface } from "./_library.ts";
+import { Box, BoxValue } from "./_boxes.ts";
 
 declare const _: unique symbol;
 
@@ -83,7 +84,7 @@ export interface Platform {
     definition: DynamicCallbackDefinition<T>,
   ): PlatformCallback;
 
-  toPlatformPointer<T>(value: PointerLike<T> | null): PlatformPointer<T> | null;
+  toPlatformPointer<T>(value: PointerLike<T> | (T extends BoxValue ? Box<T> : never) | null): PlatformPointer<T> | null;
 
   toPlatformString(value: string | null): PlatformString;
 

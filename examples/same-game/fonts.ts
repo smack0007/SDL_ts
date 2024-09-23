@@ -10,7 +10,7 @@ type GlyphData = {
 };
 
 export type FontAtlas = {
-  texture: SDL.Texture;
+  texture: Pointer<SDL.Texture>;
   glyphs: Record<string, SDL.Rect>;
 };
 

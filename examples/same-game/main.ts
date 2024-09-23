@@ -93,7 +93,7 @@ function update(elapsed: bigint, board: Board): void {
 function draw(
   renderer: Pointer<SDL.Renderer>,
   board: Board,
-  blockTexture: SDL.Texture,
+  blockTexture: Pointer<SDL.Texture>,
   font: FontAtlas
 ): void {
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);

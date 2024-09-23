@@ -32,7 +32,7 @@ export function Init(options?: InitOptions): void {
 Init.symbolName = "TTF_Init";
 
 export function CloseFont(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
 ): void {
   _library.symbols.TTF_CloseFont(
     Platform.toPlatformPointer(font),
@@ -54,11 +54,11 @@ Linked_Version.symbolName = "TTF_Linked_Version";
 export function OpenFont(
   file: string,
   ptsize: int,
-): Font {
-  const _result = Font.of(Platform.fromPlatformPointer(_library.symbols.TTF_OpenFont(
+): Pointer<Font> {
+  const _result = Platform.fromPlatformPointer(_library.symbols.TTF_OpenFont(
     Platform.toPlatformString(file),
     ptsize,
-  ) as PlatformPointer<Font>));
+  ) as PlatformPointer<Pointer<Font>>);
   if (_result === null) {
     throw new SDLError(GetError());
   }
@@ -73,7 +73,7 @@ export function Quit(): void {
 Quit.symbolName = "TTF_Quit";
 
 export function RenderText_Blended(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
 ): Surface {
@@ -90,7 +90,7 @@ export function RenderText_Blended(
 RenderText_Blended.symbolName = "TTF_RenderText_Blended";
 
 export function RenderText_LCD(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
   bg: Color,
@@ -109,7 +109,7 @@ export function RenderText_LCD(
 RenderText_LCD.symbolName = "TTF_RenderText_LCD";
 
 export function RenderText_Solid(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
 ): Surface {
@@ -126,7 +126,7 @@ export function RenderText_Solid(
 RenderText_Solid.symbolName = "TTF_RenderText_Solid";
 
 export function RenderText_Shaded(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
   bg: Color,
@@ -145,7 +145,7 @@ export function RenderText_Shaded(
 RenderText_Shaded.symbolName = "TTF_RenderText_Shaded";
 
 export function RenderUTF8_Blended(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
 ): Surface {
@@ -162,7 +162,7 @@ export function RenderUTF8_Blended(
 RenderUTF8_Blended.symbolName = "TTF_RenderUTF8_Blended";
 
 export function RenderUTF8_LCD(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
   bg: Color,
@@ -181,7 +181,7 @@ export function RenderUTF8_LCD(
 RenderUTF8_LCD.symbolName = "TTF_RenderUTF8_LCD";
 
 export function RenderUTF8_Solid(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
 ): Surface {
@@ -198,7 +198,7 @@ export function RenderUTF8_Solid(
 RenderUTF8_Solid.symbolName = "TTF_RenderUTF8_Solid";
 
 export function RenderUTF8_Shaded(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   fg: Color,
   bg: Color,
@@ -217,7 +217,7 @@ export function RenderUTF8_Shaded(
 RenderUTF8_Shaded.symbolName = "TTF_RenderUTF8_Shaded";
 
 export function SizeText(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,
@@ -236,7 +236,7 @@ export function SizeText(
 SizeText.symbolName = "TTF_SizeText";
 
 export function SizeUTF8(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
 ): [int, int] {
   const w = new Box<int>(int);
@@ -255,7 +255,7 @@ export function SizeUTF8(
 SizeUTF8.symbolName = "TTF_SizeUTF8";
 
 export function SizeUNICODE(
-  font: PointerLike<Font>,
+  font: Pointer<Font>,
   text: string,
   w: PointerLike<int>,
   h: PointerLike<int>,

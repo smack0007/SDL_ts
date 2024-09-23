@@ -3,6 +3,7 @@
 
 import Platform from "./_platform.ts";
 import { PlatformPointer } from "./_types.ts";
+import { throwError } from "./_utils.ts";
 import { StructArray } from "./structs.ts";
 
 declare const _: unique symbol;
@@ -20,8 +21,7 @@ export type Uint16 = number;
 export type Uint32 = number;
 export type Uint64 = bigint;
 
-// NOTE: Pointer<T> is an opaque type.
-export type Pointer<T> = unknown;
+export type Pointer<T> = { [_]: "Pointer" };
 
 export const double = (value = 0): double => value;
 export const float = (value = 0): float => value;
@@ -33,7 +33,7 @@ export const Uint32 = (value = 0): Uint32 => value;
 export const Uint64 = (value = 0): Uint64 => BigInt(value);
 
 export const Pointer = <T>(value: unknown): Pointer<T> =>
-  Platform.fromPlatformPointer(value as unknown as PlatformPointer<T>);
+  Platform.fromPlatformPointer(value as unknown as PlatformPointer<T>) ?? throwError("Cannot convert null to pointer.");
 
 export type TypedNumber =
   | double
