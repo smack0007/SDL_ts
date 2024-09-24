@@ -1,3 +1,14 @@
+export type CodeGenContext = {
+  libraryName: string;
+  callbacks: CodeGenCallbacks;
+  enums: CodeGenEnums;
+  events: CodeGenEvents;
+  functions: CodeGenFunctions;
+  opaqueStructs: CodeGenOpaqueStructs;
+  structs: CodeGenStructs;
+  typedefs: CodeGenTypedefs;
+};
+
 export type CodeGenTypedefs = Record<string, string>;
 
 export type CodeGenCallbacks = Record<string, CodeGenCallback>;
