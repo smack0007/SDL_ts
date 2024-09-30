@@ -1,16 +1,10 @@
 import {
-  CodeGenCallbacks,
+  CodeGenContext,
   CodeGenEnum,
-  CodeGenEnums,
-  CodeGenEvents,
   CodeGenEventType,
   CodeGenFunction,
   CodeGenFunctionParam,
-  CodeGenFunctionResult,
-  CodeGenFunctions,
-  CodeGenOpaqueStructs,
   CodeGenStructMember,
-  CodeGenStructs,
 } from "./types.ts";
 
 const PlatformDataViewGetMethods: Record<
@@ -50,8 +44,7 @@ const PlatformDataViewSetMethods: Record<
   u32: (offset, _) => `setU32(${offset}, value)`,
   u64: (offset, _) => `setU64(${offset}, value)`,
 
-  function: (offset, name) =>
-    `setCallback(${offset}, value, callbacks["${name}"])`,
+  function: (offset, name) => `setCallback(${offset}, value, callbacks["${name}"])`,
 
   pointer: (offset, _) => `setPointer(${offset}, value)`,
 } as const;
@@ -136,9 +129,9 @@ function mapEnumValue(value: string, enumData: CodeGenEnum): string {
 }
 
 export async function writeEnums(
+  context: CodeGenContext,
   filePath: string,
-  enums: CodeGenEnums,
-  imports: string[]
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
 
@@ -148,7 +141,7 @@ export async function writeEnums(
   lines.push(...imports);
   lines.push("");
 
-  for (const [enumName, enumData] of Object.entries(enums)) {
+  for (const [enumName, enumData] of Object.entries(context.enums)) {
     const prefixToStrip = enumData.prefixToStrip ?? enumName.toUpperCase();
     const strippedEnumName = stripPrefixes(enumName);
 
@@ -161,7 +154,7 @@ export async function writeEnums(
       }
 
       lines.push(
-        `\t${enumValueName} = ${mapEnumValue(enumData.values[key], enumData)},`
+        `\t${enumValueName} = ${mapEnumValue(enumData.values[key], enumData)},`,
       );
     }
     lines.push("} as const;");
@@ -169,11 +162,11 @@ export async function writeEnums(
 
     if (enumName.endsWith("Flags")) {
       lines.push(
-        `export type ${strippedEnumName} = Flags<typeof ${strippedEnumName}, "${strippedEnumName}">;`
+        `export type ${strippedEnumName} = Flags<typeof ${strippedEnumName}, "${strippedEnumName}">;`,
       );
     } else {
       lines.push(
-        `export type ${strippedEnumName} = Enum<typeof ${strippedEnumName}>;`
+        `export type ${strippedEnumName} = Enum<typeof ${strippedEnumName}>;`,
       );
     }
 
@@ -183,8 +176,8 @@ export async function writeEnums(
   await writeLinesToFile(filePath, lines);
 }
 
-function isEnum(enums: CodeGenEnums, type: string): boolean {
-  for (const [enumGroupName, enumData] of Object.entries(enums)) {
+function isEnum(context: CodeGenContext, type: string): boolean {
+  for (const [enumGroupName, enumData] of Object.entries(context.enums)) {
     if (enumGroupName === type) {
       return true;
     }
@@ -200,18 +193,17 @@ function isEnum(enums: CodeGenEnums, type: string): boolean {
 }
 
 function isStruct(
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  type: string
+  context: CodeGenContext,
+  type: string,
 ): boolean {
-  for (const structName of Object.keys(structs)) {
-    if (structName === type) {
+  for (const structName of Object.keys(context.structs)) {
+    if (structName === type || stripPrefixes(structName) === type) {
       return true;
     }
   }
 
-  for (const structName of opaqueStructs) {
-    if (structName === type) {
+  for (const structName of context.opaqueStructs) {
+    if (structName === type || stripPrefixes(structName) === type) {
       return true;
     }
   }
@@ -220,77 +212,67 @@ function isStruct(
 }
 
 function isStructPointer(
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  type: string
+  context: CodeGenContext,
+  type: string,
 ): boolean {
   if (!type.endsWith("*")) {
     return false;
   }
 
-  return isStruct(structs, opaqueStructs, stripPointerPostfix(type));
+  return isStruct(context, stripPointerPostfix(type));
 }
 
-function isCallback(callbacks: CodeGenCallbacks, type: string): boolean {
-  return Object.keys(callbacks).includes(type);
+function isCallback(context: CodeGenContext, type: string): boolean {
+  return Object.keys(context.callbacks).includes(type);
 }
 
 function mapTypeToFFIType(
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  type: string
+  context: CodeGenContext,
+  type: string,
 ): string {
   if (type.endsWith("*")) {
     return "pointer";
   }
 
-  if (isEnum(enums, type)) {
+  if (isEnum(context, type)) {
     return "u32";
   }
 
-  if (isStruct(structs, opaqueStructs, type)) {
-    const struct = structs[type];
+  if (isStruct(context, type)) {
+    const struct = context.structs[type];
 
     if (!struct) {
       throw new Error(
-        `Failed to map "${type}" in ${mapTypeToFFIType.name}. Type seems to be an opaque struct.`
+        `Failed to map "${type}" in ${mapTypeToFFIType.name}. Type seems to be an opaque struct.`,
       );
     }
 
     const members = Object.values(struct.members)
       .map(
         (member) =>
-          `"${mapTypeToFFIType(
-            callbacks,
-            enums,
-            structs,
-            opaqueStructs,
-            member.type
-          )}"`
+          `"${
+            mapTypeToFFIType(
+              context,
+              member.type,
+            )
+          }"`,
       )
       .join(", ");
 
     return `{ "struct": [ ${members} ] }`;
   }
 
-  if (isCallback(callbacks, type)) {
+  if (isCallback(context, type)) {
     return "function";
   }
 
+  if (context.typedefs[type]) {
+    type = context.typedefs[type];
+  }
+
   switch (type) {
-    case "SDL_AudioDeviceID":
-      return "u32";
-
-    case "SDL_AudioFormat":
-      return "u16";
-
     case "SDL_bool":
       return "bool";
-
-    case "SDL_TimerID":
-      return "i32";
 
     case "double":
       return "f64";
@@ -327,32 +309,27 @@ function mapTypeToFFIType(
 }
 
 function mapStructMemberType(
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  member: CodeGenStructMember
+  context: CodeGenContext,
+  member: CodeGenStructMember,
 ): string {
   if (member.overrideType) {
     return member.overrideType;
   }
 
-  if (isCallback(callbacks, member.type)) {
+  if (isCallback(context, member.type)) {
     return stripPrefixes(member.type);
   }
 
-  if (isEnum(enums, member.type)) {
-    const enumData = enums[member.type];
-    return enumData?.prefixToStrip
-      ? stripPrefixes(member.type, enumData.prefixToStrip)
-      : stripPrefixes(member.type);
+  if (isEnum(context, member.type)) {
+    const enumData = context.enums[member.type];
+    return enumData?.prefixToStrip ? stripPrefixes(member.type, enumData.prefixToStrip) : stripPrefixes(member.type);
   }
 
-  if (isStruct(structs, opaqueStructs, member.type)) {
+  if (isStruct(context, member.type)) {
     return stripPrefixes(member.type);
   }
 
-  if (isStructPointer(structs, opaqueStructs, member.type)) {
+  if (isStructPointer(context, member.type)) {
     return `${stripPrefixes(stripPointerPostfix(member.type))}`;
   }
 
@@ -364,18 +341,12 @@ function mapStructMemberType(
       return "Pointer<void>";
   }
 
-  return mapTypeToFFIType(
-    callbacks,
-    enums,
-    structs,
-    opaqueStructs,
-    member.type
-  );
+  return stripPrefixes(member.type);
 }
 
 function sortStructMembers(
   a: [string, { type: string; offset: number }],
-  b: [string, { type: string; offset: number }]
+  b: [string, { type: string; offset: number }],
 ): number {
   const offsetDiff = a[1].offset - b[1].offset;
 
@@ -388,11 +359,7 @@ function sortStructMembers(
 
 export async function writeEvents(
   filePath: string,
-  events: CodeGenEvents,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs
+  context: CodeGenContext,
 ): Promise<void> {
   const lines = createLines();
 
@@ -400,22 +367,19 @@ export async function writeEvents(
 import { PlatformDataView } from "../_types.ts";
 import { EventType, WindowEventID } from "./enums.ts";
 import { Keysym } from "./structs.ts";
-import { AllocatableStruct, f32, i32, u32, u8 } from "../types.ts";
-import { Pointer } from "../pointers.ts";
+import { AllocatableStruct, float, int, Pointer, Sint32, Uint8, Uint32 } from "../types.ts";
 
 `);
 
   const eventPropName = (eventName: string, event: CodeGenEventType) =>
     event.unionName ??
-    stripPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
+      stripPrefixes(eventName).slice(0, -"Event".length).toLowerCase();
 
-  for (const [eventName, event] of Object.entries(events)) {
+  for (const [eventName, event] of Object.entries(context.events)) {
     const className = stripPrefixes(eventName);
     lines.push(`export class ${className} {`);
 
-    const subStructMembers = Object.entries(event.members).filter((x) =>
-      isStruct(structs, opaqueStructs, x[1].type)
-    );
+    const subStructMembers = Object.entries(event.members).filter((x) => isStruct(context, x[1].type));
 
     if (subStructMembers.length > 0) {
       for (const [memberName, member] of subStructMembers) {
@@ -434,7 +398,7 @@ import { Pointer } from "../pointers.ts";
       const memberTypeName = stripPrefixes(member.type);
 
       lines.push(
-        `this._${memberName} = ${memberTypeName}.of(this._data, ${member.offset}) as ${memberTypeName};`
+        `this._${memberName} = ${memberTypeName}.of(this._data, ${member.offset}) as ${memberTypeName};`,
       );
     }
 
@@ -448,43 +412,33 @@ import { Pointer } from "../pointers.ts";
         continue;
       }
 
-      const type = mapStructMemberType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        member
-      );
+      const type = mapStructMemberType(context, member);
       lines.push(`\tpublic get ${memberName}(): ${type} {`);
 
-      if (isStruct(structs, opaqueStructs, member.type)) {
+      if (isStruct(context, member.type)) {
         lines.push(`return this._${memberName};`);
       } else {
-        const ffiType = mapTypeToFFIType(
-          callbacks,
-          enums,
-          structs,
-          opaqueStructs,
-          member.type
-        );
+        const ffiType = mapTypeToFFIType(context, member.type);
 
         const PlatformDataViewMethod = PlatformDataViewGetMethods[ffiType];
 
         if (PlatformDataViewMethod === undefined) {
           console.error(
-            `PlatformDataViewMethods is missing "${ffiType}" member "${memberName}".`
+            `PlatformDataViewMethods is missing "${ffiType}" member "${memberName}".`,
           );
         }
 
         // FIXME: isEnum expects the type to be prefixed with SDL_ but mapStructMemberType chops it off already.
-        const asEnum = isEnum(enums, "SDL_" + type) ? ` as ${type}` : "";
+        const asEnum = isEnum(context, "SDL_" + type) ? ` as ${type}` : "";
 
         const length = 0;
         lines.push(
-          `\t\treturn this._view.${PlatformDataViewGetMethods[ffiType](
-            member.offset,
-            length
-          )}${asEnum};`
+          `\t\treturn this._view.${
+            PlatformDataViewGetMethods[ffiType](
+              member.offset,
+              length,
+            )
+          }${asEnum};`,
         );
       }
       lines.push("\t}");
@@ -503,11 +457,13 @@ import { Pointer } from "../pointers.ts";
 
 `);
 
-  for (const [eventName, event] of Object.entries(events)) {
+  for (const [eventName, event] of Object.entries(context.events)) {
     lines.push(
-      `public readonly ${eventPropName(eventName, event)}: ${stripPrefixes(
-        eventName
-      )};`
+      `public readonly ${eventPropName(eventName, event)}: ${
+        stripPrefixes(
+          eventName,
+        )
+      };`,
     );
   }
 
@@ -520,11 +476,13 @@ import { Pointer } from "../pointers.ts";
     this._view = new Platform.DataView(this._data, byteOffset);
 `);
 
-  for (const [eventName, event] of Object.entries(events)) {
+  for (const [eventName, event] of Object.entries(context.events)) {
     lines.push(
-      `this.${eventPropName(eventName, event)} = new ${stripPrefixes(
-        eventName
-      )}(this._data, this._view);`
+      `this.${eventPropName(eventName, event)} = new ${
+        stripPrefixes(
+          eventName,
+        )
+      }(this._data, this._view);`,
     );
   }
 
@@ -555,11 +513,9 @@ import { Pointer } from "../pointers.ts";
 }
 
 export async function writeStructs(
+  context: CodeGenContext,
   filePath: string,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
   lines.push("// deno-lint-ignore-file no-unused-vars");
@@ -568,62 +524,42 @@ export async function writeStructs(
   lines.push(`import Platform from "../_platform.ts";`);
   lines.push(`import { callbacks } from "./_callbacks.ts";`);
   lines.push(`import { PlatformDataView } from "../_types.ts";`);
-  lines.push(`import { isTypedArray } from "../_utils.ts";`);
-  lines.push(`import { Pointer } from "../pointers.ts";`);
+  lines.push(`import { isPointer, isTypedArray } from "../_utils.ts";`);
   lines.push(
-    `import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";`
+    `import { AllocatableStruct, Pointer, Struct, double, float, int, Uint8, Uint16, Uint32 } from "../types.ts";`,
   );
   lines.push("");
 
-  const callbackNames = Object.entries(callbacks)
+  if (imports.length > 0) {
+    lines.push(...imports);
+    lines.push("");
+  }
+
+  const callbackNames = Object.entries(context.callbacks)
     .filter(([_, value]) => !value.todo)
     .map(([key, _]) => stripPrefixes(key))
     .join(", ");
   lines.push(`import { ${callbackNames} } from "./callbacks.ts";`);
   lines.push("");
 
-  const enumNames = Object.keys(enums)
+  const enumNames = Object.keys(context.enums)
     .map((x) => stripPrefixes(x))
     .join(", ");
   lines.push(`import { ${enumNames} } from "./enums.ts";`);
   lines.push("");
 
-  for (const structName of opaqueStructs) {
+  lines.push("declare const _: unique symbol;");
+  for (const structName of context.opaqueStructs) {
     const className = stripPrefixes(structName);
-    lines.push(`export class ${className} implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<${className}>,
-    byteOffset: number = 0
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<${className}> | null,
-    byteOffset: number = 0
-  ): ${className} | null {
-    return data !== null ? new ${className}(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-`);
+    lines.push(`export type ${className} = { [_]: "${className}" };`);
   }
 
   lines.push("");
 
-  for (const [structName, struct] of Object.entries(structs)) {
+  for (const [structName, struct] of Object.entries(context.structs)) {
     const className = stripPrefixes(structName);
 
-    const implementsExpression = struct.allocatable
-      ? " implements AllocatableStruct"
-      : " implements Struct";
+    const implementsExpression = struct.allocatable ? " implements AllocatableStruct" : " implements Struct";
 
     lines.push(`export class ${className}${implementsExpression} {
   public static SIZE_IN_BYTES = ${struct.size};
@@ -645,43 +581,22 @@ export async function writeStructs(
         .map(
           ([memberName, member]) =>
             (member.todo ? "// " : "") +
-            `${memberName}: ${mapStructMemberType(
-              callbacks,
-              enums,
-              structs,
-              opaqueStructs,
-              member
-            )}`
+            `${memberName}: ${mapStructMemberType(context, member)}`,
         )
         .join(",\n");
       lines.push(`constructor(${constructorParams});`);
 
       const firstMemberType = mapStructMemberType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        Object.values(struct.members)[0]
+        context,
+        Object.values(struct.members)[0],
       );
-      const secondMemberType = mapStructMemberType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        Object.values(struct.members)[1]
-      );
+      const secondMemberType = mapStructMemberType(context, Object.values(struct.members)[1]);
       const otherMembers = Object.values(struct.members)
         .slice(2)
         .map(
           (member, index) =>
             (member.todo ? "// " : "") +
-            `_${index + 3}?: ${mapStructMemberType(
-              callbacks,
-              enums,
-              structs,
-              opaqueStructs,
-              member
-            )}`
+            `_${index + 3}?: ${mapStructMemberType(context, member)}`,
         )
         .join(",\n");
       lines.push(
@@ -689,14 +604,14 @@ export async function writeStructs(
           _1: Uint8Array | Pointer<${className}> | Partial<${className}> | ${firstMemberType} = {},
           _2?: number | ${secondMemberType},
           ${otherMembers}
-        ) {`
+        ) {`,
       );
 
       const assignMemmbersFromObject = Object.entries(struct.members)
         .map(
           ([memberName, member]) =>
             (member.todo ? "// " : "") +
-            `if (_1.${memberName} !== undefined) this.${memberName} = _1.${memberName};`
+            `if (data.${memberName} !== undefined) this.${memberName} = data.${memberName};`,
         )
         .join("\n");
 
@@ -704,29 +619,27 @@ export async function writeStructs(
         .map(
           ([memberName, member], index) =>
             (member.todo ? "// " : "") +
-            `if (_${index + 1} !== undefined) this.${memberName} = _${
-              index + 1
-            };`
+            `if (_${index + 1} !== undefined) this.${memberName} = _${index + 1};`,
         )
         .join("\n");
 
       lines.push(`
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<${className}>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(${className}.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
-    
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        ${assignMemmbersFromObject}
-      } else {
-        ${assignMemmbersFromParameters}
+
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<${className}> = _1;
+          ${assignMemmbersFromObject}
+        } else {
+          ${assignMemmbersFromParameters}
+        }
       }
-    }
+    }    
   }
 `);
     } else if (struct.allocatable && !struct.mutable) {
@@ -778,21 +691,15 @@ export async function writeStructs(
         continue;
       }
 
-      const memberFFIType = mapTypeToFFIType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        member.type
-      );
+      const memberFFIType = mapTypeToFFIType(context, member.type);
 
-      const getMethod = isStruct(structs, opaqueStructs, member.type)
+      const getMethod = isStruct(context, member.type)
         ? PlatformDataViewGetMethods["struct"]
         : PlatformDataViewGetMethods[memberFFIType];
 
       if (getMethod === undefined) {
         console.error(
-          `Failure while generating "${structName}" member "${memberName}": PlatformDataViewGetMethods is missing ${memberFFIType}.`
+          `Failure while generating "${structName}" member "${memberName}": PlatformDataViewGetMethods is missing ${memberFFIType}.`,
         );
         lines.push(`// ERROR: ${memberName}`);
         lines.push("");
@@ -802,44 +709,38 @@ export async function writeStructs(
       let readOp = "";
       let writeOp = "";
       let lengthOrName: number | string = 0;
-      let memberType = mapStructMemberType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        member
-      );
+      let memberType = mapStructMemberType(context, member);
       let memberStructName = "";
 
-      if (isCallback(callbacks, member.type)) {
+      if (isCallback(context, member.type)) {
         lengthOrName = member.type;
       } else if (memberType === "string") {
         readOp += `Platform.fromPlatformString(Platform.toPlatformPointer(`;
-      } else if (isStructPointer(structs, opaqueStructs, member.type)) {
+      } else if (isStructPointer(context, member.type)) {
         memberStructName = stripPrefixes(stripPointerPostfix(member.type));
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
       } else if (memberFFIType === "pointer") {
         const subStructName = stripPrefixes(stripPointerPostfix(member.type));
         memberType = `Pointer<${subStructName}>`;
-      } else if (isStruct(structs, opaqueStructs, member.type)) {
+      } else if (isStruct(context, member.type)) {
         memberStructName = stripPrefixes(member.type);
         memberType = memberStructName;
         readOp += `${memberStructName}.of(`;
-        lengthOrName = structs[member.type].size;
+        lengthOrName = context.structs[member.type].size;
       }
 
       lines.push(`\tpublic get ${memberName}(): ${memberType} {`);
 
       readOp += `this._view.${getMethod(member.offset, lengthOrName)}`;
 
-      if (isEnum(enums, member.type)) {
+      if (isEnum(context, member.type)) {
         readOp += `as ${memberType}`;
       } else if (memberType === "string") {
         readOp += ")!)";
-      } else if (isStruct(structs, opaqueStructs, member.type)) {
+      } else if (isStruct(context, member.type)) {
         readOp += `) as ${memberStructName}`;
-      } else if (isStructPointer(structs, opaqueStructs, member.type)) {
+      } else if (isStructPointer(context, member.type)) {
         readOp += `) as ${memberStructName}`;
       }
 
@@ -860,15 +761,11 @@ export async function writeStructs(
 
         if (setMethod === undefined) {
           console.error(
-            `PlatformDataViewSetMethods is missing ${memberFFIType}.`
+            `PlatformDataViewSetMethods is missing ${memberFFIType}.`,
           );
         }
 
         writeOp += `this._view.${setMethod(member.offset, lengthOrName)}`;
-
-        // if (mapTypeToFFIType(member.type) === "pointer" || mapTypeToFFIType(member.type) === "struct") {
-        //   writeOp += ")";
-        // }
 
         lines.push(`\t\t${writeOp};`);
 
@@ -885,24 +782,15 @@ export async function writeStructs(
 }
 
 export function writeSymbolParametersAndResult(
+  context: CodeGenContext,
   lines: string[],
   symbol: Pick<CodeGenFunction, "parameters" | "result">,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs
 ): void {
   lines.push(`\t\tparameters: [`);
 
   for (const paramName of Object.keys(symbol.parameters)) {
     const param = symbol.parameters[paramName];
-    const ffiType = mapTypeToFFIType(
-      callbacks,
-      enums,
-      structs,
-      opaqueStructs,
-      param.type
-    );
+    const ffiType = mapTypeToFFIType(context, param.type);
     let line = `\t\t\t/* ${param.type} ${paramName} */ `;
 
     if (ffiType.startsWith("{")) {
@@ -916,13 +804,7 @@ export function writeSymbolParametersAndResult(
 
   lines.push("\t\t],");
 
-  const resultFFIType = mapTypeToFFIType(
-    callbacks,
-    enums,
-    structs,
-    opaqueStructs,
-    symbol.result.type
-  );
+  const resultFFIType = mapTypeToFFIType(context, symbol.result.type);
   let resultLine = `\t\tresult: /* ${symbol.result.type} */ `;
 
   if (resultFFIType.startsWith("{")) {
@@ -935,17 +817,13 @@ export function writeSymbolParametersAndResult(
 }
 
 export async function writeSymbols(
+  context: CodeGenContext,
   filePath: string,
-  functions: CodeGenFunctions,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs
 ): Promise<void> {
   const lines = createLines();
 
   lines.push("export const symbols = {");
-  for (const [funcName, func] of Object.entries(functions)) {
+  for (const [funcName, func] of Object.entries(context.functions)) {
     if (func.todo) {
       lines.push(`// TODO: ${func.todo}`);
       lines.push(`// ${funcName}`);
@@ -953,18 +831,15 @@ export async function writeSymbols(
     }
 
     if (func.symbolName !== undefined) {
-      lines.push(`\t${func.symbolName}: {`);
+      lines.push(`\t/* ${funcName} */ ${func.symbolName}: {`);
     } else {
       lines.push(`\t${funcName}: {`);
     }
 
     writeSymbolParametersAndResult(
+      context,
       lines,
       func,
-      callbacks,
-      enums,
-      structs,
-      opaqueStructs
     );
 
     lines.push("\t},");
@@ -976,8 +851,8 @@ export async function writeSymbols(
 }
 
 function isFunctionParamCallback(
-  callbacks: CodeGenCallbacks,
-  param: CodeGenFunctionParam
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
 ): boolean {
   let callbackName = param.type;
 
@@ -985,12 +860,12 @@ function isFunctionParamCallback(
     callbackName = callbackName.slice(0, -1);
   }
 
-  return Object.keys(callbacks).includes(callbackName);
+  return Object.keys(context.callbacks).includes(callbackName);
 }
 
 function isFunctionParamOpaqueStruct(
-  opaqueStructs: CodeGenOpaqueStructs,
-  param: CodeGenFunctionParam
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
 ): boolean {
   let structName = param.type;
 
@@ -998,12 +873,12 @@ function isFunctionParamOpaqueStruct(
     structName = structName.slice(0, -1);
   }
 
-  return opaqueStructs.includes(structName);
+  return context.opaqueStructs.includes(structName);
 }
 
 function isFunctionParamStruct(
-  structs: CodeGenStructs,
-  param: CodeGenFunctionParam
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
 ): boolean {
   let structName = param.type;
 
@@ -1015,14 +890,14 @@ function isFunctionParamStruct(
     return true;
   }
 
-  return Object.keys(structs).includes(structName);
+  return Object.keys(context.structs).includes(structName);
 }
 
 function isFunctionParamStructByValue(
-  structs: CodeGenStructs,
-  param: CodeGenFunctionParam
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
 ): boolean {
-  if (!isFunctionParamStruct(structs, param)) {
+  if (!isFunctionParamStruct(context, param)) {
     return false;
   }
 
@@ -1041,10 +916,6 @@ function isFunctionParamDoublePointer(param: CodeGenFunctionParam): boolean {
   return param.type.endsWith("**");
 }
 
-function hasDoublePointerParams(func: CodeGenFunction): boolean {
-  return Object.values(func.parameters).some(isFunctionParamDoublePointer);
-}
-
 function isFunctionParamString(param: CodeGenFunctionParam): boolean {
   return param.type === "char*";
 }
@@ -1054,169 +925,160 @@ function isFunctionParamBigInt(param: CodeGenFunctionParam): boolean {
 }
 
 function mapFunctionReturnType(
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  param: CodeGenFunctionParam
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
 ): string {
   return mapFunctionParamType(
-    callbacks,
-    enums,
-    structs,
-    opaqueStructs,
+    context,
     param,
-    true
+    true,
   );
 }
 
-function mapFunctionParamType(
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
+function mapFunctionReturnTypeFromOutputParam(
+  context: CodeGenContext,
   param: CodeGenFunctionParam,
-  isReturnType = false
+): string {
+  let result = mapFunctionParamType(
+    context,
+    param,
+    true,
+  );
+
+  if (result.startsWith("Box<") || result.startsWith("Pointer<")) {
+    result = getGenericParam(result);
+  }
+
+  return result;
+}
+
+function mapFunctionParamType(
+  context: CodeGenContext,
+  param: CodeGenFunctionParam,
+  isReturnType = false,
 ): string {
   if (param.overrideType) {
-    if (param.nullable) {
+    if (param.isNullable) {
       return param.overrideType + "| null";
     }
 
     return param.overrideType;
   }
 
-  if (isFunctionParamCallback(callbacks, param)) {
+  if (isFunctionParamCallback(context, param)) {
     return stripPrefixes(param.type);
   }
 
   if (
-    isFunctionParamOpaqueStruct(opaqueStructs, param) ||
-    isFunctionParamStruct(structs, param)
+    isFunctionParamOpaqueStruct(context, param) ||
+    isFunctionParamStruct(context, param)
   ) {
     let structName = param.type.substring("SDL_".length);
 
-    if (structName.endsWith("**")) {
-      structName = structName.slice(0, -2);
-      structName = `Box<Pointer<${structName}>>`;
-    } else if (structName.endsWith("*")) {
-      structName = structName.slice(0, -1);
-      if (isReturnType) {
-        structName = `${structName}`;
+    if (isFunctionParamOpaqueStruct(context, param)) {
+      if (structName.endsWith("**")) {
+        structName = `Box<Pointer<${stripPointerPostfix(structName)}>>`;
       } else {
-        structName = `PointerLike<${structName}>`;
+        structName = `Pointer<${stripPointerPostfix(structName)}>`;
+      }
+    } else {
+      if (structName.endsWith("**")) {
+        structName = `Box<Pointer<${stripPointerPostfix(structName)}>>`;
+      } else if (structName.endsWith("*")) {
+        structName = stripPointerPostfix(structName);
+        if (isReturnType) {
+          structName = `${structName}`;
+        } else {
+          structName = `PointerLike<${structName}>`;
+        }
       }
     }
 
-    if (param.nullable) {
+    if (param.isNullable) {
       structName += "| null";
     }
 
     return structName;
   }
 
-  if (isEnum(enums, param.type)) {
-    const enumData = enums[param.type];
-    return enumData?.prefixToStrip
-      ? stripPrefixes(param.type, enumData.prefixToStrip)
-      : stripPrefixes(param.type);
+  if (isEnum(context, param.type)) {
+    const enumData = context.enums[param.type];
+    return enumData?.prefixToStrip ? stripPrefixes(param.type, enumData.prefixToStrip) : stripPrefixes(param.type);
   }
 
   if (
     param.type.endsWith("*") &&
-    isEnum(enums, param.type.substring(0, param.type.length - 1))
+    isEnum(context, param.type.substring(0, param.type.length - 1))
   ) {
     const enumName = param.type.substring(0, param.type.length - 1);
-    const enumData = enums[enumName];
-    const result = enumData?.prefixToStrip
-      ? stripPrefixes(enumName, enumData.prefixToStrip)
-      : stripPrefixes(enumName);
+    const enumData = context.enums[enumName];
+    const result = enumData?.prefixToStrip ? stripPrefixes(enumName, enumData.prefixToStrip) : stripPrefixes(enumName);
     return isReturnType ? `PointerValue<${result}>` : `PointerLike<${result}>`;
   }
 
-  let result = "";
+  let type = param.type;
+
+  if (context.typedefs[type]) {
+    type = context.typedefs[type];
+  }
 
   switch (param.type) {
+    case "SDL_AudioDeviceID":
+      return "Uint32";
+
+    case "SDL_AudioFormat":
+      return "Uint16";
+
+    case "SDL_TimerID":
+      return "int";
+
     case "SDL_bool":
-      result = "boolean";
+      type = "boolean";
       break;
 
     case "char*":
-      result = "string";
+      type = "string";
       break;
 
     case "float*":
-      result = isReturnType ? "Pointer<f32>" : "PointerLike<f32>";
+      type = isReturnType ? "Pointer<float>" : "PointerLike<float>";
       break;
 
     case "int*":
-      result = isReturnType ? "Pointer<int>" : "PointerLike<int>";
+      type = isReturnType ? "Pointer<int>" : "PointerLike<int>";
       break;
 
     case "size_t*":
       // TODO: There should probably be a size and usize type.
-      result = isReturnType ? "Pointer<int>" : "PointerLike<int>";
+      type = isReturnType ? "Pointer<int>" : "PointerLike<int>";
       break;
 
     case "Uint8*":
-      result = isReturnType ? "Pointer<u8>" : "PointerLike<u8>";
+      type = isReturnType ? "Pointer<Uint8>" : "PointerLike<Uint8>";
       break;
 
     case "Uint8**":
-      result = isReturnType ? "Pointer<Pointer<u8>>" : "Box<Pointer<u8>>";
+      type = isReturnType ? "Pointer<Pointer<Uint8>>" : "Box<Pointer<Uint8>>";
       break;
 
     case "Uint16*":
-      result = isReturnType ? "Pointer<u16>" : "PointerLike<u16>";
+      type = isReturnType ? "Pointer<Uint16>" : "PointerLike<Uint16>";
       break;
 
     case "Uint32*":
-      result = isReturnType ? "Pointer<u32>" : "PointerLike<u32>";
+      type = isReturnType ? "Pointer<Uint32>" : "PointerLike<Uint32>";
       break;
 
     case "void*":
-      result = isReturnType ? "Pointer<unknown>" : "PointerLike<unknown>";
+      type = isReturnType ? "Pointer<unknown>" : "PointerLike<unknown>";
       break;
   }
 
-  if (result) {
-    if (param.nullable) {
-      result += "| null";
-    }
-
-    return result;
+  if (param.isNullable) {
+    type += "| null";
   }
 
-  if (param.type.startsWith("SDL_")) {
-    result = stripPrefixes(param.type);
-  }
-
-  const ffiType = mapTypeToFFIType(
-    callbacks,
-    enums,
-    structs,
-    opaqueStructs,
-    param.type
-  );
-
-  switch (ffiType) {
-    case "pointer":
-      throw new Error(
-        `Unable to map param in ${mapFunctionParamType.name}: ${JSON.stringify(
-          param
-        )}`
-      );
-  }
-
-  if (result === "") {
-    result = ffiType;
-  }
-
-  if (param.nullable) {
-    result += "| null";
-  }
-
-  return result;
+  return type;
 }
 
 function getGenericParam(type: string): string {
@@ -1228,26 +1090,25 @@ function getGenericParam(type: string): string {
   return type.substring(startIndex + 1, endIndex);
 }
 
-function getReturnTypePostfix(
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  result: CodeGenFunctionResult
+function getFunctionReturnTypePostfix(
+  context: CodeGenContext,
+  func: CodeGenFunction,
 ): string {
-  return isFunctionParamOpaqueStruct(opaqueStructs, result) ||
-    isFunctionParamStruct(structs, result)
+  return (isFunctionParamOpaqueStruct(context, func.result) ||
+      isFunctionParamStruct(context, func.result)) &&
+      !func.checkForError
     ? "| null"
     : "";
 }
 
 function writeImportAllStructs(
+  context: CodeGenContext,
   lines: string[],
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs
 ): void {
-  const structNames = Object.entries(structs)
+  const structNames = Object.entries(context.structs)
     .filter((x) => !x[1].doNotImport)
     .map((x) => x[0])
-    .concat(opaqueStructs)
+    .concat(context.opaqueStructs)
     .map((x) => stripPrefixes(x))
     .join(", ");
 
@@ -1255,24 +1116,23 @@ function writeImportAllStructs(
 }
 
 function writeImportAllCallbacks(
+  context: CodeGenContext,
   lines: string[],
-  callbacks: CodeGenCallbacks
 ): void {
   lines.push(
-    `import { ${Object.entries(callbacks)
-      .filter(([_, value]) => !value.todo)
-      .map(([key, _]) => stripPrefixes(key))
-      .join(", ")} } from "./callbacks.ts";`
+    `import { ${
+      Object.entries(context.callbacks)
+        .filter(([_, value]) => !value.todo)
+        .map(([key, _]) => stripPrefixes(key))
+        .join(", ")
+    } } from "./callbacks.ts";`,
   );
 }
 
 export async function writeCallbacksSymbols(
+  context: CodeGenContext,
   filePath: string,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  imports: string[]
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
   lines.push(`// deno-lint-ignore-file no-unused-vars
@@ -1280,11 +1140,11 @@ export async function writeCallbacksSymbols(
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Event } from "./events.ts";
-import { i32, u8, u32 } from "../types.ts";
+import { int, Uint8 } from "../types.ts";
 `);
 
-  writeImportAllCallbacks(lines, callbacks);
-  writeImportAllStructs(lines, structs, opaqueStructs);
+  writeImportAllCallbacks(context, lines);
+  writeImportAllStructs(context, lines);
   lines.push("");
 
   if (imports.length > 0) {
@@ -1294,7 +1154,7 @@ import { i32, u8, u32 } from "../types.ts";
 
   lines.push("export const callbacks = {");
 
-  for (const [callbackName, callback] of Object.entries(callbacks)) {
+  for (const [callbackName, callback] of Object.entries(context.callbacks)) {
     if (callback.todo) {
       lines.push(`// TODO: ${callback.todo}`);
       lines.push(`// ${callbackName}`);
@@ -1304,34 +1164,15 @@ import { i32, u8, u32 } from "../types.ts";
 
     lines.push(`\t${callbackName}: {`);
 
-    writeSymbolParametersAndResult(
-      lines,
-      callback,
-      callbacks,
-      enums,
-      structs,
-      opaqueStructs
-    );
+    writeSymbolParametersAndResult(context, lines, callback);
 
-    const returnType = mapFunctionReturnType(
-      callbacks,
-      enums,
-      structs,
-      opaqueStructs,
-      callback.result
-    );
+    const returnType = mapFunctionReturnType(context, callback.result);
     lines.push(`\t\twrap: (callback: ${stripPrefixes(callbackName)}) => {`);
 
     let platformParams = "";
     for (const [paramName, param] of Object.entries(callback.parameters)) {
       platformParams += `${paramName}: `;
-      const paramType = mapFunctionParamType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        param
-      );
+      const paramType = mapFunctionParamType(context, param);
 
       if (isFunctionParamString(param)) {
         platformParams += "PlatformString";
@@ -1340,7 +1181,7 @@ import { i32, u8, u32 } from "../types.ts";
       } else if (isFunctionParamPointer(param)) {
         platformParams += paramType.replaceAll(
           "PointerLike",
-          "PlatformPointer"
+          "PlatformPointer",
         );
       } else {
         platformParams += paramType;
@@ -1358,24 +1199,20 @@ import { i32, u8, u32 } from "../types.ts";
     lines.push(`\t\t\t\treturn callback(`);
 
     for (const [paramName, param] of Object.entries(callback.parameters)) {
-      const paramType = mapFunctionParamType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        param
-      );
+      const paramType = mapFunctionParamType(context, param);
 
       if (isFunctionParamString(param)) {
         lines.push(`\t\tPlatform.fromPlatformString(${paramName})`);
       } else if (
-        isFunctionParamOpaqueStruct(opaqueStructs, param) ||
-        isFunctionParamStruct(structs, param)
+        isFunctionParamOpaqueStruct(context, param) ||
+        isFunctionParamStruct(context, param)
       ) {
         lines.push(
-          `\t\t${getGenericParam(
-            paramType
-          )}.of(Platform.fromPlatformPointer(${paramName}))`
+          `\t\t${
+            getGenericParam(
+              paramType,
+            )
+          }.of(Platform.fromPlatformPointer(${paramName}))`,
         );
       } else if (isFunctionParamPointer(param)) {
         lines.push(`\t\tPlatform.fromPlatformPointer(${paramName})`);
@@ -1397,25 +1234,21 @@ import { i32, u8, u32 } from "../types.ts";
 }
 
 export async function writeCallbacks(
+  context: CodeGenContext,
   filePath: string,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  imports: string[]
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
   lines.push(`// deno-lint-ignore-file no-unused-vars
 
-import { Pointer } from "../pointers.ts";
-import { Callback, i32, u8, u32 } from "../types.ts";
+import { Callback, int, Pointer, Uint8 } from "../types.ts";
 import { Event } from "./events.ts";
 `);
 
   lines.push(...imports);
   lines.push("");
 
-  for (const [callbackName, callback] of Object.entries(callbacks)) {
+  for (const [callbackName, callback] of Object.entries(context.callbacks)) {
     if (callback.todo) {
       lines.push(`// TODO: ${callback.todo}`);
       lines.push(`// ${callbackName}`);
@@ -1427,17 +1260,11 @@ import { Event } from "./events.ts";
 
     lines.push("(");
     for (const [paramName, param] of Object.entries(callback.parameters)) {
-      let paramType = mapFunctionParamType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        param
-      );
+      let paramType = mapFunctionParamType(context, param);
 
       if (
-        isFunctionParamOpaqueStruct(opaqueStructs, param) ||
-        isFunctionParamStruct(structs, param)
+        isFunctionParamOpaqueStruct(context, param) ||
+        isFunctionParamStruct(context, param)
       ) {
         paramType = getGenericParam(paramType);
       } else {
@@ -1447,13 +1274,7 @@ import { Event } from "./events.ts";
       lines.push(`${paramName}: ${paramType},`);
     }
 
-    const returnType = mapFunctionReturnType(
-      callbacks,
-      enums,
-      structs,
-      opaqueStructs,
-      callback.result
-    );
+    const returnType = mapFunctionReturnType(context, callback.result);
     lines.push(`) => ${returnType}`);
 
     lines.push(") & Callback;");
@@ -1464,37 +1285,38 @@ import { Event } from "./events.ts";
 }
 
 export async function writeFunctions(
+  context: CodeGenContext,
   filePath: string,
-  libraryName: string,
-  functions: CodeGenFunctions,
-  callbacks: CodeGenCallbacks,
-  enums: CodeGenEnums,
-  structs: CodeGenStructs,
-  opaqueStructs: CodeGenOpaqueStructs,
-  imports: string[]
+  imports: string[],
 ): Promise<void> {
   const lines = createLines();
   lines.push(`// deno-lint-ignore-file no-unused-vars
   
 import Platform from "../_platform.ts";
-import { Box } from "../boxes.ts";
-import { DynamicLibrary } from "../_library.ts";
-import { PlatformPointer } from "../_types.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { callbacks } from "./_callbacks.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { symbols } from "./_symbols.ts";
+import { PlatformPointer } from "../_types.ts";
+import { Box } from "../_boxes.ts";
+import { SDLError } from "../error.ts";
+import { InitOptions, double, float, int, Pointer, PointerLike, Uint8, Uint16, Uint32, Uint64 } from "../types.ts";
 `);
 
-  writeImportAllCallbacks(lines, callbacks);
+  writeImportAllCallbacks(context, lines);
 
-  const enumNames = Object.keys(enums)
+  const enumNames = Object.keys(context.enums)
     .map((x) => stripPrefixes(x))
     .join(", ");
   lines.push(`import { ${enumNames} } from "./enums.ts";`);
 
-  writeImportAllStructs(lines, structs, opaqueStructs);
+  // TODO: This is a hack as there is currently no way to attach metadata to opaqueStruct(s).
+  let opaqueStructsToImport = [...context.opaqueStructs];
+  if (context.libraryName === "SDL2_image") {
+    opaqueStructsToImport = opaqueStructsToImport.filter((x) => x.startsWith("IMG_"));
+  }
+
+  writeImportAllStructs({ ...context, opaqueStructs: opaqueStructsToImport }, lines);
 
   lines.push("");
 
@@ -1504,7 +1326,7 @@ import { symbols } from "./_symbols.ts";
   lines.push(`let _library: DynamicLibrary<typeof symbols> = null!;`);
   lines.push("");
 
-  for (const [funcName, func] of Object.entries(functions)) {
+  for (const [funcName, func] of Object.entries(context.functions)) {
     if (func.todo) {
       lines.push(`// TODO: ${func.todo}`);
       lines.push(`// ${funcName}`);
@@ -1512,123 +1334,138 @@ import { symbols } from "./_symbols.ts";
       continue;
     }
 
+    if (func.implementation) {
+      lines.push(func.implementation);
+      writeFunctionSymbolName(lines, funcName, func);
+      lines.push("");
+      continue;
+    }
+
     if (funcName.endsWith("_Init")) {
-      if (Object.values(func.parameters).length >= 1) {
-        lines.push(`export function Init(flags: InitFlags, options?: InitOptions): number;
-export function Init(flags: number, options?: InitOptions): number;
-export function Init(flags: InitFlags | number, options?: InitOptions): number {`);
-      } else {
-        lines.push(`export function Init(options?: InitOptions): number {`);
-      }
-
-      lines.push(
-        `const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
-      _library = Platform.loadLibrary("${libraryName}", symbolsToLoad, options?.libraryPath);`
-      );
-
-      if (Object.values(func.parameters).length >= 1) {
-        lines.push(`\treturn _library.symbols.${funcName}(flags) as number;`);
-      } else {
-        lines.push(`\treturn _library.symbols.${funcName}() as number;`);
-      }
-
-      lines.push("}");
+      writeInitFunction(context, lines, funcName, func);
     } else if (funcName.endsWith("_Quit")) {
-      lines.push(`export function Quit(): void {
-        _library.symbols.${funcName}();
-        _library.close();
-      }`);
+      writeQuitFunction(lines, funcName);
     } else {
       for (const overload of func.overloads ?? []) {
-        const returnType = mapFunctionReturnType(
-          callbacks,
-          enums,
-          structs,
-          opaqueStructs,
-          {
-            ...func.result,
-            ...overload.result,
-          }
-        );
-
-        lines.push(`export function ${stripPrefixes(funcName)}(`);
-
-        for (const [paramName, param] of Object.entries(func.parameters)) {
-          lines.push(
-            `${paramName}: ${mapFunctionParamType(
-              callbacks,
-              enums,
-              structs,
-              opaqueStructs,
-              {
-                ...param,
-                ...overload?.parameters?.[paramName],
-              }
-            )},`
-          );
-        }
-
-        const returnTypePostfix = getReturnTypePostfix(structs, opaqueStructs, {
+        const returnType = mapFunctionReturnType(context, {
           ...func.result,
           ...overload.result,
         });
 
+        lines.push(`export function ${stripPrefixes(funcName)}(`);
+
+        for (
+          const [paramName, param] of Object.entries(func.parameters).filter(
+            ([_, param]) => !param.isOutput,
+          )
+        ) {
+          lines.push(
+            `${paramName}: ${
+              mapFunctionParamType(context, {
+                ...param,
+                ...overload?.parameters?.[paramName],
+              })
+            },`,
+          );
+        }
+
+        const returnTypePostfix = getFunctionReturnTypePostfix(
+          context,
+          {
+            ...func,
+            result: {
+              ...func.result,
+              ...overload,
+            },
+          },
+        );
+
         lines.push(`): ${returnType}${returnTypePostfix};`);
       }
 
-      const returnType = mapFunctionReturnType(
-        callbacks,
-        enums,
-        structs,
-        opaqueStructs,
-        func.result
+      const symbolReturnType = mapFunctionReturnType(context, func.result);
+
+      const outputParams = Object.entries(func.parameters).filter(
+        ([_, param]) => param.isOutput,
       );
+
+      const originalReturnType = mapFunctionReturnType(context, func.result);
+      let returnType = originalReturnType;
+
+      if (outputParams.length === 1) {
+        const outputParam = mapFunctionReturnTypeFromOutputParam(context, outputParams[0][1]);
+
+        if (func.result.isOutput) {
+          returnType = "[" + returnType + ", " + outputParam + "]";
+        } else {
+          returnType = outputParam;
+        }
+      } else if (outputParams.length > 1) {
+        returnType = "[" +
+          (func.result.isOutput ? returnType + ", " : "") +
+          outputParams
+            .map(([_, outputParam]) => mapFunctionReturnTypeFromOutputParam(context, outputParam))
+            .join(", ") +
+          "]";
+      }
+
+      if (func.checkForError && returnType === "i32") {
+        returnType = "void";
+      }
 
       lines.push(`export function ${stripPrefixes(funcName)}(`);
 
-      for (const [paramName, param] of Object.entries(func.parameters)) {
+      for (
+        const [paramName, param] of Object.entries(func.parameters).filter(
+          ([_, param]) => !param.isOutput,
+        )
+      ) {
         lines.push(
-          `${paramName}: ${mapFunctionParamType(
-            callbacks,
-            enums,
-            structs,
-            opaqueStructs,
-            param
-          )},`
+          `${paramName}: ${mapFunctionParamType(context, param)},`,
         );
       }
 
-      const returnTypePostfix = getReturnTypePostfix(
-        structs,
-        opaqueStructs,
-        func.result
-      );
+      const returnTypePostfix = getFunctionReturnTypePostfix(context, func);
 
       lines.push(`): ${returnType}${returnTypePostfix} {`);
 
-      let symbolName = funcName;
-      if (func.symbolName !== undefined) {
-        symbolName = func.symbolName;
-      }
+      const symbolName = func.symbolName ?? funcName;
 
-      if (returnType !== "void") {
-        let returnStatement = "\treturn ";
+      for (const [paramName, param] of outputParams) {
+        let paramType = mapFunctionReturnTypeFromOutputParam(context, param);
 
-        if (isFunctionParamBigInt(func.result)) {
-          returnStatement += "\t\tBigInt(";
-        } else if (isFunctionParamString(func.result)) {
-          returnStatement += "\t\tPlatform.fromPlatformString(";
-        } else if (
-          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-          isFunctionParamStruct(structs, func.result)
-        ) {
-          returnStatement += `\t\t${returnType}.of(Platform.fromPlatformPointer(`;
-        } else if (isFunctionParamPointer(func.result)) {
-          returnStatement += `\t\tPlatform.fromPlatformPointer(`;
+        let paramConstructorArgs = "";
+
+        if (!isStruct(context, paramType)) {
+          paramConstructorArgs = paramType;
+          if (paramType.startsWith("Pointer<")) {
+            paramConstructorArgs = "Pointer";
+          }
+
+          paramType = `Box<${paramType}>`;
         }
 
-        returnStatement += `_library.symbols.${symbolName}(`;
-        lines.push(returnStatement);
+        lines.push(
+          `const ${paramName} = new ${paramType}(${paramConstructorArgs});`,
+        );
+      }
+
+      if (symbolReturnType !== "void") {
+        let resultStatement = "\tconst _result = ";
+
+        if (isFunctionParamBigInt(func.result)) {
+          resultStatement += "\t\tBigInt(";
+        } else if (isFunctionParamString(func.result)) {
+          resultStatement += "\t\tPlatform.fromPlatformString(";
+        } else if (isFunctionParamStruct(context, func.result)) {
+          resultStatement += `\t\t${symbolReturnType}.of(Platform.fromPlatformPointer(`;
+        } else if (isFunctionParamPointer(func.result)) {
+          resultStatement += `\t\tPlatform.fromPlatformPointer(`;
+        }
+
+        resultStatement += `_library.symbols.${symbolName}(`;
+
+        lines.push(resultStatement);
       } else {
         lines.push(`\t_library.symbols.${symbolName}(`);
       }
@@ -1638,56 +1475,90 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
           lines.push(`\t\tPlatform.toPlatformString(${paramName}),`);
         } else if (isFunctionParamVoidPointer(param)) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`
+            `\t\tPlatform.toPlatformPointer(${paramName}),`,
           );
         } else if (isFunctionParamDoublePointer(param)) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.ofTypedArray(${paramName}._data)),`
+            `\t\tPlatform.toPlatformPointer(${paramName}._data),`,
           );
-        } else if (isFunctionParamCallback(callbacks, param)) {
+        } else if (isFunctionParamCallback(context, param)) {
           lines.push(
-            `\t\tPlatform.toPlatformCallback(${paramName}, callbacks["${param.type}"]),`
+            `\t\tPlatform.toPlatformCallback(${paramName}, callbacks["${param.type}"]),`,
           );
-        } else if (isFunctionParamStructByValue(structs, param)) {
+        } else if (isFunctionParamStructByValue(context, param)) {
           lines.push(
-            `\t\tPlatform.toPlatformStruct(${paramName}, ${stripPrefixes(
-              param.type
-            )}),`
+            `\t\tPlatform.toPlatformStruct(${paramName}, ${
+              stripPrefixes(
+                param.type,
+              )
+            }),`,
           );
         } else if (
           isFunctionParamPointer(param) ||
-          isFunctionParamOpaqueStruct(opaqueStructs, param) ||
-          isFunctionParamStruct(structs, param)
+          isFunctionParamOpaqueStruct(context, param) ||
+          isFunctionParamStruct(context, param)
         ) {
           lines.push(
-            `\t\tPlatform.toPlatformPointer(Pointer.of(${paramName})),`
+            `\t\tPlatform.toPlatformPointer(${paramName}),`,
           );
         } else {
           lines.push(`\t\t${paramName},`);
         }
       }
 
-      if (returnType !== "void") {
+      if (symbolReturnType !== "void") {
         if (isFunctionParamBigInt(func.result)) {
           lines.push("\t) as bigint | number);");
-        } else if (returnType === "string") {
+        } else if (symbolReturnType === "string") {
           lines.push(`\t) as PlatformPointer<unknown>);`);
-        } else if (
-          isFunctionParamOpaqueStruct(opaqueStructs, func.result) ||
-          isFunctionParamStruct(structs, func.result)
-        ) {
-          lines.push(`\t) as PlatformPointer<${returnType}>));`);
+        } else if (isFunctionParamOpaqueStruct(context, func.result)) {
+          lines.push(`\t) as PlatformPointer<${originalReturnType}>);`);
+        } else if (isFunctionParamStruct(context, func.result)) {
+          lines.push(`\t) as PlatformPointer<${originalReturnType}>));`);
         } else if (isFunctionParamPointer(func.result)) {
           const nonNullAssertion = !func.result.nullable ? "!" : "";
           lines.push(
-            `\t) as PlatformPointer<${getGenericParam(
-              returnType
-            )}>)${nonNullAssertion};`
+            `\t) as PlatformPointer<${getGenericParam(originalReturnType)}>)${nonNullAssertion};`,
           );
-        } else if (returnType === "bigint") {
-          lines.push(`\t) as unknown as ${returnType};`);
+        } else if (symbolReturnType === "bigint") {
+          lines.push(`\t) as unknown as ${symbolReturnType};`);
         } else {
-          lines.push(`\t) as ${returnType};`);
+          lines.push(`\t) as ${symbolReturnType};`);
+        }
+
+        if (func.checkForError) {
+          if (isFunctionParamPointer(func.result)) {
+            lines.push(`\tif (_result === null) {`);
+          } else {
+            lines.push(`\tif (_result < 0) {`);
+          }
+
+          lines.push(`\t\tthrow new SDLError(GetError());`);
+          lines.push("\t}");
+        }
+
+        // returnType will be set to void if checkForErrors is true and only the error code
+        // would have been returned.
+        if (returnType !== "void") {
+          if (outputParams.length === 0) {
+            lines.push("return _result;");
+          } else if (outputParams.length === 1) {
+            if (func.result.isOutput) {
+              lines.push(`return [_result, ${outputParams[0][0]}];`);
+            } else {
+              lines.push(`return ${outputParams[0][0]};`);
+            }
+          } else {
+            const outputParamNames = outputParams
+              .map(([paramName, _]) => `${paramName}.value`)
+              .join(", ");
+
+            if (func.result.isOutput) {
+              lines.push(`return [_result, ${outputParamNames}];`);
+            } else {
+              lines.push(`return [${outputParamNames}];`);
+            }
+          }
         }
       } else {
         lines.push(`\t);`);
@@ -1696,13 +1567,60 @@ export function Init(flags: InitFlags | number, options?: InitOptions): number {
       lines.push("}");
     }
 
-    lines.push(
-      `${stripPrefixes(funcName)}.symbolName = "${
-        func.symbolName ? func.symbolName : funcName
-      }";`
-    );
+    writeFunctionSymbolName(lines, funcName, func);
     lines.push("");
   }
 
   await writeLinesToFile(filePath, lines);
+}
+
+function writeFunctionSymbolName(
+  lines: string[],
+  funcName: string,
+  func: CodeGenFunction,
+): void {
+  lines.push(
+    `${stripPrefixes(funcName)}.symbolName = "${func.symbolName ? func.symbolName : funcName}";`,
+  );
+}
+
+function writeInitFunction(
+  context: CodeGenContext,
+  lines: string[],
+  funcName: string,
+  func: CodeGenFunction,
+): void {
+  if (Object.values(func.parameters).length >= 1) {
+    lines.push(`export function Init(flags: InitFlags, options?: InitOptions): void;
+export function Init(flags: number, options?: InitOptions): void;
+export function Init(flags: InitFlags | number, options?: InitOptions): void {`);
+  } else {
+    lines.push(`export function Init(options?: InitOptions): void {`);
+  }
+
+  lines.push(
+    `const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
+      _library = Platform.loadLibrary("${context.libraryName}", symbolsToLoad, options?.libraryPath);`,
+  );
+
+  if (Object.values(func.parameters).length >= 1) {
+    lines.push(
+      `\tconst _result = _library.symbols.${funcName}(flags) as number;`,
+    );
+  } else {
+    lines.push(`\tconst _result = _library.symbols.${funcName}() as number;`);
+  }
+
+  lines.push(`\tif (_result < 0) {`);
+  lines.push(`\t\tthrow new SDLError(GetError());`);
+  lines.push("\t}");
+
+  lines.push("}");
+}
+
+function writeQuitFunction(lines: string[], funcName: string): void {
+  lines.push(`export function Quit(): void {
+    _library.symbols.${funcName}();
+    _library.close();
+  }`);
 }

@@ -1,6 +1,5 @@
-import { Struct } from "./types.ts";
+import type { Pointer, Struct } from "./types.ts";
 import type { PlatformDataView } from "./_types.ts";
-import { Pointer } from "./pointers.ts";
 
 export const STRUCT_NO_ALLOCATE = Symbol("STRUCT_NO_ALLOCATE");
 
@@ -13,5 +12,6 @@ export interface StructInternal<T extends Struct> {
 
 export function isStruct<T extends Struct>(value: unknown): value is T & StructInternal<T> {
   return typeof value === "object" &&
-    ("_data" in (value as Struct));
+    ("_data" in (value as Struct)) &&
+    ("_view" in (value as Struct));
 }

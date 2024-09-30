@@ -1,4 +1,4 @@
-import { u16, u32 } from "../types.ts";
+import { Uint16, Uint32 } from "../types.ts";
 
-export type AudioFormat = u16;
-export type AudioDeviceID = u32;
+export type AudioFormat = Uint16;
+export type AudioDeviceID = Uint32;

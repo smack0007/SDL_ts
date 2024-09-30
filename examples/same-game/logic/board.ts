@@ -1,4 +1,3 @@
-import { u64 } from "SDL_ts";
 import { Block } from "./block.ts";
 import { BlockColors } from "./blockColors.ts";
 import { Random } from "./random.ts";
@@ -58,7 +57,7 @@ export class Board {
     this._score += scoreForSelectedBlocks;
   }
 
-  public update(elapsed: u64): void {
+  public update(elapsed: bigint): void {
     for (let y = Board.Height - 1; y >= 0; y -= 1) {
       for (let x = 0; x < Board.Width; x += 1) {
         const block = this.at(x, y);

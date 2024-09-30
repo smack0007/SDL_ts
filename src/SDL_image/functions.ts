@@ -3,54 +3,72 @@
 // deno-lint-ignore-file no-unused-vars
 
 import Platform from "../_platform.ts";
-import { Box } from "../boxes.ts";
-import { DynamicLibrary } from "../_library.ts";
-import { PlatformPointer } from "../_types.ts";
-import { Pointer, PointerLike } from "../pointers.ts";
-import { f32, f64, i32, InitOptions, int, TypedArray, u16, u32, u64, u8 } from "../types.ts";
 import { callbacks } from "./_callbacks.ts";
 import { getSymbolsFromFunctions } from "../_init.ts";
+import { DynamicLibrary } from "../_library.ts";
 import { symbols } from "./_symbols.ts";
+import { PlatformPointer } from "../_types.ts";
+import { Box } from "../_boxes.ts";
+import { SDLError } from "../error.ts";
+import { double, float, InitOptions, int, Pointer, PointerLike, Uint16, Uint32, Uint64, Uint8 } from "../types.ts";
 
 import {} from "./callbacks.ts";
 import { InitFlags } from "./enums.ts";
 import {} from "./structs.ts";
 
+import { GetError } from "../SDL/functions.ts";
 import { Renderer, Surface, Texture, version } from "../SDL/structs.ts";
 
 let _library: DynamicLibrary<typeof symbols> = null!;
 
-export function Init(flags: InitFlags, options?: InitOptions): number;
-export function Init(flags: number, options?: InitOptions): number;
-export function Init(flags: InitFlags | number, options?: InitOptions): number {
+export function Init(flags: InitFlags, options?: InitOptions): void;
+export function Init(flags: number, options?: InitOptions): void;
+export function Init(flags: InitFlags | number, options?: InitOptions): void {
   const symbolsToLoad = options?.functions ? getSymbolsFromFunctions(symbols, options.functions) : symbols;
   _library = Platform.loadLibrary("SDL2_image", symbolsToLoad, options?.libraryPath);
-  return _library.symbols.IMG_Init(flags) as number;
+  const _result = _library.symbols.IMG_Init(flags) as number;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
 }
 Init.symbolName = "IMG_Init";
 
-export function Linked_Version(): version | null {
-  return version.of(Platform.fromPlatformPointer(_library.symbols.IMG_Linked_Version() as PlatformPointer<version>));
+export function Linked_Version(): version {
+  const _result = version.of(
+    Platform.fromPlatformPointer(_library.symbols.IMG_Linked_Version() as PlatformPointer<version>),
+  );
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
+  return _result;
 }
 Linked_Version.symbolName = "IMG_Linked_Version";
 
 export function Load(
   file: string,
-): Surface | null {
-  return Surface.of(Platform.fromPlatformPointer(_library.symbols.IMG_Load(
+): Pointer<Surface> {
+  const _result = Platform.fromPlatformPointer(_library.symbols.IMG_Load(
     Platform.toPlatformString(file),
-  ) as PlatformPointer<Surface>));
+  ) as PlatformPointer<Pointer<Surface>>);
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
+  return _result;
 }
 Load.symbolName = "IMG_Load";
 
 export function LoadTexture(
-  renderer: PointerLike<Renderer>,
+  renderer: Pointer<Renderer>,
   file: string,
-): Texture | null {
-  return Texture.of(Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
-    Platform.toPlatformPointer(Pointer.of(renderer)),
+): Pointer<Texture> {
+  const _result = Platform.fromPlatformPointer(_library.symbols.IMG_LoadTexture(
+    Platform.toPlatformPointer(renderer),
     Platform.toPlatformString(file),
-  ) as PlatformPointer<Texture>));
+  ) as PlatformPointer<Pointer<Texture>>);
+  if (_result === null) {
+    throw new SDLError(GetError());
+  }
+  return _result;
 }
 LoadTexture.symbolName = "IMG_LoadTexture";
 

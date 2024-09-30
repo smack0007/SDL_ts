@@ -1,4 +1,4 @@
-import { Struct, StructConstructor } from "../types.ts";
+import { Pointer, Struct, StructConstructor } from "../types.ts";
 import { DenoPlatformDataView } from "./_dataView.ts";
 import { PlatformPointer } from "../_types.ts";
 import { denoFromPlatformPointer } from "./_pointers.ts";
@@ -15,7 +15,7 @@ export function denoToPlatformStruct<T extends Struct>(
       return new Uint8Array(struct._data, struct._byteOffset);
     }
   } else if (hasSizeInBytesProperty(structConstructor)) {
-    const view = new DenoPlatformDataView(struct._data);
+    const view = new DenoPlatformDataView(struct._data as Pointer<T>);
     return view.getArray(structConstructor.SIZE_IN_BYTES, struct._byteOffset);
   }
 

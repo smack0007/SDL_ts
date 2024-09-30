@@ -10,7 +10,7 @@ export const symbols = {
   },
   // TODO: Doesn't seem to be supported yet perhaps due to background thread?
   // SDL_AddTimer
-  SDL_UpperBlitScaled: {
+  /* SDL_BlitScaled */ SDL_UpperBlitScaled: {
     parameters: [
       /* SDL_Surface* src */ "pointer",
       /* SDL_Rect* srcrect */ "pointer",
@@ -19,7 +19,7 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
-  SDL_UpperBlit: {
+  /* SDL_BlitSurface */ SDL_UpperBlit: {
     parameters: [
       /* SDL_Surface* src */ "pointer",
       /* SDL_Rect* srcrect */ "pointer",

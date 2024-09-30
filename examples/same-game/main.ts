@@ -1,4 +1,4 @@
-import { Box, IMG, Pointer, SDL, SDLError, TTF, u64 } from "SDL_ts";
+import { IMG, Pointer, SDL, SDLError, TTF } from "SDL_ts";
 import { IMG_FUNCTIONS, SDL_FUNCTIONS, TTF_FUNCTIONS } from "./sdlConfig.ts";
 import { join } from "@std/path";
 import { Board } from "./logic/board.ts";
@@ -17,22 +17,10 @@ function main(): number {
   IMG.Init(IMG.InitFlags.PNG, { functions: IMG_FUNCTIONS });
   TTF.Init({ functions: TTF_FUNCTIONS });
 
-  const windowBox = new Box<Pointer<SDL.Window>>(Pointer);
-  const rendererBox = new Box<Pointer<SDL.Renderer>>(Pointer);
-
-  SDL.CreateWindowAndRenderer(
+  const [window, renderer] = SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN,
-    windowBox,
-    rendererBox
-  );
-
-  const window = windowBox.unboxNotNull(
-    () => `Failed to create window: ${SDL.GetError()}`
-  );
-  const renderer = rendererBox.unboxNotNull(
-    () => `Failed to create renderer: ${SDL.GetError()}`
+    SDL.WindowFlags.SHOWN
   );
 
   SDL.SetWindowTitle(window, "Same Game");
@@ -98,14 +86,14 @@ function main(): number {
   return 0;
 }
 
-function update(elapsed: u64, board: Board): void {
+function update(elapsed: bigint, board: Board): void {
   board.update(elapsed);
 }
 
 function draw(
   renderer: Pointer<SDL.Renderer>,
   board: Board,
-  blockTexture: SDL.Texture,
+  blockTexture: Pointer<SDL.Texture>,
   font: FontAtlas
 ): void {
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);

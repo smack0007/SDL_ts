@@ -1,3 +1,16 @@
+export type CodeGenContext = {
+  libraryName: string;
+  callbacks: CodeGenCallbacks;
+  enums: CodeGenEnums;
+  events: CodeGenEvents;
+  functions: CodeGenFunctions;
+  opaqueStructs: CodeGenOpaqueStructs;
+  structs: CodeGenStructs;
+  typedefs: CodeGenTypedefs;
+};
+
+export type CodeGenTypedefs = Record<string, string>;
+
 export type CodeGenCallbacks = Record<string, CodeGenCallback>;
 
 export interface CodeGenCallback {
@@ -29,6 +42,19 @@ export interface CodeGenEventType extends CodeGenStruct {
 
 export type CodeGenFunctions = Record<string, CodeGenFunction>;
 
+export interface CodeGenFunctionParam {
+  // SDL type.
+  type: string;
+
+  // Can the parameter be null.
+  isNullable?: boolean;
+
+  // If set this type will be used as the script type.
+  overrideType?: string;
+
+  isOutput?: boolean;
+}
+
 export interface CodeGenFunctionResult {
   // SDL type
   type: string;
@@ -38,6 +64,11 @@ export interface CodeGenFunctionResult {
 
   // If set this type will be used as the script type.
   overrideType?: string;
+
+  // If any parameter is marked as an output parameter than the return value
+  // will generally be discarded. This flag specifies that the return value
+  // should not be discarded when there are output parameters.
+  isOutput?: boolean;
 }
 
 export interface CodeGenFunction {
@@ -56,17 +87,15 @@ export interface CodeGenFunction {
     parameters?: Record<string, Partial<CodeGenFunctionParam>>;
     result?: Partial<CodeGenFunctionResult>;
   }>;
-}
 
-export interface CodeGenFunctionParam {
-  // SDL type.
-  type: string;
+  // If true the CodeGen will generate code to check for an error
+  // and throw an exception if needed. This can probably be determined
+  // from the return type in the future but while developing the feature
+  // just set this manually.
+  checkForError?: boolean;
 
-  // Can the parameter be null.
-  nullable?: boolean;
-
-  // If set this type will be used as the script type.
-  overrideType?: string;
+  // If set the function is implemented by hand only the symbol definition will be generated.
+  implementation?: string;
 }
 
 export type CodeGenStructs = Record<string, CodeGenStruct>;

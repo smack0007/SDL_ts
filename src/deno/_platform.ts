@@ -4,7 +4,7 @@ import {
 } from "./_callbacks.ts";
 import { DenoPlatformDataView } from "./_dataView.ts";
 import { denoLoadLibrary } from "./_library.ts";
-import { denoFromPlatformPointer, denoToPlatformPointer } from "./_pointers.ts";
+import { denoFromPlatformPointer, denoIsPlatformPointer, denoToPlatformPointer } from "./_pointers.ts";
 import { denoFromPlatformString, denoToPlatformString } from "./_strings.ts";
 import { denoFromPlatformStruct, denoToPlatformStruct } from "./_structs.ts";
 
@@ -18,6 +18,7 @@ export default class {
   public static fromPlatformPointer = denoFromPlatformPointer;
   public static fromPlatformString = denoFromPlatformString;
   public static fromPlatformStruct = denoFromPlatformStruct;
+  public static isPlatformPointer = denoIsPlatformPointer;
   public static loadLibrary = denoLoadLibrary;
   public static toPlatformCallback = denoToPlatformCallback;
   public static toPlatformPointer = denoToPlatformPointer;

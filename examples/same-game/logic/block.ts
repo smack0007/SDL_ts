@@ -1,4 +1,3 @@
-import { U64, u64 } from "SDL_ts";
 import { BlockColors } from "./blockColors.ts";
 
 export class Block {
@@ -54,7 +53,7 @@ export class Block {
     this._offsetY = 0;
   }
 
-  public update(elapsed: u64): void {
+  public update(elapsed: bigint): void {
     if (this._offsetY < 0) {
       this._offsetY += Block.FallRate * Number(elapsed);
     }

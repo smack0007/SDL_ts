@@ -5,7 +5,7 @@
 import Platform from "../_platform.ts";
 import { PlatformPointer } from "../_types.ts";
 import { Event } from "./events.ts";
-import { i32, u32, u8 } from "../types.ts";
+import { int, Uint8 } from "../types.ts";
 
 import { AudioCallback, EventFilter } from "./callbacks.ts";
 import {
@@ -36,7 +36,7 @@ export const callbacks = {
     ],
     result: /* void */ "void",
     wrap: (callback: AudioCallback) => {
-      return (userdata: PlatformPointer<unknown>, stream: PlatformPointer<u8>, len: i32): void => {
+      return (userdata: PlatformPointer<unknown>, stream: PlatformPointer<Uint8>, len: int): void => {
         return callback(
           Platform.fromPlatformPointer(userdata)!,
           Platform.fromPlatformPointer(stream)!,
@@ -52,7 +52,7 @@ export const callbacks = {
     ],
     result: /* int */ "i32",
     wrap: (callback: EventFilter) => {
-      return (userdata: PlatformPointer<unknown>, event: PlatformPointer<Event>): i32 => {
+      return (userdata: PlatformPointer<unknown>, event: PlatformPointer<Event>): int => {
         return callback(
           Platform.fromPlatformPointer(userdata)!,
           Event.of(Platform.fromPlatformPointer(event))!,

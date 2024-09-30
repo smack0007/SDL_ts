@@ -6,6 +6,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
 
   TTF_CloseFont: {
@@ -24,6 +25,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_version*",
     },
+    checkForError: true,
   },
 
   TTF_OpenFont: {
@@ -38,6 +40,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "TTF_Font*",
     },
+    checkForError: true,
   },
 
   TTF_Quit: {
@@ -62,6 +65,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderText_LCD: {
@@ -82,6 +86,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderText_Solid: {
@@ -99,6 +104,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderText_Shaded: {
@@ -119,6 +125,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderUTF8_Blended: {
@@ -136,6 +143,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderUTF8_LCD: {
@@ -156,6 +164,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderUTF8_Solid: {
@@ -173,6 +182,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_RenderUTF8_Shaded: {
@@ -193,6 +203,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "SDL_Surface*",
     },
+    checkForError: true,
   },
 
   TTF_SizeText: {
@@ -213,6 +224,7 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
 
   TTF_SizeUTF8: {
@@ -225,14 +237,17 @@ export const functions: CodeGenFunctions = {
       },
       w: {
         type: "int*",
+        isOutput: true,
       },
       h: {
         type: "int*",
+        isOutput: true,
       },
     },
     result: {
       type: "int",
     },
+    checkForError: true,
   },
 
   TTF_SizeUNICODE: {
@@ -253,5 +268,6 @@ export const functions: CodeGenFunctions = {
     result: {
       type: "int",
     },
+    checkForError: true,
   },
 } as const;

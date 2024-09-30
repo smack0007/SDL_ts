@@ -5,9 +5,10 @@
 import Platform from "../_platform.ts";
 import { callbacks } from "./_callbacks.ts";
 import { PlatformDataView } from "../_types.ts";
-import { isTypedArray } from "../_utils.ts";
-import { Pointer } from "../pointers.ts";
-import { AllocatableStruct, f32, f64, i16, i32, i64, i8, Struct, u16, u32, u64, u8 } from "../types.ts";
+import { isPointer, isTypedArray } from "../_utils.ts";
+import { AllocatableStruct, double, float, int, Pointer, Struct, Uint16, Uint32, Uint8 } from "../types.ts";
+
+import { AudioFormat } from "./audio.ts";
 
 import { AudioCallback, EventFilter } from "./callbacks.ts";
 
@@ -36,101 +37,11 @@ import {
   WindowPos,
 } from "./enums.ts";
 
-export class Renderer implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Renderer>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Renderer> | null,
-    byteOffset: number = 0,
-  ): Renderer | null {
-    return data !== null ? new Renderer(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class RWops implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<RWops>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<RWops> | null,
-    byteOffset: number = 0,
-  ): RWops | null {
-    return data !== null ? new RWops(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class Texture implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Texture>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Texture> | null,
-    byteOffset: number = 0,
-  ): Texture | null {
-    return data !== null ? new Texture(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
-
-export class Window implements Struct {
-  public static IS_OPAQUE = true;
-
-  public readonly _view: PlatformDataView;
-
-  constructor(
-    public readonly _data: Pointer<Window>,
-    byteOffset: number = 0,
-  ) {
-    this._view = new Platform.DataView(this._data, byteOffset);
-  }
-
-  public static of(
-    data: Pointer<Window> | null,
-    byteOffset: number = 0,
-  ): Window | null {
-    return data !== null ? new Window(data, byteOffset) : null;
-  }
-
-  public get _byteOffset(): number {
-    return this._view.byteOffset;
-  }
-}
+declare const _: unique symbol;
+export type Renderer = { [_]: "Renderer" };
+export type RWops = { [_]: "RWops" };
+export type Texture = { [_]: "Texture" };
+export type Window = { [_]: "Window" };
 
 export class AudioSpec implements AllocatableStruct {
   public static SIZE_IN_BYTES = 32;
@@ -145,57 +56,57 @@ export class AudioSpec implements AllocatableStruct {
   );
   constructor(props: Partial<AudioSpec>);
   constructor(
-    freq: i32,
-    format: u16,
-    channels: u8,
-    silence: u8,
-    samples: u16,
-    padding: u16,
-    size: u32,
+    freq: int,
+    format: AudioFormat,
+    channels: Uint8,
+    silence: Uint8,
+    samples: Uint16,
+    padding: Uint16,
+    size: Uint32,
     // callback: AudioCallback,
     userdata: Pointer<void>,
   );
   constructor(
-    _1: Uint8Array | Pointer<AudioSpec> | Partial<AudioSpec> | i32 = {},
-    _2?: number | u16,
-    _3?: u8,
-    _4?: u8,
-    _5?: u16,
-    _6?: u16,
-    _7?: u32,
+    _1: Uint8Array | Pointer<AudioSpec> | Partial<AudioSpec> | int = {},
+    _2?: number | AudioFormat,
+    _3?: Uint8,
+    _4?: Uint8,
+    _5?: Uint16,
+    _6?: Uint16,
+    _7?: Uint32,
     // _8?: AudioCallback,
     _9?: Pointer<void>,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<AudioSpec>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(AudioSpec.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.freq !== undefined) this.freq = _1.freq;
-        if (_1.format !== undefined) this.format = _1.format;
-        if (_1.channels !== undefined) this.channels = _1.channels;
-        if (_1.silence !== undefined) this.silence = _1.silence;
-        if (_1.samples !== undefined) this.samples = _1.samples;
-        if (_1.padding !== undefined) this.padding = _1.padding;
-        if (_1.size !== undefined) this.size = _1.size;
-        // if (_1.callback !== undefined) this.callback = _1.callback;
-        if (_1.userdata !== undefined) this.userdata = _1.userdata;
-      } else {
-        if (_1 !== undefined) this.freq = _1;
-        if (_2 !== undefined) this.format = _2;
-        if (_3 !== undefined) this.channels = _3;
-        if (_4 !== undefined) this.silence = _4;
-        if (_5 !== undefined) this.samples = _5;
-        if (_6 !== undefined) this.padding = _6;
-        if (_7 !== undefined) this.size = _7;
-        // if (_8 !== undefined) this.callback = _8;
-        if (_9 !== undefined) this.userdata = _9;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<AudioSpec> = _1;
+          if (data.freq !== undefined) this.freq = data.freq;
+          if (data.format !== undefined) this.format = data.format;
+          if (data.channels !== undefined) this.channels = data.channels;
+          if (data.silence !== undefined) this.silence = data.silence;
+          if (data.samples !== undefined) this.samples = data.samples;
+          if (data.padding !== undefined) this.padding = data.padding;
+          if (data.size !== undefined) this.size = data.size;
+          // if (data.callback !== undefined) this.callback = data.callback;
+          if (data.userdata !== undefined) this.userdata = data.userdata;
+        } else {
+          if (_1 !== undefined) this.freq = _1;
+          if (_2 !== undefined) this.format = _2;
+          if (_3 !== undefined) this.channels = _3;
+          if (_4 !== undefined) this.silence = _4;
+          if (_5 !== undefined) this.samples = _5;
+          if (_6 !== undefined) this.padding = _6;
+          if (_7 !== undefined) this.size = _7;
+          // if (_8 !== undefined) this.callback = _8;
+          if (_9 !== undefined) this.userdata = _9;
+        }
       }
     }
   }
@@ -211,59 +122,59 @@ export class AudioSpec implements AllocatableStruct {
     return this._view.byteOffset;
   }
 
-  public get freq(): i32 {
+  public get freq(): int {
     return this._view.getI32(0);
   }
 
-  public set freq(value: i32) {
+  public set freq(value: int) {
     this._view.setI32(0, value);
   }
 
-  public get format(): u16 {
+  public get format(): AudioFormat {
     return this._view.getU16(4);
   }
 
-  public set format(value: u16) {
+  public set format(value: AudioFormat) {
     this._view.setU16(4, value);
   }
 
-  public get channels(): u8 {
+  public get channels(): Uint8 {
     return this._view.getU8(6);
   }
 
-  public set channels(value: u8) {
+  public set channels(value: Uint8) {
     this._view.setU8(6, value);
   }
 
-  public get silence(): u8 {
+  public get silence(): Uint8 {
     return this._view.getU8(7);
   }
 
-  public set silence(value: u8) {
+  public set silence(value: Uint8) {
     this._view.setU8(7, value);
   }
 
-  public get samples(): u16 {
+  public get samples(): Uint16 {
     return this._view.getU16(8);
   }
 
-  public set samples(value: u16) {
+  public set samples(value: Uint16) {
     this._view.setU16(8, value);
   }
 
-  public get padding(): u16 {
+  public get padding(): Uint16 {
     return this._view.getU16(10);
   }
 
-  public set padding(value: u16) {
+  public set padding(value: Uint16) {
     this._view.setU16(10, value);
   }
 
-  public get size(): u32 {
+  public get size(): Uint32 {
     return this._view.getU32(12);
   }
 
-  public set size(value: u32) {
+  public set size(value: Uint32) {
     this._view.setU32(12, value);
   }
 
@@ -291,33 +202,33 @@ export class Color implements AllocatableStruct {
     byteOffset: number,
   );
   constructor(props: Partial<Color>);
-  constructor(r: u8, g: u8, b: u8, a: u8);
+  constructor(r: Uint8, g: Uint8, b: Uint8, a: Uint8);
   constructor(
-    _1: Uint8Array | Pointer<Color> | Partial<Color> | u8 = {},
-    _2?: number | u8,
-    _3?: u8,
-    _4?: u8,
+    _1: Uint8Array | Pointer<Color> | Partial<Color> | Uint8 = {},
+    _2?: number | Uint8,
+    _3?: Uint8,
+    _4?: Uint8,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Color>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Color.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.r !== undefined) this.r = _1.r;
-        if (_1.g !== undefined) this.g = _1.g;
-        if (_1.b !== undefined) this.b = _1.b;
-        if (_1.a !== undefined) this.a = _1.a;
-      } else {
-        if (_1 !== undefined) this.r = _1;
-        if (_2 !== undefined) this.g = _2;
-        if (_3 !== undefined) this.b = _3;
-        if (_4 !== undefined) this.a = _4;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Color> = _1;
+          if (data.r !== undefined) this.r = data.r;
+          if (data.g !== undefined) this.g = data.g;
+          if (data.b !== undefined) this.b = data.b;
+          if (data.a !== undefined) this.a = data.a;
+        } else {
+          if (_1 !== undefined) this.r = _1;
+          if (_2 !== undefined) this.g = _2;
+          if (_3 !== undefined) this.b = _3;
+          if (_4 !== undefined) this.a = _4;
+        }
       }
     }
   }
@@ -333,35 +244,35 @@ export class Color implements AllocatableStruct {
     return this._view.byteOffset;
   }
 
-  public get r(): u8 {
+  public get r(): Uint8 {
     return this._view.getU8(0);
   }
 
-  public set r(value: u8) {
+  public set r(value: Uint8) {
     this._view.setU8(0, value);
   }
 
-  public get g(): u8 {
+  public get g(): Uint8 {
     return this._view.getU8(1);
   }
 
-  public set g(value: u8) {
+  public set g(value: Uint8) {
     this._view.setU8(1, value);
   }
 
-  public get b(): u8 {
+  public get b(): Uint8 {
     return this._view.getU8(2);
   }
 
-  public set b(value: u8) {
+  public set b(value: Uint8) {
     this._view.setU8(2, value);
   }
 
-  public get a(): u8 {
+  public get a(): Uint8 {
     return this._view.getU8(3);
   }
 
-  public set a(value: u8) {
+  public set a(value: Uint8) {
     this._view.setU8(3, value);
   }
 }
@@ -389,19 +300,19 @@ export class DisplayMode implements Struct {
     return this._view.byteOffset;
   }
 
-  public get format(): u32 {
+  public get format(): Uint32 {
     return this._view.getU32(0);
   }
 
-  public get w(): i32 {
+  public get w(): int {
     return this._view.getI32(4);
   }
 
-  public get h(): i32 {
+  public get h(): int {
     return this._view.getI32(8);
   }
 
-  public get refresh_rate(): i32 {
+  public get refresh_rate(): int {
     return this._view.getI32(12);
   }
 
@@ -441,11 +352,11 @@ export class Keysym implements Struct {
     return this._view.getU32(4) as Keycode;
   }
 
-  public get mod(): u16 {
+  public get mod(): Uint16 {
     return this._view.getU16(8);
   }
 
-  public get unused(): u32 {
+  public get unused(): Uint32 {
     return this._view.getU32(12);
   }
 }
@@ -473,7 +384,7 @@ export class Palette implements Struct {
     return this._view.byteOffset;
   }
 
-  public get ncolors(): i32 {
+  public get ncolors(): int {
     return this._view.getI32(0);
   }
 
@@ -509,7 +420,7 @@ export class PixelFormat implements Struct {
     return this._view.byteOffset;
   }
 
-  public get format(): u32 {
+  public get format(): Uint32 {
     return this._view.getU32(0);
   }
 
@@ -517,27 +428,27 @@ export class PixelFormat implements Struct {
     return Palette.of(this._view.getPointer(8)) as Palette;
   }
 
-  public get BitsPerPixel(): u8 {
+  public get BitsPerPixel(): Uint8 {
     return this._view.getU8(16);
   }
 
-  public get BytesPerPixel(): u8 {
+  public get BytesPerPixel(): Uint8 {
     return this._view.getU8(17);
   }
 
-  public get Rmask(): u32 {
+  public get Rmask(): Uint32 {
     return this._view.getU32(20);
   }
 
-  public get Gmask(): u32 {
+  public get Gmask(): Uint32 {
     return this._view.getU32(24);
   }
 
-  public get Bmask(): u32 {
+  public get Bmask(): Uint32 {
     return this._view.getU32(28);
   }
 
-  public get Amask(): u32 {
+  public get Amask(): Uint32 {
     return this._view.getU32(32);
   }
 
@@ -574,27 +485,27 @@ export class Point implements AllocatableStruct {
     byteOffset: number,
   );
   constructor(props: Partial<Point>);
-  constructor(x: i32, y: i32);
+  constructor(x: int, y: int);
   constructor(
-    _1: Uint8Array | Pointer<Point> | Partial<Point> | i32 = {},
-    _2?: number | i32,
+    _1: Uint8Array | Pointer<Point> | Partial<Point> | int = {},
+    _2?: number | int,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Point>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Point.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.x !== undefined) this.x = _1.x;
-        if (_1.y !== undefined) this.y = _1.y;
-      } else {
-        if (_1 !== undefined) this.x = _1;
-        if (_2 !== undefined) this.y = _2;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Point> = _1;
+          if (data.x !== undefined) this.x = data.x;
+          if (data.y !== undefined) this.y = data.y;
+        } else {
+          if (_1 !== undefined) this.x = _1;
+          if (_2 !== undefined) this.y = _2;
+        }
       }
     }
   }
@@ -610,19 +521,19 @@ export class Point implements AllocatableStruct {
     return this._view.byteOffset;
   }
 
-  public get x(): i32 {
+  public get x(): int {
     return this._view.getI32(0);
   }
 
-  public set x(value: i32) {
+  public set x(value: int) {
     this._view.setI32(0, value);
   }
 
-  public get y(): i32 {
+  public get y(): int {
     return this._view.getI32(4);
   }
 
-  public set y(value: i32) {
+  public set y(value: int) {
     this._view.setI32(4, value);
   }
 }
@@ -639,33 +550,33 @@ export class Rect implements AllocatableStruct {
     byteOffset: number,
   );
   constructor(props: Partial<Rect>);
-  constructor(x: i32, y: i32, w: i32, h: i32);
+  constructor(x: int, y: int, w: int, h: int);
   constructor(
-    _1: Uint8Array | Pointer<Rect> | Partial<Rect> | i32 = {},
-    _2?: number | i32,
-    _3?: i32,
-    _4?: i32,
+    _1: Uint8Array | Pointer<Rect> | Partial<Rect> | int = {},
+    _2?: number | int,
+    _3?: int,
+    _4?: int,
   ) {
-    const dataPassedIn = isTypedArray(_1) || Pointer.isPointer(_1);
-    if (dataPassedIn) {
+    if (isTypedArray(_1) || isPointer<Rect>(_1)) {
       this._data = _1;
       this._view = new Platform.DataView(this._data, _2);
     } else {
       this._data = new Uint8Array(Rect.SIZE_IN_BYTES);
       this._view = new Platform.DataView(this._data, 0);
-    }
 
-    if (!dataPassedIn && _1 !== undefined) {
-      if (typeof _1 === "object") {
-        if (_1.x !== undefined) this.x = _1.x;
-        if (_1.y !== undefined) this.y = _1.y;
-        if (_1.w !== undefined) this.w = _1.w;
-        if (_1.h !== undefined) this.h = _1.h;
-      } else {
-        if (_1 !== undefined) this.x = _1;
-        if (_2 !== undefined) this.y = _2;
-        if (_3 !== undefined) this.w = _3;
-        if (_4 !== undefined) this.h = _4;
+      if (_1 !== undefined) {
+        if (typeof _1 === "object") {
+          const data: Partial<Rect> = _1;
+          if (data.x !== undefined) this.x = data.x;
+          if (data.y !== undefined) this.y = data.y;
+          if (data.w !== undefined) this.w = data.w;
+          if (data.h !== undefined) this.h = data.h;
+        } else {
+          if (_1 !== undefined) this.x = _1;
+          if (_2 !== undefined) this.y = _2;
+          if (_3 !== undefined) this.w = _3;
+          if (_4 !== undefined) this.h = _4;
+        }
       }
     }
   }
@@ -681,35 +592,35 @@ export class Rect implements AllocatableStruct {
     return this._view.byteOffset;
   }
 
-  public get x(): i32 {
+  public get x(): int {
     return this._view.getI32(0);
   }
 
-  public set x(value: i32) {
+  public set x(value: int) {
     this._view.setI32(0, value);
   }
 
-  public get y(): i32 {
+  public get y(): int {
     return this._view.getI32(4);
   }
 
-  public set y(value: i32) {
+  public set y(value: int) {
     this._view.setI32(4, value);
   }
 
-  public get w(): i32 {
+  public get w(): int {
     return this._view.getI32(8);
   }
 
-  public set w(value: i32) {
+  public set w(value: int) {
     this._view.setI32(8, value);
   }
 
-  public get h(): i32 {
+  public get h(): int {
     return this._view.getI32(12);
   }
 
-  public set h(value: i32) {
+  public set h(value: int) {
     this._view.setI32(12, value);
   }
 }
@@ -743,22 +654,22 @@ export class RendererInfo implements AllocatableStruct {
     return Platform.fromPlatformString(Platform.toPlatformPointer(this._view.getPointer(0))!);
   }
 
-  public get flags(): u32 {
+  public get flags(): Uint32 {
     return this._view.getU32(8);
   }
 
-  public get num_texture_formats(): u32 {
+  public get num_texture_formats(): Uint32 {
     return this._view.getU32(12);
   }
 
   // TODO: Add support for arrays in structs.
   // texture_formats
 
-  public get max_texture_width(): i32 {
+  public get max_texture_width(): int {
     return this._view.getI32(80);
   }
 
-  public get max_texture_height(): i32 {
+  public get max_texture_height(): int {
     return this._view.getI32(84);
   }
 }
@@ -786,7 +697,7 @@ export class Surface implements Struct {
     return this._view.byteOffset;
   }
 
-  public get flags(): u32 {
+  public get flags(): Uint32 {
     return this._view.getU32(0);
   }
 
@@ -794,15 +705,15 @@ export class Surface implements Struct {
     return PixelFormat.of(this._view.getPointer(8)) as PixelFormat;
   }
 
-  public get w(): i32 {
+  public get w(): int {
     return this._view.getI32(16);
   }
 
-  public get h(): i32 {
+  public get h(): int {
     return this._view.getI32(20);
   }
 
-  public get pitch(): i32 {
+  public get pitch(): int {
     return this._view.getI32(24);
   }
 
@@ -824,7 +735,7 @@ export class Surface implements Struct {
 
   // map
 
-  public get refcount(): i32 {
+  public get refcount(): int {
     return this._view.getI32(88);
   }
 }
@@ -889,15 +800,15 @@ export class version implements AllocatableStruct {
     return this._view.byteOffset;
   }
 
-  public get major(): u8 {
+  public get major(): Uint8 {
     return this._view.getU8(0);
   }
 
-  public get minor(): u8 {
+  public get minor(): Uint8 {
     return this._view.getU8(1);
   }
 
-  public get patch(): u8 {
+  public get patch(): Uint8 {
     return this._view.getU8(2);
   }
 }
