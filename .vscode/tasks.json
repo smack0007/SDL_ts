@@ -61,6 +61,23 @@
       "problemMatcher": ["$deno"]
     },
     {
+      "label": "Run Getting Started",
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "type": "deno",
+      "command": "task",
+      "args": ["start"],
+      "options": {
+        "env": {
+          "GDK_BACKEND": "wayland"
+        },
+        "cwd": "${workspaceFolder}/examples/getting-started"
+      },
+      "problemMatcher": ["$deno"]
+    },
+    {
       "label": "Run Hello World",
       "group": {
         "kind": "none",

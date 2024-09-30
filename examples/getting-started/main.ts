@@ -1,6 +1,6 @@
 import { SDL } from "@smack0007/sdl-ts";
 
-function main(): number {
+function main(): void {
   SDL.Init(SDL.InitFlags.VIDEO);
 
   const window = SDL.CreateWindow(
@@ -9,20 +9,10 @@ function main(): number {
     SDL.WindowPos.CENTERED,
     1024,
     768,
-    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE
+    SDL.WindowFlags.SHOWN | SDL.WindowFlags.RESIZABLE,
   );
 
-  if (window == null) {
-    console.error(`Failed to create window: ${SDL.GetError()}`);
-    return 1;
-  }
-
   const renderer = SDL.CreateRenderer(window, 0, SDL.RendererFlags.ACCELERATED);
-
-  if (renderer === null) {
-    console.error(`Failed to create window: ${SDL.GetError()}`);
-    return 1;
-  }
 
   SDL.RenderClear(renderer);
   SDL.RenderPresent(renderer);
@@ -41,8 +31,11 @@ function main(): number {
 
   SDL.DestroyWindow(window);
   SDL.Quit();
-
-  return 0;
 }
 
-Deno.exit(main());
+try {
+  main();
+} catch (error) {
+  console.error(error);
+  Deno.exit(1);
+}
