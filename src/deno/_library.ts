@@ -55,7 +55,7 @@ function getLibraryPaths(libraryName: string): string[] {
     // On Debain libSDL2_image and libSDL2_ttf only have symbolic links with this format so
     // search for those globally as well.
     libraryPaths.push(
-      libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0"
+      libraryPrefix + libraryName + "-2.0" + librarySuffix + ".0",
     );
   }
 
@@ -66,7 +66,7 @@ function getLibraryPaths(libraryName: string): string[] {
       libraryPaths.push(
         ...ldLibraryPath
           .split(":")
-          .map((libraryPath) => join(libraryPath, fullLibraryName))
+          .map((libraryPath) => join(libraryPath, fullLibraryName)),
       );
     }
   }
@@ -88,7 +88,7 @@ function getLibraryPaths(libraryName: string): string[] {
   }
 
   libraryPaths.push(
-    ...searchPaths.map((libraryPath) => join(libraryPath, fullLibraryName))
+    ...searchPaths.map((libraryPath) => join(libraryPath, fullLibraryName)),
   );
 
   return libraryPaths;
@@ -97,11 +97,9 @@ function getLibraryPaths(libraryName: string): string[] {
 export function denoLoadLibrary<T extends DynamicLibraryInterface>(
   libraryName: string,
   symbols: T,
-  libraryPath?: string
+  libraryPath?: string,
 ): DynamicLibrary<T> {
-  const libraryPaths = libraryPath
-    ? [libraryPath]
-    : getLibraryPaths(libraryName);
+  const libraryPaths = libraryPath ? [libraryPath] : getLibraryPaths(libraryName);
   const errors: Record<string, Error> = {};
 
   for (const libraryPath of libraryPaths) {
@@ -110,22 +108,28 @@ export function denoLoadLibrary<T extends DynamicLibraryInterface>(
         libraryPath,
         // Cast the symbols as any in order to prevent a type checking bug.
         // deno-lint-ignore no-explicit-any
-        symbols as any
+        symbols as any,
       ) as DynamicLibrary<T>;
       console.debug(`SDL_ts: Loaded ${libraryName} from "${libraryPath}"`);
       return result;
     } catch (error) {
-      errors[libraryPath] = error;
+      if (error instanceof Error) {
+        errors[libraryPath] = error;
+      } else {
+        throw error;
+      }
     }
   }
 
   throw new SDLError(
-    `Failed to load library "${libraryName}" from "${libraryPaths.join(
-      ", "
-    )}"\n` +
+    `Failed to load library "${libraryName}" from "${
+      libraryPaths.join(
+        ", ",
+      )
+    }"\n` +
       Object.entries(errors)
         .map(([libraryPath, error]) => `\t=> ${libraryPath}: ${error.message}`)
         .join("\n"),
-    new AggregateError(Object.values(errors))
+    new AggregateError(Object.values(errors)),
   );
 }
