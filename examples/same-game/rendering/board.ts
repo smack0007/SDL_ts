@@ -47,10 +47,20 @@ export function drawBoard(
       SDL.SetTextureColorMod(blockTexture, r, g, b);
       SDL.SetTextureAlphaMod(blockTexture, 255);
 
+      const blockSrcRect = new SDL.Rect(xSrc, 0, Block.WidthInPixels, Block.HeightInPixels);
+
+      if (block.multiplier === 2) {
+        blockSrcRect.x += Block.WidthInPixels;
+      } else if (block.multiplier === 3) {
+        blockSrcRect.x += Block.WidthInPixels * 2;
+      } else if (block.multiplier === 5) {
+        blockSrcRect.x += Block.WidthInPixels * 3;
+      }
+
       SDL.RenderCopy(
         renderer,
         blockTexture,
-        new SDL.Rect(xSrc, 0, Block.WidthInPixels, Block.HeightInPixels),
+        blockSrcRect,
         new SDL.Rect(xDest, yDest, Block.WidthInPixels, Block.HeightInPixels),
       );
 

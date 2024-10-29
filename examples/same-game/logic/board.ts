@@ -17,6 +17,17 @@ export class Board {
     return this._blocks.filter((x) => x.isSelected).length;
   }
 
+  public get selectedBlockScore(): number {
+    const selectedBlocks = this._blocks.filter((x) => x.isSelected);
+
+    let total = selectedBlocks.length;
+    for (const block of selectedBlocks) {
+      total += total * block.multiplier;
+    }
+
+    return total;
+  }
+
   public get score(): number {
     return this._score;
   }
@@ -24,7 +35,13 @@ export class Board {
   constructor(private _random: Random) {
     for (let i = 0; i < Board.BlockCount; i++) {
       const blockColor = this._random.nextInt(0, 3) as BlockColors;
-      this._blocks[i] = new Block(blockColor);
+
+      const multiplier2x = this._random.nextInt(0, 100) % 10 === 0;
+      const multiplier3x = this._random.nextInt(0, 100) % 25 === 0;
+      const multiplier5x = this._random.nextInt(0, 100) % 50 === 0;
+      const multiplier = multiplier5x ? 5 : (multiplier3x ? 3 : (multiplier2x ? 2 : 0));
+
+      this._blocks[i] = new Block(blockColor, multiplier);
     }
   }
 
@@ -48,13 +65,11 @@ export class Board {
       return;
     }
 
-    let scoreForSelectedBlocks = 0;
+    this._score += this.selectedBlockScore;
+
     for (const block of selected) {
       block.deactivate();
-      scoreForSelectedBlocks += 1;
     }
-
-    this._score += scoreForSelectedBlocks;
   }
 
   public update(elapsed: bigint): void {

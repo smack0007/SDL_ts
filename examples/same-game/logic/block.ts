@@ -13,6 +13,10 @@ export class Block {
     return this._color;
   }
 
+  public get multiplier(): number {
+    return this._multiplier;
+  }
+
   public get isActive(): boolean {
     return this._isActive;
   }
@@ -25,7 +29,11 @@ export class Block {
     return this._offsetY;
   }
 
-  constructor(private _color: BlockColors, private _isSelected: boolean = false) {}
+  constructor(
+    private _color: BlockColors,
+    private _multiplier: number,
+    private _isSelected: boolean = false,
+  ) {}
 
   public select(): void {
     this._isSelected = true;

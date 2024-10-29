@@ -20,14 +20,14 @@ function main(): number {
   const [window, renderer] = SDL.CreateWindowAndRenderer(
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    SDL.WindowFlags.SHOWN
+    SDL.WindowFlags.SHOWN,
   );
 
   SDL.SetWindowTitle(window, "Same Game");
 
   const blockTexture = IMG.LoadTexture(
     renderer,
-    join(ASSETS_PATH, "blocks.png")
+    join(ASSETS_PATH, "blocks.png"),
   );
 
   if (blockTexture == null) {
@@ -37,7 +37,7 @@ function main(): number {
   const font = createFontAtlas(
     renderer,
     join(ASSETS_PATH, "Hack.ttf"),
-    FONT_SIZE
+    FONT_SIZE,
   );
 
   const board = new Board(new Random(12345));
@@ -94,7 +94,7 @@ function draw(
   renderer: Pointer<SDL.Renderer>,
   board: Board,
   blockTexture: Pointer<SDL.Texture>,
-  font: FontAtlas
+  font: FontAtlas,
 ): void {
   SDL.SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL.RenderClear(renderer);
@@ -105,13 +105,13 @@ function draw(
     renderer,
     font,
     new SDL.Point(0, Board.HeightInPixels + 2),
-    `Score: ${board.score}`
+    `Score: ${board.score}`,
   );
   drawString(
     renderer,
     font,
     new SDL.Point(0, Board.HeightInPixels + FONT_SIZE + 2),
-    `Selected: ${board.selectedBlockCount}`
+    `Selected: ${board.selectedBlockCount} => ${board.selectedBlockScore}`,
   );
 
   SDL.RenderPresent(renderer);
