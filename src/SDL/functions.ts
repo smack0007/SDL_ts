@@ -1502,6 +1502,21 @@ export function SetRenderDrawColor(
 }
 SetRenderDrawColor.symbolName = "SDL_SetRenderDrawColor";
 
+export function SetRenderTarget(
+  renderer: Pointer<Renderer>,
+  texture: Pointer<Texture> | null,
+): int {
+  const _result = _library.symbols.SDL_SetRenderTarget(
+    Platform.toPlatformPointer(renderer),
+    texture ? Platform.toPlatformPointer(texture) : null,
+  ) as int;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
+  return _result;
+}
+SetRenderTarget.symbolName = "SDL_SetRenderTarget";
+
 export function SetSurfaceBlendMode(
   surface: PointerLike<Surface>,
   blendMode: BlendMode,

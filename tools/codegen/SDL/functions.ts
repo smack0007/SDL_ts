@@ -1603,6 +1603,20 @@ export const functions: CodeGenFunctions = {
     },
     checkForError: true,
   },
+  SDL_SetRenderTarget: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      texture: {
+        type: "SDL_Texture*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+    checkForError: true,
+  },
   SDL_SetSurfaceBlendMode: {
     parameters: {
       surface: {
