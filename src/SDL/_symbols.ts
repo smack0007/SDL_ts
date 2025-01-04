@@ -734,6 +734,13 @@ export const symbols = {
     ],
     result: /* void */ "void",
   },
+  SDL_RenderSetViewport: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Rect* rect */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_RenderWindowToLogical: {
     parameters: [
       /* SDL_Renderer* renderer */ "pointer",

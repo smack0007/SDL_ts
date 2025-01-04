@@ -1517,6 +1517,20 @@ export const functions: CodeGenFunctions = {
       type: "void",
     },
   },
+  SDL_RenderSetViewport: {
+    parameters: {
+      renderer: {
+        type: "SDL_Renderer*",
+      },
+      rect: {
+        type: "SDL_Rect*",
+      },
+    },
+    result: {
+      type: "int",
+    },
+    checkForError: true,
+  },
   SDL_RenderWindowToLogical: {
     parameters: {
       renderer: {

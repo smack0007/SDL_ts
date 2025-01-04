@@ -1423,6 +1423,21 @@ export function RenderPresent(
 }
 RenderPresent.symbolName = "SDL_RenderPresent";
 
+export function RenderSetViewport(
+  renderer: Pointer<Renderer>,
+  rect: PointerLike<Rect>,
+): int {
+  const _result = _library.symbols.SDL_RenderSetViewport(
+    Platform.toPlatformPointer(renderer),
+    Platform.toPlatformPointer(rect),
+  ) as int;
+  if (_result < 0) {
+    throw new SDLError(GetError());
+  }
+  return _result;
+}
+RenderSetViewport.symbolName = "SDL_RenderSetViewport";
+
 export function RenderWindowToLogical(
   renderer: Pointer<Renderer>,
   windowX: int,
