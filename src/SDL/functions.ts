@@ -1508,7 +1508,7 @@ export function SetRenderTarget(
 ): int {
   const _result = _library.symbols.SDL_SetRenderTarget(
     Platform.toPlatformPointer(renderer),
-    texture ? Platform.toPlatformPointer(texture) : null,
+    Platform.toPlatformPointer(texture),
   ) as int;
   if (_result < 0) {
     throw new SDLError(GetError());

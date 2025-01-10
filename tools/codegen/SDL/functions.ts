@@ -1610,6 +1610,7 @@ export const functions: CodeGenFunctions = {
       },
       texture: {
         type: "SDL_Texture*",
+        isNullable: true
       },
     },
     result: {
