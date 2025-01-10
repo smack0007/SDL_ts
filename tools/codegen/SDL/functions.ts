@@ -1524,6 +1524,7 @@ export const functions: CodeGenFunctions = {
       },
       rect: {
         type: "SDL_Rect*",
+        isNullable: true
       },
     },
     result: {

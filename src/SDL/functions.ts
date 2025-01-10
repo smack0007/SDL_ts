@@ -1425,7 +1425,7 @@ RenderPresent.symbolName = "SDL_RenderPresent";
 
 export function RenderSetViewport(
   renderer: Pointer<Renderer>,
-  rect: PointerLike<Rect>,
+  rect: PointerLike<Rect> | null,
 ): int {
   const _result = _library.symbols.SDL_RenderSetViewport(
     Platform.toPlatformPointer(renderer),
