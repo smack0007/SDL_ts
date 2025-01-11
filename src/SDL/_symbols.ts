@@ -775,6 +775,13 @@ export const symbols = {
     ],
     result: /* int */ "i32",
   },
+  SDL_SetRenderTarget: {
+    parameters: [
+      /* SDL_Renderer* renderer */ "pointer",
+      /* SDL_Texture* texture */ "pointer",
+    ],
+    result: /* int */ "i32",
+  },
   SDL_SetSurfaceBlendMode: {
     parameters: [
       /* SDL_Surface* surface */ "pointer",
